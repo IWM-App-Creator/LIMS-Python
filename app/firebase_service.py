@@ -14,18 +14,25 @@ def init_firebase():
         firebase_app = firebase_admin.initialize_app(cred)
     return firebase_app
 
-# def init_firebase():
-#     if not firebase_admin._apps:
-#         service_account = (Path(__file__).resolve().parent/ "serviceAccountKey.json")
-#         cred = credentials.Certificate(str(service_account))
-#         firebase_admin.initialize_app(cred)
-
 def send_push(token: str, title: str, body: str):
-    message = messaging.Message(
-        token=token,
-        notification=messaging.Notification(
-            title=title,
-            body=body,
-        ),
-    )
-    return messaging.send(message)
+    try:
+        message = messaging.Message(
+            token=token.strip(),
+            notification=messaging.Notification(
+                title=title,
+                body=body,
+            ),
+            data={
+                "title": title,
+                "body": body,
+            }
+        )
+        return messaging.send(message)
+
+    except messaging.UnregisteredError:
+        print("❌ Token expired → delete from DB")
+        return {"error": "invalid_token"}
+
+    except Exception as e:
+        print("❌ FCM error:", e)
+        return {"error": str(e)}
