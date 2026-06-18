@@ -23,16 +23,23 @@ def send_push(token: str, title: str, body: str):
                 body=body,
             ),
             data={
-                "title": title,
-                "body": body,
+                "title":title,
+                "body":body,
             }
         )
-        return messaging.send(message)
+
+        response = messaging.send(message)
+        return {"message_id": response}
 
     except messaging.UnregisteredError:
-        print("❌ Token expired → delete from DB")
+        print("❌ Token expired or invalid")
+        # delete token from database
         return {"error": "invalid_token"}
 
+    except messaging.SenderIdMismatchError:
+        print("❌ Token belongs to another Firebase project")
+        return {"error": "sender_id_mismatch"}
+
     except Exception as e:
-        print("❌ FCM error:", e)
+        print("❌ FCM error:", repr(e))
         return {"error": str(e)}
