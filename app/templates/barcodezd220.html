@@ -1,0 +1,17 @@
+<td align="center" style="width:189px;height:94px;">
+    <table width="189" height="94">
+        <tr style="height: 74px;">
+            <td align="center" style="width: 189px; height: 70px; vertical-align: middle;">
+                {% if barcode_img %}
+                <img src="{{ barcode_img }}" style="max-width:170px; max-height:70px;">
+                {% endif %}
+            </td>
+        </tr>
+        <tr style="height: 20px;">
+            <td align="center"
+                style="width: 189px; height: 20px; line-height:20px; font-size: 12px; font-weight: 800; vertical-align: middle;">
+                {{ barcode_title }}
+            </td>
+        </tr>
+    </table>
+</td>
