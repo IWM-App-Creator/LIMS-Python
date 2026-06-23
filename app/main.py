@@ -8,6 +8,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.routes.users import router as user_router
+from app.routes.pdf import router as pdf_router
+
 from app.firebase_service import init_firebase
 
 
@@ -30,3 +32,4 @@ app.add_middleware(
 )
 
 app.include_router(user_router)
+app.include_router(pdf_router)
