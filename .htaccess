@@ -1,0 +1,10 @@
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION BEGIN
+PassengerAppRoot "/home/genotypingaustra/public_html/xytovet.com/backend"
+PassengerBaseURI "/backend"
+PassengerPython "/home/genotypingaustra/virtualenv/public_html/xytovet.com/backend/3.12/bin/python"
+PassengerAppLogFile "/home/genotypingaustra/public_html/xytovet.com/backend/passenger.log"
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION END
+# DO NOT REMOVE OR MODIFY. CLOUDLINUX ENV VARS CONFIGURATION BEGIN
+<IfModule Litespeed>
+</IfModule>
+# DO NOT REMOVE OR MODIFY. CLOUDLINUX ENV VARS CONFIGURATION END
