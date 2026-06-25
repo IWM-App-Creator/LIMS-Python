@@ -4,33 +4,31 @@ from barcode import Code128
 from barcode.writer import ImageWriter
 from jinja2 import Environment, FileSystemLoader
 from xhtml2pdf import pisa
+from pathlib import Path
 from PIL import Image
 import os
 import time
 import cv2
 
+from app.utils.config import BARCODE_OUTPUT_DIR, PDF_OUTPUT_DIR, TEMPLATES_BASE_DIR
+
 router = APIRouter()
 
 templates = Environment(
-    loader=FileSystemLoader("app/templates")
+    loader=FileSystemLoader(
+        Path(TEMPLATES_BASE_DIR) / "app" / "templates"
+    )
 )
 
 def generate_barcode(text: str):
-
-    barcode_dir = "app/assets/generated_barcodes"
-    os.makedirs(barcode_dir, exist_ok=True)
-
     filename = f"barcode_{int(time.time()*1000)}"
-    filepath = os.path.join(barcode_dir, filename)
+    filepath = os.path.join(BARCODE_OUTPUT_DIR, filename)
     barcode = Code128(text,writer=ImageWriter())
     saved_file = barcode.save(filepath)
-
     return saved_file
 
 def render_barcode_label(template_name, barcode_path, title):
-
     template = templates.get_template(template_name)
-
     return template.render(barcode_img=barcode_path, barcode_title=title)
 
 @router.get("/barcode-pdf")
@@ -113,11 +111,8 @@ def barcode_pdf(labelstr: str = "ABC", barcodelbl: str = "ID ABC LBL 2", pdflabe
     </html>
     """
 
-    pdf_dir = "app/assets/generated_pdfs"
-    os.makedirs(pdf_dir, exist_ok=True)
-
     file_name = f"LIMS_{int(time.time())}.pdf"
-    file_path = os.path.join(pdf_dir, file_name)
+    file_path = PDF_OUTPUT_DIR / file_name    
 
     with open(file_path, "wb") as pdf_file:
         result = pisa.CreatePDF(html, dest=pdf_file)

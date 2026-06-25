@@ -7,16 +7,17 @@ from pypdf import PdfReader, PdfWriter
 from jinja2 import Environment, FileSystemLoader
 from xhtml2pdf import pisa
 from io import BytesIO
+from pathlib import Path
 import os
 import time
 
-router = APIRouter()
+from app.utils.config import PDF_OUTPUT_DIR, TEMPLATES_BASE_DIR
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+router = APIRouter()
 
 templates = Environment(
     loader=FileSystemLoader(
-        os.path.join(BASE_DIR, "templates")
+        Path(TEMPLATES_BASE_DIR) / "app" / "templates"
     )
 )
 
@@ -29,9 +30,10 @@ def generate_pdf(orientation: str = "portrait"):
         page_size = portrait(A4)
 
     file_name = f"{orientation}.pdf"
+    file_path = PDF_OUTPUT_DIR / file_name
 
     pdf = canvas.Canvas(
-        file_name,
+        str(file_path),
         pagesize=page_size
     )
 
@@ -49,92 +51,51 @@ def generate_pdf(orientation: str = "portrait"):
     return {
         "fetch_flag": "1",
         "file_name": file_name,
+        "file_path": str(file_path),
         "width": width,
         "height": height
     }
 
-
 @router.get("/generate-watermarked-pdf")
 def generate_watermarked_pdf(orientation: str = "portrait"):
 
-    source_pdf = f"{orientation}.pdf"
+    if orientation.lower() == "landscape":
+        page_size = landscape(A4)
+    else:
+        page_size = portrait(A4)
 
-    if not os.path.exists(source_pdf):
-        raise HTTPException(
-            status_code=404,
-            detail="Generate PDF first"
-        )
+    file_name = f"{orientation}_watermarked.pdf"
+    file_path = PDF_OUTPUT_DIR / file_name
 
-    reader = PdfReader(source_pdf)
-    first_page = reader.pages[0]
-
-    # Get page size dynamically
-    page_width = float(first_page.mediabox.width)
-    page_height = float(first_page.mediabox.height)
-
-    # Create watermark
-    packet = BytesIO()
-
-    watermark_canvas = canvas.Canvas(
-        packet,
-        pagesize=(page_width, page_height)
+    pdf = canvas.Canvas(
+        str(file_path),
+        pagesize=page_size
     )
 
-    watermark_canvas.setFillColor(
-        Color(0.7, 0.7, 0.7, alpha=0.3)
+    width, height = page_size
+
+    pdf.setFont("Helvetica-Bold", 18)
+    pdf.drawString(
+        50,
+        height - 50,
+        f"{orientation.title()} Watermarked PDF"
     )
 
-    watermark_canvas.setFont(
-        "Helvetica-Bold",
-        40
-    )
+    # watermark example
+    pdf.saveState()
+    pdf.setFont("Helvetica-Bold", 60)
+    pdf.setFillGray(0.85)
+    pdf.translate(width / 2, height / 2)
+    pdf.rotate(45)
+    pdf.drawCentredString(0, 0, "WATERMARK")
+    pdf.restoreState()
 
-    # Center of page
-    center_x = page_width / 2
-    center_y = page_height / 2
-
-    watermark_canvas.saveState()
-
-    watermark_canvas.translate(
-        center_x,
-        center_y
-    )
-
-    watermark_canvas.rotate(45)
-
-    watermark_canvas.drawCentredString(
-        0,
-        0,
-        "CONFIDENTIAL"
-    )
-
-    watermark_canvas.restoreState()
-
-    watermark_canvas.save()
-
-    packet.seek(0)
-
-    watermark_pdf = PdfReader(packet)
-
-    writer = PdfWriter()
-
-    for page in reader.pages:
-        page.merge_page(
-            watermark_pdf.pages[0]
-        )
-        writer.add_page(page)
-
-    output_file = f"watermarked_{orientation}.pdf"
-
-    with open(output_file, "wb") as f:
-        writer.write(f)
+    pdf.save()
 
     return {
         "fetch_flag": "1",
-        "message": "Watermark Added Successfully",
-        "file_name": output_file,
-        "page_width": page_width,
-        "page_height": page_height
+        "file_name": file_name,
+        "file_path": str(file_path)
     }
 
 @router.get("/print-labels-pdf")
@@ -226,27 +187,9 @@ def print_labels_pdf(labelstr: str = "ITEM1~~LOT1~~12345||ITEM2~~LOT2~~67890", p
     </html>
     """
 
-    # Create output directory
-    output_dir = "app/assets/generated_pdfs"
-    os.makedirs(output_dir, exist_ok=True)
-
     # Generate filename
     file_name = f"LIMS_{int(time.time())}.pdf"
-    file_path = os.path.join(output_dir, file_name)
-    
-
-    # # Save PDF
-    # with open(file_path, "wb") as pdf_file:
-    #     pisa.CreatePDF(
-    #         html,
-    #         dest=pdf_file
-    #     )
-    # # Check for success
-    # if not os.path.exists(file_path):
-    #     raise HTTPException(
-    #         status_code=500,
-    #         detail="PDF generation failed"
-    #     )
+    file_path = PDF_OUTPUT_DIR / file_name    
     
     with open(file_path, "wb") as pdf_file:
         result = pisa.CreatePDF(html, dest=pdf_file)
@@ -258,7 +201,8 @@ def print_labels_pdf(labelstr: str = "ITEM1~~LOT1~~12345||ITEM2~~LOT2~~67890", p
         "fetch_flag": "1",
         "message": "PDF generated successfully",
         "file_name": file_name,
-        "pdf_url": f"app/assets/generated_pdfs/{file_name}",
+        "pdf_url": f"{str(file_path)}/{file_name}",
+
     }
 
 def render_label(template_name: str, item1: str = "", item2: str = "", item3: str = ""):
