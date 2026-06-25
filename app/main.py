@@ -1,10 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes.users import router as user_router
-from app.routes.pdf import router as pdf_router
-from app.routes.barcode import router as barcode_router
+from app.api.v1.users import router as user_router
+from app.api.v1.pdf import router as pdf_router
+from app.api.v1.barcode import router as barcode_router
 
-from app.firebase_service import init_firebase
+from app.services.firebase_service import init_firebase
 
 app = FastAPI()
 

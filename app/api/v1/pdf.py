@@ -227,7 +227,7 @@ def print_labels_pdf(labelstr: str = "ITEM1~~LOT1~~12345||ITEM2~~LOT2~~67890", p
     """
 
     # Create output directory
-    output_dir = "app/generated_pdfs"
+    output_dir = "app/assets/generated_pdfs"
     os.makedirs(output_dir, exist_ok=True)
 
     # Generate filename
@@ -258,7 +258,7 @@ def print_labels_pdf(labelstr: str = "ITEM1~~LOT1~~12345||ITEM2~~LOT2~~67890", p
         "fetch_flag": "1",
         "message": "PDF generated successfully",
         "file_name": file_name,
-        "pdf_url": f"app/generated_pdfs/{file_name}",
+        "pdf_url": f"app/assets/generated_pdfs/{file_name}",
     }
 
 def render_label(template_name: str, item1: str = "", item2: str = "", item3: str = ""):

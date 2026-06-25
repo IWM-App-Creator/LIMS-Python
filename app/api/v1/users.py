@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from app.database import get_db
-from app.models import User
-from app.auth import create_token, verify_token
+from app.database.database import get_db
+from app.models.models import User
+from app.api.v1.auth import create_token, verify_token
 import bcrypt
 from firebase_admin import messaging
-from app.firebase_service import send_push
+from app.services.firebase_service import send_push
 
 router = APIRouter()
 

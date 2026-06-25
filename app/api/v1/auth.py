@@ -1,6 +1,6 @@
 from jose import jwt, JWTError, ExpiredSignatureError
 from datetime import datetime, timedelta
-from app.config import ACCESS_TOKEN_EXPIRE_MINUTES, SECRET_KEY, ALGORITHM
+from app.utils.config import ACCESS_TOKEN_EXPIRE_MINUTES, SECRET_KEY, ALGORITHM
 
 def create_token(user_id: int, email: str):
     expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)

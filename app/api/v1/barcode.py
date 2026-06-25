@@ -17,7 +17,7 @@ templates = Environment(
 
 def generate_barcode(text: str):
 
-    barcode_dir = "app/generated_barcodes"
+    barcode_dir = "app/assets/generated_barcodes"
     os.makedirs(barcode_dir, exist_ok=True)
 
     filename = f"barcode_{int(time.time()*1000)}"
@@ -113,7 +113,7 @@ def barcode_pdf(labelstr: str = "ABC", barcodelbl: str = "ID ABC LBL 2", pdflabe
     </html>
     """
 
-    pdf_dir = "app/generated_pdfs"
+    pdf_dir = "app/assets/generated_pdfs"
     os.makedirs(pdf_dir, exist_ok=True)
 
     file_name = f"LIMS_{int(time.time())}.pdf"
@@ -129,13 +129,13 @@ def barcode_pdf(labelstr: str = "ABC", barcodelbl: str = "ID ABC LBL 2", pdflabe
         "fetch_flag": "1",
         "message": "Barcode PDF generated",
         "file_name": file_name,
-        "pdf_url": f"/generated_pdfs/{file_name}"
+        "pdf_url": f"app/assets/generated_pdfs/{file_name}"
     }
 
 @router.get("/barcode-read")
 def read_barcode(file_name: str = "barcode_1782194976544.png"):
 
-    file_path = os.path.join("app","generated_barcodes",file_name)
+    file_path = os.path.join("app","assets","generated_barcodes",file_name)
 
     if not os.path.exists(file_path):
         raise HTTPException(status_code=404, detail="Barcode image not found")
@@ -174,7 +174,7 @@ def read_barcode(file_name: str = "barcode_1782194976544.png"):
 def read_barcode(file_name: str = "barcode_1782194976544.png"):
     
 
-    file_path = os.path.join("app", "generated_barcodes", file_name)
+    file_path = os.path.join("app","assets","generated_barcodes", file_name)
     img = cv2.imread(file_path)
     img = cv2.resize(img, None, fx=2.5, fy=2.5, interpolation=cv2.INTER_CUBIC)
 
