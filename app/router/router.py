@@ -5,7 +5,7 @@ from app.api.v1.pdf import router as pdf_router
 from app.api.v1.barcode import router as barcode_router
 
 
-def getrouter():
+def getRouter():
     api_router = APIRouter()
 
     api_router.include_router(user_router, prefix="/users", tags=["Users"])

@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.initialize.initialize import initialize
-from app.router.router import getrouter
+from app.router.router import getRouter
 
 app = FastAPI()
 
@@ -14,7 +14,7 @@ def root():
 async def startup_event():
     initialize()
 
-app.include_router(getrouter())
+app.include_router(getRouter())
 
 app.add_middleware(
     CORSMiddleware,
