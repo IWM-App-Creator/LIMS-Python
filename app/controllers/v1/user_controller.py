@@ -1,26 +1,27 @@
-from fastapi import  Depends, HTTPException
-from sqlalchemy.orm import Session
+from fastapi import  HTTPException
 from sqlalchemy import select
 
-from app.database.database import get_db, engine
-from app.services.dynamic_table import get_table
+from app.database.database import engine
+from app.database.db_helper import get_table
+from app.database.execute_stmt import execute_stmt
+from app.database.execute_query import execute_query
+
 from app.functions.authfunctions import create_token, verify_token
 from app.services.firebase_service import send_push
 from app.properties.usersproperties import usrproperties
-from app.services.query_service import execute_query
 
 import bcrypt
 
-def login( email: str, password: str, db: Session = Depends(get_db)):
+def login(email: str, password: str):
 
-    users = get_table(engine,"users","systemconfig")
+    users = get_table(engine, "users", "systemconfig")
 
     stmt = (
         select(users)
         .where(users.c.email == email)
     )
 
-    user = db.execute(stmt).mappings().first()
+    user = execute_stmt(engine, stmt, "one")
 
     # qry = """
     # SELECT 
@@ -57,12 +58,10 @@ def login( email: str, password: str, db: Session = Depends(get_db)):
     return {
         "fetch_flag": "1",
         "access_token": access_token,
-        "itm_list": [user],
         "usrproperties.user_id": usrproperties.user_id,
         "usrproperties.first_name": usrproperties.first_name,
         "usrproperties.last_name": usrproperties.last_name,
-        "usrproperties.user_array": usrproperties.user_array,
-        "usrproperties.user_json": usrproperties.user_json,
+        "itm_list": [user],
     }
 
 def check_token(token: str):
