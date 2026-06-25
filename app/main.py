@@ -1,10 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.v1.users import router as user_router
-from app.api.v1.pdf import router as pdf_router
-from app.api.v1.barcode import router as barcode_router
 
-from app.services.firebase_service import init_firebase
+from app.router.router import getrouter
+from app.initialize.initialize import initialize
 
 app = FastAPI()
 
@@ -14,14 +12,9 @@ def root():
 
 @app.on_event("startup")
 async def startup_event():
-    init_firebase()
-    print("Firebase initialized")
+    initialize()
 
-
-app.include_router(user_router)
-app.include_router(pdf_router)
-app.include_router(barcode_router)
-
+app.include_router(getrouter())
 
 app.add_middleware(
     CORSMiddleware,
