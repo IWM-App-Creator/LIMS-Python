@@ -14,12 +14,10 @@ import bcrypt
 def login(email: str, password: str):
 
     users = get_table("users", "systemconfig")
-
     stmt = (
         select(users)
         .where(users.c.email == email)
     )
-
     user = execute_stmt(stmt, "one")
 
     # qry = """
@@ -28,11 +26,7 @@ def login(email: str, password: str):
     # FROM users
     # WHERE users.email = :email
     # """
-    # user = execute_query(
-    #     db,
-    #     qry,
-    #     {"email": email}
-    # )
+    # user = execute_query(qry,{"email": email}, "one")
 
     if not user:
         raise HTTPException(
@@ -57,9 +51,9 @@ def login(email: str, password: str):
     return {
         "fetch_flag": "1",
         "access_token": access_token,
-        "usrproperties.user_id": usrproperties.user_id,
-        "usrproperties.first_name": usrproperties.first_name,
-        "usrproperties.last_name": usrproperties.last_name,
+        "user_id": usrproperties.user_id,
+        "first_name": usrproperties.first_name,
+        "last_name": usrproperties.last_name,
         "itm_list": [user],
     }
 
