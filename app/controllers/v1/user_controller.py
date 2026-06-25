@@ -25,9 +25,9 @@ def login(email: str, password: str, db: Session = Depends(get_db)):
         for column in user.__table__.columns
     }
 
-    usrproperties.user_id = user_data.id
-    usrproperties.first_name = user_data.first_name
-    usrproperties.last_name = user_data.last_name
+    usrproperties.user_id = user_data["id"]
+    usrproperties.first_name = user_data["first_name"]
+    usrproperties.last_name = user_data["last_name"]
     usrproperties.user_array = [user_data]
     usrproperties.user_json = user_data
     
