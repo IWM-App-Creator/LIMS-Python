@@ -1,0 +1,6 @@
+USER_ID = 0
+USER_FNAME = ""
+USER_LNAME = ""
+
+USER_ARRAY = []
+USER_JSON = {}

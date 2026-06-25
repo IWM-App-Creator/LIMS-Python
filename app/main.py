@@ -17,6 +17,12 @@ async def startup_event():
     init_firebase()
     print("Firebase initialized")
 
+
+app.include_router(user_router)
+app.include_router(pdf_router)
+app.include_router(barcode_router)
+
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -27,7 +33,3 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-app.include_router(user_router)
-app.include_router(pdf_router)
-app.include_router(barcode_router)

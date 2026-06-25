@@ -2,9 +2,11 @@ from fastapi import  Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.database.database import get_db
 from app.models.models import User
-from app.functions.functions import create_token, verify_token
+from app.functions.authfunctions import create_token, verify_token
 import bcrypt
 from app.services.firebase_service import send_push
+
+from app.properties.usersproperties import usersproperties as usrproperties
 
 
 def login(email: str, password: str, db: Session = Depends(get_db)):
@@ -23,7 +25,8 @@ def login(email: str, password: str, db: Session = Depends(get_db)):
         column.name: getattr(user, column.name)
         for column in user.__table__.columns
     }
-
+    print(usrproperties.USER_ID)
+    
     return {
         "fetch_flag":"1",
         "access_token": access_token,
