@@ -1,6 +1,9 @@
-USER_ID = 0
-USER_FNAME = ""
-USER_LNAME = ""
+class UserProperties:
+    def __init__(self):
+        self.user_id = 0
+        self.first_name = ""
+        self.last_name = ""
+        self.user_array = []
+        self.user_json = {}
 
-USER_ARRAY = []
-USER_JSON = {}
+usrproperties = UserProperties()

@@ -6,8 +6,7 @@ from app.functions.authfunctions import create_token, verify_token
 import bcrypt
 from app.services.firebase_service import send_push
 
-from app.properties.usersproperties import usersproperties as usrproperties
-
+from app.properties.usersproperties import usrproperties
 
 def login(email: str, password: str, db: Session = Depends(get_db)):
 
@@ -25,12 +24,22 @@ def login(email: str, password: str, db: Session = Depends(get_db)):
         column.name: getattr(user, column.name)
         for column in user.__table__.columns
     }
-    print(usrproperties.USER_ID)
+
+    usrproperties.user_id = user_data.id
+    usrproperties.first_name = user_data.first_name
+    usrproperties.last_name = user_data.last_name
+    usrproperties.user_array = [user_data]
+    usrproperties.user_json = user_data
     
     return {
         "fetch_flag":"1",
         "access_token": access_token,
-        "itm_list": [user_data]
+        "itm_list": [user_data],
+        "usrproperties.user_id": usrproperties.user_id,
+        "usrproperties.first_name": usrproperties.first_name,
+        "usrproperties.last_name": usrproperties.last_name,
+        "usrproperties.user_array": usrproperties.user_array,
+        "usrproperties.user_json": usrproperties.user_json,
     }
 
 def check_token(token: str):
