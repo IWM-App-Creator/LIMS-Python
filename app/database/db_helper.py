@@ -1,8 +1,9 @@
 from sqlalchemy import MetaData, Table
+from app.database.database import engine
 
 metadata = MetaData()
 
-def get_table(engine, table_name, schema=None):
+def get_table(table_name, schema=None):
     return Table(
         table_name,
         metadata,

@@ -1,7 +1,6 @@
 from fastapi import  HTTPException
 from sqlalchemy import select
 
-from app.database.database import engine
 from app.database.db_helper import get_table
 from app.database.execute_stmt import execute_stmt
 from app.database.execute_query import execute_query
@@ -14,14 +13,14 @@ import bcrypt
 
 def login(email: str, password: str):
 
-    users = get_table(engine, "users", "systemconfig")
+    users = get_table("users", "systemconfig")
 
     stmt = (
         select(users)
         .where(users.c.email == email)
     )
 
-    user = execute_stmt(engine, stmt, "one")
+    user = execute_stmt(stmt, "one")
 
     # qry = """
     # SELECT 

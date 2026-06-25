@@ -1,6 +1,8 @@
 from sqlalchemy.orm import Session
+from app.database.database import engine
 
-def execute_stmt(engine, stmt, fetch="one"):
+
+def execute_stmt(stmt, fetch="one"):
 
     with Session(engine) as db:
 
