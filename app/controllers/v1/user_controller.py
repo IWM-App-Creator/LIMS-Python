@@ -1,40 +1,63 @@
 from fastapi import  Depends, HTTPException
 from sqlalchemy.orm import Session
-from app.database.database import get_db
-from app.models.models import User
+from sqlalchemy import select
+
+from app.database.database import get_db, engine
+from app.services.dynamic_table import get_table
 from app.functions.authfunctions import create_token, verify_token
-import bcrypt
 from app.services.firebase_service import send_push
-
 from app.properties.usersproperties import usrproperties
+from app.services.query_service import execute_query
 
-def login(email: str, password: str, db: Session = Depends(get_db)):
+import bcrypt
 
-    user = db.query(User).filter(User.email == email).first()
+def login( email: str, password: str, db: Session = Depends(get_db)):
+
+    users = get_table(engine,"users","systemconfig")
+
+    stmt = (
+        select(users)
+        .where(users.c.email == email)
+    )
+
+    user = db.execute(stmt).mappings().first()
+
+    # qry = """
+    # SELECT 
+    #     users.*
+    # FROM users
+    # WHERE users.email = :email
+    # """
+    # user = execute_query(
+    #     db,
+    #     qry,
+    #     {"email": email}
+    # )
 
     if not user:
-        raise HTTPException(status_code=401, detail="Invalid Email")
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid Email"
+        )
 
     if not bcrypt.checkpw(password.encode(), user.password.encode()):
-        raise HTTPException(status_code=401, detail="Invalid Password")
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid Password"
+        )
 
     access_token = create_token(user.id, user.email)
 
-    user_data = {
-        column.name: getattr(user, column.name)
-        for column in user.__table__.columns
-    }
+    usrproperties.user_id = user.id
+    usrproperties.first_name = user.first_name
+    usrproperties.last_name = user.last_name
+    usrproperties.user_array = [user]
+    usrproperties.user_json = user
 
-    usrproperties.user_id = user_data["id"]
-    usrproperties.first_name = user_data["first_name"]
-    usrproperties.last_name = user_data["last_name"]
-    usrproperties.user_array = [user_data]
-    usrproperties.user_json = user_data
-    
     return {
-        "fetch_flag":"1",
+        "fetch_flag": "1",
         "access_token": access_token,
-        "itm_list": [user_data],
+        "itm_list": [user],
         "usrproperties.user_id": usrproperties.user_id,
         "usrproperties.first_name": usrproperties.first_name,
         "usrproperties.last_name": usrproperties.last_name,
