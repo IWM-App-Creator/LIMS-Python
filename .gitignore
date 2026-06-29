@@ -43,5 +43,7 @@ Thumbs.db
 # Logs
 *.log
 
+*.md
+
 app/certs/
 serviceAccountKey.json
