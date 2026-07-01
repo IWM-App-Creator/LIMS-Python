@@ -2,7 +2,6 @@ from fastapi import FastAPI
 from dotenv import load_dotenv
 from pathlib import Path
 
-load_dotenv(Path(__file__).parent.parent / ".env")
 
 from fastapi.middleware.cors import CORSMiddleware
 from app.initialize import initialize
@@ -11,6 +10,8 @@ from app.routehelper.router import routerGroup
 from app.requesthelper.errorhandler import error_handler
 from app.requesthelper.requestcontext import request_context
 from app.requesthelper.authhandler import auth_handler
+
+load_dotenv(Path(__file__).parent.parent / ".env")
 
 app = FastAPI()
 

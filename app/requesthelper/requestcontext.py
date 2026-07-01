@@ -20,32 +20,15 @@ async def request_context(request: Request, call_next):
             request.state.params = await request.json()
         else:
             request.state.params = dict(await request.form())
-
     # --------------------------
     # Workspace
     # --------------------------
-    print("Debug IS_LOCAL_DEV --> ", os.getenv('IS_LOCAL_DEV'))
-    # print(os.getenv("IS_LOCAL_DEV"))
-
     host = request.headers.get("Host", "")
-    # print("Debug host --> ", host)
-    # Remove port if present
     host = host.split(":")[0]
-
-    # print("Debug host 2 --> ", host)
-    # Example:
-    # customer1.example.com -> customer1
-    # localhost -> localhost
     subdomain = host.split(".")[0]
-    # print("Debug subdomain --> ", subdomain)
-    
-    
-    if os.getenv('IS_LOCAL_DEV') is 1 :
+    if os.getenv('IS_LOCAL_DEV') == "1" :
         subdomain = os.getenv('LOCAL_SUBDOMAIN')
-        # print("Debug subdomain 2 --> ", subdomain)
     
-    # print("request_context subdomain --> ", subdomain)
-
     workspace = TenantCache.get_workspace(subdomain)
     if workspace is None:
         return JSONResponse (
@@ -58,6 +41,8 @@ async def request_context(request: Request, call_next):
     request.state.workspace = workspace
     request.state.schema = workspace.schema_name
     request.state.workspace_id = workspace.workspace_id
+    # --------------------------
+    # Output
     # --------------------------
     response = await call_next(request)
     return response
