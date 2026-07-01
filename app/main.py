@@ -6,7 +6,7 @@ from app.routehelper.router import routerGroup
 
 from app.requesthelper.errorhandler import error_handler
 from app.requesthelper.requestcontext import request_context
-from app.requesthelper.auth import auth_middleware
+from app.requesthelper.authhandler import auth_handler
 
 app = FastAPI()
 
@@ -23,7 +23,7 @@ app.include_router(routerGroup())
 
 app.middleware("http")(error_handler)
 app.middleware("http")(request_context)
-app.middleware("http")(auth_middleware)
+app.middleware("http")(auth_handler)
 
 # Middleware for CORS
 app.add_middleware (

@@ -5,9 +5,9 @@ from app.database.db_helper import get_table
 from app.database.execute_stmt import execute_stmt
 from app.database.execute_query import execute_query
 
-from app.functions.authfunctions import create_token, verify_token
+from app.functions.authfunctions import createJWTToken
 from app.services.firebase.firebase_service import send_push
-from app.properties.usersproperties import usrproperties
+from app.properties.usersproperties import userps
 
 import bcrypt
 
@@ -32,28 +32,28 @@ def login(email: str, password: str):
             detail = "Invalid Password"
         )
 
-    access_token = create_token(user.id, user.email) # JWT Token Generation for user pass param that we want to use in payload.
+    access_token = createJWTToken(user.id, user.email) # JWT Token Generation for user pass param that we want to use in payload.
 
     # Set User Properties for API Response
-    usrproperties.user_id = user.id
-    usrproperties.first_name = user.first_name
-    usrproperties.last_name = user.last_name
-    usrproperties.user_array = [user]
-    usrproperties.user_json = user
+    userps.user_id = user.id
+    userps.first_name = user.first_name
+    userps.last_name = user.last_name
+    userps.user_array = [user]
+    userps.user_json = user
 
     # Return API Response with JWT Token and User Data
     return {
         "fetch_flag": "1",
         "access_token": access_token,
-        "user_id": usrproperties.user_id,
-        "first_name": usrproperties.first_name,
-        "last_name": usrproperties.last_name,
+        "user_id": userps.user_id,
+        "first_name": userps.first_name,
+        "last_name": userps.last_name,
         "itm_list": [user],
     }
 
-def check_token(token: str): # Validate JWT Token and return user data if valid, else return error message
-    result = verify_token(token)
-    return result
+# def check_token(token: str): # Validate JWT Token and return user data if valid, else return error message
+#     result = verify_token(token)
+#     return result
 
 def test_push(token: str):
     response = send_push (

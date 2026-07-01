@@ -5,7 +5,7 @@ router = APIRouter(prefix="/v1")
 
 ROUTES = [
     ("/login", usersapi.login, ["GET"]),
-    ("/check-token", usersapi.check_token, ["GET"]),
+    # ("/check-token", usersapi.check_token, ["GET"]),
     ("/test-notification", usersapi.test_push, ["GET"]),
 ]
 
