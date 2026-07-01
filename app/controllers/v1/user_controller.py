@@ -14,40 +14,34 @@ import bcrypt
 def login(email: str, password: str):
 
     users = get_table("users", "systemconfig")
+    # print("users table:", users)
     stmt = (
         select(users)
         .where(users.c.email == email)
     )
-    user = execute_stmt(stmt, "one")
-
-    # qry = """
-    # SELECT 
-    #     users.*
-    # FROM users
-    # WHERE users.email = :email
-    # """
-    # user = execute_query(qry,{"email": email}, "one")
-
+    user = execute_stmt(stmt, "one") # Executed Query to get user data from database
+    # Condition to check if data found or not found
     if not user:
         raise HTTPException(
-            status_code=401,
-            detail="Invalid Email"
+            status_code = 401,
+            detail = "Invalid Email"
         )
-
     if not bcrypt.checkpw(password.encode(), user.password.encode()):
         raise HTTPException(
-            status_code=401,
-            detail="Invalid Password"
+            status_code = 401,
+            detail = "Invalid Password"
         )
 
-    access_token = create_token(user.id, user.email)
+    access_token = create_token(user.id, user.email) # JWT Token Generation for user pass param that we want to use in payload.
 
+    # Set User Properties for API Response
     usrproperties.user_id = user.id
     usrproperties.first_name = user.first_name
     usrproperties.last_name = user.last_name
     usrproperties.user_array = [user]
     usrproperties.user_json = user
 
+    # Return API Response with JWT Token and User Data
     return {
         "fetch_flag": "1",
         "access_token": access_token,
@@ -57,7 +51,7 @@ def login(email: str, password: str):
         "itm_list": [user],
     }
 
-def check_token(token: str):
+def check_token(token: str): # Validate JWT Token and return user data if valid, else return error message
     result = verify_token(token)
     return result
 

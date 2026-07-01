@@ -2,7 +2,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.initialize.initialize import initialize
-from app.router.router import getRouter
+from app.routehelper.router import routerGroup
+
+from app.middleware.requestcontext import request_context
+from app.middleware.errorhandler import error_handler
+
 
 app = FastAPI()
 
@@ -14,16 +18,21 @@ def root():
 async def startup_event():
     initialize()
 
-app.include_router(getRouter())
+# Include Router
+app.include_router(routerGroup())
 
-app.add_middleware(
+app.middleware("http")(error_handler)
+app.middleware("http")(request_context)
+
+# Middleware for CORS
+app.add_middleware (
     CORSMiddleware,
-    allow_origins=[
+    allow_origins =[
         "http://localhost:5173",
         "http://127.0.0.1:5173",
         "http://127.0.0.1:8000"
     ],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_credentials = True,
+    allow_methods = ["*"],
+    allow_headers = ["*"],
 )

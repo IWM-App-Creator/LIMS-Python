@@ -13,7 +13,7 @@ def create_token(user_id: int, email: str):
 
 def verify_token(token: str):
     try:
-        payload = jwt.decode(
+        payload = jwt.decode (
             token,
             SECRET_KEY,
             algorithms=[ALGORITHM]

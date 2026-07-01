@@ -12,8 +12,8 @@ DATABASE_URL = (
     f"{os.getenv('DB_DATABASE')}"
 )
 
-engine = create_engine(
+dbconn = create_engine (
     DATABASE_URL,
-    pool_pre_ping=True,
-    echo=False
+    pool_pre_ping = True,
+    echo =False
 )

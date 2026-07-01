@@ -1,12 +1,13 @@
 from sqlalchemy import MetaData, Table
-from app.database.database import engine
+from app.database.database import dbconn
 
 metadata = MetaData()
 
-def get_table(table_name, schema=None):
+# To Get Table Data 
+def get_table(table_name, schema = None):
     return Table(
         table_name,
         metadata,
-        schema=schema,
-        autoload_with=engine
+        schema = schema,
+        autoload_with = dbconn
     )
