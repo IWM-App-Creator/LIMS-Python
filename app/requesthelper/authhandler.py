@@ -17,12 +17,12 @@ async def auth_handler(request: Request, call_next):
     if request.url.path in PUBLIC_APIS:
         return await call_next(request)
 
-    if os.getenv('DB_DATABASE') is 1 :
+    if os.getenv('IS_LOCAL_DEV') is 1 :
         return await call_next(request)
     else :
         auth = request.headers.get("Authorization")
         if not auth:
-            return JSONResponse(
+            return JSONResponse (
                 status_code = 401,
                 content = {
                     "status": False,
@@ -30,7 +30,7 @@ async def auth_handler(request: Request, call_next):
                 }
             )
         if not auth.startswith("Bearer "):
-            return JSONResponse(
+            return JSONResponse (
                 status_code = 401,
                 content = {
                     "status": False,
@@ -42,9 +42,9 @@ async def auth_handler(request: Request, call_next):
         # Verify the token using the verify_token function from authfunctions.py
         payload = verifyJWTToken(token)
         if payload is None:
-            return JSONResponse(
-                status_code=401,
-                content={
+            return JSONResponse (
+                status_code = 401,
+                content = {
                     "status": False,
                     "message": "Invalid or expired token"
                 }

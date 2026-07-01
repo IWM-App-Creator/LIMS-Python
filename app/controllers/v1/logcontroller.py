@@ -1,9 +1,9 @@
 from fastapi import Request
 from sqlalchemy import select
 
-from app.database.db_helper import get_table
-from app.database.execute_stmt import execute_stmt
-from app.database.execute_query import execute_query
+# from app.database.db_helper import get_table
+# from app.database.execute_stmt import execute_stmt
+# from app.database.execute_query import execute_query
 from app.requesthelper.requesthelper import RequestData
 
 from app.properties.logproperties import logps
@@ -11,8 +11,17 @@ from app.functions import logfunctions as logfnct
 
 
 def getLog():
-    logfnct.heresavelogfunction()
-    logfnct.heresavelogfunction2()
+    
+    # users = DB.table(request, "users")
+    # orders = DB.table(request, "orders")
+    # products = DB.table(request, "products")
+    # users = DB.get_table("users", request.state.schema)
+
+    # print(request.state.schema)
+    # print(request.state.workspace_id)
+
+    # logfnct.heresavelogfunction()
+    # logfnct.heresavelogfunction2()
     return {
         "fetch_flag": "3",
         # "access_token": access_token,

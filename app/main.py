@@ -1,6 +1,10 @@
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
+from pathlib import Path
 
+load_dotenv(Path(__file__).parent.parent / ".env")
+
+from fastapi.middleware.cors import CORSMiddleware
 from app.initialize import initialize
 from app.routehelper.router import routerGroup
 
@@ -21,6 +25,7 @@ async def startup_event():
 # Include Router
 app.include_router(routerGroup())
 
+# Middleware for Request Context, Error Handler, Authentication and Workspace
 app.middleware("http")(error_handler)
 app.middleware("http")(request_context)
 app.middleware("http")(auth_handler)
