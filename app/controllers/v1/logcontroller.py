@@ -4,7 +4,7 @@ from sqlalchemy import select
 from app.database.db_helper import get_table
 from app.database.execute_stmt import execute_stmt
 from app.database.execute_query import execute_query
-from app.helper.requesthelper import RequestData
+from app.helper.requestdata.requesthelper import RequestData
 from app.properties.logproperties import logps
 from app.functions import logfunctions as logfnct
 
