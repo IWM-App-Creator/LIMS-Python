@@ -4,7 +4,8 @@ from sqlalchemy import select
 from app.database.db_helper import get_table
 from app.database.execute_stmt import execute_stmt
 from app.database.execute_query import execute_query
-from app.helper.requestdata.requesthelper import RequestData
+from app.requesthelper.requesthelper import RequestData
+
 from app.properties.logproperties import logps
 from app.functions import logfunctions as logfnct
 
@@ -27,15 +28,11 @@ def getLog():
     # return result
 
 
-async def saveLog(request: Request,
-                view_id: int,
-                user_id: int
-            ):
+async def saveLog(request: Request):
     params = RequestData.params(request)
     # print("request -->", request.state.params)
     view_id = params.get("view_id")
     user_id = params.get("user_id")
-    
     print("saveLog view_id -->", view_id)
     print("saveLog user_id -->", user_id)
 
