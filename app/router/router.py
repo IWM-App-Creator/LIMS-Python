@@ -1,8 +1,8 @@
 from fastapi import APIRouter
 
-from app.api.v1.users import router as user_router
-from app.api.v1.pdf import router as pdf_router
-from app.api.v1.barcode import router as barcode_router
+from app.endpoints.v1.users import router as user_router
+from app.endpoints.v1.pdf import router as pdf_router
+from app.endpoints.v1.barcode import router as barcode_router
 
 
 def getRouter():
