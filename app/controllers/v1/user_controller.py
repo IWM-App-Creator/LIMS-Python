@@ -56,9 +56,9 @@ def check_token(token: str): # Validate JWT Token and return user data if valid,
     return result
 
 def test_push(token: str):
-    response = send_push(
-        token=token,
-        title="Test Notification",
-        body="Hello from Python"
+    response = send_push (
+        token = token,
+        title = "Test Notification",
+        body = "Hello from Python"
     )
     return { "firebase_response": response }

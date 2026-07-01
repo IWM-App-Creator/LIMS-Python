@@ -31,21 +31,10 @@ def getLog():
 async def saveLog(request: Request):
     params = RequestData.params(request)
     # print("request -->", request.state.params)
+
+    # user_id = request.state.user_id # From the auth middleware, if you want to get the user_id from the token
+
     view_id = params.get("view_id")
     user_id = params.get("user_id")
     print("saveLog view_id -->", view_id)
     print("saveLog user_id -->", user_id)
-
-
-# async def saveLog(request: Request):
-#     await RequestHelper.init(request)
-#     view_id = request.state.params.get("view_id")
-#     token = request.state.jwt
-
-
-# @app.api_route("/saveLog", methods=["GET", "POST"])
-# async def saveLog(request: Request):
-#     data = await get_input(request)
-
-#     print(data["view_id"])
-#     print(data.get("user_id"))

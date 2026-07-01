@@ -16,7 +16,7 @@ async def auth_middleware(request: Request, call_next):
         return await call_next(request)
 
     # return await call_next(request)
-    auth = request.headers.get("authorization")
+    auth = request.headers.get("Authorization")
     if not auth:
         return JSONResponse(
             status_code = 401,
@@ -34,6 +34,25 @@ async def auth_middleware(request: Request, call_next):
             }
         )
     token = auth.replace("Bearer ", "", 1)
+
+    payload = verify_token(token)
+
+    # if payload is None:
+    #     return JSONResponse(
+    #         status_code=401,
+    #         content={
+    #             "status": False,
+    #             "message": "Invalid or expired token"
+    #         }
+    #     )
+
+    # request.state.user_id = payload["user_id"]
+    # request.state.email = payload["email"]   # Optional
+    # request.state.jwt = token
+
+    # return await call_next(request)
+
+
     user = verify_token(token)
     if user is None:
         return JSONResponse (
