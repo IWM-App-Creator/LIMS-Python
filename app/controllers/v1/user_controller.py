@@ -6,7 +6,7 @@ from app.database.execute_stmt import execute_stmt
 from app.database.execute_query import execute_query
 
 from app.functions.authfunctions import create_token, verify_token
-from app.services.firebase_service import send_push
+from app.services.firebase.firebase_service import send_push
 from app.properties.usersproperties import usrproperties
 
 import bcrypt

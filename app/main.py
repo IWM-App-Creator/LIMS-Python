@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.initialize.initialize import initialize
+from app.initialize import initialize
 from app.routehelper.router import routerGroup
 
 from app.requesthelper.errorhandler import error_handler

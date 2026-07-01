@@ -35,34 +35,17 @@ async def auth_middleware(request: Request, call_next):
         )
     token = auth.replace("Bearer ", "", 1)
 
+    # Verify the token using the verify_token function from authfunctions.py
     payload = verify_token(token)
-
-    # if payload is None:
-    #     return JSONResponse(
-    #         status_code=401,
-    #         content={
-    #             "status": False,
-    #             "message": "Invalid or expired token"
-    #         }
-    #     )
-
-    # request.state.user_id = payload["user_id"]
-    # request.state.email = payload["email"]   # Optional
-    # request.state.jwt = token
-
-    # return await call_next(request)
-
-
-    user = verify_token(token)
-    if user is None:
-        return JSONResponse (
-            status_code = 401,
-            content = {
+    if payload is None:
+        return JSONResponse(
+            status_code=401,
+            content={
                 "status": False,
                 "message": "Invalid or expired token"
             }
         )
-    # Save authenticated user for controllers/services
-    request.state.user = user
+    request.state.user_id = payload["user_id"]
+    # request.state.email = payload["email"]   # Optional
     request.state.jwt = token
     return await call_next(request)
