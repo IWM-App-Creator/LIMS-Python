@@ -1,0 +1,13 @@
+from fastapi import APIRouter
+from app.controllers.v1 import logcontroller as logapi
+
+router = APIRouter(prefix="/v1")
+
+ROUTES = [
+    ("/get", logapi.getLog, ["GET"]),
+    # ("/save", logapi.saveLog, ["GET"]),
+    # ("/remove", logapi.removeLog, ["GET"]),
+]
+
+for path, handler, methods in ROUTES:
+    router.add_api_route(path, handler, methods=methods)
