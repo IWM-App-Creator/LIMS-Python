@@ -4,8 +4,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.initialize.initialize import initialize
 from app.routehelper.router import routerGroup
 
-from app.middleware.requestcontext import request_context
 from app.middleware.errorhandler import error_handler
+from app.middleware.requestcontext import request_context
+from app.middleware.auth import auth_middleware
 
 
 app = FastAPI()
@@ -23,6 +24,7 @@ app.include_router(routerGroup())
 
 app.middleware("http")(error_handler)
 app.middleware("http")(request_context)
+app.middleware("http")(auth_middleware)
 
 # Middleware for CORS
 app.add_middleware (

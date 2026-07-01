@@ -11,25 +11,36 @@ def create_token(user_id: int, email: str):
     }
     return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
+# def verify_token(token: str):
+#     try:
+#         payload = jwt.decode (
+#             token,
+#             SECRET_KEY,
+#             algorithms=[ALGORITHM]
+#         )
+#         return {
+#             "valid": True,
+#             "user_id": payload.get("user_id"),
+#             "email": payload.get("email")
+#         }
+#     except ExpiredSignatureError:
+#         return {
+#             "valid": False,
+#             "message": "Token expired"
+#         }
+#     except JWTError:
+#         return {
+#             "valid": False,
+#             "message": "Invalid token"
+#         }
+
 def verify_token(token: str):
     try:
-        payload = jwt.decode (
+        payload = jwt.decode(
             token,
             SECRET_KEY,
-            algorithms=[ALGORITHM]
+            algorithms=["HS256"]
         )
-        return {
-            "valid": True,
-            "user_id": payload.get("user_id"),
-            "email": payload.get("email")
-        }
-    except ExpiredSignatureError:
-        return {
-            "valid": False,
-            "message": "Token expired"
-        }
-    except JWTError:
-        return {
-            "valid": False,
-            "message": "Invalid token"
-        }
+        return payload
+    except Exception:
+        return None
