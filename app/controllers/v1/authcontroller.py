@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy import select
 
 from app.dbhelper.db_helper import DB
-from app.httphelper.responsehelper import responseError
+from app.httphelper.responsehelper import raiseAPIError
 from app.functions.authfunctions import authfnct
 from app.properties.globalproperties import globalps
 
@@ -28,10 +28,10 @@ def doLogin(email: str, password: str):
     # print("user --> ", user.email)
 
     if not user:  # Invalid User
-        responseError("Invalid Email", 401)
+        raiseAPIError("Invalid Email", 401)
 
     if not bcrypt.checkpw(password.encode(), user.password.encode()): # Invalid Password
-        responseError("Invalid Password", 401)
+        raiseAPIError("Invalid Password", 401)
 
     # If Success Generate JWT Token
     access_token = authfnct.createJWTToken(user.id, user.email)
