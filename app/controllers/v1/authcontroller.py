@@ -7,6 +7,13 @@ def doLogin(email: str, password: str):
     print("doLogin --> ")
 
     # $domain_url = $GeneralFunctions->getDomainNameFromURL();
+
+    # host = request.headers.get("Host", "")
+    # host = host.split(":")[0]
+    # subdomain = host.split(".")[0]
+    # if globalps.IS_LOCAL_DEV == "1":
+    #     subdomain = globalps.LOCAL_SUBDOMAIN
+
     # $login_access = $GeneralFunctions->canUserLogin($user->role_id);
     # $is_valid_ws = $GeneralFunctions->isWorkSpaceURLValid($user->id);
 

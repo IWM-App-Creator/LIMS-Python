@@ -1,4 +1,3 @@
-import os
 from fastapi import Request
 from fastapi.responses import JSONResponse
 from app.tenant.tenant_cache import TenantCache
@@ -39,6 +38,7 @@ async def request_context(request: Request, call_next):
                 "message": "Workspace not found"
             }
         )
+
     print(f"Request Context: Workspace: {workspace}, Subdomain: {subdomain}")
     request.state.workspace = workspace
     globalps.workspace_id = workspace.workspace_id

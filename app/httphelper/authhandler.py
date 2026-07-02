@@ -5,7 +5,7 @@ from app.functions.authfunctions import authfnct
 from app.properties.globalproperties import globalps
 
 PUBLIC_APIS = {
-    "/auth",
+    "/api/v1/auth/login",
     "/docs",
     "/openapi.json",
     "/redoc"
@@ -17,7 +17,7 @@ async def auth_handler(request: Request, call_next):
         return await call_next(request)
 
     if globalps.IS_LOCAL_DEV == "1": # Bypass auth for local development
-        globalps.user_id = globalps.JWT_USER_ID  # Set a default user_id for local development
+        # globalps.user_id = globalps.JWT_USER_ID  # Set a default user_id for local development
         return await call_next(request)
     else :
         auth = request.headers.get("Authorization")

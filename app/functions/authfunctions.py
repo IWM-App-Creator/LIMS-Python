@@ -9,6 +9,8 @@ class AuthFunctions:
         expire = datetime.now(UTC) + timedelta(minutes = ACCESS_TOKEN_EXPIRE_MINUTES)
         payload = {
             "user_id": str(user_id),
+            # "role_id": str(user_id),
+            # "ws_role_id": str(user_id),
             "email": str(email),
             "exp": expire
         }
