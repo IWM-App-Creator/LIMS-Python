@@ -4,7 +4,7 @@ import bcrypt
 
 def doLogin(email: str, password: str):
 
-    print("doLogin --> ")
+    # print("doLogin --> ")
 
     # $domain_url = $GeneralFunctions->getDomainNameFromURL();
 
