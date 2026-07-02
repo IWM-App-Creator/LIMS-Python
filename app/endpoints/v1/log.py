@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from app.controllers.v1 import logcontroller as logapi
 
-router = APIRouter(prefix="/v1")
+router = APIRouter(prefix="/log")
 
 ROUTES = [
     ("/get", logapi.getLog, ["GET"]),  #@app.api_route("/saveLog", methods=["GET", "POST"])

@@ -6,7 +6,7 @@ class TenantCache:
     _ws_cache = {}
     @classmethod
     def get_workspace(cls, subdomain):
-        # print("get_workspace --> ", subdomain)
+        print("get_workspace --> ")
         if subdomain in cls._ws_cache:
             return cls._ws_cache[subdomain]
         workspace_master = DB.get_table("workspace_master", "systemconfig").alias("ws")

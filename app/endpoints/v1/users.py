@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from app.controllers.v1 import user_controller as usersapi
 
-router = APIRouter(prefix="/v1")
+router = APIRouter(prefix="/users")
 
 ROUTES = [
     ("/login", usersapi.login, ["GET"]),

@@ -3,6 +3,7 @@ from fastapi import Request
 from fastapi.responses import JSONResponse
 from app.functions.authfunctions import verifyJWTToken
 from app.properties.usersproperties import userps
+from app.properties.globalproperties import globalps
 
 PUBLIC_APIS = {
     "/auth",
@@ -17,7 +18,7 @@ async def auth_handler(request: Request, call_next):
     if request.url.path in PUBLIC_APIS:
         return await call_next(request)
 
-    if os.getenv('IS_LOCAL_DEV') == "1" :
+    if globalps.IS_LOCAL_DEV == "1":
         return await call_next(request)
     else :
         auth = request.headers.get("Authorization")

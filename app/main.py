@@ -10,6 +10,8 @@ from app.requesthelper.errorhandler import error_handler
 from app.requesthelper.requestcontext import request_context
 from app.requesthelper.authhandler import auth_handler
 
+from app.functions.generalfunctions import gnrlfnct
+
 load_dotenv(Path(__file__).parent.parent / ".env")
 
 app = FastAPI()
@@ -22,7 +24,10 @@ def root():
 async def startup_event():
     initialize()
 
-# Include Router
+# Set Env Variables To Global Properties.
+gnrlfnct.setEnvVariables()
+
+# Include Router.
 app.include_router(routerGroup())
 
 # Middleware for Request Context, Error Handler, Authentication and Workspace

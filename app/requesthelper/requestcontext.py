@@ -2,6 +2,7 @@ import os
 from fastapi import Request
 from fastapi.responses import JSONResponse
 from app.tenant.tenant_cache import TenantCache
+from app.properties.globalproperties import globalps
 
 async def request_context(request: Request, call_next):
     # --------------------------
@@ -26,9 +27,9 @@ async def request_context(request: Request, call_next):
     host = request.headers.get("Host", "")
     host = host.split(":")[0]
     subdomain = host.split(".")[0]
-    if os.getenv('IS_LOCAL_DEV') == "1" :
-        subdomain = os.getenv('LOCAL_SUBDOMAIN')
-    
+    if globalps.IS_LOCAL_DEV == "1":
+        subdomain = globalps.LOCAL_SUBDOMAIN
+
     workspace = TenantCache.get_workspace(subdomain)
     if workspace is None:
         return JSONResponse (

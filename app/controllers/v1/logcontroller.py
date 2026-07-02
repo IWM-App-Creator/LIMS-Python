@@ -3,6 +3,7 @@ from sqlalchemy import select
 from app.requesthelper.requesthelper import RequestData
 from app.dbhelper.db_helper import DB
 
+from app.properties.globalproperties import globalps
 from app.properties.logproperties import logps
 from app.functions import logfunctions as logfnct
 
@@ -30,6 +31,8 @@ def getLog():
     # return result
 
 async def saveLog(request: Request):
+    print("IS_LOCAL_DEV --> ", globalps.IS_LOCAL_DEV)
+
     print("saveLog workspace_id --> ", request.state.workspace_id)
     params = RequestData.params(request)
     print("request -->", params)

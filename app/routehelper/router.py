@@ -6,9 +6,10 @@ from app.endpoints.v1.log import router as log_router
 def routerGroup():
 
     apirouter = APIRouter()
+    prefix = "/api/v1"
 
-    apirouter.include_router(user_router, prefix="/users", tags=["Users"])
-    apirouter.include_router(log_router, prefix="/log", tags=["Log"])
+    apirouter.include_router(user_router, prefix = prefix, tags = ["Users"])
+    apirouter.include_router(log_router, prefix = prefix, tags = ["Log"])
 
     # apirouter.include_router(log_router, prefix="/view", tags=["Log"])
     # apirouter.include_router(log_router, prefix="/workspace", tags=["Log"])
