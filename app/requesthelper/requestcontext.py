@@ -39,9 +39,13 @@ async def request_context(request: Request, call_next):
                 "message": "Workspace not found"
             }
         )
+    print(f"Request Context: Workspace: {workspace}, Subdomain: {subdomain}")
     request.state.workspace = workspace
-    request.state.schema = workspace.schema_name
-    request.state.workspace_id = workspace.workspace_id
+    globalps.workspace_id = workspace.workspace_id
+    globalps.workspace_name = workspace.workspace_name
+    globalps.ws_url = workspace.ws_url
+    globalps.schema_name = workspace.schema_name
+
     # --------------------------
     # Output
     # --------------------------

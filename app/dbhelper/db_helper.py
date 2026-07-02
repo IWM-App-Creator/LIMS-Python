@@ -1,5 +1,6 @@
 from sqlalchemy import MetaData, Table
 from app.dbhelper.database import dbconn
+from app.properties.globalproperties import globalps
 
 metadata = MetaData()
 
@@ -11,7 +12,7 @@ class DB:
     def table(request, table_name):
         return DB.get_table (
             table_name,
-            request.state.schema
+            globalps.schema_name
         )
 
     @staticmethod

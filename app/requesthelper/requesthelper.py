@@ -9,7 +9,3 @@ class RequestData:
     @staticmethod
     def jwt(request: Request):
         return request.state.jwt
-
-    @staticmethod
-    def user(request: Request):
-        return request.state.user

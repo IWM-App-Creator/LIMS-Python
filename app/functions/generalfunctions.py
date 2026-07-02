@@ -13,5 +13,6 @@ class GeneralFunctions:
         globalps.LOCAL_SUBDOMAIN = os.getenv('LOCAL_SUBDOMAIN')
         globalps.AI_API_URL = os.getenv('AI_API_URL')
         globalps.ASSET_URL = os.getenv('ASSET_URL')
+        globalps.JWT_USER_ID = os.getenv('JWT_USER_ID')
 
 gnrlfnct = GeneralFunctions()

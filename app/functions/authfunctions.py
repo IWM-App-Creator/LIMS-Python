@@ -13,7 +13,7 @@ def createJWTToken(user_id: int, email: str):
 
 def verifyJWTToken(token: str):
     try:
-        payload = jwt.decode(
+        payload = jwt.decode (
             token,
             SECRET_KEY,
             algorithms=["HS256"]

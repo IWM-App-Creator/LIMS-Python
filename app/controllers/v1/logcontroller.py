@@ -1,3 +1,5 @@
+from urllib import request
+
 from fastapi import Request
 from sqlalchemy import select
 from app.requesthelper.requesthelper import RequestData
@@ -9,13 +11,6 @@ from app.functions import logfunctions as logfnct
 
 def getLog():
     # users = DB.table(request, "users")
-    # orders = DB.table(request, "orders")
-    # products = DB.table(request, "products")
-    # users = DB.get_table("users", request.state.schema)
-    # print(request.state.schema)
-    # print(request.state.workspace_id)
-    # logfnct.heresavelogfunction()
-    # logfnct.heresavelogfunction2()
     return {
         "fetch_flag": "3",
         # "access_token": access_token,
@@ -33,12 +28,15 @@ def getLog():
 async def saveLog(request: Request):
     print("IS_LOCAL_DEV --> ", globalps.IS_LOCAL_DEV)
 
-    print("saveLog workspace_id --> ", request.state.workspace_id)
+    print("saveLog user_id --> ", globalps.user_id)
+    print("saveLog workspace_id --> ", globalps.workspace_id)
+    print("saveLog workspace_name --> ", globalps.workspace_name)
+    print("saveLog ws_url --> ", globalps.ws_url)
+    print("saveLog schema_name --> ", globalps.schema_name)
+    
     params = RequestData.params(request)
     print("request -->", params)
-    print("request -->", params["view_id"])
-    # print("request -->", request.state.params)
-    # user_id = request.state.user_id # From the auth middleware, if you want to get the user_id from the token
+    # print("request -->", params["view_id"])
     sys_dynamic_view = DB.table(request, "sys_dynamic_view").alias("sdv")
     stmt = (
         select(sys_dynamic_view)
