@@ -1,12 +1,5 @@
-from fastapi import HTTPException
-from fastapi.responses import JSONResponse
-from sqlalchemy import select
-
-from app.dbhelper.db_helper import DB
-from app.httphelper.responsehelper import raiseAPIError
+from app.utils.common import select, DB, Request, RequestData, JSONResponse, raiseAPIError, globalps
 from app.functions.authfunctions import authfnct
-from app.properties.globalproperties import globalps
-
 import bcrypt
 
 def doLogin(email: str, password: str):

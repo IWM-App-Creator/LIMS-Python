@@ -1,13 +1,8 @@
-from urllib import request
+from app.utils.common import select, DB, Request, RequestData, JSONResponse, raiseAPIError, globalps
 
-from fastapi import Request
-from sqlalchemy import select
-from app.httphelper.requesthelper import RequestData
-from app.dbhelper.db_helper import DB
-
-from app.properties.globalproperties import globalps
 from app.properties.logproperties import logps
 from app.functions import logfunctions as logfnct
+from app.services.firebase.firebase_service import send_push
 
 def getLog():
     # users = DB.tableMeta("users")
@@ -48,3 +43,13 @@ async def saveLog(request: Request):
     # user_id = params.get("user_id")
     # print("saveLog view_id -->", view_id)
     # print("saveLog user_id -->", user_id)
+
+
+
+def test_push(token: str):
+    response = send_push (
+        token = token,
+        title = "Test Notification",
+        body = "Hello from Python"
+    )
+    return { "firebase_response": response }

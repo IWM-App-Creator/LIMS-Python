@@ -1,10 +1,10 @@
 from fastapi import APIRouter
 from app.controllers.v1 import user_controller as usersapi
 
-router = APIRouter(prefix = "/users")
+router = APIRouter(prefix = "/user")
 
 ROUTES = [
-    ("/login1", usersapi.login, ["GET"]),
+    ("/getlist", usersapi.getUserList, ["GET"]),
 ]
 
 for path, handler, methods in ROUTES:
