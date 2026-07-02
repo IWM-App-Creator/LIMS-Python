@@ -5,7 +5,6 @@ class TenantCache:
 
     _ws_cache = {}
     @classmethod
-
     def get_workspace(cls, subdomain):
         # print("get_workspace --> ", subdomain)
         if subdomain in cls._ws_cache:
@@ -16,7 +15,7 @@ class TenantCache:
                 .where(workspace_master.c.ws_url == subdomain)
                 .where(workspace_master.c.is_delete == 0)
         )
-        print("stmt --> ", stmt)
+        # print("stmt --> ", stmt)
         row = DB.select_one(stmt)
         if row:
             cls._ws_cache[subdomain] = row

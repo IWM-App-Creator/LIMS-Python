@@ -2,7 +2,6 @@ from fastapi import FastAPI
 from dotenv import load_dotenv
 from pathlib import Path
 
-
 from fastapi.middleware.cors import CORSMiddleware
 from app.initialize import initialize
 from app.routehelper.router import routerGroup

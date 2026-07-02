@@ -10,4 +10,8 @@ def routerGroup():
     apirouter.include_router(user_router, prefix="/users", tags=["Users"])
     apirouter.include_router(log_router, prefix="/log", tags=["Log"])
 
+    # apirouter.include_router(log_router, prefix="/view", tags=["Log"])
+    # apirouter.include_router(log_router, prefix="/workspace", tags=["Log"])
+    # apirouter.include_router(log_router, prefix="/association", tags=["Log"])
+
     return apirouter

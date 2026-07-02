@@ -6,7 +6,7 @@ from app.properties.usersproperties import userps
 
 PUBLIC_APIS = {
     "/auth",
-    "/log/v1/save",
+    # "/log/v1/save",
     "/docs",
     "/openapi.json",
     "/redoc"
@@ -17,7 +17,7 @@ async def auth_handler(request: Request, call_next):
     if request.url.path in PUBLIC_APIS:
         return await call_next(request)
 
-    if os.getenv('IS_LOCAL_DEV') is 1 :
+    if os.getenv('IS_LOCAL_DEV') == "1" :
         return await call_next(request)
     else :
         auth = request.headers.get("Authorization")
