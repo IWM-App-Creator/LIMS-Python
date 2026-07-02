@@ -13,7 +13,7 @@ import bcrypt
 
 def login(email: str, password: str):
 
-    users = DB.get_table("users", "systemconfig")
+    users = DB.getTableMeta("users", "systemconfig")
     # print("users table:", users)
     stmt = (
         select(users)

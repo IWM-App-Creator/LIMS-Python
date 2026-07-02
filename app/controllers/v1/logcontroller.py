@@ -10,7 +10,7 @@ from app.properties.logproperties import logps
 from app.functions import logfunctions as logfnct
 
 def getLog():
-    # users = DB.table(request, "users")
+    # users = DB.tableMeta("users")
     return {
         "fetch_flag": "3",
         # "access_token": access_token,
@@ -37,13 +37,13 @@ async def saveLog(request: Request):
     params = RequestData.params(request)
     print("request -->", params)
     # print("request -->", params["view_id"])
-    sys_dynamic_view = DB.table(request, "sys_dynamic_view").alias("sdv")
+    sys_dynamic_view = DB.tableMeta("sys_dynamic_view").alias("sdv")
     stmt = (
         select(sys_dynamic_view)
             .where(sys_dynamic_view.c.is_delete == 0)
     )
     # print("stmt --> ", stmt)
-    row = DB.select_one(stmt)
+    row = DB.executeDBSelectSingle(stmt)
     print("row --> ", row)
     # view_id = params.get("view_id")
     # user_id = params.get("user_id")

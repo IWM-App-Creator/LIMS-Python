@@ -35,7 +35,7 @@ class ErrorLogFunctions:
         error_msg,
         user_id
     ):
-        # users = get_table("users", "systemconfig")
+        # users = getTableMeta("users", "systemconfig")
         # stmt = (
         #     select(users)
         #     .where(users.c.email == email)
@@ -52,7 +52,7 @@ class ErrorLogFunctions:
                 created_date = datetime.now()
             )
         )
-        result = DB.insert(stmt)
+        result = DB.executeDBInsert(stmt)
         return result
         # DB.commit()
         # return result.inserted_primary_key[0]

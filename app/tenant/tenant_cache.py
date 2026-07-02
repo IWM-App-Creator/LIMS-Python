@@ -8,13 +8,13 @@ class TenantCache:
     def get_workspace(cls, subdomain):
         if subdomain in cls._ws_cache:
             return cls._ws_cache[subdomain]
-        workspace_master = DB.get_table("workspace_master", "systemconfig").alias("ws")
+        workspace_master = DB.getTableMeta("workspace_master", "systemconfig").alias("ws")
         stmt = (
             select(workspace_master)
                 .where(workspace_master.c.ws_url == subdomain)
                 .where(workspace_master.c.is_delete == 0)
         )
-        row = DB.select_one(stmt)
+        row = DB.executeDBSelectSingle(stmt)
         if row:
             cls._ws_cache[subdomain] = row
         return row

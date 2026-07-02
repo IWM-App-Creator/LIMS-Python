@@ -9,14 +9,14 @@ class DB:
     _dbtables = {}
 
     @staticmethod
-    def table(request, table_name):
-        return DB.get_table (
+    def tableMeta(table_name):
+        return DB.getTableMeta (
             table_name,
             globalps.schema_name
         )
 
     @staticmethod
-    def get_table(table_name, schema = None):
+    def getTableMeta(table_name, schema = None):
         key = f"{schema}.{table_name}" if schema else table_name
         if key not in DB._dbtables:
             DB._dbtables[key] = Table(
@@ -28,36 +28,36 @@ class DB:
         return DB._dbtables[key]
 
     @staticmethod
-    def select(stmt):
+    def executeDBSelect(stmt):
         with dbconn.connect() as conn:
             result = conn.execute(stmt)
             return result.fetchall()
 
     @staticmethod
-    def select_one(stmt):
+    def executeDBSelectSingle(stmt):
         with dbconn.connect() as conn:
             result = conn.execute(stmt)
             return result.first()
 
     @staticmethod
-    def insert(stmt):
+    def executeDBInsert(stmt):
         with dbconn.begin() as conn:
             result = conn.execute(stmt)
             return result.inserted_primary_key
 
     @staticmethod
-    def update(stmt):
+    def executeDBUpdate(stmt):
         with dbconn.begin() as conn:
             result = conn.execute(stmt)
             return result.rowcount
 
     @staticmethod
-    def delete(stmt):
+    def executeDBDelete(stmt):
         with dbconn.begin() as conn:
             result = conn.execute(stmt)
             return result.rowcount
 
     @staticmethod
-    def execute(stmt):
+    def executeDBStatement(stmt):
         with dbconn.begin() as conn:
             return conn.execute(stmt)
