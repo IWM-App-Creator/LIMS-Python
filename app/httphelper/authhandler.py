@@ -1,7 +1,7 @@
 import os
 from fastapi import Request
 from fastapi.responses import JSONResponse
-from app.functions.authfunctions import verifyJWTToken
+from app.functions.authfunctions import authfnct
 from app.properties.globalproperties import globalps
 
 PUBLIC_APIS = {
@@ -39,7 +39,7 @@ async def auth_handler(request: Request, call_next):
             )
         token = auth.replace("Bearer ", "", 1)
         # Verify the token using the verify_token function from authfunctions.py
-        payload = verifyJWTToken(token)
+        payload = authfnct.verifyJWTToken(token)
         if payload is None:
             return JSONResponse (
                 status_code = 401,

@@ -5,7 +5,6 @@ from app.dbhelper.db_helper import DB
 # from app.database.execute_stmt import execute_stmt
 # from app.database.execute_query import execute_query
 
-from app.functions.authfunctions import createJWTToken
 from app.services.firebase.firebase_service import send_push
 from app.properties.usersproperties import userps
 
@@ -32,7 +31,6 @@ def login(email: str, password: str):
     #         detail = "Invalid Password"
     #     )
 
-    # access_token = createJWTToken(user.id, user.email) # JWT Token Generation for user pass param that we want to use in payload.
 
     # # Set User Properties for API Response
     # userps.user_id = user.id

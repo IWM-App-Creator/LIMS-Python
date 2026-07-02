@@ -30,7 +30,7 @@ async def request_context(request: Request, call_next):
     if globalps.IS_LOCAL_DEV == "1":
         subdomain = globalps.LOCAL_SUBDOMAIN
 
-    workspace = TenantCache.get_workspace(subdomain)
+    workspace = TenantCache.cacheTenantWS(subdomain)
     if workspace is None:
         return JSONResponse (
             status_code = 404,

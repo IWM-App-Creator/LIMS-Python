@@ -2,7 +2,7 @@ from urllib import request
 
 from fastapi import Request
 from sqlalchemy import select
-from app.requesthelper.requesthelper import RequestData
+from app.httphelper.requesthelper import RequestData
 from app.dbhelper.db_helper import DB
 
 from app.properties.globalproperties import globalps
@@ -27,7 +27,6 @@ def getLog():
 
 async def saveLog(request: Request):
     print("IS_LOCAL_DEV --> ", globalps.IS_LOCAL_DEV)
-
     print("saveLog user_id --> ", globalps.user_id)
     print("saveLog workspace_id --> ", globalps.workspace_id)
     print("saveLog workspace_name --> ", globalps.workspace_name)

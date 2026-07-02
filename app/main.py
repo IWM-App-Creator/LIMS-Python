@@ -6,11 +6,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.initialize import initialize
 from app.routehelper.router import routerGroup
 
-from app.requesthelper.errorhandler import error_handler
-from app.requesthelper.requestcontext import request_context
-from app.requesthelper.authhandler import auth_handler
+from app.httphelper.errorhandler import error_handler
+from app.httphelper.requestcontext import request_context
+from app.httphelper.authhandler import auth_handler
 
-from app.functions.generalfunctions import gnrlfnct
+from app.functions.generalfunctions import setEnvVariables
 
 load_dotenv(Path(__file__).parent.parent / ".env")
 
@@ -25,7 +25,7 @@ async def startup_event():
     initialize()
 
 # Set Env Variables To Global Properties.
-gnrlfnct.setEnvVariables()
+setEnvVariables()
 
 # Include Router.
 app.include_router(routerGroup())
