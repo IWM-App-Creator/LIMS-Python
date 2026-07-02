@@ -3,15 +3,13 @@ from app.functions.authfunctions import authfnct
 import bcrypt
 
 def doLogin(email: str, password: str):
-    # print("doLogin email:", email)
-    # print("doLogin password:", password)
+
+    print("doLogin --> ")
 
     # $domain_url = $GeneralFunctions->getDomainNameFromURL();
     # $login_access = $GeneralFunctions->canUserLogin($user->role_id);
     # $is_valid_ws = $GeneralFunctions->isWorkSpaceURLValid($user->id);
 
-    users = DB.getTableMeta("users", "systemconfig")
-    print("users table:", users)
     tbluser = DB.getTableMeta("users", "systemconfig").alias("usr")
     stmt = (
         select(tbluser)
