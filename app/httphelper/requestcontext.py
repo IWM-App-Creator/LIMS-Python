@@ -1,10 +1,12 @@
 from fastapi import Request
 from fastapi.responses import JSONResponse
+from app.httphelper.publicendpoints import isPublicEndpoint
 from app.tenant.tenant_cache import TenantCache
 from app.properties.usersproperties import userps
 
 async def request_context(request: Request, call_next):
-    if request.url.path == "/favicon.ico":
+    # Skip public APIs
+    if isPublicEndpoint(request.url.path):
         return await call_next(request)
     # --------------------------
     # Request Headers & JWT

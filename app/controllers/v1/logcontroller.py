@@ -28,11 +28,11 @@ async def saveLog(request: Request):
     # print("saveLog workspace_id --> ", globalps.workspace_id)
     # print("saveLog workspace_name --> ", globalps.workspace_name)
     # print("saveLog ws_url --> ", globalps.ws_url)
-    print("saveLog schema_name --> ", userps.schema_name.get())
+    # print("saveLog schema_name --> ", userps.schema_name.get())
     
     params = RequestData.params(request)
     # print("request -->", params)
-    print("request -->", params["view_id"])
+    # print("request -->", params["view_id"])
     # sys_dynamic_view = DB.tableMeta("sys_dynamic_view").alias("sdv")
     # stmt = (
     #     select(sys_dynamic_view)
@@ -45,8 +45,6 @@ async def saveLog(request: Request):
     # user_id = params.get("user_id")
     # print("saveLog view_id -->", view_id)
     # print("saveLog user_id -->", user_id)
-
-
 
 def test_push(token: str):
     response = send_push (

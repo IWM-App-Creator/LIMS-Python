@@ -1,6 +1,7 @@
 import os
 from fastapi import Request
 from fastapi.responses import JSONResponse
+from app.httphelper.publicendpoints import isPublicEndpoint
 from app.functions.authfunctions import authfnct
 from app.functions.generalfunctions import getHostName
 from app.properties.globalproperties import globalps
@@ -10,16 +11,17 @@ PUBLIC_APIS = {
     "/api/v1/auth/login",
     "/docs",
     "/openapi.json",
-    "/redoc"
+    "/redoc",
+    "/favicon.ico",
 }
 
 async def auth_handler(request: Request, call_next):
-    print("auth_handler --> ")
     getHostName(request) # Get Host
     # Skip public APIs
-    if request.url.path in PUBLIC_APIS:
+    if isPublicEndpoint(request.url.path):
         return await call_next(request)
 
+    # Validate Header
     if globalps.IS_LOCAL_DEV == "1": # Bypass auth for local development
         userps.user_id.set(globalps.JWT_USER_ID) # Set a default user_id for local development
         return await call_next(request)

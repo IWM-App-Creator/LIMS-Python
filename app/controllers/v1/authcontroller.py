@@ -7,14 +7,11 @@ def doLogin(email: str, password: str):
     # print("doLogin --> ")
     # getHostName(request). # $domain_url = $GeneralFunctions->getDomainNameFromURL();
     # print("request_context --> ", globalps.req_subdomain)
-
     # $login_access = $GeneralFunctions->canUserLogin($user->role_id);
     # $is_valid_ws = $GeneralFunctions->isWorkSpaceURLValid($user->id);
-
     tbluser = DB.getTableMeta("users", "systemconfig").alias("usr")
     stmt = (
-        select(tbluser)
-            .where(tbluser.c.email == email)
+        select(tbluser).where(tbluser.c.email == email)
     )
     user = DB.executeDBSelectSingle(stmt)
     # print("user --> ", user.email)
@@ -27,11 +24,6 @@ def doLogin(email: str, password: str):
 
     # If Success Generate JWT Token
     access_token = authfnct.createJWTToken(user.id, user.role_id, user.email)
-    globalps.user_id = user.id
-    globalps.first_name = user.first_name
-    globalps.last_name = user.last_name
-    globalps.email = user.email
-    globalps.user_settings = user.user_settings
 
     # To Pass Menu, Dashboard List, Association
     return JSONResponse (
@@ -40,11 +32,11 @@ def doLogin(email: str, password: str):
             "status": True,
             "message": "Login successful",
             "access_token": access_token,
-            "user_id": globalps.user_id,
-            "first_name": globalps.first_name,
-            "last_name": globalps.last_name,
-            "email": globalps.email,
-            "user_settings": globalps.user_settings,
+            "user_id": user.id,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "email": user.email,
+            "user_settings": user.user_settings,
         }
     )
 

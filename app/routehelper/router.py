@@ -22,13 +22,12 @@ def routerGroup():
     prefix = "/api/v1"
     
     apirouter.include_router(auth_router, prefix = prefix, tags = ["Auth"])
-
+    
     apirouter.include_router(workspace_router, prefix = prefix, tags=["Workspace"])
     apirouter.include_router(association_router, prefix = prefix, tags=["Association"])
     apirouter.include_router(table_router, prefix = prefix, tags=["Table"])
     apirouter.include_router(view_router, prefix = prefix, tags=["View"])
     apirouter.include_router(widget_router, prefix = prefix, tags=["Widget"])
-    
 
     apirouter.include_router(user_router, prefix = prefix, tags = ["Users"])
     apirouter.include_router(log_router, prefix = prefix, tags = ["Log"])
