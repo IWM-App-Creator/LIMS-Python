@@ -1,13 +1,6 @@
 from contextvars import ContextVar
-# from dataclasses import dataclass
 
-# @dataclass
 class UserProperties:
-    # workspace_id: int | None = None
-    # user_id: int | None = None
-    # req_host: str = ""
-    # req_subdomain: str = ""
-
     def __init__(self):
         self.user_id = ContextVar("user_id", default="")
         self.role_id = ContextVar("user_id", default="")
@@ -26,5 +19,3 @@ class UserProperties:
         self.user_settings = ContextVar("user_id", default="")
 
 userps = UserProperties()
-
-# usercontext = ContextVar("user_context", default = UserProperties())
