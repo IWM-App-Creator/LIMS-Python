@@ -26,4 +26,11 @@ class GlobalProperties:
         self.IS_LOCAL_DEV = "" # Is Local Development
         self.JWT_USER_ID = ""  # Local Dev User ID
 
+        self.MAIL_HOST = "smtp.miidata.io"
+        self.MAIL_PORT = 587
+        self.MAIL_USERNAME = "info@miidata.io"
+        self.MAIL_PASSWORD = "G}8oG]6Kmb{K"
+        self.MAIL_ENCRYPTION="tls"
+        self.MAIL_FROM_ADDRESS = "info@miidata.io"
+
 globalps = GlobalProperties()
