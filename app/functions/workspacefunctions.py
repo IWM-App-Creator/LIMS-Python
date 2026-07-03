@@ -1,6 +1,7 @@
 from sqlalchemy import select
 from app.dbhelper.db_helper import DB
 from app.properties.usersproperties import userps
+from app.properties.workspaceproperties import wsps
     
 def getWorkspaceData():
     workspace_master = DB.getTableMeta("workspace_master", "systemconfig").alias("ws")
@@ -25,3 +26,15 @@ def getWorkspaceData():
     )
     workspace = DB.executeDBSelectSingle(stmt)
     return workspace
+
+def getWorkspaceActiveURL():
+    workspace_master = DB.getTableMeta("workspace_master", "systemconfig").alias("ws")
+    stmt = (
+        select(workspace_master.c.ws_url)
+        .where(workspace_master.c.workspace_id == wsps.workspace_id)
+        .limit(1)
+    )
+    row = DB.executeDBSelectSingle(stmt)
+    if row:
+        return row.ws_url
+    return ""

@@ -2,6 +2,9 @@ import bcrypt
 from app.utils.common import select, DB, Request, RequestData, JSONResponse, raiseAPIError, globalps
 from app.functions.authfunctions import authfnct
 from app.functions.generalfunctions import getHostName
+from app.properties.workspaceproperties import wsps
+from app.functions.workspacefunctions import getWorkspaceActiveURL
+
 
 def doLogin(email: str, password: str):
     # print("doLogin --> ")
@@ -21,26 +24,21 @@ def doLogin(email: str, password: str):
     if not bcrypt.checkpw(password.encode(), user.password.encode()): # Invalid Password
         raiseAPIError("Invalid Password", 401)
     
-    print("role_id -->", user.role_id)
     if user.role_id != 1 and user.role_id != 2 :  # Check User Access
         raiseAPIError("Your don't have permission to login.", 401)
 
     # If Success Generate JWT Token
     access_token = authfnct.createJWTToken(user.id, user.role_id, user.email)
-
-    # To Pass Menu, Dashboard List, Association
+    # Get Active Workspace URL 
+    wsps.workspace_id = user.active_ws
+    active_ws_url = getWorkspaceActiveURL()
     return JSONResponse (
         status_code = 200,
         content = {
             "status": True,
             "message": "Login successful",
             "access_token": access_token,
-            "redirect_url": "",
-            "user_id": user.id,
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-            "email": user.email,
-            "user_settings": user.user_settings,
+            "redirect_url": active_ws_url,
         }
     )
 
