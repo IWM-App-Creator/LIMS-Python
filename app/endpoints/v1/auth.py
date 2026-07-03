@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from app.controllers.v1 import authcontroller as authapi
 
-router = APIRouter(prefix="/auth")
+router = APIRouter(prefix = "/auth")
 
 # http://127.0.0.1:8000/api/v1/auth/login?email=chintanit22%40gmail.com&password=1234567890
 # http://127.0.0.1:8000/api/v1/auth/validatejwt?token=
