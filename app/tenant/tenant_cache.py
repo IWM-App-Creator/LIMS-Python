@@ -48,7 +48,6 @@ class TenantCache:
             print("stmt --> ", stmt)
         row = DB.executeDBSelectSingle(stmt)
         print("row --> ", row)
-        # return
 
         if row:
             cls._ws_cache[subdomain] = row
