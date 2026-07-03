@@ -4,6 +4,8 @@ from app.tenant.tenant_cache import TenantCache
 from app.properties.globalproperties import globalps
 
 async def request_context(request: Request, call_next):
+    if request.url.path == "/favicon.ico":
+        return await call_next(request)
     # --------------------------
     # Request Headers & JWT
     # --------------------------
@@ -26,9 +28,9 @@ async def request_context(request: Request, call_next):
     host = request.headers.get("Host", "")
     host = host.split(":")[0]
     subdomain = host.split(".")[0]
-    if globalps.IS_LOCAL_DEV == "1":
-        subdomain = globalps.LOCAL_SUBDOMAIN
-
+    print("request_context --> ", subdomain)
+    # if globalps.IS_LOCAL_DEV == "1":
+    #     subdomain = globalps.LOCAL_SUBDOMAIN
     workspace = TenantCache.cacheTenantWS(subdomain)
     if workspace is None:
         return JSONResponse (
@@ -38,14 +40,13 @@ async def request_context(request: Request, call_next):
                 "message": "Workspace not found"
             }
         )
-
-    print(f"Request Context: Workspace: {workspace}, Subdomain: {subdomain}")
+    # print(f"Request Context: Workspace: {workspace}, Subdomain: {subdomain}")
     request.state.workspace = workspace
     globalps.workspace_id = workspace.workspace_id
     globalps.workspace_name = workspace.workspace_name
     globalps.ws_url = workspace.ws_url
     globalps.schema_name = workspace.schema_name
-
+    print("workspace_id --> ", globalps.workspace_id)
     # --------------------------
     # Output
     # --------------------------

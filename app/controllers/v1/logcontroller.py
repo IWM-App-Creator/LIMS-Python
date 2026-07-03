@@ -21,15 +21,16 @@ def getLog():
     # return result
 
 async def saveLog(request: Request):
-    print("IS_LOCAL_DEV --> ", globalps.IS_LOCAL_DEV)
-    print("saveLog user_id --> ", globalps.user_id)
+    # print("saveLog --> ")
+    # print("IS_LOCAL_DEV --> ", globalps.IS_LOCAL_DEV)
+    # print("saveLog user_id --> ", globalps.user_id)
     print("saveLog workspace_id --> ", globalps.workspace_id)
-    print("saveLog workspace_name --> ", globalps.workspace_name)
-    print("saveLog ws_url --> ", globalps.ws_url)
-    print("saveLog schema_name --> ", globalps.schema_name)
+    # print("saveLog workspace_name --> ", globalps.workspace_name)
+    # print("saveLog ws_url --> ", globalps.ws_url)
+    # print("saveLog schema_name --> ", globalps.schema_name)
     
     params = RequestData.params(request)
-    print("request -->", params)
+    # print("request -->", params)
     # print("request -->", params["view_id"])
     sys_dynamic_view = DB.tableMeta("sys_dynamic_view").alias("sdv")
     stmt = (
@@ -38,7 +39,7 @@ async def saveLog(request: Request):
     )
     # print("stmt --> ", stmt)
     row = DB.executeDBSelectSingle(stmt)
-    print("row --> ", row)
+    # print("row --> ", row)
     # view_id = params.get("view_id")
     # user_id = params.get("user_id")
     # print("saveLog view_id -->", view_id)

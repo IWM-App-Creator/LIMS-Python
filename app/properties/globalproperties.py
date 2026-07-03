@@ -15,14 +15,15 @@ class GlobalProperties:
         self.user_settings = {}
 
         # Env Variables
-        self.APP_URL = ""
-        self.APP_DOMAIN = ""
-        self.APP_DOMAIN_FRONT = ""
-        self.SESSION_DOMAIN = ""
-        self.IS_LOCAL_DEV = ""
-        self.JWT_USER_ID = ""
-        self.LOCAL_SUBDOMAIN = ""
+        self.APP_URL = "" #Full URL e.g https://dev-miidata.com.au, https://miidata.io
+        self.APP_DOMAIN = "" # Domain e.g dev-miidata.com.au, miidata.io
+        
+        self.APP_PATH = "" # Full Path TEMPLATES_BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
         self.AI_API_URL = ""
         self.ASSET_URL = ""
+
+        self.IS_LOCAL_DEV = "" # Is Local Development
+        self.JWT_USER_ID = ""  # Local Dev User ID
 
 globalps = GlobalProperties()
