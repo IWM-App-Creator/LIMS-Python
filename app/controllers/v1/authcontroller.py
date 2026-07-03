@@ -7,7 +7,6 @@ def doLogin(email: str, password: str):
     # print("doLogin --> ")
     # getHostName(request). # $domain_url = $GeneralFunctions->getDomainNameFromURL();
     # print("request_context --> ", globalps.req_subdomain)
-    # $login_access = $GeneralFunctions->canUserLogin($user->role_id);
     # $is_valid_ws = $GeneralFunctions->isWorkSpaceURLValid($user->id);
     tbluser = DB.getTableMeta("users", "systemconfig").alias("usr")
     stmt = (
@@ -21,6 +20,10 @@ def doLogin(email: str, password: str):
 
     if not bcrypt.checkpw(password.encode(), user.password.encode()): # Invalid Password
         raiseAPIError("Invalid Password", 401)
+    
+    print("role_id -->", user.role_id)
+    if user.role_id != 1 and user.role_id != 2 :  # Check User Access
+        raiseAPIError("Your don't have permission to login.", 401)
 
     # If Success Generate JWT Token
     access_token = authfnct.createJWTToken(user.id, user.role_id, user.email)
@@ -32,6 +35,7 @@ def doLogin(email: str, password: str):
             "status": True,
             "message": "Login successful",
             "access_token": access_token,
+            "redirect_url": "",
             "user_id": user.id,
             "first_name": user.first_name,
             "last_name": user.last_name,

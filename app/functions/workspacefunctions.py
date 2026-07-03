@@ -19,6 +19,7 @@ def getWorkspaceData():
         )
         .where(workspace_master.c.ws_url == userps.req_subdomain.get())
         .where(workspace_master.c.is_delete == 0)
+        .where(users_workspace.c.ws_role_id < 3)
         .where(users_workspace.c.is_delete == 0)
         .where(users_workspace.c.user_id == userps.user_id.get())
     )
