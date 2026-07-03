@@ -2,7 +2,9 @@ import os
 from fastapi import Request
 from fastapi.responses import JSONResponse
 from app.functions.authfunctions import authfnct
+from app.functions.generalfunctions import getHostName
 from app.properties.globalproperties import globalps
+from app.properties.usersproperties import userps
 
 PUBLIC_APIS = {
     "/api/v1/auth/login",
@@ -12,12 +14,14 @@ PUBLIC_APIS = {
 }
 
 async def auth_handler(request: Request, call_next):
+    print("auth_handler --> ")
+    getHostName(request) # Get Host
     # Skip public APIs
     if request.url.path in PUBLIC_APIS:
         return await call_next(request)
 
     if globalps.IS_LOCAL_DEV == "1": # Bypass auth for local development
-        # globalps.user_id = globalps.JWT_USER_ID  # Set a default user_id for local development
+        userps.user_id.set(globalps.JWT_USER_ID) # Set a default user_id for local development
         return await call_next(request)
     else :
         auth = request.headers.get("Authorization")
@@ -49,6 +53,6 @@ async def auth_handler(request: Request, call_next):
                 }
             )
         # request.state.user_id = payload["user_id"]
-        globalps.user_id = payload["user_id"]  # Set user_id in global properties for global access
+        userps.user_id.set(payload["user_id"])  # Set user_id in global properties for global access
         request.state.jwt = token
         return await call_next(request)

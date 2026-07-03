@@ -9,6 +9,9 @@ class GlobalProperties:
         self.ws_url = ""
         self.schema_name = ""
 
+        self.req_host = ""
+        self.req_subdomain = ""
+
         self.first_name = ""
         self.last_name = ""
         self.email = ""
@@ -26,7 +29,7 @@ class GlobalProperties:
         self.IS_LOCAL_DEV = "" # Is Local Development
         self.JWT_USER_ID = ""  # Local Dev User ID
 
-        self.MAIL_HOST = "smtp.miidata.io"
+        self.MAIL_HOST = "mail.miidata.io"
         self.MAIL_PORT = 587
         self.MAIL_USERNAME = "info@miidata.io"
         self.MAIL_PASSWORD = "G}8oG]6Kmb{K"

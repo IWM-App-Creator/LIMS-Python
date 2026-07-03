@@ -5,11 +5,11 @@ from app.utils.config import ACCESS_TOKEN_EXPIRE_MINUTES, SECRET_KEY, ALGORITHM
 class AuthFunctions:
     
     @staticmethod
-    def createJWTToken(user_id: int, email: str):
+    def createJWTToken(user_id: int, role_id: int, email: str):
         expire = datetime.now(UTC) + timedelta(minutes = ACCESS_TOKEN_EXPIRE_MINUTES)
         payload = {
             "user_id": str(user_id),
-            # "role_id": str(user_id),
+            "role_id": str(role_id),
             # "ws_role_id": str(user_id),
             "email": str(email),
             "exp": expire

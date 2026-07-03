@@ -1,7 +1,26 @@
-from datetime import datetime
-import os
-from app.properties.globalproperties import globalps
-
-def getWSList():
-    print(getWSList);
+from sqlalchemy import select
+from app.dbhelper.db_helper import DB
+from app.properties.usersproperties import userps
     
+def getWorkspaceData():
+    workspace_master = DB.getTableMeta("workspace_master", "systemconfig").alias("ws")
+    users_workspace = DB.getTableMeta("users_workspace", "systemconfig").alias("wsusr")
+    stmt = (
+        select(
+            workspace_master.c.workspace_id,
+            workspace_master.c.workspace_name,
+            workspace_master.c.ws_url,
+            workspace_master.c.schema_name,
+            users_workspace.c.ws_role_id
+        )
+        .join(
+            users_workspace,
+            users_workspace.c.workspace_id == workspace_master.c.workspace_id,
+        )
+        .where(workspace_master.c.ws_url == userps.req_subdomain.get())
+        .where(workspace_master.c.is_delete == 0)
+        .where(users_workspace.c.is_delete == 0)
+        .where(users_workspace.c.user_id == userps.user_id.get())
+    )
+    workspace = DB.executeDBSelectSingle(stmt)
+    return workspace

@@ -6,6 +6,8 @@ from app.httphelper.requesthelper import RequestData
 from fastapi.responses import JSONResponse
 from app.httphelper.responsehelper import raiseAPIError
 from app.properties.globalproperties import globalps
+from app.properties.usersproperties import userps
+
 
 __all__ = [
     "select",
@@ -14,5 +16,6 @@ __all__ = [
     "RequestData",
     "JSONResponse",
     "raiseAPIError",
-    "globalps"
+    "globalps",
+    "userps"
 ]

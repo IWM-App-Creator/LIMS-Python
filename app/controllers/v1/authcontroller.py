@@ -1,18 +1,12 @@
+import bcrypt
 from app.utils.common import select, DB, Request, RequestData, JSONResponse, raiseAPIError, globalps
 from app.functions.authfunctions import authfnct
-import bcrypt
+from app.functions.generalfunctions import getHostName
 
 def doLogin(email: str, password: str):
-
     # print("doLogin --> ")
-
-    # $domain_url = $GeneralFunctions->getDomainNameFromURL();
-
-    # host = request.headers.get("Host", "")
-    # host = host.split(":")[0]
-    # subdomain = host.split(".")[0]
-    # if globalps.IS_LOCAL_DEV == "1":
-    #     subdomain = globalps.LOCAL_SUBDOMAIN
+    # getHostName(request). # $domain_url = $GeneralFunctions->getDomainNameFromURL();
+    # print("request_context --> ", globalps.req_subdomain)
 
     # $login_access = $GeneralFunctions->canUserLogin($user->role_id);
     # $is_valid_ws = $GeneralFunctions->isWorkSpaceURLValid($user->id);
@@ -32,13 +26,14 @@ def doLogin(email: str, password: str):
         raiseAPIError("Invalid Password", 401)
 
     # If Success Generate JWT Token
-    access_token = authfnct.createJWTToken(user.id, user.email)
+    access_token = authfnct.createJWTToken(user.id, user.role_id, user.email)
     globalps.user_id = user.id
     globalps.first_name = user.first_name
     globalps.last_name = user.last_name
     globalps.email = user.email
     globalps.user_settings = user.user_settings
 
+    # To Pass Menu, Dashboard List, Association
     return JSONResponse (
         status_code = 200,
         content = {

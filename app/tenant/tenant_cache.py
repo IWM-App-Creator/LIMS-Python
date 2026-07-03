@@ -1,53 +1,29 @@
-from sqlalchemy import select
-from app.dbhelper.db_helper import DB
-from app.properties.globalproperties import globalps
+from app.properties.usersproperties import userps
+from app.functions.workspacefunctions import getWorkspaceData
 
 class TenantCache:
 
     _ws_cache = {}
+
     @classmethod
-    def cacheTenantWS(cls, subdomain):
-        # print("cacheTenantWS user_id--> ", globalps.user_id)
-        if subdomain in cls._ws_cache:
-            return cls._ws_cache[subdomain]
-    
-        if globalps.user_id is None or globalps.user_id == "" :
-            workspace_master = DB.getTableMeta("workspace_master", "systemconfig").alias("ws")
-            stmt = (
-                select(workspace_master)
-                    .where(workspace_master.c.ws_url == subdomain)
-                    .where(workspace_master.c.is_delete == 0)
-            )
-        else :
-            # print("subdomain --> ", subdomain)
-            users = DB.getTableMeta("users", "systemconfig").alias("usr")
-            workspace_master = DB.getTableMeta("workspace_master", "systemconfig").alias("ws")
-            users_workspace = DB.getTableMeta("users_workspace", "systemconfig").alias("wsusr")
-            stmt = (
-                select(
-                    users, # usr.*
-                    workspace_master.c.workspace_id,
-                    workspace_master.c.workspace_name,
-                    workspace_master.c.ws_url,
-                    workspace_master.c.schema_name,
-                    workspace_master.c.is_setup,
-                    users_workspace.c.ws_role_id
-                )
-                .select_from (
-                    users.outerjoin(
-                        users_workspace,
-                        users_workspace.c.user_id == users.c.id
-                    ).outerjoin(
-                        workspace_master,
-                        workspace_master.c.workspace_id == users_workspace.c.workspace_id
-                    )
-                )
-                .where(users.c.id == globalps.user_id)
-                .where(workspace_master.c.ws_url == subdomain)
-            )
-            # print("stmt --> ", stmt)
-        row = DB.executeDBSelectSingle(stmt)
-        # print("row --> ", row)
-        if row:
-            cls._ws_cache[subdomain] = row
-        return row
+    def cacheTenantWS(cls):
+        cachekey = (userps.req_subdomain.get(), userps.user_id.get())
+        workspace = cls._ws_cache.get(cachekey)
+        if workspace is None:
+            workspace = getWorkspaceData()
+            if workspace:
+                cls._ws_cache[cachekey] = workspace
+        # If Data found, Set Into Context Property
+        if workspace:
+            userps.workspace_id.set(workspace.workspace_id)
+            userps.workspace_name.set(workspace.workspace_name)
+            userps.ws_url.set(workspace.ws_url)
+            userps.schema_name.set(workspace.schema_name)
+            userps.ws_role_id.set(workspace.ws_role_id)
+
+    @classmethod
+    def clearWorkSpaceCache(cls, subdomain = None, user_id = None):
+        subdomain = subdomain or userps.req_subdomain.get()
+        user_id = user_id or userps.user_id.get()
+        cachekey = (subdomain, user_id)
+        cls._ws_cache.pop(cachekey, None)

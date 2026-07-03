@@ -1,19 +1,30 @@
+from contextvars import ContextVar
+# from dataclasses import dataclass
+
+# @dataclass
 class UserProperties:
+    # workspace_id: int | None = None
+    # user_id: int | None = None
+    # req_host: str = ""
+    # req_subdomain: str = ""
+
     def __init__(self):
-        self.user_id = 0
-        self.first_name = ""
-        self.last_name = ""
-        self.user_array = []
-        self.user_json = {}
+        self.user_id = ContextVar("user_id", default="")
+        self.role_id = ContextVar("user_id", default="")
+        self.ws_role_id = ContextVar("user_id", default="")
+        self.workspace_id = ContextVar("user_id", default="")
+        self.workspace_name = ContextVar("user_id", default="")
+        self.ws_url = ContextVar("user_id", default="")
+        self.schema_name = ContextVar("user_id", default="")
+
+        self.req_host = ContextVar("user_id", default="")
+        self.req_subdomain = ContextVar("user_id", default="")
+
+        self.first_name = ContextVar("user_id", default="")
+        self.last_name = ContextVar("user_id", default="")
+        self.email = ContextVar("user_id", default="")
+        self.user_settings = ContextVar("user_id", default="")
 
 userps = UserProperties()
 
-
-# $userdtlarr = DB::table('systemconfig.users')
-#                         ->select('users.*', 'workspace_master.workspace_id', 'workspace_master.workspace_name', 'workspace_master.ws_url', 'workspace_master.schema_name', 'workspace_master.is_setup', 'users_workspace.ws_role_id')
-#                         ->leftJoin('systemconfig.users_workspace', 'users_workspace.user_id', '=', 'users.id')
-#                         ->leftJoin('systemconfig.workspace_master', 'workspace_master.workspace_id', '=', 'users_workspace.workspace_id')
-#                         ->where('id', $user_id)
-#                         ->where('ws_url', $ws_url)
-#                         ->where('api_secret', $api_secret)
-#                         ->first();
+# usercontext = ContextVar("user_context", default = UserProperties())
