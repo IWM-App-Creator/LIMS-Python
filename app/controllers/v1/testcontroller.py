@@ -3,13 +3,14 @@ from app.functions.notificationfunction import sendEmail
 from app.properties.notificationproperties import notifyps
 
 def getTestData (request: Request):
-    print("getTestData --> ")
-    notifyps.to_email = "rushirko05@gmail.com"
-    notifyps.subject = "Test Email from LIMS-Python"
-    notifyps.body = "Hello Good Morning, This is a test email from LIMS-Python. Please ignore this email."
-    notifyps.html = ""
-    notifyps.cc = ""
-    notifyps.bcc = ""
+    params = RequestData.params(request)
+    notifyps.to_email.set(params.get("to_email", ""))
+    notifyps.subject.set(params.get("subject", ""))
+    notifyps.body.set(params.get("body", ""))
+    notifyps.html.set(params.get("html", ""))
+    notifyps.cc.set(params.get("cc", ""))
+    notifyps.bcc.set(params.get("bcc", ""))
+    notifyps.attachments.set(params.get("attachments", []))
     sendEmail()
 
 def saveTestData (request: Request):

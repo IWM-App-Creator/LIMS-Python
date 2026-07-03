@@ -1,59 +1,55 @@
 from app.properties.globalproperties import globalps
 from app.properties.notificationproperties import notifyps
+from pathlib import Path
 import smtplib
 from email.message import EmailMessage
 
 def sendEmail():
-    print("sendEmail --> ", notifyps.to_email, notifyps.subject, notifyps.body, notifyps.html, notifyps.cc, notifyps.bcc)
-    print("sendEmail --> ", globalps.MAIL_FROM_ADDRESS, ":", globalps.MAIL_HOST, ":", globalps.MAIL_PORT, ":", globalps.MAIL_USERNAME, globalps.MAIL_PASSWORD)
     msg = EmailMessage()
-
-    msg["Subject"] = notifyps.subject
+    msg["Subject"] = notifyps.subject.get()
     msg["From"] = globalps.MAIL_FROM_ADDRESS
-    msg["To"] = ", ".join(notifyps.to_email) if isinstance(notifyps.to_email, list) else notifyps.to_email
+    msg["To"] = ", ".join(notifyps.to_email.get()) if isinstance(notifyps.to_email.get(), list) else notifyps.to_email.get()
 
-    if notifyps.cc:
-        msg["Cc"] = ", ".join(notifyps.cc) if isinstance(notifyps.cc, list) else notifyps.cc
+    if notifyps.cc.get():
+        msg["Cc"] = ", ".join(notifyps.cc.get()) if isinstance(notifyps.cc.get(), list) else notifyps.cc.get()
 
-    if notifyps.html:
-        msg.add_alternative(notifyps.body, subtype="html")
+    if notifyps.html.get():
+        msg.add_alternative(notifyps.body.get(), subtype="html")
     else:
-        msg.set_content(notifyps.body)
+        msg.set_content(notifyps.body.get())
 
-    # if attachments:
-    #     for file in attachments:
-    #         path = Path(file)
-    #         with open(path, "rb") as f:
-    #             msg.add_attachment(
-    #                 f.read(),
-    #                 maintype="application",
-    #                 subtype="octet-stream",
-    #                 filename=path.name
-    #             )
+    if notifyps.attachments.get():
+        for file in notifyps.attachments.get():
+            path = Path(file)
+            with open(path, "rb") as f:
+                msg.add_attachment(
+                    f.read(),
+                    maintype="application",
+                    subtype="octet-stream",
+                    filename=path.name
+                )
 
     # Combine all recipients for SMTP
     recipients = []
-
-    if isinstance(notifyps.to_email, list):
-        recipients.extend(notifyps.to_email)
+    if isinstance(notifyps.to_email.get(), list):
+        recipients.extend(notifyps.to_email.get())
     else:
-        recipients.append(notifyps.to_email)
+        recipients.append(notifyps.to_email.get())
 
-    if notifyps.cc:
-        if isinstance(notifyps.cc, list):
-            recipients.extend(notifyps.cc)
+    if notifyps.cc.get():
+        if isinstance(notifyps.cc.get(), list):
+            recipients.extend(notifyps.cc.get())
         else:
-            recipients.append(notifyps.cc)
+            recipients.append(notifyps.cc.get())
 
-    if notifyps.bcc:
-        if isinstance(notifyps.bcc, list):
-            recipients.extend(notifyps.bcc)
+    if notifyps.bcc.get():
+        if isinstance(notifyps.bcc.get(), list):
+            recipients.extend(notifyps.bcc.get())
         else:
-            recipients.append(notifyps.bcc)
+            recipients.append(notifyps.bcc.get())
 
     with smtplib.SMTP(globalps.MAIL_HOST, globalps.MAIL_PORT) as smtp:
         smtp.starttls()
         smtp.login(globalps.MAIL_USERNAME, globalps.MAIL_PASSWORD)
         smtp.send_message(msg, to_addrs=recipients)
-
-    print("Email sent successfully!!")
+        print("Email sent successfully!!")
