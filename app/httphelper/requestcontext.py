@@ -3,8 +3,6 @@ from fastapi.responses import JSONResponse
 from app.tenant.tenant_cache import TenantCache
 from app.properties.usersproperties import userps
 
-from app.functions.workspacefunctions import getWorkspace, getWorkspaceByUser
-
 async def request_context(request: Request, call_next):
     if request.url.path == "/favicon.ico":
         return await call_next(request)
