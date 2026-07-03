@@ -7,9 +7,6 @@ from app.functions.workspacefunctions import getWorkspaceActiveURL
 
 def doLogin(email: str, password: str):
     # print("doLogin --> ")
-    # getHostName(request). # $domain_url = $GeneralFunctions->getDomainNameFromURL();
-    # print("request_context --> ", globalps.req_subdomain)
-    # $is_valid_ws = $GeneralFunctions->isWorkSpaceURLValid($user->id);
     tbluser = DB.getTableMeta("users", "systemconfig").alias("usr")
     stmt = (
         select(tbluser).where(tbluser.c.email == email)
@@ -17,19 +14,19 @@ def doLogin(email: str, password: str):
     user = DB.executeDBSelectSingle(stmt)
     # print("user --> ", user.email)
 
-    if not user:  # Invalid User
+    if not user: # Invalid User
         raiseAPIError("Invalid Email", 401)
 
     if not bcrypt.checkpw(password.encode(), user.password.encode()): # Invalid Password
         raiseAPIError("Invalid Password", 401)
-    
-    if user.role_id != 1 and user.role_id != 2 :  # Check User Access
+
+    if user.role_id != 1 and user.role_id != 2 : # Check User Access
         raiseAPIError("Your don't have permission to login.", 401)
 
     # If Success Generate JWT Token
     access_token = authfnct.createJWTToken(user.id, user.role_id, user.email)
     # Get Active Workspace URL 
-    wsps.workspace_id = user.active_ws
+    wsps.workspace_id = user.active_ws # TO DO : Convert To Context Based.
     active_ws_url = getWorkspaceActiveURL()
     return JSONResponse (
         status_code = 200,

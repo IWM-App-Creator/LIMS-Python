@@ -7,3 +7,17 @@ class LogProperties:
         self.user_json = {}
 
 logps = LogProperties()
+
+
+class LogProperties:
+    def __init__(self):
+        self.srno = 0
+
+logps = LogProperties()
+
+from contextvars import ContextVar
+class LogProperties:
+    def __init__(self):
+        self.srno = ContextVar("srno", default = "")
+
+logps = LogProperties()
