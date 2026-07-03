@@ -8,7 +8,7 @@ def sendEmail():
     msg = EmailMessage()
     msg["Subject"] = notifyps.subject.get()
     msg["From"] = globalps.MAIL_FROM_ADDRESS
-    msg["To"] = ", ".join(notifyps.to_email.get()) if isinstance(notifyps.to_email.get(), list) else notifyps.to_email.get()
+    msg["To"] = ", " . join(notifyps.to_email.get()) if isinstance(notifyps.to_email.get(), list) else notifyps.to_email.get()
 
     if notifyps.cc.get():
         msg["Cc"] = ", ".join(notifyps.cc.get()) if isinstance(notifyps.cc.get(), list) else notifyps.cc.get()
