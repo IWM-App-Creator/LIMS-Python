@@ -2,16 +2,18 @@ import bcrypt
 from app.utils.common import select, DB, Request, RequestData, JSONResponse, raiseAPIError, userps
 from app.functions.authfunctions import authfnct
 from app.functions.generalfunctions import getHostName
+from app.functions.userfunctions import getUserDataFromDB
 from app.functions.workspacefunctions import getWorkspaceActiveURL
 
 def doLogin(email: str, password: str):
     # print("doLogin --> ")
-    tbluser = DB.getTableMeta("users", "systemconfig").alias("usr")
-    stmt = (
-        select(tbluser).where(tbluser.c.email == email)
-    )
-    user = DB.executeDBSelectSingle(stmt)
-    # print("user --> ", user.email)
+    # tbluser = DB.getTableMeta("users", "systemconfig").alias("usr")
+    # stmt = (
+    #     select(tbluser).where(tbluser.c.email == email)
+    # )
+    # user = DB.executeDBSelectSingle(stmt)
+    userps.email.set(email) # Set Email To Property
+    user = getUserDataFromDB()  # Execute Function to Get Data
 
     if not user: # Invalid User
         raiseAPIError("Invalid Email", 401)

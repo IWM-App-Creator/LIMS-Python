@@ -24,6 +24,7 @@ async def auth_handler(request: Request, call_next):
     # Validate Header
     if globalps.IS_LOCAL_DEV == "1": # Bypass auth for local development
         userps.user_id.set(globalps.JWT_USER_ID) # Set a default user_id for local development
+        userps.role_id.set("1") # Set a default role_id for local development
         return await call_next(request)
     else :
         auth = request.headers.get("Authorization")
@@ -54,7 +55,7 @@ async def auth_handler(request: Request, call_next):
                     "message": "Invalid or expired token"
                 }
             )
-        # request.state.user_id = payload["user_id"]
         userps.user_id.set(payload["user_id"])  # Set user_id in global properties for global access
+        userps.role_id.set(payload["role_id"])
         request.state.jwt = token
         return await call_next(request)

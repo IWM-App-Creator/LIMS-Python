@@ -10,7 +10,6 @@ class AuthFunctions:
         payload = {
             "user_id": str(user_id),
             "role_id": str(role_id),
-            # "ws_role_id": str(user_id),
             "email": str(email),
             "exp": expire
         }
