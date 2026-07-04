@@ -1,8 +1,7 @@
 import bcrypt
-from app.utils.common import select, DB, Request, RequestData, JSONResponse, raiseAPIError
+from app.utils.common import select, DB, Request, RequestData, JSONResponse, raiseAPIError, userps
 from app.functions.authfunctions import authfnct
 from app.functions.generalfunctions import getHostName
-from app.properties.workspaceproperties import wsps
 from app.functions.workspacefunctions import getWorkspaceActiveURL
 
 def doLogin(email: str, password: str):
@@ -26,7 +25,7 @@ def doLogin(email: str, password: str):
     # If Success Generate JWT Token
     access_token = authfnct.createJWTToken(user.id, user.role_id, user.email)
     # Get Active Workspace URL 
-    wsps.workspace_id = user.active_ws # TO DO : Convert To Context Based.
+    userps.workspace_id.set(user.active_ws)
     active_ws_url = getWorkspaceActiveURL()
     return JSONResponse (
         status_code = 200,
