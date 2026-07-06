@@ -16,7 +16,17 @@ def getTestData(request: Request):
     # notifyps.attachments.set(params.get("attachments", []))
     # sendEmail()
     associationps.associations_id.set(1)
-    getAssociationUsers()
+    assousr = getAssociationUsers()
+    if assousr is None : # Invalid Association
+        raiseAPIError("Invalid Workspace", 401)
+    return JSONResponse (
+        status_code = 200,
+        content = {
+            "status": True,
+            "message": "Valid",
+            "srno": assousr.srno
+        }
+    )
 
 def saveTestData (request: Request):
     print("saveTestData --> ")

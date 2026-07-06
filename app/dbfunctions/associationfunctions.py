@@ -19,7 +19,7 @@ def getDesignationData():
     return DB.executeDBSelectSingle(stmt)
 
 def getAssociationUsers():
-    assousers = DB.getTableMeta("sys_association_users")
+    assousers = DB.getTableMeta("sys_association_users").alias("au")
     stmt = select(assousers)
     if associationps.associations_id.get() not in (None, "", 0):
         stmt = stmt.where(assousers.c.associations_id == associationps.associations_id.get())
@@ -32,4 +32,5 @@ def getAssociationUsers():
     if associationps.col_p_val.get() not in (None, "", 0):
         stmt = stmt.where(assousers.c.col_p_val == associationps.col_p_val.get())
     stmt = stmt.where(assousers.c.is_delete == 0)
-    print("stmt --> ", stmt)
+    return DB.executeDBSelectSingle(stmt)
+    # print("stmt --> ", stmt)
