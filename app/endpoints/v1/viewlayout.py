@@ -24,7 +24,6 @@ ROUTES = [
 for path, handler, methods in ROUTES:
     router.add_api_route(path, handler, methods=methods)
 
-
 # Route::any('view/getids', 'App\Http\Controllers\ModelData\DynamicViewAPIController@getPrimaryKeyIds');
 
 # Route::any('view/share', 'App\Http\Controllers\ModelData\DynamicViewAPIController@saveViewShare');
