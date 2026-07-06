@@ -3,7 +3,7 @@ from app.utils.common import DB, JSONResponse, raiseAPIError, userps
 
 
 def getUserDetail(token: str):
-    # print("getUserDetail:", token)
+    print("getUserDetail:", userps.user_id.get())
     tbluser = DB.getTableMeta("users", "systemconfig").alias("usr")
     stmt = (
         select(tbluser).where(tbluser.c.id == userps.user_id.get())
@@ -24,6 +24,15 @@ def getUserDetail(token: str):
         "email": userps.email.get(),
         "user_settings": userps.user_settings.get(),
     }
+    # Get User Menu 
+    user_menu = {
+        "m_centre_id": userps.user_id.get(),
+        "role_id": userps.role_id.get(),
+        "first_name": userps.first_name.get(),
+        "last_name": userps.last_name.get(),
+        "email": userps.email.get(),
+    }
+
     # print("user --> ", user.email)
     return JSONResponse (
         status_code = 200,
@@ -31,6 +40,7 @@ def getUserDetail(token: str):
             "status": True,
             "message": "User Data",
             "user_dict": user_dict,
+            "user_menu": user_menu,
         }
     )
     # return JSONResponse (

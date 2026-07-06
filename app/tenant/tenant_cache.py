@@ -12,7 +12,7 @@ class TenantCache:
         if workspace is None:
             workspace = getWorkspaceData()
             if workspace:
-                cls._ws_cache[cachekey] = workspace
+                cls._ws_cache[cachekey] = workspace # Save User Wise WS In Cache
         # If Data found, Set Into Context Property
         if workspace:
             userps.workspace_id.set(workspace.workspace_id)

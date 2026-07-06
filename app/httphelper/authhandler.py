@@ -7,14 +7,6 @@ from app.functions.generalfunctions import getHostName
 from app.properties.globalproperties import globalps
 from app.properties.usersproperties import userps
 
-PUBLIC_APIS = {
-    "/api/v1/auth/login",
-    "/docs",
-    "/openapi.json",
-    "/redoc",
-    "/favicon.ico",
-}
-
 async def auth_handler(request: Request, call_next):
     getHostName(request) # Get Host
     # Skip public APIs
@@ -54,7 +46,7 @@ async def auth_handler(request: Request, call_next):
                     "status": False,
                     "message": "Invalid or expired token"
                 }
-            )
+            )        
         userps.user_id.set(payload["user_id"])  # Set user_id in global properties for global access
         userps.role_id.set(payload["role_id"])
         request.state.jwt = token
