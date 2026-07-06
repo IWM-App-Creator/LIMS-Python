@@ -48,5 +48,6 @@ def getDBTableData(dbps):
     
     stmt = stmt.where(tblmaster.c.is_delete == is_del_tbl)
     stmt = stmt.where(tblcols.c.is_delete == is_del_col)
-
-    dbps.db_tbl_data.set( DB.executeDBSelect(stmt) )
+    db_tbl_data = DB.executeDBSelect(stmt)
+    return db_tbl_data
+    # dbps.db_tbl_data.set( DB.executeDBSelect(stmt) )
