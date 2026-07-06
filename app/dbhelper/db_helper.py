@@ -60,6 +60,11 @@ class DB:
             return result.rowcount
 
     @staticmethod
+    def getSingleColumnValue(stmt, column_name, default = None):
+        row = DB.executeDBSelectSingle(stmt)
+        return getattr(row, column_name, default) if row else default
+
+    @staticmethod
     def executeDBStatement(stmt):
         with dbconn.begin() as conn:
             return conn.execute(stmt)

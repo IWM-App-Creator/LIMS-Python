@@ -33,10 +33,7 @@ def getWorkspaceActiveURL():
         .where(workspace_master.c.workspace_id == userps.workspace_id.get())
         .limit(1)
     )
-    row = DB.executeDBSelectSingle(stmt)
-    if row:
-        return row.ws_url
-    return ""
+    return DB.getSingleColumnValue(stmt, "ws_url", "")
 
 def isWorkspaceValid(subdomain: str):
     ws_url = subdomain
@@ -48,7 +45,4 @@ def isWorkspaceValid(subdomain: str):
         .where(workspace_master.c.ws_url == ws_url)
         .limit(1)
     )
-    row = DB.executeDBSelectSingle(stmt)
-    if row:
-        return row.workspace_id
-    return "0"
+    return DB.getSingleColumnValue(stmt, "workspace_id", "0")
