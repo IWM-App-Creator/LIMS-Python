@@ -17,6 +17,9 @@ def getUserDetail(): # token: str
     #     raiseAPIError("Invalid User ID", 401)
 
     user = getUserDataFromDB() # Execute Function to User Get Data
+    if not user: # Invalid User
+        raiseAPIError("Invalid Email", 401)
+
     userps.first_name.set(user.first_name)
     userps.last_name.set(user.last_name)
     userps.email.set(user.email)
