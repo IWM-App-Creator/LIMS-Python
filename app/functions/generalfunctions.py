@@ -2,8 +2,6 @@ import os
 import json
 from app.properties.usersproperties import userps
 from app.properties.globalproperties import globalps
-from app.properties.generalproperties import generalps
-
 
 def setEnvVariables():
     globalps.IS_LOCAL_DEV = os.getenv('IS_LOCAL_DEV')
