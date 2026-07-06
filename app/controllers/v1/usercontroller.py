@@ -1,5 +1,6 @@
 from sqlalchemy import select
 from app.utils.common import DB, JSONResponse, raiseAPIError, userps
+from app.functions.userfunctions import getUserDataFromDB
 
 
 def getUserDetail(): # token: str
@@ -7,14 +8,15 @@ def getUserDetail(): # token: str
     # --------------------------
     # Get User Data
     # --------------------------
-    tbluser = DB.getTableMeta("users", "systemconfig").alias("usr")
-    stmt = (
-        select(tbluser).where(tbluser.c.id == userps.user_id.get())
-    )
-    user = DB.executeDBSelectSingle(stmt)
-    if not user: # Invalid User
-        raiseAPIError("Invalid User ID", 401)
+    # tbluser = DB.getTableMeta("users", "systemconfig").alias("usr")
+    # stmt = (
+    #     select(tbluser).where(tbluser.c.id == userps.user_id.get())
+    # )
+    # user = DB.executeDBSelectSingle(stmt)
+    # if not user: # Invalid User
+    #     raiseAPIError("Invalid User ID", 401)
 
+    user = getUserDataFromDB() # Execute Function to User Get Data
     userps.first_name.set(user.first_name)
     userps.last_name.set(user.last_name)
     userps.email.set(user.email)

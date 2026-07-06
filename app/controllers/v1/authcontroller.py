@@ -13,7 +13,7 @@ def doLogin(email: str, password: str):
     # )
     # user = DB.executeDBSelectSingle(stmt)
     userps.email.set(email) # Set Email To Property
-    user = getUserDataFromDB()  # Execute Function to Get Data
+    user = getUserDataFromDB() # Execute Function to User Get Data
 
     if not user: # Invalid User
         raiseAPIError("Invalid Email", 401)
