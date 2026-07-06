@@ -136,7 +136,6 @@ def removeColumnUnique(dbps):
         alter_qry = generateDBColumnAlterQuery(dbps)
         DB.executeDBStatement(text(alter_qry))
 
-
 def getDBTables():
     print("getDBTables --> ")
     user_id = userps.user_id.get() # Get User ID
