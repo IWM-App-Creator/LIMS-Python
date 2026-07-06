@@ -2,8 +2,11 @@ from sqlalchemy import select
 from app.utils.common import DB, JSONResponse, raiseAPIError, userps
 
 
-def getUserDetail(token: str):
+def getUserDetail(): # token: str
     print("getUserDetail:", userps.user_id.get())
+    # --------------------------
+    # Get User Data
+    # --------------------------
     tbluser = DB.getTableMeta("users", "systemconfig").alias("usr")
     stmt = (
         select(tbluser).where(tbluser.c.id == userps.user_id.get())
@@ -24,7 +27,9 @@ def getUserDetail(token: str):
         "email": userps.email.get(),
         "user_settings": userps.user_settings.get(),
     }
-    # Get User Menu 
+    # --------------------------
+    # Get User Menu
+    # --------------------------
     user_menu = {
         "m_centre_id": userps.user_id.get(),
         "role_id": userps.role_id.get(),
@@ -32,8 +37,9 @@ def getUserDetail(token: str):
         "last_name": userps.last_name.get(),
         "email": userps.email.get(),
     }
-
-    # print("user --> ", user.email)
+    # --------------------------
+    # Merge All Data & Send Response
+    # --------------------------
     return JSONResponse (
         status_code = 200,
         content = {

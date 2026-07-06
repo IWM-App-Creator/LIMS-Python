@@ -8,6 +8,7 @@ from app.properties.globalproperties import globalps
 from app.properties.usersproperties import userps
 
 async def auth_handler(request: Request, call_next):
+    print("auth_handler --> ")
     getHostName(request) # Get Host
     # Skip public APIs
     if isPublicEndpoint(request.url.path):
