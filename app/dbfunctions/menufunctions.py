@@ -3,7 +3,7 @@ from app.utils.common import select, DB, JSONResponse, raiseAPIError, userps
 def getMenuCentre():
     # m_centre_id = userps.user_id.get() # Get User ID
     # Prepare Query
-    tblmcentre = DB.tableMeta("sys_dynamic_menu_centre").alias("sdmc")
+    tblmcentre = DB.getTableMeta("sys_dynamic_menu_centre").alias("sdmc")
     stmt = select(tblmcentre).where(tblmcentre.c.is_delete == 0)
     # if m_centre_id not in (None, ""):
     #     stmt = stmt.where(tblmcentre.c.id == m_centre_id)

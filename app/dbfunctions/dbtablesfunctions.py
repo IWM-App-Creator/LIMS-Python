@@ -2,8 +2,8 @@ from sqlalchemy import func
 from app.utils.common import select, DB, userps
 
 def getDBTableData(dbps):
-    tblcols = DB.tableMeta("sys_new_db_tables_cols").alias("tblcols")
-    tblmaster = DB.tableMeta("sys_db_tables").alias("tbl")
+    tblcols = DB.getTableMeta("sys_new_db_tables_cols").alias("tblcols")
+    tblmaster = DB.getTableMeta("sys_db_tables").alias("tbl")
     stmt = (
         select(
             tblcols,

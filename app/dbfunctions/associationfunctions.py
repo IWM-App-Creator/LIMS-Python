@@ -3,7 +3,7 @@ from app.utils.common import select, DB
 from app.properties.associationproperties import associationps
 
 def getAssociationData():
-    association = DB.tableMeta("sys_associations")
+    association = DB.getTableMeta("sys_associations")
     stmt = select(association)
     if associationps.association_id.get() not in (None, "", 0):
         stmt = stmt.where(association.c.associations_id == associationps.association_id.get())
@@ -11,7 +11,7 @@ def getAssociationData():
     return DB.executeDBSelectSingle(stmt)
 
 def getDesignationData():
-    designation = DB.tableMeta("sys_designation")
+    designation = DB.getTableMeta("sys_designation")
     stmt = select(designation)
     if associationps.designation_id.get() not in (None, "", 0):
         stmt = stmt.where(designation.c.designation_id == associationps.designation_id.get())
@@ -19,7 +19,7 @@ def getDesignationData():
     return DB.executeDBSelectSingle(stmt)
 
 def getAssociationUsers():
-    assousers = DB.tableMeta("sys_association_users")
+    assousers = DB.getTableMeta("sys_association_users")
     stmt = select(assousers)
     if associationps.associations_id.get() not in (None, "", 0):
         stmt = stmt.where(assousers.c.associations_id == associationps.associations_id.get())

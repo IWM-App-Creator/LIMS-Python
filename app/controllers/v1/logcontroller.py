@@ -6,7 +6,7 @@ from app.services.firebase.firebase_service import send_push
 from app.properties.usersproperties import userps
 
 def getLog():
-    # users = DB.tableMeta("users")
+    # users = DB.getTableMeta("users")
     return {
         "fetch_flag": "3",
         # "access_token": access_token,
@@ -33,7 +33,7 @@ async def saveLog(request: Request):
     params = RequestData.params(request)
     # print("request -->", params)
     print("request -->", params["view_id"])
-    # sys_dynamic_view = DB.tableMeta("sys_dynamic_view").alias("sdv")
+    # sys_dynamic_view = DB.getTableMeta("sys_dynamic_view").alias("sdv")
     # stmt = (
     #     select(sys_dynamic_view)
     #         .where(sys_dynamic_view.c.is_delete == 0)

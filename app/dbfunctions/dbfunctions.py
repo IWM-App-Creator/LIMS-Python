@@ -140,7 +140,7 @@ def getDBTables():
     print("getDBTables --> ")
     user_id = userps.user_id.get() # Get User ID
     # Prepare Query
-    tbluser = DB.tableMeta("users").alias("usr")
+    tbluser = DB.getTableMeta("users").alias("usr")
     stmt = select(tbluser)
     if user_id not in (None, ""):
         stmt = stmt.where(tbluser.c.id == user_id)
