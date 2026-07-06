@@ -15,18 +15,6 @@ def getTestData(request: Request):
     # notifyps.bcc.set(params.get("bcc", ""))
     # notifyps.attachments.set(params.get("attachments", []))
     # sendEmail()
-    associationps.associations_id.set(1)
-    assousr = getAssociationUsers()
-    if assousr is None : # Invalid Association
-        raiseAPIError("Invalid Workspace", 401)
-    return JSONResponse (
-        status_code = 200,
-        content = {
-            "status": True,
-            "message": "Valid",
-            "srno": assousr.srno
-        }
-    )
 
 def saveTestData (request: Request):
     print("saveTestData --> ")

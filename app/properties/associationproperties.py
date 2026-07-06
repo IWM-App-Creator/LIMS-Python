@@ -6,8 +6,27 @@ class AssociationProperties:
         self.associations_id = ContextVar("associations_id", default = 0)
         self.designation_id = ContextVar("designation_id", default = 0)
 
+        self.view_id = ContextVar("view_id", default = 0)
+        self.view_ids = ContextVar("view_ids", default = "")
+
         self.user_id = ContextVar("user_id", default = 0)
         self.col_id = ContextVar("col_id", default = 0)
         self.col_p_val = ContextVar("col_p_val", default = 0)
+
+        self.is_owner = ContextVar("is_owner", default = 0)
+        self.is_edit = ContextVar("is_edit", default = 0)
+        self.is_view = ContextVar("is_view", default = 0)
+        self.is_noaccess = ContextVar("is_noaccess", default = 0)
+
+        self.dyncviews = ContextVar("dyncviews", default = "")
+        self.custlink = ContextVar("custlink", default = "")
+        self.menucntr = ContextVar("menucntr", default = "")
+        self.modules = ContextVar("modules", default = "")
+        self.dashboardcntr = ContextVar("dashboardcntr", default = "")
+
+        self.defmenucntr = ContextVar("defmenucntr", default = 0)
+        self.defdashboard = ContextVar("defdashboard", default = 0)
+
+        self.access_json = ContextVar("access_json", default = {})
 
 associationps = AssociationProperties()
