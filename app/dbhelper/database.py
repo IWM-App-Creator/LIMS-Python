@@ -1,7 +1,6 @@
 import os
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
-from app.properties.globalproperties import globalps
 
 load_dotenv()
 
