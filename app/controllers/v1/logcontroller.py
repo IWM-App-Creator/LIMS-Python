@@ -1,7 +1,7 @@
 from app.utils.common import select, DB, Request, RequestData, JSONResponse, raiseAPIError, globalps
 
 from app.properties.logproperties import logps
-from app.functions import logfunctions as logfnct
+# from app.functions import logfunctions as logfnct
 from app.services.firebase.firebase_service import send_push
 from app.properties.usersproperties import userps
 
