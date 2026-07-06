@@ -7,6 +7,7 @@ PUBLIC_APIS = {
 
 PUBLIC_PREFIXES = (
     "/api/v1/auth/",
+    "/api/v1/workspace/isvalidws",
     "/redoc",
     "/backend/api/v1/auth/",
 )

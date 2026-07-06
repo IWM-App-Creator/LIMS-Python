@@ -37,3 +37,19 @@ def getWorkspaceActiveURL():
     if row:
         return row.ws_url
     return ""
+
+def isWorkspaceValid(subdomain: str):
+    ws_url = subdomain
+    if subdomain == "" :
+        ws_url = userps.ws_url.get()
+
+    workspace_master = DB.getTableMeta("workspace_master", "systemconfig").alias("ws")
+    stmt = (
+        select(workspace_master.c.workspace_id)
+        .where(workspace_master.c.ws_url == ws_url)
+        .limit(1)
+    )
+    row = DB.executeDBSelectSingle(stmt)
+    if row:
+        return row.workspace_id
+    return "0"

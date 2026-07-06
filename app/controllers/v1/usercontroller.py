@@ -4,8 +4,6 @@ from app.dbfunctions.userfunctions import getUserDataFromDB
 from app.properties.dbproperties import dbps
 from app.functions.dbtbalehelper import getPrimaryKeyByTableID, getPrimaryKeyByTableNM
 
-
-
 def getUserDetail(): # token: str
     print("getUserDetail:", userps.user_id.get())
     # --------------------------

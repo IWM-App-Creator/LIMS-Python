@@ -11,4 +11,4 @@ ROUTES = [
 ]
 
 for path, handler, methods in ROUTES:
-    router.add_api_route(path, handler, methods=methods)
+    router.add_api_route(path, handler, methods = methods)
