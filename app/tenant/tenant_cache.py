@@ -1,5 +1,5 @@
 from app.properties.usersproperties import userps
-from app.functions.workspacefunctions import getWorkspaceData
+from app.dbfunctions.workspacefunctions import getWorkspaceData
 
 class TenantCache:
 

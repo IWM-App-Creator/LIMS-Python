@@ -1,6 +1,6 @@
 from sqlalchemy import select
 from app.utils.common import DB, JSONResponse, raiseAPIError, userps
-from app.functions.userfunctions import getUserDataFromDB
+from app.dbfunctions.userfunctions import getUserDataFromDB
 
 
 def getUserDetail(): # token: str

@@ -2,8 +2,8 @@ import bcrypt
 from app.utils.common import select, DB, Request, RequestData, JSONResponse, raiseAPIError, userps
 from app.functions.authfunctions import authfnct
 from app.functions.generalfunctions import getHostName
-from app.functions.userfunctions import getUserDataFromDB
-from app.functions.workspacefunctions import getWorkspaceActiveURL
+from app.dbfunctions.userfunctions import getUserDataFromDB
+from app.dbfunctions.workspacefunctions import getWorkspaceActiveURL
 
 def doLogin(email: str, password: str):
     # print("doLogin --> ")
