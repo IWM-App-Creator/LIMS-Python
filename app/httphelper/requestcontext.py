@@ -5,7 +5,7 @@ from app.tenant.tenant_cache import TenantCache
 from app.properties.usersproperties import userps
 
 async def request_context(request: Request, call_next):
-    print("request_context --> ")
+    # print("request_context --> ")
     # Skip public APIs
     if isPublicEndpoint(request.url.path):
         return await call_next(request)

@@ -6,7 +6,7 @@ from fastapi.responses import JSONResponse
 logger = logging.getLogger(__name__)
 
 async def error_handler(request: Request, call_next):
-    print("error_handler --> ")
+    # print("error_handler --> ")
     try:
         response = await call_next(request)
         return response

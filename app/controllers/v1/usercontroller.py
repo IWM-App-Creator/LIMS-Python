@@ -2,7 +2,6 @@ from sqlalchemy import select
 from app.utils.common import DB, JSONResponse, raiseAPIError, userps
 from app.dbfunctions.userfunctions import getUserDataFromDB
 from app.properties.dbproperties import dbps
-from app.functions.dbtbalehelper import getPrimaryKeyByTableID, getPrimaryKeyByTableNM
 
 def getUserDetail(): # token: str
     print("getUserDetail:", userps.user_id.get())
@@ -46,22 +45,6 @@ def getUserDetail(): # token: str
     # --------------------------
     # Merge All Data & Send Response
     # --------------------------
-
-
-    dbps.table_id.set("1")
-    dbps.is_primary.set(1)
-    db_tbl_data = getPrimaryKeyByTableID(dbps)
-
-    # dbps.table_id.set("1")
-    # db_tbl_data = getDBTableData(dbps)
-
-    dbps.table_id.set("")
-    dbps.table_name.set("sys_dynamic_view")
-    dbps.is_primary.set(1)
-    db_tbl_data = getPrimaryKeyByTableID(dbps)
-    # db_tbl_data = getPrimaryKeyByTableNM(dbps)
-
-
     return JSONResponse (
         status_code = 200,
         content = {

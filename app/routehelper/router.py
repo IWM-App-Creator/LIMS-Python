@@ -6,7 +6,7 @@ from app.endpoints.v1.auth import router as auth_router
 
 from app.endpoints.v1.workspace import router as workspace_router
 from app.endpoints.v1.association import router as association_router
-from app.endpoints.v1.table import router as table_router
+from app.endpoints.v1.dbtable import router as dbtable_router
 from app.endpoints.v1.view import router as view_router
 from app.endpoints.v1.widget import router as widget_router
 
@@ -23,11 +23,11 @@ def routerGroup():
     
     apirouter.include_router(auth_router, prefix = prefix, tags = ["Auth"])
     
-    apirouter.include_router(workspace_router, prefix = prefix, tags=["Workspace"])
-    apirouter.include_router(association_router, prefix = prefix, tags=["Association"])
-    apirouter.include_router(table_router, prefix = prefix, tags=["Table"])
-    apirouter.include_router(view_router, prefix = prefix, tags=["View"])
-    apirouter.include_router(widget_router, prefix = prefix, tags=["Widget"])
+    apirouter.include_router(workspace_router, prefix = prefix, tags = ["Workspace"])
+    apirouter.include_router(association_router, prefix = prefix, tags = ["Association"])
+    apirouter.include_router(dbtable_router, prefix = prefix, tags = ["Table"])
+    apirouter.include_router(view_router, prefix = prefix, tags = ["View"])
+    apirouter.include_router(widget_router, prefix = prefix, tags = ["Widget"])
 
     apirouter.include_router(user_router, prefix = prefix, tags = ["Users"])
     apirouter.include_router(log_router, prefix = prefix, tags = ["Log"])
