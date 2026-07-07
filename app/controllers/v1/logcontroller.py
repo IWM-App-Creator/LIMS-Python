@@ -1,7 +1,6 @@
 from app.utils.common import select, DB, Request, RequestData, JSONResponse, raiseAPIError, globalps
 
 from app.properties.logproperties import logps
-# from app.functions import logfunctions as logfnct
 from app.services.firebase.firebase_service import send_push
 from app.properties.usersproperties import userps
 
@@ -46,7 +45,7 @@ async def saveLog(request: Request):
     # print("saveLog view_id -->", view_id)
     # print("saveLog user_id -->", user_id)
 
-def test_push(token: str):
+def testFireBasePush(token: str):
     response = send_push (
         token = token,
         title = "Test Notification",

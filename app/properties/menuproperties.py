@@ -12,4 +12,5 @@ class MenuProperties:
 
         self.menu_array = ContextVar("menu_array", default = [])
         self.menus_output = ContextVar("menus_output", default = [])
+
 menups = MenuProperties()
