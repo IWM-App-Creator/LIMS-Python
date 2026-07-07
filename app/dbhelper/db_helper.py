@@ -1,7 +1,6 @@
 from sqlalchemy import MetaData, Table, text
 from app.dbhelper.database import dbconn
 from app.properties.usersproperties import userps
-import re
 
 metadata = MetaData()
 

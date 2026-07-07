@@ -1,6 +1,6 @@
 from fastapi import HTTPException
-from app.dbfunctions.logfunctions import saveErrorLog
-from app.properties.logproperties import logps
+# from app.dbfunctions.logfunctions import saveErrorLog
+# from app.properties.logproperties import logps
 
 # raiseAPIError( "Workspace not found", 404, view_id=178, section="getWorkspace", desc="Invalid workspace URL")
 def raiseAPIError(message, status_code = 401):
