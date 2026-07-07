@@ -61,12 +61,14 @@ def getViewData (request: Request):
         #     }
 
         view_qry = f"{view_qry} LIMIT {viewps.offset.get()}, {viewps.page_size.get()}"
-        print("view_qry -->", view_qry)
-        # view_qry_data
-        
-        #     $dvps->dataarr = DB::select($dvps->view_qry); /* Execute Query To Get View Data */
-        #     $this->getRecordCount($dvps); /* Get Total Record Count */
-        #     $this->setViewItemArray($dvps); /* Set View Data In Items Array */
+        view_qry_data = DB.executeDBStatement(view_qry) #Execute Query To Get View Data
+        viewps.view_qry_data.set(view_qry_data)
+        # print("view_qry_data --> ", view_qry_data)
+        total_record = DB.getRecordCount(view_qry) #Total Record Data
+        viewps.total_record.set(total_record)
+        print("view_qry_data --> ", viewps.total_record.get())
+
+        # $this->setViewItemArray($dvps); /* Set View Data In Items Array */
         # $this->setViewOutputArray($dvps); /* Output Json */
     except Exception as e:
         raiseAPIError(str(e), 500)

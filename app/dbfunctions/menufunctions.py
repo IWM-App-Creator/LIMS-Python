@@ -43,7 +43,6 @@ def getDynamicMenuCenter(menups):
         return DB.executeDBSelect(stmt)
 
 def getUserMenuList(menups):
-    fetch_single = menups.fetch_single.get()
     dync_menu = DB.getTableMeta("sys_dynamic_menu").alias("sdm")
     dync_view = DB.getTableMeta("sys_dynamic_view").alias("sdv")
     custom_view = DB.getTableMeta("sys_custom_view").alias("scv")
@@ -70,7 +69,4 @@ def getUserMenuList(menups):
     if menups.usr_flag.get() in (None, "", 0):
         stmt = stmt.where(dync_menu.c.created_by == userps.user_id.get())
     stmt = stmt.order_by(dync_menu.c.rank.asc())
-    if fetch_single == 1 :
-        return DB.executeDBSelectSingle(stmt)
-    else :
-        return DB.executeDBSelect(stmt)
+    return DB.executeDBSelect(stmt)

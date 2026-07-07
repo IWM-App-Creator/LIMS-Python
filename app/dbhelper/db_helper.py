@@ -1,19 +1,13 @@
-from sqlalchemy import MetaData, Table
+from sqlalchemy import MetaData, Table, text
 from app.dbhelper.database import dbconn
 from app.properties.usersproperties import userps
+import re
 
 metadata = MetaData()
 
 class DB:
 
     _dbtables = {}
-
-    # @staticmethod
-    # def tableMeta(table_name, schema = None):
-    #     return DB.getTableMeta (
-    #         table_name,
-    #         userps.schema_name.get()
-    #     )
 
     @staticmethod
     def getTableMeta(table_name, schema = None):
@@ -64,7 +58,61 @@ class DB:
         row = DB.executeDBSelectSingle(stmt)
         return getattr(row, column_name, default) if row else default
 
-    @staticmethod
     def executeDBStatement(stmt):
         with dbconn.begin() as conn:
-            return conn.execute(stmt)
+            schema_name = userps.schema_name.get()
+            if schema_name:
+                conn.execute(text(f"USE `{schema_name}`"))
+            if isinstance(stmt, str):
+                stmt = text(stmt)
+            result = conn.execute(stmt)
+            return result.fetchall()
+
+    @staticmethod
+    def getRecordCount(stmt):
+        with dbconn.begin() as conn:
+            # schema_name = userps.schema_name.get()
+            # if schema_name:
+            #     conn.execute(text(f"USE `{schema_name}`"))
+            # if not isinstance(stmt, str):
+            #     stmt = str(stmt)
+            # stmt = re.sub(
+            #     r"\s+LIMIT\s+\d+(\s*,\s*\d+)?\s*;?\s*$",
+            #     "",
+            #     stmt,
+            #     flags = re.IGNORECASE
+            # )
+            # count_stmt = text(
+            #     f"SELECT COUNT(*) AS total_count FROM ({stmt}) AS tmp"
+            # )
+            # result = conn.execute(count_stmt)
+            # return result.scalar() or 0
+            schema_name = userps.schema_name.get()
+
+            if schema_name:
+                conn.execute(text(f"USE `{schema_name}`"))
+
+            if not isinstance(stmt, str):
+                stmt = str(stmt)
+
+            # Remove LIMIT clause
+            stmt = re.sub(
+                r"\s+LIMIT\s+\d+(\s*,\s*\d+)?\s*;?\s*$",
+                "",
+                stmt,
+                flags=re.IGNORECASE
+            )
+
+            # Remove ORDER BY clause (last occurrence)
+            stmt = re.split(r"\border\s+by\b", stmt, flags=re.IGNORECASE)[0]
+
+            # Find the FROM clause
+            match = re.search(r"\bfrom\b", stmt, flags=re.IGNORECASE)
+
+            if not match:
+                return 0
+
+            count_qry = f"SELECT COUNT(*) AS rcdcnt {stmt[match.start():]}"
+            print("count_qry --> ", count_qry)
+            result = conn.execute(text(count_qry))
+            return result.scalar() or 0

@@ -11,6 +11,8 @@ class viewproperties:
         self.view_qry = ContextVar("view_qry", default = "")
 
         self.view_qry_data = ContextVar("view_qry_data", default = [])
+        self.total_record = ContextVar("total_record", default = 0)
+        
 
         self.tab_id = ContextVar("tab_id", default = "0")
         self.page_no = ContextVar("page_no", default = 1)

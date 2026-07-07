@@ -5,6 +5,15 @@ from app.properties.associationproperties import associationps
 from app.properties.menuproperties import menups
 
 def getUserSideMenu(request: Request):
+    try:
+        params = RequestData.params(request)
+        # user_id = userps.user_id.get()
+        # menups.is_active.set(1)
+        # menups.created_by.set(user_id)
+        # menups.fetch_single.set(1)
+    except Exception as e:
+        raiseAPIError(str(e), 500)
+
     user_id = userps.user_id.get()
     menups.is_active.set(1)
     menups.created_by.set(user_id)
