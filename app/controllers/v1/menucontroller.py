@@ -19,7 +19,7 @@ def getUserMenu(request: Request):
             content = {
                 "status": True,
                 "message": "Menu Data",
-                "view_data": menups.menus_output.get()
+                "menu_data": menups.menus_output.get()
             }
         )
     except Exception as e:
