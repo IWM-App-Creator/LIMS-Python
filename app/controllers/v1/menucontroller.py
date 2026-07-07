@@ -9,6 +9,8 @@ def getUserMenu(request: Request):
     try:
         params = RequestData.params(request)
         menups.m_centre_id.set(params.get("m_centre_id", ""))
+        if menups.m_centre_id.get() in (None, "", 0):
+            raiseAPIError("Invalid menu center id!", 401)
         menu_array = getUserMenuList(menups)
         menups.menu_array.set(menu_array)
         setUserMenusOutput(menups)
