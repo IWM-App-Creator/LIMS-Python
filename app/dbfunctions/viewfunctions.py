@@ -10,6 +10,7 @@ def getViewDataByID(viewps):
         stmt = stmt.where(tblview.c.view_id == view_id)
         is_single = 1
     if is_single == 1 : # Return Single Value 
-        return DB.executeDBSelectSingle(stmt)
+        userview = DB.executeDBSelectSingle(stmt)
     else : # Return Array Value 
-        return DB.executeDBSelect(stmt)
+        userview = DB.executeDBSelect(stmt)
+    viewps.userview.set(userview)

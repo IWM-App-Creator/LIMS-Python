@@ -16,7 +16,11 @@ def getTestData(request: Request):
     # notifyps.bcc.set(params.get("bcc", ""))
     # notifyps.attachments.set(params.get("attachments", []))
     # sendEmail()
+
+    # Get Memu Centre --> based on m_centre_id, is_active not to be check
+
     getUserMenuList(3837)
+    # print(dict(row._mapping))
 
 def saveTestData (request: Request):
     print("saveTestData --> ")

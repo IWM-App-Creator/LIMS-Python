@@ -1,9 +1,10 @@
 import json
 from app.utils.common import select, DB, userps
 from app.dbfunctions.dbtablesfunctions import getDBTableData
+from app.dbfunctions.viewlayoutfunctions import getViewLayoutDataByID
 from app.properties.dbproperties import dbps
 
-def processViewInputParam(viewps, params):
+def setViewInputParam(viewps, params):
     viewps.view_id.set(params.get("view_id", ""))
     viewps.call_from.set(params.get("call_from", "DynamicView"))
     viewps.tab_id.set(params.get("tab_id", ""))
@@ -63,3 +64,11 @@ def setViewTableCols(viewps):
             "col_options": col_options
         })
     viewps.tbl_cols.set(tbl_cols)
+
+def setViewLayout(viewps):
+    viewlayout = getViewLayoutDataByID(viewps)
+    if viewlayout:
+        viewps.col_metadata.set(viewlayout.col_metadata)
+        viewps.col_colors.set(viewlayout.col_colors)
+        viewps.action_group_list.set(viewlayout.action_group_list)
+        viewps.user_setting.set(viewlayout.user_setting)

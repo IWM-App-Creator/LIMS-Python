@@ -1,14 +1,30 @@
 from app.utils.common import select, DB, JSONResponse, raiseAPIError, userps
 
 def getMenuCentre():
-    # m_centre_id = userps.user_id.get() # Get User ID
+    user_id = userps.user_id.get() # Get User ID
+    # m_centre_id = menups.m_centre_id.get() # Get User ID
+    # is_active = menups.is_active.get() # Get User ID
     # Prepare Query
-    tblmcentre = DB.getTableMeta("sys_dynamic_menu_centre").alias("sdmc")
+    tblmcentre = DB.getTableMeta("sys_dynamic_menu_centre").alias("mc")
     stmt = select(tblmcentre).where(tblmcentre.c.is_delete == 0)
     # if m_centre_id not in (None, ""):
-    #     stmt = stmt.where(tblmcentre.c.id == m_centre_id)
-    return DB.executeDBSelectSingle(stmt)
+    #     stmt = stmt.where(tblmcentre.c.m_centre_id == m_centre_id)
 
+    # return DB.executeDBSelectSingle(stmt)
+
+
+    # view_id = viewps.view_id.get()
+    # tblview = DB.getTableMeta("sys_new_dynamic_view").alias("dyncv")
+    # stmt = (select(tblview)).where(tblview.c.is_delete == 0)
+    # is_single = 0
+    # if view_id not in (None, "", 0):
+    #     stmt = stmt.where(tblview.c.view_id == view_id)
+    #     is_single = 1
+    # if is_single == 1 : # Return Single Value 
+    #     return DB.executeDBSelectSingle(stmt)
+    # else : # Return Array Value 
+    #     return DB.executeDBSelect(stmt)
+    
     # $menuc = DB::table('sys_dynamic_menu_centre')->where('m_centre_id', $m_center_id)->first();
     #                     if($menuc) {
     #                         $centre_name = $menuc->centre_name;
@@ -27,7 +43,8 @@ def getMenuCentre():
 def getMenuFromMenuCentre():
     print(getMenuFromMenuCentre)
 
-def getUserMenuList(user_id):
+def getUserMenuList():
+    user_id = userps.user_id.get() # Get User ID
     m_centre_id = 0
     usr_flag = 0
     # ---------------------------------------

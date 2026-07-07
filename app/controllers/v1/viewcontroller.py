@@ -5,60 +5,62 @@ from app.properties.dbproperties import dbps
 from app.dbfunctions.dbtablesfunctions import getDBTableData
 from app.dbfunctions.viewfunctions import getViewDataByID
 from app.dbfunctions.viewlayoutfunctions import getViewLayoutDataByID
-from app.functions.viewhelper import processViewInputParam, setViewDataProperties
+from app.functions.viewhelper import setViewInputParam, setViewDataProperties, setViewTableCols, setViewLayout
 
 # http://xytovet.localhost:8000/api/v1/view/getdata?view_id=178
 def getViewData (request: Request):
     try:
-        # --------------------------
-        # Get Input Param Data
-        # --------------------------
         params = RequestData.params(request)
-        processViewInputParam(viewps, params)
-        # --------------------------
-        # Get View Data
-        # --------------------------
-        userview = getViewDataByID(viewps) # Execute Function to User Get Data
-        if not userview: # Invalid View
+        setViewInputParam(viewps, params) # Get Input Param Data
+        getViewDataByID(viewps) # Get View Data
+        if not viewps.userview.get(): # Invalid View
             raiseAPIError("View Not Found", 401)
-        # for row in userview:
-            # print(dict(row._mapping))
-
-        viewps.userview.set(userview)
         setViewDataProperties(viewps) # Set View Properties
-        # Get View Columns
-        view_cols = viewps.view_cols.get()
-        view_cols = view_cols.get("view_cols", [])
-        col_id_arr = []
-        for col in view_cols:
-            col_id_arr.append(col["col_id"])
-        col_id_arr = list(dict.fromkeys(col_id_arr))
-        # Get Table Col
-        dbps.col_ids.set(col_id_arr)
-        dbps.is_del_tbl.set(0)
-        dbps.is_del_col.set(0)
-        tblcol = getDBTableData(dbps)
-        tbl_cols = []
-        for col in tblcol:
-            col_options = (col.col_options or {}).copy()
-            col_options.pop("csv_col_name", None)
-            col_options.pop("csv_col_type", None)
-            col_options.pop("csv_map_col_nm", None)
-            tbl_cols.append({
-                "col_id": col.col_id,
-                "col_options": col_options
-            })
-        viewps.tbl_cols.set(tbl_cols)
-        # Get View Layout Data
-        viewlayout = getViewLayoutDataByID(viewps)
-        if viewlayout:
-            viewps.col_metadata.set(viewlayout.col_metadata)
-            viewps.col_colors.set(viewlayout.col_colors)
-            viewps.action_group_list.set(viewlayout.action_group_list)
-            viewps.user_setting.set(viewlayout.user_setting)
+        setViewTableCols(viewps) # Get View Columns
+        setViewLayout(viewps) # Get View Layout Data
         # --------------------------
         # Process To Get View Data
         # --------------------------
+
+        # /* Get Data */
+        # $GeneralFunctions->sortObjectsByKey($view_cols, 'rank', 'asc'); /* Sort By Rank */
+        # $dvps->view_cols = $view_cols;
+        # $dataarr = array();
+        # $dvps->dataarr = $dataarr;
+        # try {
+        #     $dvps->rawqry = "";
+        #     if($dvps->txtsearch) {
+        #         $this->getViewSearchQuery($dvps);
+        #         // $DynamicViewFunctions->appendChildViewSearchQuery($dvps); /* Search For Child View */
+        #         if($dvps->rawqry) {
+        #             $dvps->view_qry = $dvps->view_qry . " and ( " . $dvps->rawqry . " ) ";
+        #         }
+        #     }
+        #     if($dvps->filterqry) {
+        #         $this->getViewFilteredQuery($dvps);
+        #     }
+        #     // if($dvps->association_limit) {
+        #     //     $DynamicViewFunctions->getViewAssociationLimit($dvps);
+        #     // }
+        #     // checkViewAssociation. 
+        #     $dvps->sorting = "mtbl." . $dvps->primary_colnm . " DESC";
+        #     $dvps->offset = 0;
+        #     $this->setViewPagingSorting($dvps);
+        #     if($dvps->sorting) {
+        #         $dvps->view_qry = $dvps->view_qry . " order by " . $dvps->sorting;
+        #     }
+        #     $dvps->view_qry = $dvps->view_qry . " limit " . $dvps->offset . ', ' . $dvps->page_size;
+        #     // echo "<br/><br/> view_qry --> " . $dvps->view_qry;
+        #     // exit;
+        #     $dvps->dataarr = DB::select($dvps->view_qry); /* Execute Query To Get View Data */
+        #     $this->getRecordCount($dvps); /* Get Total Record Count */
+        #     $this->setViewItemArray($dvps); /* Set View Data In Items Array */
+        # } catch (\Exception $e) {
+        #     echo "<br/><br/> Exception --> " . $e->getMessage();
+        #     $dataarr = array();
+        #     exit;
+        # }
+        # $this->setViewOutputArray($dvps); /* Output Json */
     except Exception as e:
         raiseAPIError(str(e), 500)
 
