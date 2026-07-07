@@ -7,9 +7,13 @@ from app.properties.associationproperties import associationps
 from app.properties.menuproperties import menups
 
 def getTestData(request: Request):
+    user_id = userps.user_id.get()
     print("getTestData --> ")
+
     menups.is_active.set(1)
-    menucenter = getDynamicMenuCenter()
+    menups.created_by.set(user_id)
+    menups.fetch_single.set(1)
+    menucenter = getDynamicMenuCenter(menups)
     print("menucenter --> ")
     for row in menucenter:
         print(dict(row._mapping))

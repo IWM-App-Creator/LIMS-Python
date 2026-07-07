@@ -7,7 +7,7 @@ from app.properties.dbproperties import dbps
 def setViewInputParam(viewps, params):
     viewps.view_id.set(params.get("view_id", ""))
     viewps.call_from.set(params.get("call_from", "DynamicView"))
-    viewps.tab_id.set(params.get("tab_id", ""))
+    viewps.tab_id.set(params.get("tab_id", "0"))
     viewps.page_no.set(params.get("page_no", ""))
     viewps.txtsearch.set(params.get("txtsearch", ""))
     viewps.filterqry.set(params.get("filterqry", ""))
@@ -30,8 +30,9 @@ def parseViewOptions(viewps):
     viewps.table_id.set(viewopt.get("table_id", 0))
     viewps.table_name.set(viewopt.get("table_name", ""))
     viewps.view_qry.set(viewopt.get("view_qry", ""))
-    viewps.primary_col.set(viewopt.get("primary_col", ""))
-    viewps.primary_colnm.set(viewopt.get("primary_colnm", ""))    
+    primary_col = viewopt.get("primary_col", "")
+    viewps.primary_col.set(primary_col)
+    viewps.primary_colnm.set( primary_col.split("|", 1)[1] if "|" in primary_col else "" )
     viewps.delete_col.set(viewopt.get("delete_col", ""))
     viewps.show_deleted.set(viewopt.get("show_deleted", 0))
     viewps.enable_newline.set(viewopt.get("enable_newline", 0))
@@ -72,3 +73,86 @@ def setViewLayout(viewps):
         viewps.col_colors.set(viewlayout.col_colors)
         viewps.action_group_list.set(viewlayout.action_group_list)
         viewps.user_setting.set(viewlayout.user_setting)
+
+def setViewSorting(viewps):
+    user_setting = viewps.user_setting.get() or {}
+    current_tab = f"tab_{viewps.tab_id.get()}"
+    tab_setting = user_setting.get(current_tab)
+    # print("tab_setting --> ", tab_setting)
+    if not tab_setting:
+        return
+    # Sorting
+    # sortby = tab_setting.get("sortby", "")
+    # sortorder = tab_setting.get("sortorder", "")
+
+    # if not sortorder:
+    #     sortorder = "DESC"
+    # viewps.sortby.set(sortby)
+    # viewps.sortorder.set(sortorder)
+    # sorting = ""
+    # if sortby:
+    #     tmp_sortby = sortby.split(",")
+    #     tmp_sortorder = sortorder.split(",")
+    #     sort_parts = []
+    #     for i, srt in enumerate(tmp_sortby):
+    #         if "FIELD(" in srt:
+    #             srt = srt.replace("^^", ",")
+    #             srt = srt.split("**")[0]
+    #             tmp = srt.split(",")[0].replace("FIELD(", "")
+    #             tmp_srt = getSortByColIDName(tmp)
+    #             srt = srt.replace(tmp, tmp_srt)
+    #         else:
+    #             srt = getSortByColIDName(srt)
+    #         order = tmp_sortorder[i] if i < len(tmp_sortorder) else "DESC"
+    #         sort_parts.append(f"{srt} {order}")
+    #     sorting = ", ".join(sort_parts)
+    # # Convert list to comma-separated string if needed
+    # if isinstance(viewps.sortby.get(), list):
+    #     viewps.sortby.set(",".join(viewps.sortby.get()))
+    # if isinstance(viewps.sortorder.get(), list):
+    #     viewps.sortorder.set(",".join(viewps.sortorder.get()))
+    # viewps.sorting.set(sorting)
+
+def setViewPaging(viewps):
+    user_setting = viewps.user_setting.get() or {}
+    current_tab = f"tab_{viewps.tab_id.get()}"
+    tab_setting = user_setting.get(current_tab)
+    print("tab_setting --> ", tab_setting)
+    if not tab_setting:
+        return
+    # Page Size
+    page_size = tab_setting.get("page_size", "10")
+    if page_size in ("", "0"):
+        page_size = "10"
+    viewps.page_size.set(page_size)
+    offset = (int(viewps.page_no.get()) - 1) * int(viewps.page_size.get())
+    viewps.offset.set(offset)
+
+
+def getSortByColIDName(srt: str):
+    srtarr = srt.split(".")
+    if len(srtarr) != 2:
+        return srt
+    table_name, col_name = srtarr
+    tblcols = DB.getTableMeta("sys_db_tables_cols").alias("tblcols")
+    tblmaster = DB.getTableMeta("sys_db_tables").alias("tbl")
+    stmt = (
+        select(
+            tblcols.c.col_id,
+            tblcols.c.col_name
+        )
+        .select_from(
+            tblcols.outerjoin(
+                tblmaster,
+                tblmaster.c.table_id == tblcols.c.table_id
+            )
+        )
+        .where(tblmaster.c.table_name == table_name)
+        .where(tblcols.c.col_name == col_name)
+        .where(tblcols.c.is_delete == 0)
+        .limit(1)
+    )
+    row = DB.executeDBSelectSingle(stmt)
+    if row:
+        return f"{row.col_id}{row.col_name}"
+    return srt

@@ -10,8 +10,10 @@ class viewproperties:
         self.view_type = ContextVar("view_type", default = "")
         self.view_qry = ContextVar("view_qry", default = "")
 
+        self.view_qry_data = ContextVar("view_qry_data", default = [])
+
         self.tab_id = ContextVar("tab_id", default = "0")
-        self.page_no = ContextVar("page_no", default = "")
+        self.page_no = ContextVar("page_no", default = "1")
         self.txtsearch = ContextVar("txtsearch", default = "")
         self.filterqry = ContextVar("filterqry", default = "")
 
@@ -40,5 +42,8 @@ class viewproperties:
         self.col_colors = ContextVar("col_colors", default = [])
         self.action_group_list = ContextVar("action_group_list", default = [])
         self.user_setting = ContextVar("user_setting", default = [])
+
+        self.sorting = ContextVar("sorting", default = "")
+        self.offset = ContextVar("offset", default = "")
 
 viewps = viewproperties()

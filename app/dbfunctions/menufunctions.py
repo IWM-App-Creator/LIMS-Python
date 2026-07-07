@@ -12,20 +12,28 @@ def getDynamicMenu():
     stmt = stmt.where(dync_menu.c.is_delete == 0)
     return DB.executeDBSelect(stmt)
 
-def getDynamicMenuCenter():
+def getDynamicMenuCenter(menups):
+    m_centre_id = menups.m_centre_id.get()
+    is_active = menups.is_active.get()
+    is_public = menups.is_public.get()
+    created_by = menups.created_by.get()
+    fetch_single = menups.fetch_single.get()
+
     dync_menu_cntr = DB.getTableMeta('sys_dynamic_menu_centre').alias('sdmc')
-    stmt = (
-        select(dync_menu_cntr)
-    )
-    if menups.m_centre_id.get() not in (None, "", 0):
-        stmt = stmt.where(dync_menu_cntr.c.m_centre_id == menups.m_centre_id.get())
-    if menups.is_public.get() not in (None, "", 0):
-        stmt = stmt.where(dync_menu_cntr.c.is_public == menups.is_public.get())
-    if menups.is_active.get() not in (None, "", 0):
-        stmt = stmt.where(dync_menu_cntr.c.is_active == menups.is_active.get())
-    stmt = stmt.where(dync_menu_cntr.c.created_by == userps.user_id.get())
+    stmt = (select(dync_menu_cntr))
+    if m_centre_id not in (None, "", 0):
+        stmt = stmt.where(dync_menu_cntr.c.m_centre_id == m_centre_id)
+    if is_active not in (None, ""):
+        stmt = stmt.where(dync_menu_cntr.c.is_active == is_active)
+    if is_public not in (None, ""):
+        stmt = stmt.where(dync_menu_cntr.c.is_public == is_public)
+    if created_by not in (None, "", 0):
+        stmt = stmt.where(dync_menu_cntr.c.created_by == created_by)
     stmt = stmt.where(dync_menu_cntr.c.is_delete == 0)
-    return DB.executeDBSelect(stmt)
+    if fetch_single == 1 :
+        return DB.executeDBSelectSingle(stmt)
+    else :
+        return DB.executeDBSelect(stmt)
 
 def getUserMenuList():
     dync_menu = DB.getTableMeta("sys_dynamic_menu").alias("sdm")

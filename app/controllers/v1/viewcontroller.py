@@ -5,7 +5,9 @@ from app.properties.dbproperties import dbps
 from app.dbfunctions.dbtablesfunctions import getDBTableData
 from app.dbfunctions.viewfunctions import getViewDataByID
 from app.dbfunctions.viewlayoutfunctions import getViewLayoutDataByID
-from app.functions.viewhelper import setViewInputParam, setViewDataProperties, setViewTableCols, setViewLayout
+from app.functions.viewhelper import setViewInputParam, setViewDataProperties, setViewTableCols, setViewLayout, setViewPaging, setViewSorting
+from app.functions.generalfunctions import sortObjectsByKey
+
 
 # http://xytovet.localhost:8000/api/v1/view/getdata?view_id=178
 def getViewData (request: Request):
@@ -18,16 +20,20 @@ def getViewData (request: Request):
         setViewDataProperties(viewps) # Set View Properties
         setViewTableCols(viewps) # Get View Columns
         setViewLayout(viewps) # Get View Layout Data
-        # --------------------------
-        # Process To Get View Data
-        # --------------------------
 
-        # /* Get Data */
-        # $GeneralFunctions->sortObjectsByKey($view_cols, 'rank', 'asc'); /* Sort By Rank */
-        # $dvps->view_cols = $view_cols;
-        # $dataarr = array();
-        # $dvps->dataarr = $dataarr;
-        # try {
+        # --------------------------
+        # Sort View Col
+        # --------------------------
+        view_cols = viewps.view_cols.get()
+        sortObjectsByKey(view_cols["view_cols"], 'rank', 'asc'); # Sort By Rank
+        viewps.view_cols.set(view_cols)
+        # --------------------------
+        # Get Data
+        # --------------------------
+        dataarr = []
+        viewps.view_qry_data.set(dataarr)
+        view_qry = viewps.view_qry.get() # Get Query
+        # print("primary_colnm --", viewps.primary_colnm.get())
         #     $dvps->rawqry = "";
         #     if($dvps->txtsearch) {
         #         $this->getViewSearchQuery($dvps);
@@ -43,28 +49,27 @@ def getViewData (request: Request):
         #     //     $DynamicViewFunctions->getViewAssociationLimit($dvps);
         #     // }
         #     // checkViewAssociation. 
-        #     $dvps->sorting = "mtbl." . $dvps->primary_colnm . " DESC";
-        #     $dvps->offset = 0;
-        #     $this->setViewPagingSorting($dvps);
+
+        sorting = f"mtbl.{viewps.primary_colnm.get()} DESC"
+        viewps.sorting.set(sorting)
+        viewps.primary_colnm.set(0)
+        setViewPaging(viewps) # Get Paging
+        # setViewSorting(viewps) # Get Sorting
+        # print("primary_colnm --", viewps.primary_colnm.get())
         #     if($dvps->sorting) {
         #         $dvps->view_qry = $dvps->view_qry . " order by " . $dvps->sorting;
         #     }
-        #     $dvps->view_qry = $dvps->view_qry . " limit " . $dvps->offset . ', ' . $dvps->page_size;
-        #     // echo "<br/><br/> view_qry --> " . $dvps->view_qry;
-        #     // exit;
+
+        view_qry = f"{view_qry} LIMIT {viewps.offset.get()}, {viewps.page_size.get()}"
+        print("view_qry -->", view_qry)
+        # view_qry_data
+        
         #     $dvps->dataarr = DB::select($dvps->view_qry); /* Execute Query To Get View Data */
         #     $this->getRecordCount($dvps); /* Get Total Record Count */
         #     $this->setViewItemArray($dvps); /* Set View Data In Items Array */
-        # } catch (\Exception $e) {
-        #     echo "<br/><br/> Exception --> " . $e->getMessage();
-        #     $dataarr = array();
-        #     exit;
-        # }
         # $this->setViewOutputArray($dvps); /* Output Json */
     except Exception as e:
         raiseAPIError(str(e), 500)
-
-    # print("getViewData --> ", viewdata)
 
 # http://xytovet.localhost:8000/api/v1/view/savetbldata
 def saveTableData (request: Request):

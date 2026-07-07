@@ -78,14 +78,8 @@ def getJsonObjectByKey(generalps):
     except Exception:
         generalps.jsonkeyval.set("")
 
-def sortByKey(arr, key, direction="asc"):
+def sortObjectsByKey(arr, key, direction = "asc"):
     arr.sort(
-        key=lambda x: x.get(key),
-        reverse=(direction.lower() == "desc")
-    )
-
-def sortObjectsByKey(arr, key, direction="asc"):
-    arr.sort(
-        key=lambda x: getattr(x, key),
-        reverse=(direction.lower() == "desc")
+        key = lambda x: x.get(key),
+        reverse = (direction.lower() == "desc")
     )
