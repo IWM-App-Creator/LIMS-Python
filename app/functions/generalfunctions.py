@@ -1,5 +1,9 @@
 import os
 import json
+import secrets
+import string
+from datetime import datetime
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 from app.properties.usersproperties import userps
 from app.properties.globalproperties import globalps
 
@@ -17,6 +21,51 @@ def getHostName(request):
     hostsd = host.split(":")[0]
     userps.req_host.set(host)
     userps.req_subdomain.set(hostsd.split(".")[0])
+
+def generateRandomDBName(length: int = 10) -> str:
+    alphabet = string.ascii_lowercase + string.digits
+    return "".join(secrets.choice(alphabet) for _ in range(length))
+
+def formatUserDisplayName(first_name: str = "", last_name: str = "", format_type: str = "") -> str:
+    first_name = first_name or ""
+    last_name = last_name or ""
+    match format_type.upper():
+        case "INITIAL":
+            display_name = ""
+            if first_name:
+                display_name += first_name[0]
+            if last_name:
+                display_name += last_name[0]
+            return display_name
+        case "FIRSTNAME":
+            return first_name
+        case "LASTNAME":
+            return last_name
+        case _:
+            return f"{first_name} {last_name}".strip()
+
+def getUserRoleName(user_role_id: int) -> str:
+    return {
+        1: "Super Admin",
+        2: "User"
+    }.get(user_role_id, "No Access")
+
+def getWSUserRole(ws_role_id: int) -> str:
+    return {
+        1: "Owner",
+        2: "User"
+    }.get(ws_role_id, "No Access")
+
+def convertDateToUserZone(current_date: str, user_timezone: str) -> str:
+    try:
+        if user_timezone and user_timezone != "Australia/Perth":
+            dt = datetime.strptime(current_date, "%Y-%m-%d %H:%M:%S")
+            dt = dt.replace(tzinfo=ZoneInfo("Australia/Perth"))
+            dt = dt.astimezone(ZoneInfo(user_timezone))
+            return dt.strftime("%Y-%m-%d %H:%M:%S")
+    except (ValueError, ZoneInfoNotFoundError):
+        pass
+    return current_date
 
 def addUpdateToJson(generalps, updkey, newval, originaljson):
     generalps.itmjson.set(originaljson)

@@ -5,7 +5,8 @@ from app.properties.dbproperties import dbps
 from app.dbfunctions.dbtablesfunctions import getDBTableData
 from app.dbfunctions.viewfunctions import getViewDataByID
 from app.dbfunctions.viewlayoutfunctions import getViewLayoutDataByID
-from app.functions.viewhelper import setViewInputParam, setViewDataProperties, setViewTableCols, setViewLayout, setViewPaging, setViewSorting, getRecordCount, setViewItemArray, setViewOutputArray
+from app.functions.viewhelper import viewhlp
+# setViewInputParam, setViewDataProperties, setViewTableCols, setViewLayout, setViewPaging, setViewSorting, getRecordCount, setViewItemArray, setViewOutputArray
 from app.functions.generalfunctions import sortObjectsByKey
 
 
@@ -13,14 +14,13 @@ from app.functions.generalfunctions import sortObjectsByKey
 def getViewData (request: Request):
     try:
         params = RequestData.params(request)
-        setViewInputParam(viewps, params) # Get Input Param Data
+        viewhlp.setViewInputParam(viewps, params) # Get Input Param Data
         getViewDataByID(viewps) # Get View Data
         if not viewps.userview.get(): # Invalid View
             raiseAPIError("View Not Found", 401)
-        setViewDataProperties(viewps) # Set View Properties
-        setViewTableCols(viewps) # Get View Columns
-        setViewLayout(viewps) # Get View Layout Data
-
+        viewhlp.setViewDataProperties(viewps) # Set View Properties
+        viewhlp.setViewTableCols(viewps) # Get View Columns
+        viewhlp.setViewLayout(viewps) # Get View Layout Data
         # --------------------------
         # Sort View Col
         # --------------------------
@@ -58,14 +58,14 @@ def getViewData (request: Request):
                 # $dvps->view_qry = $dvps->view_qry . " order by " . $dvps->sorting;
         #     }
         view_qry = f"{view_qry} Order By {sorting}"
-        setViewPaging(viewps) # Get Paging
+        viewhlp.setViewPaging(viewps) # Get Paging
         view_qry = f"{view_qry} LIMIT {viewps.offset.get()}, {viewps.page_size.get()}"
         viewps.view_qry.set(view_qry)
         view_qry_data = DB.executeDBStatement(view_qry) # Execute Query To Get View Data
         viewps.view_qry_data.set(view_qry_data)
-        getRecordCount(viewps) # Total Record Data
-        setViewItemArray(viewps); # Set View Data In Items Array
-        setViewOutputArray(viewps); # Output Json
+        viewhlp.getRecordCount(viewps) # Total Record Data
+        viewhlp.setViewItemArray(viewps); # Set View Data In Items Array
+        viewhlp.setViewOutputArray(viewps); # Output Json
         return JSONResponse (
             status_code = 200,
             content = {
