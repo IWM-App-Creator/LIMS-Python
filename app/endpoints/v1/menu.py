@@ -4,7 +4,7 @@ from app.controllers.v1 import menucontroller as menuapi
 router = APIRouter(prefix = "/menu")
 
 ROUTES = [
-    ("/getsidemenu", menuapi.getUserSideMenu, ["GET"]),
+    ("/get", menuapi.getUserMenu, ["GET"]),
 ]
 
 for path, handler, methods in ROUTES:

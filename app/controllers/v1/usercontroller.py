@@ -2,6 +2,8 @@ from sqlalchemy import select
 from app.utils.common import DB, JSONResponse, raiseAPIError, userps
 from app.dbfunctions.userfunctions import getUserDataFromDB
 from app.properties.dbproperties import dbps
+from app.functions.menuhelper import getMenuCenterId, setUserMenusOutput
+from app.dbfunctions.menufunctions import getUserMenuList
 from app.properties.menuproperties import menups
 
 # http://xytovet.localhost:8000/api/v1/user/getdetail?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMzc3OSIsInJvbGVfaWQiOiIxIiwiZW1haWwiOiJjaGludGFuaXQyMkBnbWFpbC5jb20iLCJleHAiOjE3ODMzMjQ3ODR9.AY-PMOH78_p-Jj9v3L1Hd_stU6NXcRWdmoBYHtVnjgo
@@ -37,13 +39,10 @@ def getUserDetail(): # token: str
     # --------------------------
     # Get User Menu
     # --------------------------
-    user_menu = {
-        "m_centre_id": userps.user_id.get(),
-        "role_id": userps.role_id.get(),
-        "first_name": userps.first_name.get(),
-        "last_name": userps.last_name.get(),
-        "email": userps.email.get(),
-    }
+    getMenuCenterId(menups) # find m_center_id from user_id
+    menu_array = getUserMenuList(menups) # Get User Active Menu
+    menups.menu_array.set(menu_array)
+    setUserMenusOutput(menups) # Set Menu Output
     # --------------------------
     # Merge All Data & Send Response
     # --------------------------
@@ -53,7 +52,7 @@ def getUserDetail(): # token: str
             "status": True,
             "message": "User Data",
             "user_dict": user_dict,
-            "user_menu": user_menu,
+            "user_menu": menups.menus_output.get(),
         }
     )
     # return JSONResponse (

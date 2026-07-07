@@ -17,5 +17,6 @@ class UserProperties:
         self.last_name = ContextVar("last_name", default = "")
         self.email = ContextVar("email", default = "")
         self.user_settings = ContextVar("user_settings", default = "")
+        self.usermenus = ContextVar("usermenus", default = [])
 
 userps = UserProperties()

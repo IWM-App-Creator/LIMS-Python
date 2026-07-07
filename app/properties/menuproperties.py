@@ -10,5 +10,6 @@ class MenuProperties:
         
         self.fetch_single = ContextVar("fetch_single", default = 0)
 
-        self.active_m_c_id = ContextVar("active_m_c_id", default = "")
+        self.menu_array = ContextVar("menu_array", default = [])
+        self.menus_output = ContextVar("menus_output", default = [])
 menups = MenuProperties()
