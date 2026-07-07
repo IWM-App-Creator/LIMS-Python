@@ -16,8 +16,8 @@ def getViewData (request: Request):
         # Get View Data
         # --------------------------
         userview = getViewDataByID(viewps) # Execute Function to User Get Data
-        print(userview.view_id)
-
+        print("table_id --> ", viewps.view_id.get())
+        print("table_id --> ", viewps.table_id.get())
         # for row in userview:
             # print(dict(row._mapping))
         
