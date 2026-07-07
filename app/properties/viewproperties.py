@@ -17,13 +17,16 @@ class viewproperties:
 
         self.view_options = ContextVar("view_options", default = [])
         self.view_cols = ContextVar("view_cols", default = [])
+        self.tbl_cols = ContextVar("tbl_cols", default = [])
         self.view_joins = ContextVar("view_joins", default = [])
         self.view_child = ContextVar("view_child", default = [])
         self.view_actions = ContextVar("view_actions", default = [])
 
         # View Options Properties
         self.table_id = ContextVar("table_id", default = "0")
+        self.table_name = ContextVar("table_name", default = "")
         self.primary_col = ContextVar("primary_col", default = "")
+        self.primary_colnm = ContextVar("primary_colnm", default = "") 
         self.delete_col = ContextVar("delete_col", default = "")
         self.show_deleted = ContextVar("show_deleted", default = "")
         self.enable_newline = ContextVar("enable_newline", default = "0")
@@ -31,5 +34,11 @@ class viewproperties:
         self.is_child_view = ContextVar("is_child_view", default = "0")
         self.enable_child_srch = ContextVar("enable_child_srch", default = "0")
         self.enable_chart = ContextVar("enable_chart", default = "0")
+
+        # View Layout Properties
+        self.col_metadata = ContextVar("col_metadata", default = [])
+        self.col_colors = ContextVar("col_colors", default = [])
+        self.action_group_list = ContextVar("action_group_list", default = [])
+        self.user_setting = ContextVar("user_setting", default = [])
 
 viewps = viewproperties()

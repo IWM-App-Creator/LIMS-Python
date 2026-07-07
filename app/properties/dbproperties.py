@@ -36,13 +36,13 @@ class DBProperties:
         # DB Table Data
         self.db_tbl_data = ContextVar("db_tbl_data", default = [])
         self.table_ids = ContextVar("table_ids", default = [])
-        self.col_ids = ContextVar("col_ids", default=[])
+        self.col_ids = ContextVar("col_ids", default = [])
         self.is_del_tbl = ContextVar("is_del_tbl", default = "0")
         self.is_del_col = ContextVar("is_del_col", default = "0")
 
         # View / DB Column Types
-        self.view_col_type = ContextVar("view_col_type", default={})
-        self.db_col_type = ContextVar("db_col_type", default={})
+        self.view_col_type = ContextVar("view_col_type", default = {})
+        self.db_col_type = ContextVar("db_col_type", default = {})
 
     
 

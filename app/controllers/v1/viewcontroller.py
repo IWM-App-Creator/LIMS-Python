@@ -1,8 +1,11 @@
 from app.utils.common import select, DB, Request, RequestData, JSONResponse, raiseAPIError, globalps
 import json
 from app.properties.viewproperties import viewps
+from app.properties.dbproperties import dbps
+from app.dbfunctions.dbtablesfunctions import getDBTableData
 from app.dbfunctions.viewfunctions import getViewDataByID
-from app.functions.viewhelper import processInputParam, setViewDataProperties, parseViewOptions
+from app.dbfunctions.viewlayoutfunctions import getViewLayoutDataByID
+from app.functions.viewhelper import processViewInputParam, setViewDataProperties
 
 # http://xytovet.localhost:8000/api/v1/view/getdata?view_id=178
 def getViewData (request: Request):
@@ -11,49 +14,48 @@ def getViewData (request: Request):
         # Get Input Param Data
         # --------------------------
         params = RequestData.params(request)
-        processInputParam(viewps, params)
+        processViewInputParam(viewps, params)
         # --------------------------
         # Get View Data
         # --------------------------
         userview = getViewDataByID(viewps) # Execute Function to User Get Data
-        print("view_id --> ", viewps.view_id.get())
-        print("table_id --> ", viewps.table_id.get())
+        if not userview: # Invalid View
+            raiseAPIError("View Not Found", 401)
         # for row in userview:
             # print(dict(row._mapping))
-        
+
         viewps.userview.set(userview)
         setViewDataProperties(viewps) # Set View Properties
-        # parseViewOptions(viewps)
-        # $view_cols = json_decode($dvps->view_cols);
-        # $view_cols = $view_cols->view_cols;
-        # $col_id_arr = array();
-        # foreach($view_cols as $col) {
-        #     array_push($col_id_arr, $col->col_id);
-        # }
-        # $col_id_arr = array_unique($col_id_arr);
-
-        # /* Table Col */
-        # $dvps->tbl_cols = array();
-        # $tblcol = DB::table('sys_new_db_tables_cols')->whereIn('col_id', $col_id_arr)->where('is_delete', 0)->get();
-        # foreach($tblcol as $col) { 
-        #     $col_options = $col->col_options;
-        #     $tmpopt = json_decode($col_options, true);
-        #     unset($tmpopt['csv_col_name'], $tmpopt['csv_col_type'], $tmpopt['csv_map_col_nm']);
-        #     $col_options = json_encode($tmpopt);
-        #     $tmparr = array();
-        #     $tmparr['col_id'] = $col->col_id;
-        #     $tmparr['col_options'] = $col_options;
-        #     array_push($dvps->tbl_cols, $tmparr);
-        # }
-        # /* Layout Data */
-        # $viewlayout = DB::table('sys_view_layout_users')->where('view_id', $dvps->view_id)->where('is_delete', 0)->first();
-        # if($viewlayout) {
-        #     $dvps->col_metadata = json_decode($viewlayout->col_metadata);
-        #     $dvps->col_colors = json_decode($viewlayout->col_colors);
-        #     $dvps->action_group_list = json_decode($viewlayout->action_group_list);
-        #     $dvps->user_setting = json_decode($viewlayout->user_setting);
-        # }
-        
+        # Get View Columns
+        view_cols = viewps.view_cols.get()
+        view_cols = view_cols.get("view_cols", [])
+        col_id_arr = []
+        for col in view_cols:
+            col_id_arr.append(col["col_id"])
+        col_id_arr = list(dict.fromkeys(col_id_arr))
+        # Get Table Col
+        dbps.col_ids.set(col_id_arr)
+        dbps.is_del_tbl.set(0)
+        dbps.is_del_col.set(0)
+        tblcol = getDBTableData(dbps)
+        tbl_cols = []
+        for col in tblcol:
+            col_options = (col.col_options or {}).copy()
+            col_options.pop("csv_col_name", None)
+            col_options.pop("csv_col_type", None)
+            col_options.pop("csv_map_col_nm", None)
+            tbl_cols.append({
+                "col_id": col.col_id,
+                "col_options": col_options
+            })
+        viewps.tbl_cols.set(tbl_cols)
+        # Get View Layout Data
+        viewlayout = getViewLayoutDataByID(viewps)
+        if viewlayout:
+            viewps.col_metadata.set(viewlayout.col_metadata)
+            viewps.col_colors.set(viewlayout.col_colors)
+            viewps.action_group_list.set(viewlayout.action_group_list)
+            viewps.user_setting.set(viewlayout.user_setting)
         # --------------------------
         # Process To Get View Data
         # --------------------------
