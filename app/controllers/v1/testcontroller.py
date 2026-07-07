@@ -1,6 +1,7 @@
 from app.utils.common import select, DB, Request, RequestData, JSONResponse, raiseAPIError, globalps
 from app.functions.notificationfunction import sendEmail
 from app.dbfunctions.associationfunctions import getAssociationUsers
+from app.dbfunctions.menufunctions import getUserMenuList
 from app.properties.notificationproperties import notifyps
 from app.properties.associationproperties import associationps
 
@@ -15,6 +16,7 @@ def getTestData(request: Request):
     # notifyps.bcc.set(params.get("bcc", ""))
     # notifyps.attachments.set(params.get("attachments", []))
     # sendEmail()
+    getUserMenuList(3837)
 
 def saveTestData (request: Request):
     print("saveTestData --> ")
