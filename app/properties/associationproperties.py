@@ -28,5 +28,6 @@ class AssociationProperties:
         self.defdashboard = ContextVar("defdashboard", default = 0)
 
         self.access_json = ContextVar("access_json", default = {})
+        self.fetch_single = ContextVar("fetch_single", default = 0)
 
 associationps = AssociationProperties()

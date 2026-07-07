@@ -1,12 +1,10 @@
 from app.utils.common import select, DB, Request, RequestData, JSONResponse, raiseAPIError, userps
-from app.functions.notificationfunction import sendEmail
 from app.dbfunctions.associationfunctions import getAssociationUsers
 from app.dbfunctions.menufunctions import getDynamicMenuCenter, getUserMenuList
-from app.properties.notificationproperties import notifyps
 from app.properties.associationproperties import associationps
 from app.properties.menuproperties import menups
 
-def getTestData(request: Request):
+def getUserSideMenu(request: Request):
     user_id = userps.user_id.get()
     menups.is_active.set(1)
     menups.created_by.set(user_id)
@@ -54,6 +52,3 @@ def getTestData(request: Request):
             "sidemenus": sidemenus
         }
     )
-
-def saveTestData (request: Request):
-    print("saveTestData --> ")

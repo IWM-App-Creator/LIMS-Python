@@ -1,8 +1,7 @@
 from sqlalchemy import func
 from app.utils.common import select, DB
-from app.properties.associationproperties import associationps
 
-def getAssociationData():
+def getAssociationData(associationps):
     association = DB.getTableMeta("sys_associations").alias("a")
     stmt = select(association)
     if associationps.association_id.get() not in (None, "", 0):
@@ -10,15 +9,18 @@ def getAssociationData():
     stmt = stmt.where(association.c.is_delete == 0)
     return stmt
 
-def getDesignationData():
+def getDesignationData(associationps):
     designation = DB.getTableMeta("sys_designation").alias("d")
     stmt = select(designation)
     if associationps.designation_id.get() not in (None, "", 0):
         stmt = stmt.where(designation.c.designation_id == associationps.designation_id.get())
     stmt = stmt.where(designation.c.is_delete == 0)
-    return stmt
+    if associationps.fetch_single.get() == 1:
+        return DB.executeDBSelectSingle(stmt)
+    else :
+        return DB.executeDBSelect(stmt)
 
-def getAssociationUsers():
+def getAssociationUsers(associationps):
     assousers = DB.getTableMeta("sys_association_users").alias("au")
     stmt = select(assousers)
     if associationps.associations_id.get() not in (None, "", 0):
@@ -37,9 +39,12 @@ def getAssociationUsers():
         stmt = stmt.where(assousers.c.col_p_val == associationps.col_p_val.get())
     stmt = stmt.where(assousers.c.is_delete == 0)
     stmt = stmt.order_by(assousers.c.srno.asc())
-    return DB.executeDBSelect(stmt)
+    if associationps.fetch_single.get() == 1:
+        return DB.executeDBSelectSingle(stmt)
+    else :
+        return DB.executeDBSelect(stmt)
 
-def getAssociationViews():
+def getAssociationViews(associationps):
     assoviews = DB.getTableMeta("sys_association_view").alias("av")
     stmt = select(assoviews)
     if associationps.view_id.get() not in (None, "", 0):
@@ -49,9 +54,12 @@ def getAssociationViews():
         view_id_list = [int(x) for x in view_ids.split(",") if x.strip()]
         stmt = stmt.where(assoviews.c.view_id.in_(view_id_list))
     stmt = stmt.where(assoviews.c.is_delete == 0)
-    return stmt
+    if associationps.fetch_single.get() == 1:
+        return DB.executeDBSelectSingle(stmt)
+    else :
+        return DB.executeDBSelect(stmt)
 
-def getAssociationDesignation():
+def getAssociationDesignation(associationps):
     asso_designation = DB.getTableMeta("sys_assoc_designation").alias("ad")
     stmt = select(asso_designation)
     if associationps.associations_id.get() not in (None, "", 0):
@@ -59,4 +67,7 @@ def getAssociationDesignation():
     if associationps.designation_id.get() not in (None, "", 0):
         stmt = stmt.where(asso_designation.c.designation_id == associationps.designation_id.get())
     stmt = stmt.where(asso_designation.c.is_delete == 0)
-    return stmt    
+    if associationps.fetch_single.get() == 1:
+        return DB.executeDBSelectSingle(stmt)
+    else :
+        return DB.executeDBSelect(stmt)    
