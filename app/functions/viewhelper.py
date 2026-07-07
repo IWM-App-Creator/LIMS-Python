@@ -173,3 +173,11 @@ def setViewPaging(viewps):
         viewps.page_size.set(10)
         viewps.offset.set(0)
 
+def getRecordCount(viewps):
+    view_qry = viewps.view_qry.get()
+    tmpstr = view_qry.split(f"From {viewps.table_name.get()} mtbl")[1]
+    tmpstr = tmpstr.trim()
+    cnt_qry = f"Select count(*) as total_record From {viewps.table_name.get()} mtbl {tmpstr}"
+    cnt_qry = cnt_qry.split("Order By")[0]
+    total_record = DB.getSingleColumnValue(cnt_qry, "total_record", 0)
+    viewps.total_record.set(total_record)

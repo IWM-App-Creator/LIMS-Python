@@ -5,7 +5,7 @@ from app.properties.dbproperties import dbps
 from app.dbfunctions.dbtablesfunctions import getDBTableData
 from app.dbfunctions.viewfunctions import getViewDataByID
 from app.dbfunctions.viewlayoutfunctions import getViewLayoutDataByID
-from app.functions.viewhelper import setViewInputParam, setViewDataProperties, setViewTableCols, setViewLayout, setViewPaging, setViewSorting
+from app.functions.viewhelper import setViewInputParam, setViewDataProperties, setViewTableCols, setViewLayout, setViewPaging, setViewSorting, getRecordCount
 from app.functions.generalfunctions import sortObjectsByKey
 
 
@@ -51,23 +51,22 @@ def getViewData (request: Request):
         #     // checkViewAssociation. 
 
         sorting = f"mtbl.{viewps.primary_colnm.get()} DESC"
-        viewps.sorting.set(sorting)
-        viewps.primary_colnm.set(0)
-        setViewPaging(viewps) # Get Paging
+        # viewps.sorting.set(sorting)
+        # viewps.primary_colnm.set(0)
         # setViewSorting(viewps) # Get Sorting
         # print("primary_colnm --", viewps.primary_colnm.get())
         #     if($dvps->sorting) {
-        #         $dvps->view_qry = $dvps->view_qry . " order by " . $dvps->sorting;
+                # $dvps->view_qry = $dvps->view_qry . " order by " . $dvps->sorting;
         #     }
-
+        
+        view_qry = f"{view_qry} Order By {sorting}"
+        setViewPaging(viewps) # Get Paging
         view_qry = f"{view_qry} LIMIT {viewps.offset.get()}, {viewps.page_size.get()}"
-        view_qry_data = DB.executeDBStatement(view_qry) #Execute Query To Get View Data
+        viewps.view_qry.set(view_qry)
+        view_qry_data = DB.executeDBStatement(view_qry) # Execute Query To Get View Data
         viewps.view_qry_data.set(view_qry_data)
-        # print("view_qry_data --> ", view_qry_data)
-        total_record = DB.getRecordCount(view_qry) #Total Record Data
-        viewps.total_record.set(total_record)
-        print("view_qry_data --> ", viewps.total_record.get())
-
+        getRecordCount(viewps) # Total Record Data
+        print("total_record --> ", viewps.total_record.get())
         # $this->setViewItemArray($dvps); /* Set View Data In Items Array */
         # $this->setViewOutputArray($dvps); /* Output Json */
     except Exception as e:
