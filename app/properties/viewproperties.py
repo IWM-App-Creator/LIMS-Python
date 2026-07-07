@@ -3,15 +3,14 @@ from contextvars import ContextVar
 class viewproperties:
     def __init__(self):
         self.userview = ContextVar("userview", default = [])
-
         self.call_from = ContextVar("call_from", default = "")
-
-        self.view_id = ContextVar("view_id", default = "")
+        self.view_id = ContextVar("view_id", default = "0")
         self.view_name = ContextVar("view_name", default = "")
         self.view_url = ContextVar("view_url", default = "")
         self.view_type = ContextVar("view_type", default = "")
+        self.view_qry = ContextVar("view_qry", default = "")
 
-        self.tab_id = ContextVar("tab_id", default = "")
+        self.tab_id = ContextVar("tab_id", default = "0")
         self.page_no = ContextVar("page_no", default = "")
         self.txtsearch = ContextVar("txtsearch", default = "")
         self.filterqry = ContextVar("filterqry", default = "")
@@ -22,17 +21,15 @@ class viewproperties:
         self.view_child = ContextVar("view_child", default = [])
         self.view_actions = ContextVar("view_actions", default = [])
 
-        # viewps.table_id.set(viewopt.get("table_id", 0))
-        # viewps.table_name.set(viewopt.get("table_name", 0))
-        # viewps.view_qry.set(viewopt.get("view_qry", 0))
-        # viewps.primary_col.set(viewopt.get("primary_col", 0))
-        # viewps.primary_col.set(viewopt.get("primary_col", 0))
-        # viewps.delete_col.set(viewopt.get("delete_col", 0))
-        # viewps.show_deleted.set(viewopt.get("show_deleted", 0))
-        # viewps.enable_newline.set(viewopt.get("enable_newline", 0))
-        # viewps.enable_join_save.set(viewopt.get("enable_join_save", 0))
-        # viewps.is_child_view.set(viewopt.get("is_child_view", 0))
-        # viewps.enable_child_srch.set(viewopt.get("enable_child_srch", 0))
-        # viewps.enable_chart.set(viewopt.get("enable_chart", 0))
+        # View Options Properties
+        self.table_id = ContextVar("table_id", default = "0")
+        self.primary_col = ContextVar("primary_col", default = "")
+        self.delete_col = ContextVar("delete_col", default = "")
+        self.show_deleted = ContextVar("show_deleted", default = "")
+        self.enable_newline = ContextVar("enable_newline", default = "0")
+        self.enable_join_save = ContextVar("enable_join_save", default = "0")
+        self.is_child_view = ContextVar("is_child_view", default = "0")
+        self.enable_child_srch = ContextVar("enable_child_srch", default = "0")
+        self.enable_chart = ContextVar("enable_chart", default = "0")
 
 viewps = viewproperties()

@@ -16,7 +16,7 @@ def getViewData (request: Request):
         # Get View Data
         # --------------------------
         userview = getViewDataByID(viewps) # Execute Function to User Get Data
-        print("table_id --> ", viewps.view_id.get())
+        print("view_id --> ", viewps.view_id.get())
         print("table_id --> ", viewps.table_id.get())
         # for row in userview:
             # print(dict(row._mapping))
@@ -31,7 +31,6 @@ def getViewData (request: Request):
         #     array_push($col_id_arr, $col->col_id);
         # }
         # $col_id_arr = array_unique($col_id_arr);
-        
 
         # /* Table Col */
         # $dvps->tbl_cols = array();
@@ -60,7 +59,6 @@ def getViewData (request: Request):
         # --------------------------
     except Exception as e:
         raiseAPIError(str(e), 500)
-    
 
     # print("getViewData --> ", viewdata)
 

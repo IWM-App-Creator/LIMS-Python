@@ -31,11 +31,10 @@ def parseViewOptions(viewps):
     # viewopt = json.loads(viewps.view_options.get()) if viewps.view_options.get() else {}
     viewopt = viewps.view_options.get() or {}
     viewps.table_id.set(viewopt.get("table_id", 0))
-    viewps.table_name.set(viewopt.get("table_name", 0))
-    viewps.view_qry.set(viewopt.get("view_qry", 0))
-    viewps.primary_col.set(viewopt.get("primary_col", 0))
-    viewps.primary_col.set(viewopt.get("primary_col", 0))
-    viewps.delete_col.set(viewopt.get("delete_col", 0))
+    viewps.table_name.set(viewopt.get("table_name", ""))
+    viewps.view_qry.set(viewopt.get("view_qry", ""))
+    viewps.primary_col.set(viewopt.get("primary_col", ""))
+    viewps.delete_col.set(viewopt.get("delete_col", ""))
     viewps.show_deleted.set(viewopt.get("show_deleted", 0))
     viewps.enable_newline.set(viewopt.get("enable_newline", 0))
     viewps.enable_join_save.set(viewopt.get("enable_join_save", 0))
