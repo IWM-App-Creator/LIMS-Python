@@ -1,16 +1,21 @@
 from fastapi import APIRouter
-from app.controllers.v1 import logcontroller as logapi
+from app.controllers.v1 import notificationcontroller as notiapi
 
-router = APIRouter(prefix = "/log")
+router = APIRouter(prefix = "/notification")
 
 ROUTES = [
-    ("/get", logapi.getLog, ["GET"]), #@app.api_route("/saveLog", methods=["GET", "POST"])
-    ("/save", logapi.saveLog, ["GET"]),
-    # ("/remove", logapi.removeLog, ["GET"]),
+    ("/get", notiapi.getUserNotifications, ["GET"]),
+    ("/markread", notiapi.markNotificationRead, ["GET"]),
+    ("/markold", notiapi.markNotificationOld, ["GET"]),
+    ("/delete", notiapi.markNotificationDeleted, ["GET"]),
+    ("/archive", notiapi.markNotificationArchive, ["GET"]),
+    ("/counts", notiapi.getNotiCountByUserID, ["GET"]),
 ]
 
 for path, handler, methods in ROUTES:
-    router.add_api_route(path, handler, methods = methods)
+    router.add_api_route(path, handler, methods=methods)
+
+
 
 # Route::any('notifications/getlist', 'App\Http\Controllers\ModelData\NotificationsAPIController@getUserNotifications');
 # Route::any('notifications/markread', 'App\Http\Controllers\ModelData\NotificationsAPIController@markNotificationRead');

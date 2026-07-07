@@ -12,6 +12,7 @@ from app.endpoints.v1.menu import router as menu_router
 from app.endpoints.v1.widget import router as widget_router
 
 from app.endpoints.v1.users import router as user_router
+from app.endpoints.v1.notification import router as noti_router
 from app.endpoints.v1.log import router as log_router
 
 from app.endpoints.v1.testapi import router as test_router
@@ -32,6 +33,7 @@ def routerGroup():
     apirouter.include_router(widget_router, prefix = prefix, tags = ["Widget"])
 
     apirouter.include_router(user_router, prefix = prefix, tags = ["Users"])
+    apirouter.include_router(noti_router, prefix = prefix, tags = ["Notification"])
     apirouter.include_router(log_router, prefix = prefix, tags = ["Log"])
 
     apirouter.include_router(test_router, prefix = prefix, tags = ["Test"])

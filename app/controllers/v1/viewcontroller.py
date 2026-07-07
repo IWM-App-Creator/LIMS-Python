@@ -118,8 +118,3 @@ def getRawViewQuery (request: Request):
 # http://xytovet.localhost:8000/api/v1/view/checkurl
 def getViewURL (request: Request):
     print("getViewURL --> ")
-
-
-
-
-    
