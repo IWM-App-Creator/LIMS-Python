@@ -8,7 +8,7 @@ def setViewInputParam(viewps, params):
     viewps.view_id.set(params.get("view_id", ""))
     viewps.call_from.set(params.get("call_from", "DynamicView"))
     viewps.tab_id.set(params.get("tab_id", "0"))
-    viewps.page_no.set(params.get("page_no", ""))
+    viewps.page_no.set(params.get("page_no", 1))
     viewps.txtsearch.set(params.get("txtsearch", ""))
     viewps.filterqry.set(params.get("filterqry", ""))
 
@@ -117,17 +117,17 @@ def setViewPaging(viewps):
     user_setting = viewps.user_setting.get() or {}
     current_tab = f"tab_{viewps.tab_id.get()}"
     tab_setting = user_setting.get(current_tab)
-    print("tab_setting --> ", tab_setting)
-    if not tab_setting:
-        return
-    # Page Size
-    page_size = tab_setting.get("page_size", "10")
-    if page_size in ("", "0"):
-        page_size = "10"
-    viewps.page_size.set(page_size)
-    offset = (int(viewps.page_no.get()) - 1) * int(viewps.page_size.get())
-    viewps.offset.set(offset)
-
+    # print("tab_setting --> ", tab_setting)
+    if tab_setting:
+        page_size = tab_setting.get("page_size", 10)
+        if page_size in ("", "0"):
+            page_size = 10
+        viewps.page_size.set(page_size)
+        offset = (int(viewps.page_no.get()) - 1) * int(viewps.page_size.get())
+        viewps.offset.set(offset)
+    else :
+        viewps.page_size.set(10)
+        viewps.offset.set(0)
 
 def getSortByColIDName(srt: str):
     srtarr = srt.split(".")
