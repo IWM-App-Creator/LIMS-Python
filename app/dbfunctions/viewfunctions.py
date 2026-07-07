@@ -7,4 +7,5 @@ def getViewDataByID(viewps):
     stmt = (select(tblview)).where(tblview.c.is_delete == 0)
     if view_id not in (None, "", 0):
         stmt = stmt.where(tblview.c.view_id == view_id)
-    return DB.executeDBSelect(stmt)
+        return DB.executeDBSelectSingle(stmt) # Return Single Value 
+    return DB.executeDBSelect(stmt) # Return Array Value 
