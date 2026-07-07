@@ -12,7 +12,7 @@ class viewproperties:
 
         self.view_qry_data = ContextVar("view_qry_data", default = [])
         self.total_record = ContextVar("total_record", default = 0)
-        
+        self.item_list = ContextVar("item_list", default = [])
 
         self.tab_id = ContextVar("tab_id", default = "0")
         self.page_no = ContextVar("page_no", default = 1)
@@ -47,5 +47,8 @@ class viewproperties:
         self.col_colors = ContextVar("col_colors", default = [])
         self.action_group_list = ContextVar("action_group_list", default = [])
         self.user_setting = ContextVar("user_setting", default = [])
+
+        # View Output Properties
+        self.output_array = ContextVar("output_array", default = [])
 
 viewps = viewproperties()

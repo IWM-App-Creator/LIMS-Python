@@ -3,6 +3,7 @@ from app.utils.common import select, DB, userps
 from app.dbfunctions.dbtablesfunctions import getDBTableData
 from app.dbfunctions.viewlayoutfunctions import getViewLayoutDataByID
 from app.properties.dbproperties import dbps
+from app.functions.dbhelper import isUserColumn
 
 def setViewInputParam(viewps, params):
     viewps.view_id.set(params.get("view_id", ""))
@@ -176,8 +177,50 @@ def setViewPaging(viewps):
 def getRecordCount(viewps):
     view_qry = viewps.view_qry.get()
     tmpstr = view_qry.split(f"From {viewps.table_name.get()} mtbl")[1]
-    tmpstr = tmpstr.trim()
+    tmpstr = tmpstr.strip()
     cnt_qry = f"Select count(*) as total_record From {viewps.table_name.get()} mtbl {tmpstr}"
     cnt_qry = cnt_qry.split("Order By")[0]
     total_record = DB.getSingleColumnValue(cnt_qry, "total_record", 0)
     viewps.total_record.set(total_record)
+
+def setViewOutputArray(viewps):
+    viewps.output_array.set({
+        "rcdcnt": viewps.total_record.get(),
+        # "view_cols": viewps.view_cols.get(),
+        # "tbl_cols": viewps.tbl_cols.get(),
+        # "col_metadata": viewps.col_metadata.get(),
+        # "col_colors": viewps.col_colors.get(),
+        # "action_group_list": viewps.action_group_list.get(),
+        # "user_setting": viewps.user_setting.get(),
+        # "view_qry": viewps.view_qry.get(),
+        "itm_list": viewps.item_list.get()
+    })
+
+def setViewItemArray(viewps):
+    item_list = []
+    view_qry_data = viewps.view_qry_data.get()
+    view_cols = viewps.view_cols.get()
+    view_cols = view_cols.get("view_cols", [])
+    primary_col = viewps.primary_col.get().replace("|", "")
+    item_id_name = f"{primary_col}_mtbl"
+    for data in view_qry_data:
+        item = {
+            "item_id": getattr(data, item_id_name, ""),
+            "is_delete": getattr(data, "is_delete", 0),
+            "noti_cnt": getattr(data, "noti_cnt", "")
+        }
+        for colhd in view_cols:
+            col_id = colhd["col_id"]
+            col_name = colhd["col_name"]
+            qry_alias = colhd["qry_alias"]
+            if colhd["col_type"] == "PChild":
+                continue
+            dbcol = f"{col_id}{col_name}_{qry_alias}"
+            item[f"{col_id}|{col_name}"] = str(getattr(data, dbcol, ""))
+
+            # Display label for lookup/user columns
+            if (isUserColumn(col_name, 0) or (colhd["col_type"] in ("MAPCOL", "DISPLAYAS") and colhd["lookup_colid"] > 0) ):
+                lbl_col = f"{col_id}{col_name}_lbl_{qry_alias}"
+                item[f"{col_id}|{col_name}lbl"] = str(getattr(data, lbl_col, ""))
+        item_list.append(item)
+    viewps.item_list.set(item_list)

@@ -5,7 +5,7 @@ from app.properties.dbproperties import dbps
 from app.dbfunctions.dbtablesfunctions import getDBTableData
 from app.dbfunctions.viewfunctions import getViewDataByID
 from app.dbfunctions.viewlayoutfunctions import getViewLayoutDataByID
-from app.functions.viewhelper import setViewInputParam, setViewDataProperties, setViewTableCols, setViewLayout, setViewPaging, setViewSorting, getRecordCount
+from app.functions.viewhelper import setViewInputParam, setViewDataProperties, setViewTableCols, setViewLayout, setViewPaging, setViewSorting, getRecordCount, setViewItemArray, setViewOutputArray
 from app.functions.generalfunctions import sortObjectsByKey
 
 
@@ -48,8 +48,7 @@ def getViewData (request: Request):
         #     // if($dvps->association_limit) {
         #     //     $DynamicViewFunctions->getViewAssociationLimit($dvps);
         #     // }
-        #     // checkViewAssociation. 
-
+        #     // checkViewAssociation.
         sorting = f"mtbl.{viewps.primary_colnm.get()} DESC"
         # viewps.sorting.set(sorting)
         # viewps.primary_colnm.set(0)
@@ -58,7 +57,6 @@ def getViewData (request: Request):
         #     if($dvps->sorting) {
                 # $dvps->view_qry = $dvps->view_qry . " order by " . $dvps->sorting;
         #     }
-        
         view_qry = f"{view_qry} Order By {sorting}"
         setViewPaging(viewps) # Get Paging
         view_qry = f"{view_qry} LIMIT {viewps.offset.get()}, {viewps.page_size.get()}"
@@ -66,9 +64,16 @@ def getViewData (request: Request):
         view_qry_data = DB.executeDBStatement(view_qry) # Execute Query To Get View Data
         viewps.view_qry_data.set(view_qry_data)
         getRecordCount(viewps) # Total Record Data
-        print("total_record --> ", viewps.total_record.get())
-        # $this->setViewItemArray($dvps); /* Set View Data In Items Array */
-        # $this->setViewOutputArray($dvps); /* Output Json */
+        setViewItemArray(viewps); # Set View Data In Items Array
+        setViewOutputArray(viewps); # Output Json
+        return JSONResponse (
+            status_code = 200,
+            content = {
+                "status": True,
+                "message": "View Data",
+                "view_data": viewps.output_array.get()
+            }
+        )
     except Exception as e:
         raiseAPIError(str(e), 500)
 

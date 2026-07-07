@@ -60,6 +60,7 @@ class DB:
         row = DB.executeDBSelectSingle(stmt)
         return getattr(row, column_name, default) if row else default
 
+    @staticmethod
     def executeDBStatement(stmt):
         with dbconn.begin() as conn:
             schema_name = userps.schema_name.get()
