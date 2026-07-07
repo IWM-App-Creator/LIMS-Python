@@ -36,7 +36,8 @@ def getAssociationUsers():
     if associationps.col_p_val.get() not in (None, "", 0):
         stmt = stmt.where(assousers.c.col_p_val == associationps.col_p_val.get())
     stmt = stmt.where(assousers.c.is_delete == 0)
-    return stmt
+    stmt = stmt.order_by(assousers.c.srno.asc())
+    return DB.executeDBSelect(stmt)
 
 def getAssociationViews():
     assoviews = DB.getTableMeta("sys_association_view").alias("av")
@@ -58,4 +59,4 @@ def getAssociationDesignation():
     if associationps.designation_id.get() not in (None, "", 0):
         stmt = stmt.where(asso_designation.c.designation_id == associationps.designation_id.get())
     stmt = stmt.where(asso_designation.c.is_delete == 0)
-    return stmt
+    return stmt    

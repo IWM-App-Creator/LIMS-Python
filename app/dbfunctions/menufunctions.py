@@ -1,106 +1,57 @@
 from app.utils.common import select, DB, JSONResponse, raiseAPIError, userps
+from app.properties.menuproperties import menups
 
-def getMenuCentre():
-    user_id = userps.user_id.get() # Get User ID
-    # m_centre_id = menups.m_centre_id.get() # Get User ID
-    # is_active = menups.is_active.get() # Get User ID
-    # Prepare Query
-    tblmcentre = DB.getTableMeta("sys_dynamic_menu_centre").alias("mc")
-    stmt = select(tblmcentre).where(tblmcentre.c.is_delete == 0)
-    # if m_centre_id not in (None, ""):
-    #     stmt = stmt.where(tblmcentre.c.m_centre_id == m_centre_id)
+def getDynamicMenu():
+    dync_menu = DB.getTableMeta("sys_dynamic_menu").alias("sdm")
+    stmt = (
+        select(dync_menu)
+    )
+    if menups.m_centre_id.get() not in (None, "", 0):
+        stmt = stmt.where(dync_menu.c.m_centre_id == menups.m_centre_id.get())
+    stmt = stmt.where(dync_menu.c.created_by == userps.user_id.get())
+    stmt = stmt.where(dync_menu.c.is_delete == 0)
+    return DB.executeDBSelect(stmt)
 
-    # return DB.executeDBSelectSingle(stmt)
-
-
-    # view_id = viewps.view_id.get()
-    # tblview = DB.getTableMeta("sys_new_dynamic_view").alias("dyncv")
-    # stmt = (select(tblview)).where(tblview.c.is_delete == 0)
-    # is_single = 0
-    # if view_id not in (None, "", 0):
-    #     stmt = stmt.where(tblview.c.view_id == view_id)
-    #     is_single = 1
-    # if is_single == 1 : # Return Single Value 
-    #     return DB.executeDBSelectSingle(stmt)
-    # else : # Return Array Value 
-    #     return DB.executeDBSelect(stmt)
-    
-    # $menuc = DB::table('sys_dynamic_menu_centre')->where('m_centre_id', $m_center_id)->first();
-    #                     if($menuc) {
-    #                         $centre_name = $menuc->centre_name;
-    #                         $data = array();
-    #                         $data['centre_name'] = $centre_name;
-    #                         $data['ref_m_c_id'] = $m_center_id;
-    #                         $data['is_public'] = 0;
-    #                         $data['is_active'] = 0;
-    #                         $data['created_by'] = $user_id;
-    #                         $data['created_date'] = date('Y-m-d H:i:s');
-    #                         $new_m_centre_id = DB::table('sys_dynamic_menu_centre')->insertGetId($data);
-    #                         $this->copyMenuList($m_center_id, $new_m_centre_id, $user_id, $userdtlarr);
-    #                         $m_centre_id = $new_m_centre_id;
-    #                     }
-
-def getMenuFromMenuCentre():
-    print(getMenuFromMenuCentre)
+def getDynamicMenuCenter():
+    dync_menu_cntr = DB.getTableMeta('sys_dynamic_menu_centre').alias('sdmc')
+    stmt = (
+        select(dync_menu_cntr)
+    )
+    if menups.m_centre_id.get() not in (None, "", 0):
+        stmt = stmt.where(dync_menu_cntr.c.m_centre_id == menups.m_centre_id.get())
+    if menups.is_public.get() not in (None, "", 0):
+        stmt = stmt.where(dync_menu_cntr.c.is_public == menups.is_public.get())
+    if menups.is_active.get() not in (None, "", 0):
+        stmt = stmt.where(dync_menu_cntr.c.is_active == menups.is_active.get())
+    stmt = stmt.where(dync_menu_cntr.c.created_by == userps.user_id.get())
+    stmt = stmt.where(dync_menu_cntr.c.is_delete == 0)
+    return DB.executeDBSelect(stmt)
 
 def getUserMenuList():
-    user_id = userps.user_id.get() # Get User ID
-    m_centre_id = 0
-    usr_flag = 0
-    # ---------------------------------------
-    # Check user's active menu centre
-    # ---------------------------------------
-    sys_dynamic_menu_centre = DB.getTableMeta("sys_dynamic_menu_centre").alias("sdmc")
-    stmt = (
-        select(sys_dynamic_menu_centre)
-        .where(sys_dynamic_menu_centre.c.is_active == 1)
-        .where(sys_dynamic_menu_centre.c.is_delete == 0)
-        .where(sys_dynamic_menu_centre.c.created_by == user_id)
-    )
-    m_centre_id = DB.getSingleColumnValue(stmt, "m_centre_id", 0)
-    if m_centre_id in (None, "", 0):
-        # ---------------------------------------
-        # Get default menu centre from association
-        # ---------------------------------------
-        sys_association_users = DB.getTableMeta("sys_association_users").alias("sau")
-        stmt = (
-            select(sys_association_users.c.defmenucntr)
-            .where(sys_association_users.c.user_id == user_id)
-            .where(sys_association_users.c.is_delete == 0)
-            .order_by(sys_association_users.c.srno.asc())
-        )
-        m_centre_id = DB.getSingleColumnValue(stmt, "defmenucntr", 0)
-        if m_centre_id in (None, "", 0):
-            usr_flag = 1
-    # ---------------------------------------
-    # Get side menus
-    # ---------------------------------------
-    sys_dynamic_menu = DB.getTableMeta("sys_dynamic_menu").alias("sdm")
-    sys_dynamic_view = DB.getTableMeta("sys_dynamic_view").alias("sdv")
-    sys_custom_view = DB.getTableMeta("sys_custom_view").alias("scv")
+    dync_menu = DB.getTableMeta("sys_dynamic_menu").alias("sdm")
+    dync_view = DB.getTableMeta("sys_dynamic_view").alias("sdv")
+    custom_view = DB.getTableMeta("sys_custom_view").alias("scv")
     stmt = (
         select(
-            sys_dynamic_menu,
-            sys_dynamic_view.c.url,
-            sys_custom_view.c.view_url
+            dync_menu,
+            dync_view.c.url,
+            custom_view.c.view_url,
         )
         .select_from(
-            sys_dynamic_menu
+            dync_menu
             .outerjoin(
-                sys_dynamic_view,
-                sys_dynamic_view.c.view_id == sys_dynamic_menu.c.view_id
+                dync_view,
+                dync_view.c.view_id == dync_menu.c.view_id
             )
             .outerjoin(
-                sys_custom_view,
-                sys_custom_view.c.custom_view_id == sys_dynamic_menu.c.view_id
+                custom_view,
+                custom_view.c.custom_view_id == dync_menu.c.view_id
             )
         )
-        .where(sys_dynamic_menu.c.m_centre_id == m_centre_id)
-        .where(sys_dynamic_menu.c.is_delete == 0)
+        .where(dync_menu.c.m_centre_id == menups.m_centre_id.get())
+        .where(dync_menu.c.is_delete == 0)
     )
-    if usr_flag == 0:
-        stmt = stmt.where(sys_dynamic_menu.c.created_by == user_id)
-    stmt = stmt.order_by(sys_dynamic_menu.c.rank.asc())
-    sidemenus = DB.executeDBSelect(stmt)
-    print("sidemenus --> ", sidemenus)
-    return sidemenus
+    if menups.usr_flag.get() in (None, "", 0):
+        stmt = stmt.where(dync_menu.c.created_by == userps.user_id.get())
+    stmt = stmt.order_by(dync_menu.c.rank.asc())
+    return DB.executeDBSelect(stmt)
