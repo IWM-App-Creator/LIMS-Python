@@ -24,6 +24,9 @@ ROUTES = [
 for path, handler, methods in ROUTES:
     router.add_api_route(path, handler, methods=methods)
 
+# ViewList
+# Custom List
+# Forms
 
 # Route::any('view/getids', 'App\Http\Controllers\ModelData\DynamicViewAPIController@getPrimaryKeyIds');
 

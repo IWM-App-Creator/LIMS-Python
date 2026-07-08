@@ -4,13 +4,28 @@ from app.controllers.v1 import menucontroller as menuapi
 router = APIRouter(prefix = "/menu")
 
 ROUTES = [
+    # Menu Centre API
+    ("/mcget", menuapi.getMenuCentre, ["GET"]),
+    ("/mcsave", menuapi.saveMenuCentre, ["GET"]),
+    ("/mcactive", menuapi.setMenuCentreActive, ["GET"]),
+    ("/mcreset", menuapi.resetMenuCentre, ["GET"]),
+    ("/mccopy", menuapi.copyMenuCentre, ["GET"]),
+    
+    # Menu's API
     ("/get", menuapi.getUserMenu, ["GET"]),
     ("/save", menuapi.saveUserMenu, ["GET"]),
+    ("/update", menuapi.updateUserMenu, ["GET"]),
+    ("/sort", menuapi.saveMenuSorting, ["GET"]),
+    ("/remove", menuapi.removeUserMenu, ["GET"]),
+    ("/geticons", menuapi.getMenuIcons, ["GET"]),
 ]
 
 for path, handler, methods in ROUTES:
     router.add_api_route(path, handler, methods=methods)
 
+# ViewList
+# Custom List
+# Forms
 
 # Route::any('menu/get', 'App\Http\Controllers\ModelData\UserMenuAPIController@getMenuList');
 # Route::any('menu/save', 'App\Http\Controllers\ModelData\UserMenuAPIController@saveUserMenu');

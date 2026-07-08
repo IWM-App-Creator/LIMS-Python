@@ -5,6 +5,27 @@ from app.properties.associationproperties import associationps
 from app.properties.menuproperties import menups
 from app.functions.menuhelper import getMenuCenterId, setUserMenusOutput
 
+# --------------------------
+# Menu Centre
+# --------------------------
+def getMenuCentre(request: Request):
+    print("getMenuCentre")
+
+def saveMenuCentre(request: Request):
+    print("saveMenuCentre")
+
+def setMenuCentreActive(request: Request):
+    print("setMenuCentreActive")
+
+def resetMenuCentre(request: Request):
+    print("resetMenuCentre")
+
+def copyMenuCentre(request: Request):
+    print("copyMenuCentre")
+
+# --------------------------
+# Menu
+# --------------------------
 def getUserMenu(request: Request):
     try:
         params = RequestData.params(request)
@@ -24,3 +45,16 @@ def getUserMenu(request: Request):
         raiseAPIError(str(e), 500)
 
 def saveUserMenu(request: Request):
+    print("saveUserMenu")
+
+def updateUserMenu(request: Request):
+    print("updateUserMenu")
+
+def saveMenuSorting(request: Request):
+    print("saveMenuSorting")
+
+def removeUserMenu(request: Request):
+    print("removeUserMenu")
+
+def getMenuIcons(request: Request):
+    print("getMenuIcons")
