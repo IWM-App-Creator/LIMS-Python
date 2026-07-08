@@ -51,3 +51,47 @@ def getTimeAgoValue(created_date: str) -> str:
         return dt.strftime("%d/%m/%y")
     except Exception:
         return ""
+
+# %Y-%m-%d	2026-07-08
+# %d/%m/%Y	08/07/2026
+# %m/%d/%Y	07/08/2026
+# %d-%m-%Y	08-07-2026
+# %m-%d-%Y	07-08-2026
+# %d.%m.%Y	08.07.2026
+# %Y/%m/%d	2026/07/08
+# %d %b %Y	08 Jul 2026
+# %d %B %Y	08 July 2026
+# %b %d, %Y	Jul 08, 2026
+# %B %d, %Y	July 08, 2026
+# %A, %d %B %Y	Wednesday, 08 July 2026
+# %a, %d %b %Y	Wed, 08 Jul 2026
+# %Y-%m-%d %H:%M:%S	2026-07-08 14:30:45
+# %Y-%m-%d %H:%M	2026-07-08 14:30
+# %d/%m/%Y %H:%M:%S	08/07/2026 14:30:45
+# %d/%m/%Y %H:%M	08/07/2026 14:30
+# %m/%d/%Y %I:%M:%S %p	07/08/2026 02:30:45 PM
+# %d-%b-%Y %H:%M	08-Jul-2026 14:30
+# %d %B %Y %I:%M %p	08 July 2026 02:30 PM
+# %H:%M:%S	14:30:45
+# %H:%M	14:30
+# %I:%M:%S %p	02:30:45 PM
+# %I:%M %p	02:30 PM
+# %Y	4-digit year	2026
+# %y	2-digit year	26
+# %m	Month (01-12)	07
+# %d	Day (01-31)	08
+# %H	Hour (00-23)	14
+# %I	Hour (01-12)	02
+# %M	Minute	30
+# %S	Second	45
+# %p	AM/PM	PM
+# %a	Short weekday	Wed
+# %A	Full weekday	Wednesday
+# %b	Short month	Jul
+# %B	Full month	July
+# %j	Day of year	189
+# %U	Week number (Sunday first)	27
+# %W	Week number (Monday first)	27
+# %f	Microseconds	123456
+# %z	UTC offset	+0800
+# %Z	Timezone name	AWST
