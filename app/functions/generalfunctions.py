@@ -56,17 +56,6 @@ def getWSUserRole(ws_role_id: int) -> str:
         2: "User"
     }.get(ws_role_id, "No Access")
 
-def convertDateToUserZone(current_date: str, user_timezone: str) -> str:
-    try:
-        if user_timezone and user_timezone != "Australia/Perth":
-            dt = datetime.strptime(current_date, "%Y-%m-%d %H:%M:%S")
-            dt = dt.replace(tzinfo=ZoneInfo("Australia/Perth"))
-            dt = dt.astimezone(ZoneInfo(user_timezone))
-            return dt.strftime("%Y-%m-%d %H:%M:%S")
-    except (ValueError, ZoneInfoNotFoundError):
-        pass
-    return current_date
-
 def addUpdateToJson(generalps, updkey, newval, originaljson):
     generalps.itmjson.set(originaljson)
     generalps.jsonkey.set(updkey)

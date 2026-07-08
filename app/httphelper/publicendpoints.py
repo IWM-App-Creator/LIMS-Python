@@ -3,12 +3,12 @@ PUBLIC_APIS = {
     "/openapi.json",
     "/favicon.ico",
     "/backend/docs",
+    "/api/v1/workspace/isvalidws",
+    "/backend/api/v1/workspace/isvalidws",
 }
 
 PUBLIC_PREFIXES = (
     "/api/v1/auth/",
-    "/api/v1/workspace/isvalidws",
-    "/redoc",
     "/backend/api/v1/auth/",
 )
 

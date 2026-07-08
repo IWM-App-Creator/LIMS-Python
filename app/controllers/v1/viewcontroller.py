@@ -80,12 +80,7 @@ def saveTableData (request: Request):
 def createBlankView (request: Request):
     # nowWithTimeZone
     # getTimeAgoValue
-    # convertDateToUserZone(current_date: str, user_timezone: str)
-    print("createBlankView  --> ", nowWithTimeZone())
-    print("createBlankView  --> ", formatDate(created_date = "2026-07-08 10:10:10", format = "%d/%m/%Y"))
-    print("createBlankView  --> ", formatDate(created_date = "2026-07-08 10:10:10", format = "%d/%m/%y"))
-    print("getTimeAgoValue  --> ", getTimeAgoValue(created_date = "2026-07-08 10:10:10"))
-    
+    print("createBlankView  --> ", nowWithTimeZone())    
 
 # http://xytovet.localhost:8000/api/v1/view/getlist
 def getViewList (request: Request):
