@@ -1,5 +1,5 @@
 from datetime import datetime
-from app.utils.common import select, DB, userps, nowWithTimeZone
+from app.utils.common import select, DB, userps, update, func, nowWithTimeZone
 
 def getNotificationList(notifyps):
     view_id = viewps.view_id.get()

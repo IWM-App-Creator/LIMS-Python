@@ -11,12 +11,6 @@ async def error_handler(request: Request, call_next):
         response = await call_next(request)
         return response
     except Exception as ex:
-        # try:
-        #     logps.error_msg.set(message)
-        #     saveErrorLog()
-        # except Exception:
-        #     # Never let logging prevent the API from returning the error
-        #     pass
         logger.exception("Unhandled request error: %s %s", request.method, request.url)
         return JSONResponse (
             status_code = 500,

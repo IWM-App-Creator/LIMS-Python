@@ -4,7 +4,7 @@ from app.properties.viewproperties import viewps
 from app.dbfunctions.viewfunctions import getViewDataByID
 from app.functions.viewhelper import viewhlp
 from app.functions.generalfunctions import sortObjectsByKey
-from app.dbfunctions.logfunctions import saveErrorLog
+from app.dbfunctions.logfunctions import saveErrorLogtoDB
 
 # http://xytovet.localhost:8000/api/v1/view/getdata?view_id=178
 def getViewData(request: Request):
@@ -71,7 +71,7 @@ def getViewData(request: Request):
             }
         )
     except Exception as e:
-        saveErrorLog ("View", viewps.view_id.get(), "getViewData", str(e)) # Log Error To DB
+        saveErrorLogtoDB ("View", viewps.view_id.get(), "getViewData", str(e)) # Log Error To DB
         raiseAPIError(str(e), 500)
 
 # http://xytovet.localhost:8000/api/v1/view/savetbldata

@@ -231,7 +231,6 @@ class ViewHelper:
                     continue
                 dbcol = f"{col_id}{col_name}_{qry_alias}"
                 item[f"{col_id}|{col_name}"] = str(getattr(data, dbcol, ""))
-
                 # Display label for lookup/user columns
                 if (isUserColumn(col_name, 0) or (colhd["col_type"] in ("MAPCOL", "DISPLAYAS") and colhd["lookup_colid"] > 0) ):
                     lbl_col = f"{col_id}{col_name}_lbl_{qry_alias}"
