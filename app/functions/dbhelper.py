@@ -1,3 +1,18 @@
+from app.functions.generalfunctions import addUpdateJson
+
+def setColOptions(dbps):
+    col_options = {}
+    addUpdateJson(col_options, "length", dbps.length.get())
+    addUpdateJson(col_options, "is_index", dbps.is_index.get())
+    addUpdateJson(col_options, "datatype", dbps.datatype.get())
+    addUpdateJson(col_options, "is_unique", dbps.is_unique.get())
+    addUpdateJson(col_options, "is_primary", dbps.is_primary.get())
+    addUpdateJson(col_options, "default_val", dbps.default_val.get())
+    addUpdateJson(col_options, "notify_user", dbps.notify_user.get())
+    addUpdateJson(col_options, "is_mandatory", dbps.is_mandatory.get())
+    addUpdateJson(col_options, "actv_log_cols", dbps.actv_log_cols.get())
+    addUpdateJson(col_options, "col_data_items", dbps.col_data_items.get())
+    dbps.col_options.set(col_options)
 
 def isStatusColumn(colname: str) -> bool:
     return colname.startswith("status_")

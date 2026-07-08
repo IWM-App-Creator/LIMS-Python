@@ -40,9 +40,22 @@ class DB:
             result = conn.execute(stmt)
             if result.inserted_primary_key:
                 return result.inserted_primary_key[0]
-
             return None
 
+    @staticmethod
+    def executeDBMultiInsert(stmt, values = None):
+        with dbconn.begin() as conn:
+            schema_name = userps.schema_name.get()
+            if schema_name:
+                conn.execute(text(f"USE `{schema_name}`"))
+            if values is None:
+                result = conn.execute(stmt)
+            else:
+                result = conn.execute(stmt, values)
+            if result.inserted_primary_key:
+                return result.inserted_primary_key[0]
+            return result.rowcount
+        
     @staticmethod
     def executeDBUpdate(stmt):
         with dbconn.begin() as conn:

@@ -7,7 +7,7 @@ class viewproperties:
         self.view_id = ContextVar("view_id", default = "0")
         self.view_name = ContextVar("view_name", default = "")
         self.view_url = ContextVar("view_url", default = "")
-        self.view_type = ContextVar("view_type", default = "")
+        self.view_type = ContextVar("view_type", default = "Table")
         self.view_qry = ContextVar("view_qry", default = "")
 
         self.view_qry_data = ContextVar("view_qry_data", default = [])
@@ -50,5 +50,8 @@ class viewproperties:
 
         # View Output Properties
         self.output_array = ContextVar("output_array", default = [])
-
+        
+        # Create View Properties
+        self.blank_view_cols = ContextVar("blank_view_cols", default = 0)
+        self.pin_to_menu = ContextVar("pin_to_menu", default = 0)
 viewps = viewproperties()

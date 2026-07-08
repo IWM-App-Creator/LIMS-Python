@@ -7,10 +7,14 @@ class DBProperties:
         self.table_name = ContextVar("table_name", default = "")
         self.table_alias = ContextVar("table_alias", default = "")
         
+        self.primary_col_nm = ContextVar("primary_col_nm", default = "")
+        self.primary_col_alias = ContextVar("primary_col_alias", default = "")
+
         # Columns Properties
         self.col_id = ContextVar("col_id", default = 0)
         self.col_name = ContextVar("col_name", default = "")
         self.col_alias = ContextVar("col_name", default = "")
+        self.col_options = ContextVar("col_options", default = {})
         self.col_key = ContextVar("col_key", default = 0)
         self.datatype = ContextVar("datatype", default = "")
         self.length = ContextVar("length", default = "")
@@ -18,6 +22,10 @@ class DBProperties:
         self.default_val = ContextVar("default_val", default = "")
         self.is_primary = ContextVar("is_primary", default = "")
         self.is_index = ContextVar("is_index", default = "")
+        self.is_unique = ContextVar("is_unique", default = "")
+        self.notify_user = ContextVar("notify_user", default = "")
+        self.actv_log_cols = ContextVar("actv_log_cols", default = "")
+        self.col_data_items = ContextVar("col_data_items", default = "")
 
         # All DB Table List & Table Cols
         self.all_db_tables = ContextVar("all_db_tables", default = "")

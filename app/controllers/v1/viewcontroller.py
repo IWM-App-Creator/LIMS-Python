@@ -1,10 +1,11 @@
 from app.utils.common import DB, Request, RequestData, JSONResponse, raiseAPIError, raiseInvalidError, nowWithTimeZone
-from app.functions.datetime import formatDate, getTimeAgoValue
-from app.properties.viewproperties import viewps
 from app.dbfunctions.viewfunctions import getViewDataByID
-from app.functions.viewhelper import viewhlp
-from app.functions.generalfunctions import sortObjectsByKey
+from app.dbfunctions.dbtablesfunctions import insertTableDataToDB, insertUpdateTblCol
 from app.dbfunctions.logfunctions import saveErrorLogtoDB
+from app.functions.viewhelper import viewhlp, createviewhlp
+from app.functions.generalfunctions import sortObjectsByKey, generateRandomString
+from app.properties.viewproperties import viewps
+from app.properties.dbproperties import dbps
 
 # http://xytovet.localhost:8000/api/v1/view/getdata?view_id=178
 def getViewData(request: Request):
@@ -76,22 +77,71 @@ def getViewData(request: Request):
 
 # http://xytovet.localhost:8000/api/v1/view/savetbldata
 def saveTableData (request: Request):
-    print("saveTableData --> ")
+    try:
+        print("saveTableData --> ")
+    except Exception as e:
+        # saveErrorLogtoDB ("View", viewps.view_id.get(), "getViewData", str(e)) # Log Error To DB
+        raiseAPIError(str(e), 500)
 
-# http://xytovet.localhost:8000/api/v1/view/create
+# http://xytovet.localhost:8000/api/v1/view/create?view_name=Python View&view_type=Table&pin_to_menu=1
 def createBlankView (request: Request):
-    # nowWithTimeZone
-    # getTimeAgoValue
-    print("createBlankView  --> ", nowWithTimeZone())    
+    try:
+        params = RequestData.params(request)
+        view_name = params.get("view_name", "")
+        viewps.view_name.set(view_name)
+        viewps.view_type.set(params.get("view_type", ""))
+        viewps.pin_to_menu.set(params.get("pin_to_menu", 0))
+
+        # dbps.primary_col_nm.set(view_name.lower().replace(" ", "_") + "_id") 
+        # dbps.primary_col_alias.set(view_name + " ID")
+        # print("primary_col_nm --> ", dbps.primary_col_nm.get())
+        # print("primary_col_alias --> ", dbps.primary_col_nm.get())
+
+        # Step 1 Insert Into Sys DB Table
+        # dbps.table_alias.set(view_name)
+        # dbps.table_name.set(generateRandomString())
+        # table_id = insertTableDataToDB(dbps)
+        # if not table_id:
+        #     return raiseInvalidError("Table Not Created ", 401)
+        # dbps.table_name.set(table_id)
+        # print("table_id --> ", table_id)
+        # table_id = 204
+        # table_name = "krxtqesaep"
+        dbps.table_name.set(204)
+
+        # Step 2 Insert Into Sys DB Table Col
+        createviewhlp.getDefaultAddViewCols(viewps)
+
+        blank_view_cols = viewps.blank_view_cols.get()
+        for blnkvcol in blank_view_cols:
+            print("blnkvcol --> ", blnkvcol)
+        # insertUpdateTblCol(dbps)
+
+
+        # print("blank_view_cols --> ", viewps.blank_view_cols.get())
+        # Step 3 Insert Into Sys View Table
+
+
+        # print("createBlankView  --> ", nowWithTimeZone())
+    except Exception as e:
+        # saveErrorLogtoDB ("View", viewps.view_id.get(), "getViewData", str(e)) # Log Error To DB
+        raiseAPIError(str(e), 500)
 
 # http://xytovet.localhost:8000/api/v1/view/getlist
 def getViewList (request: Request):
-    print("getViewList --> ")
+    try:
+        print("getViewList --> ")
+    except Exception as e:
+        # saveErrorLogtoDB ("View", viewps.view_id.get(), "getViewData", str(e)) # Log Error To DB
+        raiseAPIError(str(e), 500)
 
 # http://xytovet.localhost:8000/api/v1/view/childstatus
 def getViewChildStatus (request: Request):
-    print("getViewChildStatus --> ")
-
+    try:
+        print("getViewChildStatus --> ")
+    except Exception as e:
+        # saveErrorLogtoDB ("View", viewps.view_id.get(), "getViewData", str(e)) # Log Error To DB
+        raiseAPIError(str(e), 500)
 
 # http://xytovet.localhost:8000/api/v1/view/duplicate
 def duplicateFullView (request: Request):

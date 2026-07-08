@@ -239,3 +239,32 @@ class ViewHelper:
         viewps.item_list.set(item_list)
 
 viewhlp = ViewHelper()
+
+class CreateViewHelper:
+    
+    @staticmethod
+    def getDefaultAddViewCols(viewps):
+        view_name = viewps.view_name.get()
+        primary_col_nm = view_name.lower().replace(" ", "_") + "_id"
+        primary_col_alias = view_name + " ID"
+        print("primary_col_nm --> ", primary_col_nm)
+        print("primary_col_alias --> ", primary_col_alias)
+        blank_view_cols = []
+        blank_view_cols.append({"col_name": primary_col_nm, "col_alias": primary_col_alias, "datatype": "bigint", "col_type": "NUMBER", "colkey": 1, "length": 11, "is_primary": 1, "default_val": 0, "rank": 10 })
+
+        blank_view_cols.append({"col_name": "status_1", "col_alias": "Status", "datatype": "int", "col_type": "YESNO", "length": 4, "is_index": 1, "default_val": 0, "rank": 20})
+
+        blank_view_cols.append({"col_name": "is_delete", "col_alias": "ID Deleted", "datatype": "int", "length": 1, "is_index": 1, "actv_log_cols": 1, "default_val": 0, "rank": 30})
+        
+        blank_view_cols.append({"col_name": "is_metadata", "col_alias": "Metadata", "datatype": "json", "is_index": 1, "rank": 40})
+        
+        blank_view_cols.append({"col_name": "created_by", "col_alias": "Created By", "datatype": "bigint", "col_type": "FULLNAME", "colkey": 2, "lookup_colid": 492, "length": 11, "is_index": 1, "default_val": 0, "rank": 50})
+        
+        blank_view_cols.append({"col_name": "created_date", "col_alias": "Created Date", "datatype": "datetime", "col_type": "DATETIME", "length": "", "rank": 60})
+        
+        viewps.blank_view_cols.set(blank_view_cols) # Set To Property
+
+createviewhlp = CreateViewHelper()
+
+# TO DO --> Create above format in helper, when new column get added, reuse col and view col functions.
+# Generate Create & Alter Query

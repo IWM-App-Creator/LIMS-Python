@@ -22,8 +22,10 @@ def getHostName(request):
     userps.req_host.set(host)
     userps.req_subdomain.set(hostsd.split(".")[0])
 
-def generateRandomDBName(length: int = 10) -> str:
-    alphabet = string.ascii_lowercase + string.digits
+def generateRandomString(length: int = 10, hasdigits: int = 0) -> str:
+    alphabet = string.ascii_lowercase
+    if hasdigits == 1 :
+        alphabet = string.ascii_lowercase + string.digits
     return "".join(secrets.choice(alphabet) for _ in range(length))
 
 def formatUserDisplayName(first_name: str = "", last_name: str = "", format_type: str = "") -> str:
@@ -56,12 +58,9 @@ def getWSUserRole(ws_role_id: int) -> str:
         2: "User"
     }.get(ws_role_id, "No Access")
 
-def addUpdateToJson(generalps, updkey, newval, originaljson):
-    generalps.itmjson.set(originaljson)
-    generalps.jsonkey.set(updkey)
-    generalps.jsonval.set(newval)
-    generalps.operation.set("ADD_UPDATE")
-    modifyJsonObject(generalps)
+def addUpdateJson(data: dict, key: str, value):
+    if value not in (None, ""):
+        data[key] = value
 
 def modifyJsonObject(generalps):
     try:

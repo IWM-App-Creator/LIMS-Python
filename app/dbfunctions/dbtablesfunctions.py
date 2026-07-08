@@ -49,7 +49,7 @@ def getDBTableData(dbps):
     # print("stmt --> ", stmt)
     return DB.executeDBSelect(stmt)
 
-def saveTableData(dbps) :
+def insertTableDataToDB(dbps) :
     table_id = dbps.table_id.get()
     table_name = dbps.table_name.get()
     table_alias = dbps.table_alias.get()
@@ -88,7 +88,7 @@ def insertUpdateTable(dbps):
     table_alias = dbps.table_alias.get()
     user_id = userps.user_id.get()
     values = {
-        "table_name": table_name,
+        # "table_name": table_name,
         "table_alias": table_alias,
         "is_visible": 1,
         "created_by": user_id,
@@ -125,42 +125,31 @@ def insertUpdateTable(dbps):
         table_id = DB.executeDBInsert(stmt)
     return table_id
 
-def saveTableCol(dbps) :
-    table_id = dbps.table_id.get()
-    table_name = dbps.table_name.get()
-    table_alias = dbps.table_alias.get()
-    user_id = userps.user_id.get()
-    tblmaster = DB.getTableMeta("sys_db_tables")
-    stmt = (
-        insert(tblmaster)
-            .values(
-                table_name = table_name,
-                table_alias = table_alias,
-                is_visible = 1,
-                created_by = user_id,
-                created_date = nowWithTimeZone()
-            )
-    )
-    table_id = DB.executeDBInsert(stmt)
-    dbps.table_id.set(table_id)
-    return table_id
+def insertUpdateTblCol(dbps) :
+    tblcols = DB.getTableMeta("sys_new_db_tables_cols")
+    values = {
+        "table_id": dbps.table_id.get(),
+        "col_name": dbps.col_name.get(),
+        "col_alias": dbps.col_alias.get(),
+        "col_options": dbps.col_options.get(),
+        "rank": dbps.rank.get(),
+        "created_by": userps.user_id.get(),
+        "created_date": nowWithTimeZone()
+    }
 
-def saveTableData(dbps) :
-    table_id = dbps.table_id.get()
-    table_name = dbps.table_name.get()
-    table_alias = dbps.table_alias.get()
-    user_id = userps.user_id.get()
-    tblmaster = DB.getTableMeta("sys_db_tables")
-    stmt = (
-        insert(tblmaster)
-            .values(
-                table_name = table_name,
-                table_alias = table_alias,
-                is_visible = 1,
-                created_by = user_id,
-                created_date = nowWithTimeZone()
-            )
-    )
-    table_id = DB.executeDBInsert(stmt)
-    dbps.table_id.set(table_id)
-    return table_id
+    # stmt = (insert(tblcols).values(**values))
+    # col_id = DB.executeDBInsert(stmt)
+    # return col_id
+
+    col_id = dbps.col_id.get()
+    if col_id > 0 : # Update existing record
+        stmt = (
+            update(tblcols)
+            .where(tblcols.c.col_id == col_id)
+            .values(**values)
+        )
+        DB.executeDBUpdate(stmt)
+    else :  # Insert new record
+        stmt = insert(tblcols).values(**values)
+        col_id = DB.executeDBInsert(stmt)
+    return col_id
