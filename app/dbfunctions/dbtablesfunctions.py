@@ -110,3 +110,43 @@ def insertUpdateTable(dbps):
         stmt = insert(tblmaster).values(**values)
         table_id = DB.executeDBInsert(stmt)
     return table_id
+
+def saveTableCol(dbps) :
+    table_id = dbps.table_id.get()
+    table_name = dbps.table_name.get()
+    table_alias = dbps.table_alias.get()
+    user_id = userps.user_id.get()
+    tblmaster = DB.getTableMeta("sys_db_tables")
+    stmt = (
+        insert(tblmaster)
+            .values(
+                table_name = table_name,
+                table_alias = table_alias,
+                is_visible = 1,
+                created_by = user_id,
+                created_date = nowWithTimeZone()
+            )
+    )
+    table_id = DB.executeDBInsert(stmt)
+    dbps.table_id.set(table_id)
+    return table_id
+
+def saveTableData(dbps) :
+    table_id = dbps.table_id.get()
+    table_name = dbps.table_name.get()
+    table_alias = dbps.table_alias.get()
+    user_id = userps.user_id.get()
+    tblmaster = DB.getTableMeta("sys_db_tables")
+    stmt = (
+        insert(tblmaster)
+            .values(
+                table_name = table_name,
+                table_alias = table_alias,
+                is_visible = 1,
+                created_by = user_id,
+                created_date = nowWithTimeZone()
+            )
+    )
+    table_id = DB.executeDBInsert(stmt)
+    dbps.table_id.set(table_id)
+    return table_id
