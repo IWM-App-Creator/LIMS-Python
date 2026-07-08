@@ -4,9 +4,10 @@ from app.properties.viewproperties import viewps
 from app.dbfunctions.viewfunctions import getViewDataByID
 from app.functions.viewhelper import viewhlp
 from app.functions.generalfunctions import sortObjectsByKey
+from app.dbfunctions.logfunctions import saveErrorLog
 
 # http://xytovet.localhost:8000/api/v1/view/getdata?view_id=178
-def getViewData (request: Request):
+def getViewData(request: Request):
     try:
         params = RequestData.params(request)
         viewhlp.setViewInputParam(viewps, params) # Get Input Param Data
@@ -70,6 +71,7 @@ def getViewData (request: Request):
             }
         )
     except Exception as e:
+        saveErrorLog ("View", viewps.view_id.get(), "getViewData", str(e))
         raiseAPIError(str(e), 500)
 
 # http://xytovet.localhost:8000/api/v1/view/savetbldata

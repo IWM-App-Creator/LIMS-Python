@@ -1,4 +1,4 @@
-from app.utils.common import select, DB, Request, RequestData, JSONResponse, raiseAPIError, globalps
+from app.utils.common import Request
 
 def getTestData (request: Request):
     print("getTestData --> ")
