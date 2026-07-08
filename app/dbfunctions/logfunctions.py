@@ -1,7 +1,4 @@
-from app.functions.datetime import now
-from sqlalchemy import insert, delete
-from app.utils.common import  DB, userps
-
+from app.utils.common import DB, insert, delete, userps, nowWithTimeZone
 from app.properties.logproperties import logps
 
 def saveErrorLog ():
@@ -15,7 +12,7 @@ def saveErrorLog ():
             desc = logps.desc.get(),
             error_msg = logps.error_msg.get(),
             created_by = userps.user_id.get(),
-            created_date = now()
+            created_date = nowWithTimeZone()
         )
     )
     return DB.executeDBInsert(stmt)

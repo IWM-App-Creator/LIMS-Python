@@ -3,7 +3,8 @@ from zoneinfo import ZoneInfo
 
 PERTH_TZ = ZoneInfo("Australia/Perth")
 
-def now():
+def nowWithTimeZone(format: None):
+    print("nowWithTimeZone --> ", datetime.now(PERTH_TZ))
     return datetime.now(PERTH_TZ)
     # Usage 
     # read_date = now().strftime("%Y-%m-%d %H:%M:%S")

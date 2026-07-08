@@ -1,14 +1,8 @@
-from app.utils.common import select, DB, Request, RequestData, JSONResponse, raiseAPIError, globalps
-import json
+from app.utils.common import DB, Request, RequestData, JSONResponse, raiseAPIError
 from app.properties.viewproperties import viewps
-from app.properties.dbproperties import dbps
-from app.dbfunctions.dbtablesfunctions import getDBTableData
 from app.dbfunctions.viewfunctions import getViewDataByID
-from app.dbfunctions.viewlayoutfunctions import getViewLayoutDataByID
 from app.functions.viewhelper import viewhlp
-# setViewInputParam, setViewDataProperties, setViewTableCols, setViewLayout, setViewPaging, setViewSorting, getRecordCount, setViewItemArray, setViewOutputArray
 from app.functions.generalfunctions import sortObjectsByKey
-
 
 # http://xytovet.localhost:8000/api/v1/view/getdata?view_id=178
 def getViewData (request: Request):

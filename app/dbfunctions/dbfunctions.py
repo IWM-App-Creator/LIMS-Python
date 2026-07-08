@@ -1,5 +1,4 @@
-from sqlalchemy import text
-from app.utils.common import select, DB, userps
+from app.utils.common import DB, select, text, userps
 import re
 
 def getDBTablesFromSchema(dbps):

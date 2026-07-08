@@ -1,5 +1,4 @@
-from sqlalchemy import func
-from app.utils.common import select, DB
+from app.utils.common import DB, select, func
 
 def getAssociationData(associationps):
     association = DB.getTableMeta("sys_associations").alias("a")

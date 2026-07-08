@@ -1,5 +1,4 @@
-from sqlalchemy import select
-from app.utils.common import DB, JSONResponse, raiseAPIError, userps
+from app.utils.common import DB, select, JSONResponse, raiseAPIError, userps
 from app.dbfunctions.userfunctions import getUserDataFromDB
 from app.properties.dbproperties import dbps
 from app.functions.menuhelper import getMenuCenterId, setUserMenusOutput

@@ -1,3 +1,4 @@
+
 def isStatusColumn(colname: str) -> bool:
     return colname.startswith("status_")
 

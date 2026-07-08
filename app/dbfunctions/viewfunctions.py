@@ -1,5 +1,4 @@
-from sqlalchemy import func
-from app.utils.common import select, DB, userps
+from app.utils.common import DB, select, userps
 
 def getViewDataByID(viewps):
     view_id = viewps.view_id.get()

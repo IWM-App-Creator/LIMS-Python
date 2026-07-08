@@ -1,6 +1,5 @@
 from datetime import datetime
-from sqlalchemy import select, update, case, func
-from app.utils.common import select, DB, userps
+from app.utils.common import select, DB, userps, nowWithTimeZone
 
 def getNotificationList(notifyps):
     view_id = viewps.view_id.get()

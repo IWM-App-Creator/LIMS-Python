@@ -1,7 +1,4 @@
-from sqlalchemy import func
-from app.utils.common import select, DB
-# from app.properties.usersproperties import userps
-# from app.properties.dbproperties import dbps
+from app.utils.common import DB, select, insert, update, func, userps, nowWithTimeZone
 
 def getDBTableData(dbps):
     table_id = dbps.table_id.get()
@@ -51,3 +48,37 @@ def getDBTableData(dbps):
         stmt = stmt.where(tblcols.c.is_delete == is_del_col)
     # print("stmt --> ", stmt)
     return DB.executeDBSelect(stmt)
+
+def saveTableData(dbps) :
+    table_id = dbps.table_id.get()
+    table_name = dbps.table_name.get()
+    table_alias = dbps.table_alias.get()
+    
+    user_id = userps.user_id.get()
+    tblmaster = DB.getTableMeta("sys_db_tables")
+    stmt = (
+        insert(tblmaster)
+            .values(
+                table_name = table_name,
+                table_alias = table_alias,
+                is_visible = 1,
+                created_by = user_id,
+                created_date = nowWithTimeZone()
+            )
+    )
+    table_id = DB.executeDBInsert(stmt)
+    dbps.table_id.set(table_id)
+    return table_id
+
+def updateTableData(dbps) :
+    table_id = dbps.table_id.get()
+    table_alias = dbps.table_alias.get()
+    tblmaster = DB.getTableMeta("sys_db_tables")
+    stmt = (
+        update(tblmaster)
+        .where(tblmaster.c.table_id == table_id)
+        .values(
+            table_alias = table_alias
+        )
+    )
+    DB.executeDBUpdate(stmt)
