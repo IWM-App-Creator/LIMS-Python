@@ -114,9 +114,12 @@ def createBlankView (request: Request):
 
         blank_view_cols = viewps.blank_view_cols.get()
         for blnkvcol in blank_view_cols:
+            # col_name = getattr(blnkvcol, "col_name", "")
             print("blnkvcol --> ", blnkvcol)
-        # insertUpdateTblCol(dbps)
-
+            print("blnkvcol --> ", blnkvcol.get("col_name", ""))
+            # setColOptions(dbps)
+            # insertUpdateTblCol(dbps)
+            # setColForView(dbps)
 
         # print("blank_view_cols --> ", viewps.blank_view_cols.get())
         # Step 3 Insert Into Sys View Table
