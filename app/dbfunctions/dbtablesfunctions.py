@@ -53,7 +53,6 @@ def saveTableData(dbps) :
     table_id = dbps.table_id.get()
     table_name = dbps.table_name.get()
     table_alias = dbps.table_alias.get()
-    
     user_id = userps.user_id.get()
     tblmaster = DB.getTableMeta("sys_db_tables")
     stmt = (

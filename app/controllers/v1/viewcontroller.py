@@ -1,4 +1,5 @@
-from app.utils.common import DB, Request, RequestData, JSONResponse, raiseAPIError
+from app.utils.common import DB, Request, RequestData, JSONResponse, raiseAPIError, nowWithTimeZone
+from app.functions.datetime import getTimeAgoValue
 from app.properties.viewproperties import viewps
 from app.dbfunctions.viewfunctions import getViewDataByID
 from app.functions.viewhelper import viewhlp
@@ -77,7 +78,15 @@ def saveTableData (request: Request):
 
 # http://xytovet.localhost:8000/api/v1/view/create
 def createBlankView (request: Request):
-    print("createBlankView --> ")
+    # nowWithTimeZone
+    # getTimeAgoValue
+    # convertDateToUserZone(current_date: str, user_timezone: str)
+    print("createBlankView  --> ", nowWithTimeZone())
+    print("createBlankView  --> ", nowWithTimeZone(timezone = "Asia/Kolkata"))
+
+    print("getTimeAgoValue  --> ", getTimeAgoValue(created_date = "2026-07-08 10:10:10", timezone = "Asia/Kolkata"))
+    print("getTimeAgoValue  --> ", getTimeAgoValue(created_date = "2026-07-08 10:10:10"))
+    
 
 # http://xytovet.localhost:8000/api/v1/view/getlist
 def getViewList (request: Request):

@@ -1,20 +1,36 @@
 from datetime import datetime
-from zoneinfo import ZoneInfo
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
-PERTH_TZ = ZoneInfo("Australia/Perth")
+DEFAULT_TZ = "Australia/Perth"
+DEFAULT_FORMAT = "%Y-%m-%d %H:%M:%S"
 
-def nowWithTimeZone(format: None):
-    print("nowWithTimeZone --> ", datetime.now(PERTH_TZ))
-    return datetime.now(PERTH_TZ)
-    # Usage 
-    # read_date = now().strftime("%Y-%m-%d %H:%M:%S")
-    # created_date = now()
-
-def getTimeAgoValue(created_date: str) -> str:
+def getTimeZone(timezone: str | None = None):
     try:
+        tz = ZoneInfo(timezone or DEFAULT_TZ)
+    except ZoneInfoNotFoundError:
+        tz = ZoneInfo(DEFAULT_TZ)
+    return tz
+    
+def nowWithTimeZone(format: str | None = DEFAULT_FORMAT, timezone: str | None = None):
+    tz = getTimeZone(timezone)
+    dt = datetime.now(tz)
+    return dt.strftime(format) if format else dt
+
+def formatDate(created_date: str, fmt: str = "%d/%m/%Y", timezone: str | None = None ) -> str:
+    try:
+        tz = getTimeZone(timezone)
         dt = datetime.strptime(created_date, "%Y-%m-%d %H:%M:%S")
-        dt = dt.replace(tzinfo=PERTH_TZ)
-        now = datetime.now(PERTH_TZ)
+        dt = dt.replace(tzinfo=DEFAULT_TZ).astimezone(tz)
+        return dt.strftime(fmt)
+    except Exception:
+        return ""
+    
+def getTimeAgoValue(created_date: str, timezone: str | None = None ) -> str:
+    try:
+        tz = getTimeZone(timezone)
+        dt = datetime.strptime(created_date, "%Y-%m-%d %H:%M:%S")
+        dt = dt.replace(tzinfo = tz)
+        now = datetime.now(tz)
         elapsed = int((now - dt).total_seconds())
         seconds = elapsed
         minutes = round(elapsed / 60)
