@@ -4,6 +4,18 @@ from app.properties.associationproperties import associationps
 from app.dbfunctions.associationfunctions import getAssociationUsers
 from app.dbfunctions.menufunctions import getDynamicMenuCenter
 
+def setMenuInputParam(menups, params):
+    menups.m_centre_id.set(params.get("m_centre_id", ""))
+    menups.m_type.set(params.get("m_type", 1))
+    menups.view_id.set(params.get("view_id", 0))
+    menups.menu_name.set(params.get("menu_name", ""))
+    menups.menu_icon.set(params.get("menu_icon", ""))
+    menups.menu_color.set(params.get("menu_color", ""))
+    menups.menu_url.set(params.get("menu_url", ""))
+    menups.is_new_tab.set(params.get("is_new_tab", 0))
+    menups.add_custom_view.set(params.get("add_custom_view", 0))
+    menups.is_section.set(params.get("is_section", 0))
+
 def getMenuCenterId(menups):
     menups.usr_flag.set(0)
     menups.is_active.set(1)

@@ -1,19 +1,34 @@
-from app.utils.common import select, or_, DB, userps
+from app.utils.common import select, update, insert, or_, DB, userps, nowWithTimeZone
 
 def getDynamicMenu(menups):
     m_centre_id = menups.m_centre_id.get()
+    view_id = menups.view_id.get()
+    m_type = menups.m_type.get()
     created_by = menups.created_by.get()
     fetch_single = menups.fetch_single.get()
-
+    order_by = menups.order_by.get()
+    order_type = menups.order_type.get()
     dync_menu = DB.getTableMeta("sys_dynamic_menu").alias("sdm")
     stmt = (
         select(dync_menu)
     )
     if m_centre_id not in (None, "", 0):
         stmt = stmt.where(dync_menu.c.m_centre_id == m_centre_id)
+    if view_id not in (None, "", 0):
+        stmt = stmt.where(dync_menu.c.view_id == view_id)
+    if m_type not in (None, "", 0):
+        stmt = stmt.where(dync_menu.c.m_type == m_type)
     if created_by not in (None, "", 0):
         stmt = stmt.where(dync_menu.c.created_by == created_by)
-    stmt = stmt.where(dync_menu.c.is_delete == 0)
+    if menups.is_delete.get() not in (None, ""):
+        stmt = stmt.where(dync_menu.c.is_delete == menups.is_delete.get())
+    if order_by not in (None, ""):
+        if hasattr(dync_menu.c, order_by):
+            column = getattr(dync_menu.c, order_by)
+            if str(order_type).upper() == "DESC":
+                stmt = stmt.order_by(column.desc())
+            else:
+                stmt = stmt.order_by(column.asc())
     if fetch_single == 1 :
         return DB.executeDBSelectSingle(stmt)
     else :
@@ -35,7 +50,8 @@ def getDynamicMenuCenter(menups):
         stmt = stmt.where(dync_menu_cntr.c.is_public == is_public)
     if created_by not in (None, "", 0):
         stmt = stmt.where(dync_menu_cntr.c.created_by == created_by)
-    stmt = stmt.where(dync_menu_cntr.c.is_delete == 0)
+    if menups.is_delete.get() not in (None, ""):
+        stmt = stmt.where(dync_menu_cntr.c.is_delete == menups.is_delete.get())
     if fetch_single == 1 :
         return DB.executeDBSelectSingle(stmt)
     else :
@@ -87,3 +103,50 @@ def getUserMenuList(menups):
         stmt = stmt.where(dync_menu.c.created_by == created_by)
     stmt = stmt.order_by(dync_menu.c.rank.asc())
     return DB.executeDBSelect(stmt)
+
+def insertUpdateUserMenu(menups):
+    usermenu = DB.getTableMeta("sys_dynamic_menu")
+    where_clause = (usermenu.c.menu_id == menups.menu_id.get())
+    stmt = select(usermenu.c.menu_id).where(where_clause)
+    values = {}
+    if menups.m_centre_id.get() not in (None, "", 0):
+        values["m_centre_id"] = menups.m_centre_id.get()
+    if menups.parent_menu_id.get() not in (None, "", 0):
+        values["parent_menu_id"] = menups.parent_menu_id.get()
+    if menups.is_section.get() not in (None, ""):
+        values["is_section"] = menups.is_section.get()
+    if menups.menu_name.get() not in (None, "", 0):
+        values["menu_name"] = menups.menu_name.get()
+    if menups.menu_url.get() not in (None, "", 0):
+        values["menu_url"] = menups.menu_url.get()
+    if menups.menu_icon.get() not in (None, "", 0):
+        values["menu_icon"] = menups.menu_icon.get()
+    if menups.menu_color.get() not in (None, "", 0):
+        values["menu_color"] = menups.menu_color.get()
+    if menups.m_type.get() not in (None, "", 0):
+        values["m_type"] = menups.m_type.get()
+    if menups.view_id.get() not in (None, "", 0):
+        values["view_id"] = menups.view_id.get()
+    if menups.is_new_tab.get() not in (None, ""):
+        values["is_new_tab"] = menups.is_new_tab.get()
+    if menups.is_custom_centre.get() not in (None, ""):
+        values["is_custom_centre"] = menups.is_custom_centre.get()
+    if menups.rank.get() not in (None, ""):
+        values["rank"] = menups.rank.get()
+    if menups.is_delete.get() not in (None, ""):
+        values["is_delete"] = menups.is_delete.get()
+    row = DB.executeDBSelectSingle(stmt) # Check if record exists
+    if row: # Update existing record
+        stmt = (
+            update(usermenu)
+            .where(where_clause)
+            .values(**values)
+        )
+        DB.executeDBUpdate(stmt)
+        menu_id = row.menu_id
+    else :  # Insert new record
+        values["created_by"] = userps.user_id.get()
+        values["created_date"] = nowWithTimeZone()
+        stmt = insert(usermenu).values(**values)
+        menu_id = DB.executeDBInsert(stmt)
+    return menu_id
