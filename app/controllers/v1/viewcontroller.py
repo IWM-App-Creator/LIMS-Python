@@ -1,4 +1,4 @@
-from app.utils.common import DB, Request, RequestData, JSONResponse, raiseAPIError, nowWithTimeZone
+from app.utils.common import DB, Request, RequestData, JSONResponse, raiseAPIError, raiseInvalidError, nowWithTimeZone
 from app.functions.datetime import formatDate, getTimeAgoValue
 from app.properties.viewproperties import viewps
 from app.dbfunctions.viewfunctions import getViewDataByID
@@ -13,7 +13,7 @@ def getViewData(request: Request):
         viewhlp.setViewInputParam(viewps, params) # Get Input Param Data
         getViewDataByID(viewps) # Get View Data
         if not viewps.userview.get(): # Invalid View
-            raiseAPIError("View Not Found", 401)
+            return raiseInvalidError("View Not Found", 401)
         viewhlp.setViewDataProperties(viewps) # Set View Properties
         viewhlp.setViewTableCols(viewps) # Get View Columns
         viewhlp.setViewLayout(viewps) # Get View Layout Data
@@ -71,7 +71,8 @@ def getViewData(request: Request):
             }
         )
     except Exception as e:
-        saveErrorLog ("View", viewps.view_id.get(), "getViewData", str(e))
+        print("Exception ")
+        saveErrorLog ("View", viewps.view_id.get(), "getViewData", str(e)) # Log Error To DB
         raiseAPIError(str(e), 500)
 
 # http://xytovet.localhost:8000/api/v1/view/savetbldata
