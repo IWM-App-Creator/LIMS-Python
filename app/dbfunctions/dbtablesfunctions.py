@@ -81,3 +81,32 @@ def updateTableData(dbps) :
         )
     )
     DB.executeDBUpdate(stmt)
+
+def insertUpdateTable(dbps):
+    table_id = dbps.table_id.get()
+    table_name = dbps.table_name.get()
+    table_alias = dbps.table_alias.get()
+    user_id = userps.user_id.get()
+    values = {
+        "table_name": table_name,
+        "table_alias": table_alias,
+        "is_visible": 1,
+        "created_by": user_id,
+        "created_date": nowWithTimeZone()
+    }
+    tblmaster = DB.getTableMeta("sys_db_tables")
+    where_clause = (tblmaster.c.table_id == table_id)
+    stmt = select(tblmaster.c.table_id).where(where_clause)
+    row = DB.executeDBSelectSingle(stmt) # Check if record exists
+    if row: # Update existing record
+        stmt = (
+            update(tblmaster)
+            .where(where_clause)
+            .values(**values)
+        )
+        DB.executeDBUpdate(stmt)
+        table_id = row.table_id
+    else :  # Insert new record
+        stmt = insert(tblmaster).values(**values)
+        table_id = DB.executeDBInsert(stmt)
+    return table_id

@@ -71,7 +71,6 @@ def getViewData(request: Request):
             }
         )
     except Exception as e:
-        print("Exception ")
         saveErrorLog ("View", viewps.view_id.get(), "getViewData", str(e)) # Log Error To DB
         raiseAPIError(str(e), 500)
 
