@@ -3,6 +3,8 @@ from contextvars import ContextVar
 class MenuProperties:
     def __init__(self):
         self.m_centre_id = ContextVar("m_centre_id", default = "")
+        self.m_centre_ids = ContextVar("m_centre_ids", default = [])
+
         self.is_public = ContextVar("is_public", default = "")
         self.is_active = ContextVar("is_active", default = "")
         self.created_by = ContextVar("created_by", default = "")

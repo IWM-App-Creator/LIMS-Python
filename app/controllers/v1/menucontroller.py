@@ -1,15 +1,28 @@
 from app.utils.common import select, DB, Request, RequestData, JSONResponse, raiseAPIError, userps
 from app.dbfunctions.associationfunctions import getAssociationUsers
-from app.dbfunctions.menufunctions import getDynamicMenuCenter, getUserMenuList
+from app.dbfunctions.menufunctions import getPublicOrUserMenuCenters, getDynamicMenuCenter, getUserMenuList
 from app.properties.associationproperties import associationps
 from app.properties.menuproperties import menups
-from app.functions.menuhelper import getMenuCenterId, setUserMenusOutput
+from app.functions.menuhelper import setUserMenusOutput, setUserMenuCenterOutput
 
 # --------------------------
 # Menu Centre
 # --------------------------
 def getMenuCentre(request: Request):
-    print("getMenuCentre")
+    print("getMenuCentre --> ")
+    asso_menu_cntr_ids = [8, 51, 60, 61] # Get User Menu Centre IDs From Association Users
+    menups.m_centre_ids.set(asso_menu_cntr_ids)
+    mymenus = getPublicOrUserMenuCenters(menups) # Get User Menu Centre and Public Menu Centre
+    menups.menu_array.set(mymenus)
+    setUserMenuCenterOutput(menups)
+    return JSONResponse (
+        status_code = 200,
+        content = {
+            "status": True,
+            "message": "Menu Centre Data",
+            "menu_centres": menups.menus_output.get()
+        }
+    )
 
 def saveMenuCentre(request: Request):
     print("saveMenuCentre")

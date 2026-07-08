@@ -1,4 +1,4 @@
-from app.utils.common import select, DB, JSONResponse, raiseAPIError, userps
+from app.utils.common import select, or_, DB, userps
 
 def getDynamicMenu(menups):
     m_centre_id = menups.m_centre_id.get()
@@ -40,6 +40,23 @@ def getDynamicMenuCenter(menups):
         return DB.executeDBSelectSingle(stmt)
     else :
         return DB.executeDBSelect(stmt)
+
+def getPublicOrUserMenuCenters(menups):
+    dync_menu_cntr = DB.getTableMeta('sys_dynamic_menu_centre').alias('sdmc')
+    stmt = (
+        select(dync_menu_cntr)
+        .where(
+            or_(
+                dync_menu_cntr.c.m_centre_id.in_(menups.m_centre_ids.get()),
+                dync_menu_cntr.c.is_public == 1,
+                dync_menu_cntr.c.created_by == userps.user_id.get()
+            )
+        )
+        .where(dync_menu_cntr.c.is_delete == 0)
+        .order_by(dync_menu_cntr.c.m_centre_id.asc())
+        .distinct()
+    )
+    return DB.executeDBSelect(stmt)
 
 def getUserMenuList(menups):
     created_by = menups.created_by.get()

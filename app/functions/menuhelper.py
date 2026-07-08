@@ -43,3 +43,20 @@ def setUserMenusOutput(menups):
         }
         sidemenus.append(row)
     menups.menus_output.set(sidemenus)
+
+def setUserMenuCenterOutput(menups):
+    menu_array = menups.menu_array.get()
+    sidemenus = []
+    for m in menu_array:
+        row = {
+            "m_centre_id": m.m_centre_id,
+            "centre_name": m.centre_name,
+            "ref_m_c_id": m.ref_m_c_id,
+            "short_desc": m.short_desc,
+            "preview_img": m.preview_img,
+            "dync_cat_id": m.dync_cat_id,
+            "is_public": m.is_public,
+            "is_active": m.is_active,
+        }
+        sidemenus.append(row)
+    menups.menus_output.set(sidemenus)
