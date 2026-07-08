@@ -13,7 +13,7 @@ ROUTES = [
     
     # Menu's API
     ("/get", menuapi.getUserMenu, ["GET"]),
-    ("/save", menuapi.saveUserMenu, ["GET"]),
+    ("/save", menuapi.saveUserMenu, ["GET", "POST"]),
     ("/update", menuapi.updateUserMenu, ["GET"]),
     ("/sort", menuapi.saveMenuSorting, ["GET"]),
     ("/remove", menuapi.removeUserMenu, ["GET"]),
