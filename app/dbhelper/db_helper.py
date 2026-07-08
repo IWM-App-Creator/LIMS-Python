@@ -38,7 +38,10 @@ class DB:
     def executeDBInsert(stmt):
         with dbconn.begin() as conn:
             result = conn.execute(stmt)
-            return result.inserted_primary_key
+            if result.inserted_primary_key:
+                return result.inserted_primary_key[0]
+
+            return None
 
     @staticmethod
     def executeDBUpdate(stmt):

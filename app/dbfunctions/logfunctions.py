@@ -44,7 +44,7 @@ def saveErrorLogtoDB(section: str, item_id: str, notes: str, error_msg: str):
     error_id = DB.executeDBInsert(stmt)
     return error_id
 
-def resolveError(error_id):
+def resolveError(error_id: str):
     sys_error_log = DB.getTableMeta("sys_error_log")
     stmt = ( delete(sys_error_log).where(sys_error_log.c.error_id == error_id) )
     DB.executeDBDelete(stmt)

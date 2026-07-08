@@ -3,7 +3,7 @@ from app.services.firebase.firebase_service import send_push
 from app.dbfunctions.logfunctions import getDBErrorLog, saveErrorLogtoDB, resolveError
 from app.functions.generalfunctions import formatUserDisplayName
 
-# http://xytovet.localhost:8000/api/v1//log/geterrors?error_id=&section=View&item_id=178
+# http://tesetws1.localhost:8000/api/v1/log/geterrors?error_id=&section=View&item_id=178
 def getErrorLog(error_id: str, section: str, item_id: str):
     try:
         logdata = getDBErrorLog(error_id, section, item_id) # Get Error Log Data
@@ -13,7 +13,7 @@ def getErrorLog(error_id: str, section: str, item_id: str):
         for data in logdata:
             first_name = getattr(data, "first_name", "")
             last_name = getattr(data, "last_name", "")
-            user_name = formatUserDisplayName(first_name = first_name, last_nam = last_name)
+            user_name = formatUserDisplayName(first_name = first_name, last_name = last_name)
             item = {
                 "error_id": getattr(data, "error_id", "0"),
                 "section": getattr(data, "section", ""),
@@ -42,35 +42,35 @@ def getErrorLog(error_id: str, section: str, item_id: str):
     # result = verify_token(token)
     # return result
 
-# http://xytovet.localhost:8000/api/v1//log/saveerror?view_id=178
-async def saveErrorLog(request: Request):
-    # request.state.params
-    # print("saveLog --> ")
-    # print("IS_LOCAL_DEV --> ", globalps.IS_LOCAL_DEV)
-    # print("saveLog user_id --> ", globalps.user_id)
-    # print("saveLog workspace_id --> ", globalps.workspace_id)
-    # print("saveLog workspace_name --> ", globalps.workspace_name)
-    # print("saveLog ws_url --> ", globalps.ws_url)
-    # print("saveLog schema_name --> ", userps.schema_name.get())
-    params = RequestData.params(request)
-    # print("request -->", params)
-    print("request -->", params["view_id"])
-    # sys_dynamic_view = DB.getTableMeta("sys_dynamic_view").alias("sdv")
-    # stmt = (
-    #     select(sys_dynamic_view)
-    #         .where(sys_dynamic_view.c.is_delete == 0)
-    # )
-    # # print("stmt --> ", stmt)
-    # row = DB.executeDBSelectSingle(stmt)
-    # print("row --> ", row)
-    # view_id = params.get("view_id")
-    # user_id = params.get("user_id")
-    # print("saveLog view_id -->", view_id)
-    # print("saveLog user_id -->", user_id)
+# http://tesetws1.localhost:8000/api/v1//log/saveerror?section=View&item_id=178&notes=notes&error_msg=test error message
+async def saveErrorLog(section: str, item_id: str, notes: str, error_msg: str):
+    try:
+        error_id = saveErrorLogtoDB(section, item_id, notes, error_msg)
+        return JSONResponse (
+            status_code = 200,
+            content = {
+                "status": True,
+                "message": "Error Log Saved Successfully",
+                "error_id": error_id
+            }
+        )
+    except Exception as e:
+        raiseAPIError(str(e), 500)
 
-# http://xytovet.localhost:8000/api/v1//log/removeerror?view_id=178
-def removeErrorLog(request: Request):
-    print("saveLog user_id -->")
+# http://tesetws1.localhost:8000/api/v1/log/removeerror?view_id=178
+def removeErrorLog(error_id: str):
+    try:
+        resolveError(error_id)
+        return JSONResponse (
+            status_code = 200,
+            content = {
+                "status": True,
+                "message": "Error Log Removed Successfully",
+                "error_id": error_id
+            }
+        )
+    except Exception as e:
+        raiseAPIError(str(e), 500)
 
 def testFireBasePush(token: str):
     response = send_push (
