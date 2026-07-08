@@ -1,7 +1,15 @@
-from sqlalchemy import select, func, text, insert, update, delete, or_
-from app.dbhelper.db_helper import DB
-from app.properties.usersproperties import userps
-from app.functions.datetime import nowWithTimeZone
+from app.utils.common import select, DB, insert, delete, userps, nowWithTimeZone
+
+def getErrorLog(error_id: int, section: str, item_id: str):
+    tblerrorlog = DB.getTableMeta("sys_error_log").alias("errlog")
+    stmt = (select(tblerrorlog))
+    # error_id, section, item_id, notes, error_msg, created_by, created_date
+    if section not in (None, "", 0):
+        stmt = stmt.where(tblerrorlog.c.section == section)
+        stmt = stmt.where(tblerrorlog.c.item_id == item_id)
+    if error_id not in (None, "", 0):
+        stmt = stmt.where(tblerrorlog.c.error_id == error_id)
+    return DB.executeDBSelect(stmt)
 
 def saveErrorLog(section: str, item_id: str, notes: str, error_msg: str):
     sys_error_log = DB.getTableMeta("sys_error_log")

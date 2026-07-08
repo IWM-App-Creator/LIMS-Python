@@ -1,23 +1,36 @@
-from app.utils.common import Request, RequestData
+from app.utils.common import Request, RequestData, raiseAPIError
 from app.services.firebase.firebase_service import send_push
+from app.dbfunctions.logfunctions import getErrorLog, saveErrorLog, resolveError
 
-def getLog():
-    # users = DB.getTableMeta("users")
-    return {
-        "fetch_flag": "3",
-        # "access_token": access_token,
-        # "user_id": usrproperties.user_id,
-        # "first_name": usrproperties.first_name,
-        # "last_name": usrproperties.last_name,
-        # "itm_list": [user],
-    }
+# http://xytovet.localhost:8000/api/v1//log/geterrors?view_id=178
+def getErrorLog(request: Request):
+    try:
+        params = RequestData.params(request)
+        viewhlp.setViewInputParam(viewps, params) # Get Input Param Data
+        getErrorLog() # Get View Data
+        if not viewps.userview.get(): # Invalid View
+            return raiseInvalidError("View Not Found", 401)
+        
+        
+        viewhlp.setViewOutputArray(viewps); # Output Json
+        return JSONResponse (
+            status_code = 200,
+            content = {
+                "status": True,
+                "message": "View Data",
+                "view_data": viewps.output_array.get()
+            }
+        )
+    except Exception as e:
+        raiseAPIError(str(e), 500)
 
 # def saveLog(token: str):
 #     print(f"Token received: {token}")
     # result = verify_token(token)
     # return result
 
-async def saveLog(request: Request):
+# http://xytovet.localhost:8000/api/v1//log/saveerror?view_id=178
+async def saveErrorLog(request: Request):
     # request.state.params
     # print("saveLog --> ")
     # print("IS_LOCAL_DEV --> ", globalps.IS_LOCAL_DEV)
@@ -41,6 +54,10 @@ async def saveLog(request: Request):
     # user_id = params.get("user_id")
     # print("saveLog view_id -->", view_id)
     # print("saveLog user_id -->", user_id)
+
+# http://xytovet.localhost:8000/api/v1//log/removeerror?view_id=178
+def removeErrorLog(request: Request):
+    print("saveLog user_id -->")
 
 def testFireBasePush(token: str):
     response = send_push (

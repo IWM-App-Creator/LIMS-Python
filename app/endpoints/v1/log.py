@@ -4,17 +4,10 @@ from app.controllers.v1 import logcontroller as logapi
 router = APIRouter(prefix = "/log")
 
 ROUTES = [
-    ("/get", logapi.getLog, ["GET"]), #@app.api_route("/saveLog", methods=["GET", "POST"])
-    ("/save", logapi.saveLog, ["GET"]),
-    # ("/remove", logapi.removeLog, ["GET"]),
+    ("/geterrors", logapi.getErrorLog, ["GET"]),
+    ("/saveerror", logapi.saveErrorLog, ["GET"]),
+    ("/removeerror", logapi.removeErrorLog, ["GET"]),
 ]
 
 for path, handler, methods in ROUTES:
     router.add_api_route(path, handler, methods = methods)
-
-# Route::any('notifications/getlist', 'App\Http\Controllers\ModelData\NotificationsAPIController@getUserNotifications');
-# Route::any('notifications/markread', 'App\Http\Controllers\ModelData\NotificationsAPIController@markNotificationRead');
-# Route::any('notifications/markold', 'App\Http\Controllers\ModelData\NotificationsAPIController@markNotificationOld');
-# Route::any('notifications/delete', 'App\Http\Controllers\ModelData\NotificationsAPIController@markNotificationDeleted');
-# Route::any('notifications/archive', 'App\Http\Controllers\ModelData\NotificationsAPIController@markNotificationArchive');
-# Route::any('notiview/counts', 'App\Http\Controllers\ModelData\NotificationsAPIController@getNotiCountByUserID');
