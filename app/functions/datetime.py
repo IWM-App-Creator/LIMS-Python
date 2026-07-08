@@ -1,33 +1,37 @@
 from datetime import datetime
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
+from app.properties.usersproperties import userps
 
 DEFAULT_TZ = "Australia/Perth"
 DEFAULT_FORMAT = "%Y-%m-%d %H:%M:%S"
 
-def getTimeZone(timezone: str | None = None):
+def getTimeZone():
     try:
-        tz = ZoneInfo(timezone or DEFAULT_TZ)
+        tz_name = userps.user_timezone.get()
+        if tz_name:
+            return ZoneInfo(tz_name)
+        return ZoneInfo(DEFAULT_TZ)
     except ZoneInfoNotFoundError:
-        tz = ZoneInfo(DEFAULT_TZ)
-    return tz
-    
-def nowWithTimeZone(format: str | None = DEFAULT_FORMAT, timezone: str | None = None):
-    tz = getTimeZone(timezone)
+        return ZoneInfo(DEFAULT_TZ)
+
+def nowWithTimeZone(format: str | None = DEFAULT_FORMAT):
+    tz = ZoneInfo(DEFAULT_TZ) # Default "Australia/Perth"
     dt = datetime.now(tz)
     return dt.strftime(format) if format else dt
 
-def formatDate(created_date: str, fmt: str = "%d/%m/%Y", timezone: str | None = None ) -> str:
+def formatDate(created_date: str, format: str = "%d/%m/%Y") -> str:
     try:
-        tz = getTimeZone(timezone)
+        source_tz = ZoneInfo(DEFAULT_TZ)
+        user_tz = getTimeZone()  # Convert Timezone based on user setting, Default "Australia/Perth"
         dt = datetime.strptime(created_date, "%Y-%m-%d %H:%M:%S")
-        dt = dt.replace(tzinfo=DEFAULT_TZ).astimezone(tz)
-        return dt.strftime(fmt)
+        dt = dt.replace(tzinfo=source_tz).astimezone(user_tz)
+        return dt.strftime(format)
     except Exception:
         return ""
     
-def getTimeAgoValue(created_date: str, timezone: str | None = None ) -> str:
+def getTimeAgoValue(created_date: str) -> str:
     try:
-        tz = getTimeZone(timezone)
+        tz = getTimeZone() # Convert Timezone based on user setting, Default "Australia/Perth"
         dt = datetime.strptime(created_date, "%Y-%m-%d %H:%M:%S")
         dt = dt.replace(tzinfo = tz)
         now = datetime.now(tz)

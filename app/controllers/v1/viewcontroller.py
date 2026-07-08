@@ -1,5 +1,5 @@
 from app.utils.common import DB, Request, RequestData, JSONResponse, raiseAPIError, nowWithTimeZone
-from app.functions.datetime import getTimeAgoValue
+from app.functions.datetime import formatDate, getTimeAgoValue
 from app.properties.viewproperties import viewps
 from app.dbfunctions.viewfunctions import getViewDataByID
 from app.functions.viewhelper import viewhlp
@@ -82,9 +82,8 @@ def createBlankView (request: Request):
     # getTimeAgoValue
     # convertDateToUserZone(current_date: str, user_timezone: str)
     print("createBlankView  --> ", nowWithTimeZone())
-    print("createBlankView  --> ", nowWithTimeZone(timezone = "Asia/Kolkata"))
-
-    print("getTimeAgoValue  --> ", getTimeAgoValue(created_date = "2026-07-08 10:10:10", timezone = "Asia/Kolkata"))
+    print("createBlankView  --> ", formatDate(created_date = "2026-07-08 10:10:10", format = "%d/%m/%Y"))
+    print("createBlankView  --> ", formatDate(created_date = "2026-07-08 10:10:10", format = "%d/%m/%y"))
     print("getTimeAgoValue  --> ", getTimeAgoValue(created_date = "2026-07-08 10:10:10"))
     
 
