@@ -34,4 +34,6 @@ class MenuProperties:
         self.order_by = ContextVar("order_by", default = None)
         self.order_type = ContextVar("order_type", default = None)
 
+        self.menu_exe_data = ContextVar("menu_exe_data", default = {})
+
 menups = MenuProperties()

@@ -14,8 +14,8 @@ def getMenuCentre(request: Request):
     try:
         asso_menu_cntr_ids = [8, 51, 60, 61] # Get User Menu Centre IDs From Association Users
         menups.m_centre_ids.set(asso_menu_cntr_ids)
-        mymenus = getPublicOrUserMenuCenters(menups) # Get User Menu Centre and Public Menu Centre
-        menups.menu_array.set(mymenus)
+        getPublicOrUserMenuCenters(menups) # Get User Menu Centre and Public Menu Centre
+        menups.menu_array.set(menups.menu_exe_data.get())
         setUserMenuCenterOutput(menups)
         return JSONResponse (
             status_code = 200,
@@ -50,8 +50,8 @@ def getUserMenu(request: Request):
         menups.m_centre_id.set(params.get("m_centre_id", ""))
         if menups.m_centre_id.get() in (None, "", 0):
             return raiseInvalidError("Menu Center is not found", 404)
-        menu_array = getUserMenuList(menups)
-        menups.menu_array.set(menu_array)
+        getUserMenuList(menups)
+        menups.menu_array.set(menups.menu_exe_data.get())
         setUserMenusOutput(menups)
         return JSONResponse (
             status_code = 200,
@@ -67,7 +67,6 @@ def getUserMenu(request: Request):
 
 def saveUserMenu(request: Request):
     try:
-        menu_id = ""
         status = True
         params = RequestData.params(request)
         menups.callfrom.set(params.get("callfrom", ""))
@@ -78,14 +77,15 @@ def saveUserMenu(request: Request):
             menups.created_by.set(userps.user_id.get())
             menups.fetch_single.set(1)
             menups.is_delete.set(0)
-            menu_center = getDynamicMenuCenter(menups)
-            if menu_center and menu_center.m_centre_id not in (None, "", 0):
-                menups.m_centre_id.set(menu_center.m_centre_id)
+            getDynamicMenuCenter(menups)
+            menu_centre = menups.menu_exe_data.get()
+            if menu_centre and menu_centre.m_centre_id not in (None, "", 0):
+                menups.m_centre_id.set(menu_centre.m_centre_id)
             menups.is_delete.set(None)
             menups.m_type.set(1)
-            user_menu = getDynamicMenu(menups)
+            getDynamicMenu(menups)
+            user_menu = menups.menu_exe_data.get()
             if user_menu:
-                menu_id = user_menu.menu_id
                 if user_menu.is_delete == 1:
                     menups.menu_id.set(user_menu.menu_id)
                     menups.m_type.set(0)
@@ -108,16 +108,16 @@ def saveUserMenu(request: Request):
             menups.view_id.set(None)
             menups.m_centre_id.set(None)
             menups.m_type.set(0)
-            user_menu = getDynamicMenu(menups)
+            getDynamicMenu(menups)
+            user_menu = menups.menu_exe_data.get()
             if user_menu:
                 menups.rank.set(user_menu.rank + 1)
             setMenuInputParam(menups, params)
             menups.is_delete.set(0)
             menups.parent_menu_id.set(0)
-            menu_id = insertUpdateUserMenu(menups)
+            insertUpdateUserMenu(menups)
             if menups.add_custom_view.get() == 1:
                 resetMenuProperties(menups)
-                menups.menu_id.set(menu_id)
                 customvwps.view_name.set(menups.menu_name.get())
                 customvwps.view_url.set(menups.menu_url.get())
                 custom_view_id = addUpdateCustomView(customvwps)
@@ -133,7 +133,7 @@ def saveUserMenu(request: Request):
             content = {
                 "status": status,
                 "message": "Menu Saved Successfully",
-                "menu_id": menu_id
+                "menu_id": menups.menu_id.get()
             }
         )
     except Exception as e:
@@ -141,7 +141,22 @@ def saveUserMenu(request: Request):
         raiseAPIError(str(e), 500)
 
 def updateUserMenu(request: Request):
-    print("updateUserMenu")
+    try:
+        params = RequestData.params(request)
+        setMenuInputParam(menups, params)
+        if menups.menu_id.get() in (None, "", 0):
+            return raiseInvalidError("Menu Id is not found", 404)
+        insertUpdateUserMenu(menups)
+        return JSONResponse (
+            status_code = 200,
+            content = {
+                "status": True,
+                "message": "Menu Updated Successfully"
+            }
+        )
+    except Exception as e:
+        saveErrorLogtoDB("Menu", menups.menu_id.get(), "updateUserMenu", str(e)) # Log Error To DB
+        raiseAPIError(str(e), 500)
 
 def saveMenuSorting(request: Request):
     print("saveMenuSorting")

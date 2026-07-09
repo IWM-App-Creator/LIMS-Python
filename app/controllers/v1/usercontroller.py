@@ -39,8 +39,8 @@ def getUserDetail(): # token: str
     # Get User Menu
     # --------------------------
     getMenuCenterId(menups) # find m_center_id from user_id
-    menu_array = getUserMenuList(menups) # Get User Active Menu
-    menups.menu_array.set(menu_array)
+    getUserMenuList(menups) # Get User Active Menu
+    menups.menu_array.set(menups.menu_exe_data.get())
     setUserMenusOutput(menups) # Set Menu Output
     # --------------------------
     # Merge All Data & Send Response

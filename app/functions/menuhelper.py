@@ -23,23 +23,25 @@ def resetMenuProperties(menups):
     menups.is_delete.set(None)
 
 def setMenuInputParam(menups, params):
-    menups.m_centre_id.set(params.get("m_centre_id", ""))
-    menups.m_type.set(params.get("m_type", 1))
-    menups.view_id.set(params.get("view_id", 0))
-    menups.menu_name.set(params.get("menu_name", ""))
-    menups.menu_icon.set(params.get("menu_icon", ""))
-    menups.menu_color.set(params.get("menu_color", ""))
-    menups.menu_url.set(params.get("menu_url", ""))
-    menups.is_new_tab.set(params.get("is_new_tab", 0))
-    menups.add_custom_view.set(params.get("add_custom_view", 0))
-    menups.is_section.set(params.get("is_section", 0))
+    menups.menu_id.set(params.get("menu_id", None))
+    menups.m_centre_id.set(params.get("m_centre_id", None))
+    menups.m_type.set(params.get("m_type", None))
+    menups.view_id.set(params.get("view_id", None))
+    menups.menu_name.set(params.get("menu_name", None))
+    menups.menu_icon.set(params.get("menu_icon", None))
+    menups.menu_color.set(params.get("menu_color", None))
+    menups.menu_url.set(params.get("menu_url", None))
+    menups.is_new_tab.set(params.get("is_new_tab", None))
+    menups.add_custom_view.set(params.get("add_custom_view", None))
+    menups.is_section.set(params.get("is_section", None))
 
 def getMenuCenterId(menups):
     menups.usr_flag.set(0)
     menups.is_active.set(1)
     menups.created_by.set(userps.user_id.get())
     menups.fetch_single.set(1)
-    menucenter = getDynamicMenuCenter(menups)
+    getDynamicMenuCenter(menups)
+    menucenter = menups.menu_exe_data.get()
     if menucenter and menucenter.m_centre_id not in (None, "", 0):
         menups.m_centre_id.set(menucenter.m_centre_id)
     else :
