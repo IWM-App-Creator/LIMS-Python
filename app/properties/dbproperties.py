@@ -26,6 +26,7 @@ class DBProperties:
         self.notify_user = ContextVar("notify_user", default = "")
         self.actv_log_cols = ContextVar("actv_log_cols", default = "")
         self.col_data_items = ContextVar("col_data_items", default = "")
+        self.rank = ContextVar("rank", default = 0)
 
         # All DB Table List & Table Cols
         self.all_db_tables = ContextVar("all_db_tables", default = "")
@@ -54,7 +55,6 @@ class DBProperties:
         # View / DB Column Types
         self.view_col_type = ContextVar("view_col_type", default = {})
         self.db_col_type = ContextVar("db_col_type", default = {})
-
-    
+        self.blnkvcol = ContextVar("blnkvcol", default = {})    
 
 dbps = DBProperties()

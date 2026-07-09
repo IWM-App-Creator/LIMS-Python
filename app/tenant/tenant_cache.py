@@ -11,8 +11,6 @@ class TenantCache:
         cachekey = (userps.req_subdomain.get(), userps.user_id.get())
         workspace = cls._ws_cache.get(cachekey)
         if workspace is None:
-            wsps.domain_flag.set(1)
-            wsps.fetch_single.set(1)
             getWorkspaceData(wsps)
             workspace = wsps.ws_data.get()
             if workspace:

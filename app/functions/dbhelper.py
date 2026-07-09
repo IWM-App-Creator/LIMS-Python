@@ -1,17 +1,18 @@
 from app.functions.generalfunctions import addUpdateJson
 
 def setColOptions(dbps):
+    blnkvcol = dbps.blnkvcol.get()
     col_options = {}
-    addUpdateJson(col_options, "length", dbps.length.get())
-    addUpdateJson(col_options, "is_index", dbps.is_index.get())
-    addUpdateJson(col_options, "datatype", dbps.datatype.get())
-    addUpdateJson(col_options, "is_unique", dbps.is_unique.get())
-    addUpdateJson(col_options, "is_primary", dbps.is_primary.get())
-    addUpdateJson(col_options, "default_val", dbps.default_val.get())
-    addUpdateJson(col_options, "notify_user", dbps.notify_user.get())
-    addUpdateJson(col_options, "is_mandatory", dbps.is_mandatory.get())
-    addUpdateJson(col_options, "actv_log_cols", dbps.actv_log_cols.get())
-    addUpdateJson(col_options, "col_data_items", dbps.col_data_items.get())
+    addUpdateJson(col_options, "data_type",  blnkvcol.get("data_type"))
+    addUpdateJson(col_options, "length",  blnkvcol.get("length"))
+    addUpdateJson(col_options, "default_val",  blnkvcol.get("default_val"))
+    addUpdateJson(col_options, "is_primary",  blnkvcol.get("is_primary"))
+    addUpdateJson(col_options, "is_index",  blnkvcol.get("is_index"))
+    addUpdateJson(col_options, "is_unique",  blnkvcol.get("is_unique"))
+    addUpdateJson(col_options, "is_mandatory",  blnkvcol.get("is_mandatory"))
+    addUpdateJson(col_options, "notify_user",  blnkvcol.get("notify_user"))
+    addUpdateJson(col_options, "actv_log_cols",  blnkvcol.get("actv_log_cols"))
+    addUpdateJson(col_options, "col_data_items",  blnkvcol.get("col_data_items"))
     dbps.col_options.set(col_options)
 
 def getPrimaryColParam(col_name, col_alias, rank):
@@ -71,7 +72,7 @@ def isStatusColumn(colname: str) -> bool:
     return colname.startswith("status_")
 
 def isDDColumn(colname: str) -> bool:
-    return colname.startswith(("dd_", "dync_"))
+    return colname.startswith("dd_")
 
 def isPeopleColumn(colname: str) -> bool:
     return colname.startswith("ppl_")

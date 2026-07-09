@@ -1,6 +1,3 @@
-import json
-from app.utils.common import userps
-
 def setWorkspaceOutput(wsps):
     ws_datas = wsps.ws_data.get()
     ws_data = []
@@ -14,4 +11,4 @@ def setWorkspaceOutput(wsps):
             "is_accepted": ws.is_accepted
         }
         ws_data.append(row)
-    wsps.ws_data.set(json.dumps(ws_data))
+    wsps.ws_data.set(ws_data)

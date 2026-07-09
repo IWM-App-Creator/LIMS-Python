@@ -10,4 +10,4 @@ def setDashboardOutput(dps):
             "is_active": dashboard.is_active
         }
         dashboards_data.append(row)
-    dps.dashboards_data.set(json.dumps(dashboards_data))
+    dps.dashboards_data.set(dashboards_data)

@@ -3,7 +3,7 @@ from app.utils.common import select, DB, userps
 from app.dbfunctions.dbtablesfunctions import getDBTableData
 from app.dbfunctions.viewlayoutfunctions import getViewLayoutDataByID
 from app.properties.dbproperties import dbps
-from app.functions.dbhelper import isUserColumn
+from app.functions import dbhelper as dbhlp
 
 class ViewHelper:
 
@@ -247,41 +247,44 @@ class CreateViewHelper:
         view_name = viewps.view_name.get()
         primary_col_nm = view_name.lower().replace(" ", "_") + "_id"
         primary_col_alias = view_name + " ID"
-        print("primary_col_nm --> ", primary_col_nm)
-        print("primary_col_alias --> ", primary_col_alias)
         blank_view_cols = []
-        blank_view_cols.append({"col_name": primary_col_nm, "col_alias": primary_col_alias, "datatype": "bigint", "col_type": "NUMBER", "colkey": 1, "length": 11, "is_primary": 1, "default_val": 0, "rank": 10 })
-
-        # blank_view_cols.append({"col_name": "status_1", "col_alias": "Status", "datatype": "int", "col_type": "YESNO", "length": 4, "is_index": 1, "default_val": 0, "rank": 20})
-
-        # blank_view_cols.append({"col_name": "is_delete", "col_alias": "ID Deleted", "datatype": "int", "length": 1, "is_index": 1, "actv_log_cols": 1, "default_val": 0, "rank": 30})
-        
-        # blank_view_cols.append({"col_name": "is_metadata", "col_alias": "Metadata", "datatype": "json", "is_index": 1, "rank": 40})
-        
-        # blank_view_cols.append({"col_name": "created_by", "col_alias": "Created By", "datatype": "bigint", "col_type": "FULLNAME", "colkey": 2, "lookup_colid": 492, "length": 11, "is_index": 1, "default_val": 0, "rank": 50})
-        
-        # blank_view_cols.append({"col_name": "created_date", "col_alias": "Created Date", "datatype": "datetime", "col_type": "DATETIME", "length": "", "rank": 60})
-
+        rank = 10
+        blank_view_cols.append( dbhlp.getPrimaryColParam(primary_col_nm, primary_col_alias, rank) )
+        rank = rank + 10
+        blank_view_cols.append( dbhlp.getStatusColParam("Status", "1", rank) )
+        # rank = rank + 10
+        # blank_view_cols.append( dbhlp.getIsDeleteColParam(rank) )
+        # rank = rank + 10
+        # blank_view_cols.append( dbhlp.getIsMetadataColParam(rank) )
+        # rank = rank + 10
+        # blank_view_cols.append( dbhlp.getCreatedByColParam(rank) )
+        # rank = rank + 10
+        # blank_view_cols.append( dbhlp.getCreatedDateColParam(rank) )
         viewps.blank_view_cols.set(blank_view_cols) # Set To Property
 
-    # @staticmethod
-    # def setColForView(rps):
-    #     return {
-    #         "table_id": rps.table_id.get(),
-    #         "col_id": rps.col_id.get(),
-    #         "col_name": rps.col_name.get(),
-    #         "qry_alias": rps.qry_alias.get(),
-    #         "col_alias": rps.col_alias.get(),
-    #         "col_type": rps.col_type.get(),
-    #         "colkey": rps.colkey.get(),
-    #         "lookup_colid": rps.lookup_colid.get(),
-    #         "lookup_colnm": rps.lookup_colnm.get(),
-    #         "url_prefix": "",
-    #         "link_text": "",
-    #         "date_format": "",
-    #         "calc_formula": "",
-    #         "rank": rps.rank.get(),
-    #     }
+    @staticmethod
+    def setColForView(dbps):
+        print("setColForView col_id --> ", dbps.col_id.get())
+        view_cols = {}
+
+        # {"view_cols": [{"rank": 10, "col_id": 3255, "colkey": 1, "col_name": "join_v1_id", "col_type": "NUMBER", "table_id": 198, "col_alias": "ID", "link_text": "", "qry_alias": "mtbl", "url_prefix": "", "date_format": null, "calc_formula": null, "lookup_colid": 0, "lookup_colnm": ""}}
+        return {
+            "table_id": dbps.table_id.get(),
+            "col_id": dbps.col_id.get(),
+            "col_name": dbps.col_name.get(),
+            "qry_alias": dbps.qry_alias.get(),
+            "col_alias": dbps.col_alias.get(),
+            "col_type": dbps.col_type.get(),
+            "colkey": dbps.colkey.get(),
+            "lookup_colid": dbps.lookup_colid.get(),
+            "lookup_colnm": dbps.lookup_colnm.get(),
+            "url_prefix": "",
+            "link_text": "",
+            "date_format": "",
+            "calc_formula": "",
+            "rank": dbps.rank.get(),
+        }
+
 createviewhlp = CreateViewHelper()
 
 # TO DO --> Create above format in helper, when new column get added, reuse col and view col functions.

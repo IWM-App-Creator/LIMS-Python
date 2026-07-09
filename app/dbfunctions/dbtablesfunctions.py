@@ -129,16 +129,16 @@ def insertUpdateTblCol(dbps) :
     tblcols = DB.getTableMeta("sys_new_db_tables_cols")
     values = {
         "table_id": dbps.table_id.get(),
-        "col_name": dbps.col_name.get(),
-        "col_alias": dbps.col_alias.get(),
-        "col_options": dbps.col_options.get(),
-        "rank": dbps.rank.get(),
-        "created_by": userps.user_id.get(),
-        "created_date": nowWithTimeZone()
     }
-    # stmt = (insert(tblcols).values(**values))
-    # col_id = DB.executeDBInsert(stmt)
-    # return col_id
+    if dbps.col_name.get() not in (None, ""):
+        values["col_name"] = dbps.col_name.get()
+    if dbps.col_alias.get() not in (None, ""):
+        values["col_alias"] = dbps.col_alias.get()
+    if dbps.col_options.get() not in (None, "", {}):
+        values["col_options"] = dbps.col_options.get()
+    if dbps.rank.get() not in (None, "", 0):
+        values["rank"] = dbps.rank.get()
+    # Check for Insert / Update
     col_id = dbps.col_id.get()
     if col_id > 0 : # Update existing record
         stmt = (
@@ -147,7 +147,9 @@ def insertUpdateTblCol(dbps) :
             .values(**values)
         )
         DB.executeDBUpdate(stmt)
-    else :  # Insert new record
+    else : # Insert new record
+        values["created_by"] = userps.user_id.get() # Include Create By
+        values["created_date"] = nowWithTimeZone() # Include Create Date
         stmt = insert(tblcols).values(**values)
         col_id = DB.executeDBInsert(stmt)
-    return col_id
+    dbps.col_id.set(col_id)

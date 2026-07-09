@@ -10,8 +10,8 @@ class WorkspaceProperties:
         self.is_accepted = ContextVar("is_accepted", default = 0)
         self.user_id = ContextVar("user_id", default = 0)
 
-        self.domain_flag = ContextVar("domain_flag", default = 0)
-        self.fetch_single = ContextVar("fetch_single", default = 0)
+        self.domain_flag = ContextVar("domain_flag", default = 1)
+        self.fetch_single = ContextVar("fetch_single", default = 1)
         self.ws_data = ContextVar("ws_output", default = [])
 
 wsps = WorkspaceProperties()

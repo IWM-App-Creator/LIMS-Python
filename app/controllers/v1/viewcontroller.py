@@ -3,6 +3,7 @@ from app.dbfunctions.viewfunctions import getViewDataByID
 from app.dbfunctions.dbtablesfunctions import insertTableDataToDB, insertUpdateTblCol
 from app.dbfunctions.logfunctions import saveErrorLogtoDB
 from app.functions.viewhelper import viewhlp, createviewhlp
+from app.functions.dbhelper import setColOptions
 from app.functions.generalfunctions import sortObjectsByKey, generateRandomString
 from app.properties.viewproperties import viewps
 from app.properties.dbproperties import dbps
@@ -93,19 +94,10 @@ def createBlankView (request: Request):
         viewps.view_name.set(view_name)
         viewps.view_type.set(params.get("view_type", ""))
         viewps.pin_to_menu.set(params.get("pin_to_menu", 0))
+        dbps.primary_col_nm.set(view_name.lower().replace(" ", "_") + "_id") 
+        dbps.primary_col_alias.set(view_name + " ID")
 
-
-        #
-        dbps.table_id.set(204)
-        dbps.table_name.set("wtyrqqgmka")
-
-
-        # dbps.primary_col_nm.set(view_name.lower().replace(" ", "_") + "_id") 
-        # dbps.primary_col_alias.set(view_name + " ID")
-        # print("primary_col_nm --> ", dbps.primary_col_nm.get())
-        # print("primary_col_alias --> ", dbps.primary_col_nm.get())
-
-        # Step 1 Insert Into Sys DB Table
+        # Step 1 : Insert Into Sys DB Table
         # dbps.table_alias.set(view_name)
         # dbps.table_name.set(generateRandomString())
         # table_id = insertTableDataToDB(dbps)
@@ -114,24 +106,30 @@ def createBlankView (request: Request):
         # dbps.table_name.set(table_id)
         # print("table_id --> ", table_id)
         # table_id = 204
-        # table_name = "krxtqesaep"
         dbps.table_id.set(204)
+        dbps.table_name.set("krxtqesaep")
 
-        # Step 2 Insert Into Sys DB Table Col
-        createviewhlp.getDefaultAddViewCols(viewps)
-
+        # Step 2 : Insert Into Sys DB Table Col
+        createviewhlp.getDefaultAddViewCols(viewps) # Get Column List Based On View Type
         blank_view_cols = viewps.blank_view_cols.get()
         for blnkvcol in blank_view_cols:
-            # col_name = getattr(blnkvcol, "col_name", "")
-            print("blnkvcol --> ", blnkvcol)
-            print("blnkvcol --> ", blnkvcol.get("col_name", ""))
-            # setColOptions(dbps)
-            # insertUpdateTblCol(dbps)
-            # setColForView(dbps)
+            dbps.blnkvcol.set(blnkvcol)
+            # Set Col ID, Name, Alias, ColOption & Rank
+            # dbps.col_id.set(0) 
+            # dbps.col_name.set(blnkvcol.get("col_name"))
+            # dbps.col_alias.set(blnkvcol.get("col_alias"))
+            # setColOptions(dbps) # Set Table Col Option To JSON
+            # dbps.rank.set(blnkvcol.get("rank"))
+            # insertUpdateTblCol(dbps) # Save to sys_new_db_tables_cols
+            3310, 3311
+            dbps.col_id.set(3310)
 
-        # print("blank_view_cols --> ", viewps.blank_view_cols.get())
-        # Step 3 Insert Into Sys View Table
+            # {"view_cols": [{"rank": 10, "col_id": 3255, "colkey": 1, "col_name": "join_v1_id", "col_type": "NUMBER", "table_id": 198, "col_alias": "ID", "link_text": "", "qry_alias": "mtbl", "url_prefix": "", "date_format": null, "calc_formula": null, "lookup_colid": 0, "lookup_colnm": ""}}
 
+
+            createviewhlp.setColForView(dbps) # Set View Col Option To JSON
+
+        # Step 3 : Insert Into Sys View Table
 
         # print("createBlankView  --> ", nowWithTimeZone())
     except Exception as e:
