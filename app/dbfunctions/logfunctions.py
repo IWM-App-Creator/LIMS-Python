@@ -41,7 +41,8 @@ def getDBErrorLog(logps):
             .limit(page_size)
             .offset(offset)
     )
-    return DB.executeDBSelect(stmt)
+    logdata = DB.executeDBSelect(stmt)
+    logps.logdata.set(logdata)
 
 def saveErrorLogtoDB(section: str, item_id: str, notes: str, error_msg: str):
     sys_error_log = DB.getTableMeta("sys_error_log")

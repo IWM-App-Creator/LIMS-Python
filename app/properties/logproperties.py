@@ -7,6 +7,7 @@ class LogProperties:
         self.section = ContextVar("section", default = "")
         self.page_no = ContextVar("page_no", default = 1)
         self.page_size = ContextVar("page_size", default = 5)
+        self.logdata = ContextVar("logdata", default = [])        
         self.total_record = ContextVar("total_record", default = 0)
-
+        
 logps = LogProperties()

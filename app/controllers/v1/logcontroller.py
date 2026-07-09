@@ -12,7 +12,8 @@ def getErrorLog(request: Request):
         logps.error_id.set(params.get("error_id", ""))
         logps.section.set(params.get("section", ""))
         logps.item_id.set(params.get("item_id", ""))
-        logdata = getDBErrorLog(logps) # Get Error Log Data
+        getDBErrorLog(logps) # Get Error Log Data
+        logdata = logps.logdata.get()
         item_list = []
         if not logdata: # Invalid View
             return raiseAPIError("Log Not Found", 401)
