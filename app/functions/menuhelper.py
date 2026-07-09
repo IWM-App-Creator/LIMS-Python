@@ -37,15 +37,15 @@ def setMenuInputParam(menups, params):
 
 def getActiveMenuCenterID(menups):
     # menups.usr_flag.set(0)
-    # menups.is_active.set(1)
     menups.created_by.set(userps.user_id.get())
-    # menups.fetch_single.set(1)
-    if menups.menu_exe_data.get() is None :
+    if menups.menu_centre.get() is None :
         getDynamicMenuCenter(menups)
-
-    menucenter = menups.menu_exe_data.get()
-    if menucenter and menucenter.m_centre_id not in (None, "", 0):
-        menups.m_centre_id.set(menucenter.m_centre_id)
+    menucenter = menups.menu_centre.get()
+    if menucenter:
+        for menu in menucenter:
+            if menu.is_active == 1:
+                menups.m_centre_id.set(menu.m_centre_id)
+                break
     else :
         associationps.user_id.set(userps.user_id.get())
         associationps.fetch_single.set(1)
@@ -55,7 +55,7 @@ def getActiveMenuCenterID(menups):
             menups.usr_flag.set(1)
 
 def setUserMenusOutput(menups):
-    menu_array = menups.menu_array.get()
+    menu_array = menups.menu_cntr_data.get()
     sidemenus = []
     for m in menu_array:
         row = {
@@ -79,9 +79,9 @@ def setUserMenusOutput(menups):
     menups.menus_output.set(sidemenus)
 
 def setUserMenuCenterOutput(menups):
-    menu_array = menups.menu_array.get()
+    menu_centre = menups.menu_centre.get()
     sidemenus = []
-    for m in menu_array:
+    for m in menu_centre:
         row = {
             "m_centre_id": m.m_centre_id,
             "centre_name": m.centre_name,
@@ -93,4 +93,4 @@ def setUserMenuCenterOutput(menups):
             "is_active": m.is_active,
         }
         sidemenus.append(row)
-    menups.menus_output.set(sidemenus)
+    menups.menu_centre.set(sidemenus)

@@ -1,9 +1,15 @@
 from app.utils.common import DB, select, JSONResponse, raiseAPIError, userps
 from app.dbfunctions.userfunctions import getUserDataFromDB
 from app.properties.dbproperties import dbps
-from app.functions.menuhelper import getActiveMenuCenterID, setUserMenusOutput
-from app.dbfunctions.menufunctions import getUserMenuList
+from app.functions.menuhelper import getActiveMenuCenterID, setUserMenusOutput, setUserMenuCenterOutput
+from app.functions.workspacehelper import setWorkspaceOutput
+from app.functions.dashboardhelper import setDashboardOutput
+from app.dbfunctions.menufunctions import getUserMenuList, getDynamicMenuCenter
+from app.dbfunctions.workspacefunctions import getWorkspaceData
+from app.dbfunctions.dashboardfunctions import getUserDashboards
 from app.properties.menuproperties import menups
+from app.properties.workspaceproperties import wsps
+from app.properties.dashboardproperties import dps
 
 # http://xytovet.localhost:8000/api/v1/user/getdetail?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMzc3OSIsInJvbGVfaWQiOiIxIiwiZW1haWwiOiJjaGludGFuaXQyMkBnbWFpbC5jb20iLCJleHAiOjE3ODMzMjQ3ODR9.AY-PMOH78_p-Jj9v3L1Hd_stU6NXcRWdmoBYHtVnjgo
 def getUserDetail(): # token: str
@@ -37,11 +43,24 @@ def getUserDetail(): # token: str
     # --------------------------
     # Get User Menu
     # --------------------------
-    # getDynamicMenuCenter(menups) # Get All Menu Centre By User
+    menups.created_by.set(userps.user_id.get())
+    getDynamicMenuCenter(menups) # Get All Menu Centre By User
     getActiveMenuCenterID(menups) # find m_center_id from user_id
     getUserMenuList(menups) # Get User Active Menu
-    menups.menu_array.set(menups.menu_exe_data.get())
     setUserMenusOutput(menups) # Set Menu Output
+    setUserMenuCenterOutput(menups) # Set Menu Centres
+    # --------------------------
+    # Get Workspace List
+    # --------------------------
+    wsps.domain_flag.set(0)
+    wsps.fetch_single.set(0)
+    getWorkspaceData(wsps)
+    setWorkspaceOutput(wsps)
+    # --------------------------
+    # Get Dashboard List
+    # --------------------------
+    getUserDashboards(dps)
+    setDashboardOutput(dps)
     # --------------------------
     # Merge All Data & Send Response
     # --------------------------
@@ -51,26 +70,13 @@ def getUserDetail(): # token: str
             "status": True,
             "message": "User Data",
             "user_dict": user_dict,
-            "menu_centre": "",
-            "active_menu_cid": "",
+            "menu_centre": menups.menu_centre.get(),
+            "active_menu_cid": menups.m_centre_id.get(),
             "user_menu": menups.menus_output.get(),
-            "ws_list" : "",
-            "dashboard_list" : ""
+            "ws_list" : wsps.ws_data.get(),
+            "dashboard_list" : dps.dashboards_data.get()
         }
     )
-    # return JSONResponse (
-    #     status_code = 200,
-    #     content = {
-    #         "status": True,
-    #         "message": "Login successful",
-    #         
-    #         "role_id": userps.role_id.get(),
-    #         "ws_role_id": userps.ws_role_id.get(),
-    #         "workspace_id": userps.workspace_id.get(),
-    #         "workspace_name": userps.workspace_name.get(),
-    #         "ws_url": userps.ws_url.get()
-    #     }
-    # )
 
 def getUserList():
     print("getUserList:")

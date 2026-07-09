@@ -30,9 +30,9 @@ def getDynamicMenu(menups):
             else:
                 stmt = stmt.order_by(column.asc())
     if fetch_single == 1 :
-        menups.menu_exe_data.set(DB.executeDBSelectSingle(stmt))
+        menups.menu_cntr_data.set(DB.executeDBSelectSingle(stmt))
     else :
-        menups.menu_exe_data.set(DB.executeDBSelect(stmt))
+        menups.menu_cntr_data.set(DB.executeDBSelect(stmt))
 
 def getDynamicMenuCenter(menups):
     m_centre_id = menups.m_centre_id.get()
@@ -53,9 +53,9 @@ def getDynamicMenuCenter(menups):
     if menups.is_delete.get() not in (None, ""):
         stmt = stmt.where(dync_menu_cntr.c.is_delete == menups.is_delete.get())
     if fetch_single == 1 :
-        menups.menu_exe_data.set(DB.executeDBSelectSingle(stmt))
+        menups.menu_centre.set(DB.executeDBSelectSingle(stmt))
     else :
-        menups.menu_exe_data.set(DB.executeDBSelect(stmt))
+        menups.menu_centre.set(DB.executeDBSelect(stmt))
 
 def getPublicOrUserMenuCenters(menups):
     dync_menu_cntr = DB.getTableMeta('sys_dynamic_menu_centre').alias('sdmc')
@@ -72,7 +72,7 @@ def getPublicOrUserMenuCenters(menups):
         .order_by(dync_menu_cntr.c.m_centre_id.asc())
         .distinct()
     )
-    menups.menu_exe_data.set(DB.executeDBSelect(stmt))
+    menups.menu_centre.set(DB.executeDBSelect(stmt))
 
 def getUserMenuList(menups):
     created_by = menups.created_by.get()
@@ -102,7 +102,7 @@ def getUserMenuList(menups):
     if menups.usr_flag.get() in (None, "", 0) and created_by not in (None, "", 0):
         stmt = stmt.where(dync_menu.c.created_by == created_by)
     stmt = stmt.order_by(dync_menu.c.rank.asc())
-    menups.menu_exe_data.set(DB.executeDBSelect(stmt))
+    menups.menu_cntr_data.set(DB.executeDBSelect(stmt))
 
 def insertUpdateUserMenu(menups):
     menu_id = 0

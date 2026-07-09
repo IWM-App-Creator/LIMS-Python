@@ -15,14 +15,13 @@ def getMenuCentre(request: Request):
         asso_menu_cntr_ids = [8, 51, 60, 61] # Get User Menu Centre IDs From Association Users
         menups.m_centre_ids.set(asso_menu_cntr_ids)
         getPublicOrUserMenuCenters(menups) # Get User Menu Centre and Public Menu Centre
-        menups.menu_array.set(menups.menu_exe_data.get())
         setUserMenuCenterOutput(menups)
         return JSONResponse (
             status_code = 200,
             content = {
                 "status": True,
                 "message": "Menu Centre Data",
-                "menu_centres": menups.menus_output.get()
+                "menu_centres": menups.menu_centre.get()
             }
         )
     except Exception as e:
@@ -51,7 +50,7 @@ def getUserMenu(request: Request):
         if menups.m_centre_id.get() in (None, "", 0):
             return raiseInvalidError("Menu Center is not found", 404)
         getUserMenuList(menups)
-        menups.menu_array.set(menups.menu_exe_data.get())
+        menups.menu_array.set(menups.menu_cntr_data.get())
         setUserMenusOutput(menups)
         return JSONResponse (
             status_code = 200,
@@ -78,13 +77,13 @@ def saveUserMenu(request: Request):
             menups.fetch_single.set(1)
             menups.is_delete.set(0)
             getDynamicMenuCenter(menups)
-            menu_centre = menups.menu_exe_data.get()
+            menu_centre = menups.menu_centre.get()
             if menu_centre and menu_centre.m_centre_id not in (None, "", 0):
                 menups.m_centre_id.set(menu_centre.m_centre_id)
             menups.is_delete.set(None)
             menups.m_type.set(1)
             getDynamicMenu(menups)
-            user_menu = menups.menu_exe_data.get()
+            user_menu = menups.menu_cntr_data.get()
             if user_menu:
                 if user_menu.is_delete == 1:
                     menups.menu_id.set(user_menu.menu_id)
@@ -109,7 +108,7 @@ def saveUserMenu(request: Request):
             menups.m_centre_id.set(None)
             menups.m_type.set(0)
             getDynamicMenu(menups)
-            user_menu = menups.menu_exe_data.get()
+            user_menu = menups.menu_cntr_data.get()
             if user_menu:
                 menups.rank.set(user_menu.rank + 1)
             setMenuInputParam(menups, params)
