@@ -44,6 +44,10 @@ def getUserDetail(): # token: str
     # Get User Menu
     # --------------------------
     menups.created_by.set(userps.user_id.get())
+    menups.m_centre_id.set(None)
+    menups.is_active.set(None)
+    menups.is_public.set(None)
+    menups.fetch_single.set(None)
     getDynamicMenuCenter(menups) # Get All Menu Centre By User
     getActiveMenuCenterID(menups) # find m_center_id from user_id
     getUserMenuList(menups) # Get User Active Menu
