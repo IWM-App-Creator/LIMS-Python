@@ -8,6 +8,7 @@ ROUTES = [
     ("/getcols", tableapi.getDBTableColumns, ["GET"]),
     ("/updatetbl", tableapi.updateDBTableAlias, ["GET"]),
     ("/renamecol", tableapi.updateDBTblColAlias, ["GET"]),
+    ("/addcol", tableapi.addDynamicColumn, ["GET"]),
     ("/updatecol", tableapi.updateDBTableColumn, ["GET"]),
     ("/removecol", tableapi.removeDBTableColumn, ["GET"]),
     ("/getdesc", tableapi.getDBTableDesc, ["GET"]),

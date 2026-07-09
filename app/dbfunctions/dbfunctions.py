@@ -16,6 +16,18 @@ def getColFromTablesSchema(dbps):
     all_db_tbl_col = DB.executeDBStatement(stmt)
     dbps.all_db_tbl_col.set(all_db_tbl_col) # Set To Properties
 
+@staticmethod
+def getTableColumnCount(dbps):
+    getColFromTablesSchema(dbps) # Get Table Columns From DB
+    tbl_col_cnt = 0
+    tbl_col_srch = dbps.tbl_col_srch.get()
+    columns = dbps.all_db_tbl_col.get()
+    for col in columns:
+        # print(dict(col._mapping))
+        if col.Field.startswith(f"{tbl_col_srch}"):
+            tbl_col_cnt = tbl_col_cnt + 1
+    dbps.tbl_col_cnt.set(tbl_col_cnt)
+
 def getCreateTableSqlFromSchema(dbps):
     schema_name = userps.schema_name.get()
     table_name = dbps.table_name.get()
@@ -136,6 +148,15 @@ def removeColumnUnique(dbps):
         alter_qry = generateDBColumnAlterQuery(dbps)
         DB.executeDBStatement(text(alter_qry))
 
+
+# type_map = {
+#     "DDL": "dd",
+#     "People/Assign To": "ppl",
+#     "YesNo": "yn",
+#     "TrueFalse": "tf",
+#     "Geolocation": "lat"
+# }
+
 # public function getColumnCount($rlps) {
 #         $columns = DB::select('describe ' . $rlps->table_name);
 #         $rlps->col_cnt = 0;
@@ -166,3 +187,35 @@ def removeColumnUnique(dbps):
 #         }
 #         $rlps->col_name = strtolower($rlps->col_type) . "_" . ($rlps->col_cnt + 1);
 #     }
+
+# if (str_contains($col->Field, 'status')) {
+#         $statuscnt = $statuscnt + 1;
+#     }
+#     if (str_contains($col->Field, 'ppl_')) {
+#         $usercnt = $usercnt + 1;
+#     }
+#     if (str_contains($col->Field, 'dd_')) {
+#         $ddlcnt = $ddlcnt + 1;
+#     }
+#     if (str_contains($col->Field, 'yn_')) {
+#         $yesnocnt = $yesnocnt + 1;
+#     }
+#     if (str_contains($col->Field, 'tf_')) {
+#         $turefalsecnt = $turefalsecnt + 1;
+#     }
+#     if (str_contains($col->Field, 'lat_')) {
+#         $latcnt = $latcnt + 1;
+#     }
+#     if (str_contains($col->Field, 'calc_')) {
+#         $calccnt = $calccnt + 1;
+#     }
+#     if (str_contains($col->Field, 'rating_')) {
+#         $ratingcnt = $ratingcnt + 1;
+#     }
+#     if (str_contains($col->Field, 'barcode_')) {
+#         $barcodecnt = $barcodecnt + 1;
+#     }
+#     if (str_contains($col->Field, 'sign_')) {
+#         $signcnt = $signcnt + 1;
+#     }
+# if($txtcol_dval == "" && ($txt_data_type == "int" || $txt_data_type == "bigint" || $txt_data_type == "float" || $txt_data_type == "decimal" || $txt_data_type == "double") ) {

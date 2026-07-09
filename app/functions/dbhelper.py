@@ -67,7 +67,6 @@ def getCreatedDateColParam(rank):
     colopt = {"col_name": "created_date", "col_alias": "Created Date", "data_type": "datetime", "length": 0, "default_val": 0, "is_primary": 0, "is_index": 0, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": "", "col_type": "DATETIME", "colkey": 0, "rank": rank }
     return colopt
 
-
 def isStatusColumn(colname: str) -> bool:
     return colname.startswith("status_")
 

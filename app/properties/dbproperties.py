@@ -30,6 +30,9 @@ class DBProperties:
         # All DB Table List & Table Cols
         self.all_db_tables = ContextVar("all_db_tables", default = "")
         self.all_db_tbl_col = ContextVar("all_db_tbl_col", default = "")
+
+        self.tbl_col_srch = ContextVar("tbl_col_srch", default = "")
+        self.tbl_col_cnt = ContextVar("all_db_tbl_col", default = "")
         
         # Create Query
         self.create_qry = ContextVar("create_qry", default = "")

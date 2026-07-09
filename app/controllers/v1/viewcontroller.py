@@ -94,6 +94,12 @@ def createBlankView (request: Request):
         viewps.view_type.set(params.get("view_type", ""))
         viewps.pin_to_menu.set(params.get("pin_to_menu", 0))
 
+
+        #
+        dbps.table_id.set(204)
+        dbps.table_name.set("wtyrqqgmka")
+
+
         # dbps.primary_col_nm.set(view_name.lower().replace(" ", "_") + "_id") 
         # dbps.primary_col_alias.set(view_name + " ID")
         # print("primary_col_nm --> ", dbps.primary_col_nm.get())
@@ -109,7 +115,7 @@ def createBlankView (request: Request):
         # print("table_id --> ", table_id)
         # table_id = 204
         # table_name = "krxtqesaep"
-        dbps.table_name.set(204)
+        dbps.table_id.set(204)
 
         # Step 2 Insert Into Sys DB Table Col
         createviewhlp.getDefaultAddViewCols(viewps)
