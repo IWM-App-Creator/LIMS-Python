@@ -159,7 +159,58 @@ def updateUserMenu(request: Request):
         raiseAPIError(str(e), 500)
 
 def saveMenuSorting(request: Request):
-    print("saveMenuSorting")
+    print("saveMenuSorting --> ")
+    try:
+        tempmenuarr = []
+        status = False
+        params = RequestData.params(request)
+        menuids = params.get("menuids", None)
+        if menuids in (None, ""):
+            return raiseInvalidError("Menu Ids is not found", 404)
+        if isinstance(menuids, str):
+            menuids = menuids.strip(",")
+            menuids = menuids.split(",")
+        rank = 1
+        for menu in menuids:
+            resetMenuProperties(menups)
+            childarr = menu.split("-")
+            print("childarr --> ", childarr)
+            menups.menu_id.set(childarr[0] if childarr[0] else 0)
+            menups.parent_menu_id.set(0)
+            menups.rank = rank
+            insertUpdateUserMenu(menups)
+            rank = rank + 1
+            print("after save 1")
+            if len(childarr) > 1:
+                parentmenu1 = menups.menu_id.get()
+                for chilf in childarr[1:]:
+                    childarr2 = chilf.split("|")
+                    menups.menu_id.set(childarr2[0] if childarr2[0] else 0)
+                    menups.parent_menu_id.set(parentmenu1)
+                    menups.rank = rank
+                    insertUpdateUserMenu(menups)
+                    rank = rank + 1
+                    parentmenu = menups.menu_id.get()
+                    for chilf2 in childarr2[1:]:
+                        menups.menu_id.set(chilf2 if chilf2 else 0)
+                        menups.parent_menu_id.set(parentmenu)
+                        menups.rank = rank
+                        insertUpdateUserMenu(menups)
+                        rank = rank + 1
+            tempmenuarr.append(menups.parent_menu_id.get())
+        status = True
+        return JSONResponse (
+            status_code = 200,
+            content = {
+                "status": status,
+                "message": "Menu Sorted Successfully",
+                "parent_menu_id": tempmenuarr
+            }
+        )
+    except Exception as e:
+        saveErrorLogtoDB("Menu", 0, "saveMenuSorting", str(e)) # Log Error To DB
+        raiseAPIError(str(e), 500)
+
 
 def removeUserMenu(request: Request):
     print("removeUserMenu")

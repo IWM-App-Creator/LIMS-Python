@@ -108,43 +108,54 @@ def insertUpdateUserMenu(menups):
     menu_id = 0
     usermenu = DB.getTableMeta("sys_dynamic_menu")
     where_clause = (usermenu.c.menu_id == menups.menu_id.get())
-    stmt = select(usermenu.c.menu_id).where(where_clause)
     values = {}
     if menups.m_centre_id.get() not in (None, "", 0):
         values["m_centre_id"] = menups.m_centre_id.get()
+        print("m_centre_id:", menups.m_centre_id.get())
     if menups.parent_menu_id.get() not in (None, "", 0):
         values["parent_menu_id"] = menups.parent_menu_id.get()
+        print("parent_menu_id:", menups.parent_menu_id.get())
     if menups.is_section.get() not in (None, ""):
         values["is_section"] = menups.is_section.get()
+        print("is_section:", menups.is_section.get())
     if menups.menu_name.get() not in (None, "", 0):
         values["menu_name"] = menups.menu_name.get()
+        print("menu_name:", menups.menu_name.get())
     if menups.menu_url.get() not in (None, "", 0):
         values["menu_url"] = menups.menu_url.get()
+        print("menu_url:", menups.menu_url.get())
     if menups.menu_icon.get() not in (None, "", 0):
         values["menu_icon"] = menups.menu_icon.get()
+        print("menu_icon:", menups.menu_icon.get())
     if menups.menu_color.get() not in (None, "", 0):
         values["menu_color"] = menups.menu_color.get()
+        print("menu_color:", menups.menu_color.get())
     if menups.m_type.get() not in (None, "", 0):
         values["m_type"] = menups.m_type.get()
+        print("m_type:", menups.m_type.get())
     if menups.view_id.get() not in (None, "", 0):
         values["view_id"] = menups.view_id.get()
+        print("view_id:", menups.view_id.get())
     if menups.is_new_tab.get() not in (None, ""):
         values["is_new_tab"] = menups.is_new_tab.get()
+        print("is_new_tab:", menups.is_new_tab.get())
     if menups.is_custom_centre.get() not in (None, ""):
         values["is_custom_centre"] = menups.is_custom_centre.get()
+        print("is_custom_centre:", menups.is_custom_centre.get())
     if menups.rank.get() not in (None, ""):
         values["rank"] = menups.rank.get()
+        print("rank:", menups.rank.get())
     if menups.is_delete.get() not in (None, ""):
         values["is_delete"] = menups.is_delete.get()
-    row = DB.executeDBSelectSingle(stmt) # Check if record exists
-    if row: # Update existing record
+        print("is_delete:", menups.is_delete.get())
+    if menups.menu_id.get() not in (None, "", 0): # Update existing record
         stmt = (
             update(usermenu)
             .where(where_clause)
             .values(**values)
         )
         DB.executeDBUpdate(stmt)
-        menu_id = row.menu_id
+        menu_id = menups.menu_id.get()
     else :  # Insert new record
         values["created_by"] = userps.user_id.get()
         values["created_date"] = nowWithTimeZone()
