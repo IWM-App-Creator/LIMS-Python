@@ -232,7 +232,7 @@ class ViewHelper:
                 dbcol = f"{col_id}{col_name}_{qry_alias}"
                 item[f"{col_id}|{col_name}"] = str(getattr(data, dbcol, ""))
                 # Display label for lookup/user columns
-                if (isUserColumn(col_name, 0) or (colhd["col_type"] in ("MAPCOL", "DISPLAYAS") and colhd["lookup_colid"] > 0) ):
+                if (dbhlp.isUserColumn(col_name, 0) or (colhd["col_type"] in ("MAPCOL", "DISPLAYAS") and colhd["lookup_colid"] > 0) ):
                     lbl_col = f"{col_id}{col_name}_lbl_{qry_alias}"
                     item[f"{col_id}|{col_name}lbl"] = str(getattr(data, lbl_col, ""))
             item_list.append(item)
@@ -263,27 +263,27 @@ class CreateViewHelper:
         viewps.blank_view_cols.set(blank_view_cols) # Set To Property
 
     @staticmethod
-    def setColForView(dbps):
+    def setColForView(dbps, viewps):
         print("setColForView col_id --> ", dbps.col_id.get())
-        view_cols = {}
-
+        view_cols_item = {}
         # {"view_cols": [{"rank": 10, "col_id": 3255, "colkey": 1, "col_name": "join_v1_id", "col_type": "NUMBER", "table_id": 198, "col_alias": "ID", "link_text": "", "qry_alias": "mtbl", "url_prefix": "", "date_format": null, "calc_formula": null, "lookup_colid": 0, "lookup_colnm": ""}}
-        return {
+        view_cols_item = {
             "table_id": dbps.table_id.get(),
             "col_id": dbps.col_id.get(),
             "col_name": dbps.col_name.get(),
             "qry_alias": dbps.qry_alias.get(),
             "col_alias": dbps.col_alias.get(),
             "col_type": dbps.col_type.get(),
-            "colkey": dbps.colkey.get(),
+            "col_key": dbps.col_key.get(),
             "lookup_colid": dbps.lookup_colid.get(),
             "lookup_colnm": dbps.lookup_colnm.get(),
-            "url_prefix": "",
-            "link_text": "",
-            "date_format": "",
-            "calc_formula": "",
+            "url_prefix": viewps.url_prefix.get(),
+            "link_text": viewps.link_text.get(),
+            "date_format": viewps.date_format.get(),
+            "calc_formula": viewps.calc_formula.get(),
             "rank": dbps.rank.get(),
         }
+        viewps.view_cols_item.set(view_cols_item) # Set To Property
 
 createviewhlp = CreateViewHelper()
 

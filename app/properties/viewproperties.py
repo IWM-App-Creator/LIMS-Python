@@ -24,10 +24,22 @@ class viewproperties:
 
         self.view_options = ContextVar("view_options", default = [])
         self.view_cols = ContextVar("view_cols", default = [])
+        self.view_cols_item = ContextVar("view_cols_item", default = [])
         self.tbl_cols = ContextVar("tbl_cols", default = [])
         self.view_joins = ContextVar("view_joins", default = [])
         self.view_child = ContextVar("view_child", default = [])
         self.view_actions = ContextVar("view_actions", default = [])
+
+        self.dync_cat_id = ContextVar("dync_cat_id", default = "")
+        self.short_desc = ContextVar("short_desc", default = "")
+        self.preview_img = ContextVar("preview_img", default = "")
+        self.is_delete = ContextVar("is_delete", default = "")
+
+        # Column Options Properties
+        self.url_prefix = ContextVar("url_prefix", default = "")
+        self.link_text = ContextVar("link_text", default = "")
+        self.date_format = ContextVar("date_format", default = "")
+        self.calc_formula = ContextVar("calc_formula", default = "")
 
         # View Options Properties
         self.table_id = ContextVar("table_id", default = "0")
@@ -54,4 +66,5 @@ class viewproperties:
         # Create View Properties
         self.blank_view_cols = ContextVar("blank_view_cols", default = 0)
         self.pin_to_menu = ContextVar("pin_to_menu", default = 0)
+
 viewps = viewproperties()

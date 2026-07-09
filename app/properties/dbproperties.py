@@ -16,7 +16,7 @@ class DBProperties:
         self.col_alias = ContextVar("col_name", default = "")
         self.col_options = ContextVar("col_options", default = {})
         self.col_key = ContextVar("col_key", default = 0)
-        self.datatype = ContextVar("datatype", default = "")
+        self.data_type = ContextVar("data_type", default = "")
         self.length = ContextVar("length", default = "")
         self.is_mandatory = ContextVar("is_mandatory", default = "")
         self.default_val = ContextVar("default_val", default = "")
@@ -27,6 +27,12 @@ class DBProperties:
         self.actv_log_cols = ContextVar("actv_log_cols", default = "")
         self.col_data_items = ContextVar("col_data_items", default = "")
         self.rank = ContextVar("rank", default = 0)
+
+        # View Related Columns Properties
+        self.qry_alias = ContextVar("qry_alias", default = "mtbl")
+        self.lookup_colid = ContextVar("lookup_colid", default = 0)
+        self.lookup_colnm = ContextVar("lookup_colnm", default = "")
+        self.col_type = ContextVar("col_type", default = "")    
 
         # All DB Table List & Table Cols
         self.all_db_tables = ContextVar("all_db_tables", default = "")

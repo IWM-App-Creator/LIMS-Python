@@ -112,6 +112,7 @@ def createBlankView (request: Request):
         # Step 2 : Insert Into Sys DB Table Col
         createviewhlp.getDefaultAddViewCols(viewps) # Get Column List Based On View Type
         blank_view_cols = viewps.blank_view_cols.get()
+        v_c_item = []
         for blnkvcol in blank_view_cols:
             dbps.blnkvcol.set(blnkvcol)
             # Set Col ID, Name, Alias, ColOption & Rank
@@ -123,11 +124,13 @@ def createBlankView (request: Request):
             # insertUpdateTblCol(dbps) # Save to sys_new_db_tables_cols
             3310, 3311
             dbps.col_id.set(3310)
-
             # {"view_cols": [{"rank": 10, "col_id": 3255, "colkey": 1, "col_name": "join_v1_id", "col_type": "NUMBER", "table_id": 198, "col_alias": "ID", "link_text": "", "qry_alias": "mtbl", "url_prefix": "", "date_format": null, "calc_formula": null, "lookup_colid": 0, "lookup_colnm": ""}}
-
-
-            createviewhlp.setColForView(dbps) # Set View Col Option To JSON
+            createviewhlp.setColForView(dbps, viewps) # Set View Col Option To JSON
+            v_c_item.append( viewps.view_cols_item.get() )
+        # Get Cols Json for View
+        view_cols = {}
+        view_cols["view_cols"] = v_c_item
+        viewps.view_cols.set(view_cols) # Set View Cols To Property
 
         # Step 3 : Insert Into Sys View Table
 
