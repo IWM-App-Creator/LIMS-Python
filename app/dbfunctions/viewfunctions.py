@@ -16,7 +16,6 @@ def getViewDataByID(viewps):
 
 def insertUpdateView(viewps) :
     tblview = DB.getTableMeta("sys_new_dynamic_view")
-    # view_id, , , , , , , , , dync_cat_id, short_desc, preview_img, is_delete, created_by, is_metadata, created_date
     values = {}
     if viewps.view_name.get() not in (None, ""):
         values["view_name"] = viewps.view_name.get()
@@ -24,7 +23,6 @@ def insertUpdateView(viewps) :
         values["url"] = viewps.view_url.get()
     if viewps.view_type.get() not in (None, ""):
         values["view_type"] = viewps.view_type.get()
-
     if viewps.view_options.get() not in (None, "", []):
         values["view_options"] = viewps.view_options.get()
     if viewps.view_cols.get() not in (None, "", []):
@@ -35,12 +33,14 @@ def insertUpdateView(viewps) :
         values["view_child"] = viewps.view_child.get()
     if viewps.view_actions.get() not in (None, "", []):
         values["view_actions"] = viewps.view_actions.get()
-    
-    if viewps.view_type.get() not in (None, ""):
-        values["view_type"] = viewps.view_type.get()
-    if viewps.view_type.get() not in (None, ""):
-        values["view_type"] = viewps.view_type.get()
-    
+    if viewps.dync_cat_id.get() not in (None, ""):
+        values["dync_cat_id"] = viewps.dync_cat_id.get()
+    if viewps.short_desc.get() not in (None, ""):
+        values["short_desc"] = viewps.short_desc.get()
+    if viewps.preview_img.get() not in (None, ""):
+        values["preview_img"] = viewps.preview_img.get()
+    if viewps.is_delete.get() not in (None, ""):
+        values["is_delete"] = viewps.is_delete.get()
     # Check for Insert / Update
     view_id = viewps.view_id.get()
     if viewps > 0 : # Update existing record

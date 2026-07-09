@@ -1,5 +1,5 @@
 from app.utils.common import DB, Request, RequestData, JSONResponse, raiseAPIError, raiseInvalidError, nowWithTimeZone
-from app.dbfunctions.viewfunctions import getViewDataByID
+from app.dbfunctions.viewfunctions import getViewDataByID, insertUpdateView
 from app.dbfunctions.dbtablesfunctions import insertTableDataToDB, insertUpdateTblCol
 from app.dbfunctions.logfunctions import saveErrorLogtoDB
 from app.functions.viewhelper import viewhlp, createviewhlp
@@ -132,9 +132,24 @@ def createBlankView (request: Request):
         view_cols["view_cols"] = v_c_item
         viewps.view_cols.set(view_cols) # Set View Cols To Property
 
-        # Step 3 : Insert Into Sys View Table
+        # Step 3 : Generate Create Table Query & Execute
+        insertUpdateView(viewps)
 
-        # print("createBlankView  --> ", nowWithTimeZone())
+        # Step 4 : Insert Into Sys View Table
+        insertUpdateView(viewps)
+
+        # Step 5 : Set Menu
+        insertUpdateView(viewps)
+
+        # $viewdtl = explode("~~", $viewdtl);
+        # $view_id = $viewdtl[0];
+        # $view_url = "https://" . $GeneralFunctions->getDomainNameFromURL() . "/view/" . $viewdtl[2];
+        # if($pin_to_menu == 1) {
+        #     $ModelFunctionsController->addViewToMenu($user_id, $view_id, $view_name);
+        # }
+        
+        # /* Step 4 : Update Rank */
+
     except Exception as e:
         # saveErrorLogtoDB ("View", viewps.view_id.get(), "getViewData", str(e)) # Log Error To DB
         raiseAPIError(str(e), 500)

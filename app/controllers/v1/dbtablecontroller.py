@@ -104,10 +104,14 @@ def addDynamicColumn (request: Request):
         tmpcnt = dbps.tbl_col_cnt.get() + 1
         col_name = col_name + tmpcnt # Append Count + 1
         print(col_name)
+
+        # 
     
     # Step 2 : Create Array For Adding New Column
+    # blank_view_cols.append( dbhlp.getStatusColParam("Status", "1", rank) )
 
     # Step 3 : Get Query For Adding Table Column
+        # insertUpdateView(viewps)
 
     # Step 4 : Add New Column To View
 
