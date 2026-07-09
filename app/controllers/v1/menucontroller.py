@@ -26,7 +26,7 @@ def getMenuCentre(request: Request):
             }
         )
     except Exception as e:
-        saveErrorLogtoDB ("Menu", 0, "getMenuCentre", str(e)) # Log Error To DB
+        # saveErrorLogtoDB ("Menu", 0, "getMenuCentre", str(e)) # Log Error To DB
         raiseAPIError(str(e), 500)
 
 def saveMenuCentre(request: Request):
@@ -62,7 +62,7 @@ def getUserMenu(request: Request):
             }
         )
     except Exception as e:
-        saveErrorLogtoDB("Menu", 0, "getUserMenu", str(e)) # Log Error To DB
+        # saveErrorLogtoDB("Menu", 0, "getUserMenu", str(e)) # Log Error To DB
         raiseAPIError(str(e), 500)
 
 def saveUserMenu(request: Request):
@@ -137,7 +137,7 @@ def saveUserMenu(request: Request):
             }
         )
     except Exception as e:
-        saveErrorLogtoDB("Menu", 0, "saveUserMenu", str(e)) # Log Error To DB
+        # saveErrorLogtoDB("Menu", 0, "saveUserMenu", str(e)) # Log Error To DB
         raiseAPIError(str(e), 500)
 
 def updateUserMenu(request: Request):
@@ -155,7 +155,7 @@ def updateUserMenu(request: Request):
             }
         )
     except Exception as e:
-        saveErrorLogtoDB("Menu", menups.menu_id.get(), "updateUserMenu", str(e)) # Log Error To DB
+        # saveErrorLogtoDB("Menu", menups.menu_id.get(), "updateUserMenu", str(e)) # Log Error To DB
         raiseAPIError(str(e), 500)
 
 def saveMenuSorting(request: Request):
@@ -174,27 +174,25 @@ def saveMenuSorting(request: Request):
         for menu in menuids:
             resetMenuProperties(menups)
             childarr = menu.split("-")
-            print("childarr --> ", childarr)
             menups.menu_id.set(childarr[0] if childarr[0] else 0)
             menups.parent_menu_id.set(0)
-            menups.rank = rank
+            menups.rank.set(rank)
             insertUpdateUserMenu(menups)
             rank = rank + 1
-            print("after save 1")
             if len(childarr) > 1:
                 parentmenu1 = menups.menu_id.get()
                 for chilf in childarr[1:]:
                     childarr2 = chilf.split("|")
                     menups.menu_id.set(childarr2[0] if childarr2[0] else 0)
                     menups.parent_menu_id.set(parentmenu1)
-                    menups.rank = rank
+                    menups.rank.set(rank)
                     insertUpdateUserMenu(menups)
                     rank = rank + 1
                     parentmenu = menups.menu_id.get()
                     for chilf2 in childarr2[1:]:
                         menups.menu_id.set(chilf2 if chilf2 else 0)
                         menups.parent_menu_id.set(parentmenu)
-                        menups.rank = rank
+                        menups.rank.set(rank)
                         insertUpdateUserMenu(menups)
                         rank = rank + 1
             tempmenuarr.append(menups.parent_menu_id.get())
@@ -208,7 +206,7 @@ def saveMenuSorting(request: Request):
             }
         )
     except Exception as e:
-        saveErrorLogtoDB("Menu", 0, "saveMenuSorting", str(e)) # Log Error To DB
+        # saveErrorLogtoDB("Menu", 0, "saveMenuSorting", str(e)) # Log Error To DB
         raiseAPIError(str(e), 500)
 
 
