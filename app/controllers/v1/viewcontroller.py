@@ -7,7 +7,7 @@ from app.functions.generalfunctions import sortObjectsByKey, generateRandomStrin
 from app.properties.viewproperties import viewps
 from app.properties.dbproperties import dbps
 
-# http://xytovet.localhost:8000/api/v1/view/getdata?view_id=178
+# http://testws1.localhost:8000/api/v1/view/getdata?view_id=178
 def getViewData(request: Request):
     try:
         params = RequestData.params(request)
@@ -85,7 +85,7 @@ def saveTableData (request: Request):
 
 # http://xytovet.localhost:8000/api/v1/view/create?view_name=Python View&view_type=Table&pin_to_menu=1
 
-# api/dyncol/add?view_id=166&col_id=0&tab_id=0&all_usr_flg=1&col_type=DDL&col_alias=DDl&txt_data_type=varchar&txtcol_length=255&txtcol_index=0&txtcol_dval=&is_private=0&dync_cat_id=0&orderflag=Right&ordercol_id=3017&notify_user=0
+# api/dyncol/add?view_id=166&col_id=0&tab_id=0&all_usr_flg=1&col_type=DDL&col_alias=DDl&txt_data_type=varchar&txtcol_length=255&txtcol_index=0&txtcol_dval=&orderflag=Right&ordercol_id=3017&notify_user=0
 def createBlankView (request: Request):
     try:
         params = RequestData.params(request)

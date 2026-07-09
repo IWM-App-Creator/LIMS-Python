@@ -136,11 +136,9 @@ def insertUpdateTblCol(dbps) :
         "created_by": userps.user_id.get(),
         "created_date": nowWithTimeZone()
     }
-
     # stmt = (insert(tblcols).values(**values))
     # col_id = DB.executeDBInsert(stmt)
     # return col_id
-
     col_id = dbps.col_id.get()
     if col_id > 0 : # Update existing record
         stmt = (
