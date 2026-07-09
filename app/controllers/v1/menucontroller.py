@@ -1,29 +1,33 @@
 from app.utils.common import select, DB, Request, RequestData, JSONResponse, raiseAPIError, raiseInvalidError, userps
 from app.dbfunctions.associationfunctions import getAssociationUsers
 from app.dbfunctions.menufunctions import getPublicOrUserMenuCenters, getDynamicMenu, getDynamicMenuCenter, getUserMenuList, insertUpdateUserMenu
-from app.properties.associationproperties import associationps
-from app.properties.menuproperties import menups
-from app.functions.menuhelper import setMenuInputParam, setUserMenusOutput, setUserMenuCenterOutput
+from app.functions.menuhelper import resetMenuProperties, setMenuInputParam, setUserMenusOutput, setUserMenuCenterOutput
 from app.dbfunctions.logfunctions import saveErrorLogtoDB
+from app.dbfunctions.customviewfunctions import addUpdateCustomView
+from app.properties.menuproperties import menups
+from app.properties.customviewproperties import customvwps
 
 # --------------------------
 # Menu Centre
 # --------------------------
 def getMenuCentre(request: Request):
-    print("getMenuCentre --> ")
-    asso_menu_cntr_ids = [8, 51, 60, 61] # Get User Menu Centre IDs From Association Users
-    menups.m_centre_ids.set(asso_menu_cntr_ids)
-    mymenus = getPublicOrUserMenuCenters(menups) # Get User Menu Centre and Public Menu Centre
-    menups.menu_array.set(mymenus)
-    setUserMenuCenterOutput(menups)
-    return JSONResponse (
-        status_code = 200,
-        content = {
-            "status": True,
-            "message": "Menu Centre Data",
-            "menu_centres": menups.menus_output.get()
-        }
-    )
+    try:
+        asso_menu_cntr_ids = [8, 51, 60, 61] # Get User Menu Centre IDs From Association Users
+        menups.m_centre_ids.set(asso_menu_cntr_ids)
+        mymenus = getPublicOrUserMenuCenters(menups) # Get User Menu Centre and Public Menu Centre
+        menups.menu_array.set(mymenus)
+        setUserMenuCenterOutput(menups)
+        return JSONResponse (
+            status_code = 200,
+            content = {
+                "status": True,
+                "message": "Menu Centre Data",
+                "menu_centres": menups.menus_output.get()
+            }
+        )
+    except Exception as e:
+        saveErrorLogtoDB ("Menu", 0, "getMenuCentre", str(e)) # Log Error To DB
+        raiseAPIError(str(e), 500)
 
 def saveMenuCentre(request: Request):
     print("saveMenuCentre")
@@ -58,6 +62,7 @@ def getUserMenu(request: Request):
             }
         )
     except Exception as e:
+        saveErrorLogtoDB("Menu", 0, "getUserMenu", str(e)) # Log Error To DB
         raiseAPIError(str(e), 500)
 
 def saveUserMenu(request: Request):
@@ -111,7 +116,13 @@ def saveUserMenu(request: Request):
             menups.parent_menu_id.set(0)
             menu_id = insertUpdateUserMenu(menups)
             if menups.add_custom_view.get() == 1:
+                resetMenuProperties(menups)
                 menups.menu_id.set(menu_id)
+                customvwps.view_name.set(menups.menu_name.get())
+                customvwps.view_url.set(menups.menu_url.get())
+                custom_view_id = addUpdateCustomView(customvwps)
+                menups.view_id.set(custom_view_id)
+                insertUpdateUserMenu(menups)
             status = True
         elif is_valid == 2:
             status = True
@@ -126,7 +137,7 @@ def saveUserMenu(request: Request):
             }
         )
     except Exception as e:
-        saveErrorLogtoDB("SaveMenu", 0, "saveUserMenu", str(e)) # Log Error To DB
+        saveErrorLogtoDB("Menu", 0, "saveUserMenu", str(e)) # Log Error To DB
         raiseAPIError(str(e), 500)
 
 def updateUserMenu(request: Request):
@@ -140,96 +151,3 @@ def removeUserMenu(request: Request):
 
 def getMenuIcons(request: Request):
     print("getMenuIcons")
-
-
-
-    # public function saveUserMenu(Request $request) {
-    #     $menu_id = "";
-    #     $fetch_flag = 0;
-    #     $output_array = array();
-    #     /* Input Params */
-    #     $user_id = empty(Input::get('user_id')) ? "1" : Input::get('user_id');
-    #     $api_secret = empty(Input::get('api_secret')) ? "" : Input::get('api_secret');
-    #     $m_centre_id = empty(Input::get('m_centre_id')) ? "0" : Input::get('m_centre_id');
-    #     $m_type = empty(Input::get('m_type')) ? "1" : Input::get('m_type');
-    #     $view_id = empty(Input::get('view_id')) ? "0" : Input::get('view_id');
-    #     $menu_name = empty(Input::get('menu_name')) ? "" : Input::get('menu_name');
-    #     $menu_icon = empty(Input::get('menu_icon')) ? "" : Input::get('menu_icon');
-    #     $menu_color = empty(Input::get('menu_color')) ? "" : Input::get('menu_color');
-    #     $menu_url = empty(Input::get('menu_url')) ? "" : Input::get('menu_url');
-    #     $is_new_tab = empty(Input::get('is_new_tab')) ? "0" : Input::get('is_new_tab');
-    #     $add_custom_view = empty(Input::get('add_custom_view')) ? "0" : Input::get('add_custom_view');
-    #     $is_section = empty(Input::get('is_section')) ? "0" : Input::get('is_section');
-    #     $callfrom = empty(Input::get('callfrom')) ? "" : Input::get('callfrom');
-    #     /* API Check */
-    #     $ModelFunctionsController = new ModelFunctionsController();
-    #     $userdtlarr = $ModelFunctionsController->getAPIUserHeader($user_id, $api_secret, 1);
-    #     if($userdtlarr) {
-    #         $is_valid = 1;
-    #         if($callfrom == "ViewPage") { /* Called From View */
-    #             $menuc = DB::table('sys_dynamic_menu_centre')
-    #                         ->where('is_active', 1)
-    #                         ->where('is_delete', 0)
-    #                         ->where('created_by', $user_id)
-    #                         ->first();
-    #             if($menuc) {
-    #                 $m_centre_id = $menuc->m_centre_id;
-    #             }
-    #             $menu = DB::table('sys_dynamic_menu')
-    #                     ->where('m_type', 1)
-    #                     ->where('m_centre_id', $m_centre_id)
-    #                     ->where('view_id', $view_id)
-    #                     ->where('created_by', $user_id)
-    #                     ->first();
-    #             if($menu) {
-    #                 $menu_id = $menu->menu_id;
-    #                 if($menu->is_delete == 1) {
-    #                     $data = array();
-    #                     $data['is_delete'] = 0;
-    #                     DB::table('sys_dynamic_menu')->where('menu_id', $menu_id)->update($data);
-    #                     $is_valid = 2;    
-    #                 } else {
-    #                     $is_valid = 0;
-    #                 }
-    #             }
-    #         }
-    #         if($is_valid == 1) {
-    #             $rank = 0;
-    #             $menu = DB::table('sys_dynamic_menu')
-    #                     ->where('created_by', $user_id)
-    #                     ->where('is_delete', '0')
-    #                     ->orderBy('rank', 'DESC')
-    #                     ->first();
-    #             if($menu) {
-    #                 $rank = (int)$menu->rank + 1;
-    #             }
-    #             $data = array();
-    #             $data['parent_menu_id'] = '0';
-    #             $data['m_centre_id'] = $m_centre_id;
-    #             $data['is_section'] = $is_section;
-    #             $data['menu_name'] = $menu_name;
-    #             $data['menu_url'] = $menu_url;
-    #             $data['menu_icon'] = $menu_icon;
-    #             $data['menu_color'] = $menu_color;
-    #             $data['m_type'] = $m_type;
-    #             $data['view_id'] = $view_id;
-    #             $data['is_new_tab'] = $is_new_tab;
-    #             $data['rank'] = $rank;
-    #             $data['is_delete'] = "0";
-    #             $data['created_by'] = $user_id;
-    #             $data['created_date'] = date('Y-m-d H:i:s');
-    #             $menu_id = DB::table('sys_dynamic_menu')->insertGetId($data);
-    #             if($add_custom_view == '1') {
-    #                 $this->saveCustomView($menu_id, $menu_name, $menu_url, $user_id);
-    #             }
-    #             $fetch_flag = 1;
-    #         } else if($is_valid == 2) {
-    #             $fetch_flag = 1;
-    #         } else {
-    #             $fetch_flag = 2;
-    #         }
-    #     }
-    #     $output_array['fetch_flag'] = $fetch_flag;
-    #     $output_array['menu_id'] = $menu_id;
-    #     echo json_encode($output_array);
-    # }
