@@ -1,6 +1,13 @@
-from app.utils.common import select, DB, insert, delete, userps, nowWithTimeZone
+from app.utils.common import DB, select, insert, delete, func, userps, nowWithTimeZone
 
-def getDBErrorLog(error_id: str, section: str, item_id: str):
+def getDBErrorLog(logps):
+    page_no = logps.page_no.get()
+    error_id = logps.error_id.get()
+    section = logps.section.get()
+    item_id = logps.item_id.get()
+    page_size = logps.page_size.get()
+    page_no = max(1, int(page_no))
+    offset = (page_no - 1) * page_size
     tblerrorlog = DB.getTableMeta("sys_error_log").alias("errlog")
     tbluser = DB.getTableMeta("users", "systemconfig").alias("usr")
     tblview = DB.getTableMeta("sys_new_dynamic_view").alias("dyncv")
@@ -17,7 +24,7 @@ def getDBErrorLog(error_id: str, section: str, item_id: str):
                 (tblerrorlog.c.section == "View") &
                 (tblerrorlog.c.item_id == tblview.c.view_id)
             )
-        )        
+        )
     )
     if section not in (None, "", 0):
         stmt = stmt.where(tblerrorlog.c.section == section)
@@ -25,7 +32,15 @@ def getDBErrorLog(error_id: str, section: str, item_id: str):
         stmt = stmt.where(tblerrorlog.c.item_id == item_id)
     if error_id not in (None, "", 0):
         stmt = stmt.where(tblerrorlog.c.error_id == error_id)
-    stmt = stmt.order_by(tblerrorlog.c.created_date.desc())
+    # Create count statement from the existing statement
+    count_stmt = stmt.with_only_columns(func.count()).order_by(None)
+    logps.total_record.set(DB.executeDBScalar(count_stmt))
+    # Apply paging to the original statement
+    stmt = (
+        stmt.order_by(tblerrorlog.c.created_date.desc())
+            .limit(page_size)
+            .offset(offset)
+    )
     return DB.executeDBSelect(stmt)
 
 def saveErrorLogtoDB(section: str, item_id: str, notes: str, error_msg: str):

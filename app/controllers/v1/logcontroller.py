@@ -1,12 +1,18 @@
-from app.utils.common import Request, RequestData, JSONResponse, raiseAPIError, formatDate
+from app.utils.common import RequestData, Request, JSONResponse, raiseAPIError, formatDate
 from app.services.firebase.firebase_service import send_push
 from app.dbfunctions.logfunctions import getDBErrorLog, saveErrorLogtoDB, resolveError
 from app.functions.generalfunctions import formatUserDisplayName
+from app.properties.logproperties import logps
 
-# http://tesetws1.localhost:8000/api/v1/log/geterrors?error_id=&section=View&item_id=178
-def getErrorLog(error_id: str, section: str, item_id: str):
+# http://tesetws1.localhost:8000/api/v1/log/geterrors?page_no=1&error_id=&section=View&item_id=178
+def getErrorLog(request: Request):
     try:
-        logdata = getDBErrorLog(error_id, section, item_id) # Get Error Log Data
+        params = RequestData.params(request)
+        logps.page_no.set(params.get("page_no", 1))
+        logps.error_id.set(params.get("error_id", ""))
+        logps.section.set(params.get("section", ""))
+        logps.item_id.set(params.get("item_id", ""))
+        logdata = getDBErrorLog(logps) # Get Error Log Data
         item_list = []
         if not logdata: # Invalid View
             return raiseAPIError("Log Not Found", 401)
@@ -23,14 +29,15 @@ def getErrorLog(error_id: str, section: str, item_id: str):
                 "user_name": user_name,
                 "view_name": getattr(data, "view_name", ""),
                 "url": getattr(data, "url", ""),
-                "created_date": formatDate(created_date = getattr(data, "created_date", "")),
+                "created_date": formatDate(from_date = getattr(data, "created_date", "")),
             }
             item_list.append(item)
         return JSONResponse (
             status_code = 200,
             content = {
                 "status": True,
-                "message": "Error Log Data",
+                # "message": "Error Log Data",
+                "total_record": logps.total_record.get(),
                 "log_data": item_list
             }
         )

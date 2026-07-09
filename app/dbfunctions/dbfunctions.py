@@ -1,5 +1,6 @@
 from app.utils.common import DB, select, text, userps
 import re
+from sqlalchemy import inspect
 
 def getDBTablesFromSchema(dbps):
     schema_name = userps.schema_name.get()
@@ -135,13 +136,33 @@ def removeColumnUnique(dbps):
         alter_qry = generateDBColumnAlterQuery(dbps)
         DB.executeDBStatement(text(alter_qry))
 
-def getDBTables():
-    print("getDBTables --> ")
-    user_id = userps.user_id.get() # Get User ID
-    # Prepare Query
-    tbluser = DB.getTableMeta("users").alias("usr")
-    stmt = select(tbluser)
-    if user_id not in (None, ""):
-        stmt = stmt.where(tbluser.c.id == user_id)
-    user = DB.executeDBSelectSingle(stmt) # Execute Query
-    return user
+# public function getColumnCount($rlps) {
+#         $columns = DB::select('describe ' . $rlps->table_name);
+#         $rlps->col_cnt = 0;
+#         if($rlps->col_type == "DDL") {
+#             $rlps->col_type = "dd";
+#         } else if($rlps->col_type == "People/Assign To") {
+#             $rlps->col_type = "ppl";
+#         } else if($rlps->col_type == "YesNo") {
+#             $rlps->col_type = "yn";
+#         } else if($rlps->col_type == "TrueFalse") {
+#             $rlps->col_type = "tf";
+#         } else if($rlps->col_type == "Geolocation") {
+#             $rlps->col_type = "lat";
+#         }
+#         foreach ($columns as $col) {
+#             if($col->Field == "is_delete") {
+#                 $rlps->previous_col = $rlps->tmp_col;
+#             }
+#             $rlps->tmp_col = $col->Field;
+#             if($col->Field == $rlps->col_name) {
+#                 $rlps->fetch_flag = 2;
+#                 $rlps->error_msg = "Column already exists, Duplicate column name " . $rlps->col_name;
+#                 break;
+#             }
+#             if (str_contains($col->Field, strtolower($rlps->col_type) . "_")) {
+#                 $rlps->col_cnt = $rlps->col_cnt + 1;
+#             }
+#         }
+#         $rlps->col_name = strtolower($rlps->col_type) . "_" . ($rlps->col_cnt + 1);
+#     }

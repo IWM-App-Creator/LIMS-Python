@@ -85,3 +85,11 @@ class DB:
                 stmt = text(stmt)
             result = conn.execute(stmt)
             return result.fetchall()
+
+    @staticmethod
+    def executeDBScalar(stmt):
+        with dbconn.begin() as conn:
+            schema_name = userps.schema_name.get()
+            if schema_name:
+                conn.execute(text(f"USE `{schema_name}`"))
+            return conn.execute(stmt).scalar()
