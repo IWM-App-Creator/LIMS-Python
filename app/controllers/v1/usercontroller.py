@@ -1,7 +1,7 @@
 from app.utils.common import DB, select, JSONResponse, raiseAPIError, userps
 from app.dbfunctions.userfunctions import getUserDataFromDB
 from app.properties.dbproperties import dbps
-from app.functions.menuhelper import getMenuCenterId, setUserMenusOutput
+from app.functions.menuhelper import getActiveMenuCenterID, setUserMenusOutput
 from app.dbfunctions.menufunctions import getUserMenuList
 from app.properties.menuproperties import menups
 
@@ -22,7 +22,6 @@ def getUserDetail(): # token: str
     user = getUserDataFromDB() # Execute Function to User Get Data
     if not user: # Invalid User
         raiseAPIError("Invalid Email", 401)
-
     userps.first_name.set(user.first_name)
     userps.last_name.set(user.last_name)
     userps.email.set(user.email)
@@ -38,7 +37,8 @@ def getUserDetail(): # token: str
     # --------------------------
     # Get User Menu
     # --------------------------
-    getMenuCenterId(menups) # find m_center_id from user_id
+    # getDynamicMenuCenter(menups) # Get All Menu Centre By User
+    getActiveMenuCenterID(menups) # find m_center_id from user_id
     getUserMenuList(menups) # Get User Active Menu
     menups.menu_array.set(menups.menu_exe_data.get())
     setUserMenusOutput(menups) # Set Menu Output
@@ -51,7 +51,11 @@ def getUserDetail(): # token: str
             "status": True,
             "message": "User Data",
             "user_dict": user_dict,
+            "menu_centre": "",
+            "active_menu_cid": "",
             "user_menu": menups.menus_output.get(),
+            "ws_list" : "",
+            "dashboard_list" : ""
         }
     )
     # return JSONResponse (

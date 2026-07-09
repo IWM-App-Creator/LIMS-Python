@@ -35,12 +35,14 @@ def setMenuInputParam(menups, params):
     menups.add_custom_view.set(params.get("add_custom_view", None))
     menups.is_section.set(params.get("is_section", None))
 
-def getMenuCenterId(menups):
-    menups.usr_flag.set(0)
-    menups.is_active.set(1)
+def getActiveMenuCenterID(menups):
+    # menups.usr_flag.set(0)
+    # menups.is_active.set(1)
     menups.created_by.set(userps.user_id.get())
-    menups.fetch_single.set(1)
-    getDynamicMenuCenter(menups)
+    # menups.fetch_single.set(1)
+    if menups.menu_exe_data.get() is None :
+        getDynamicMenuCenter(menups)
+
     menucenter = menups.menu_exe_data.get()
     if menucenter and menucenter.m_centre_id not in (None, "", 0):
         menups.m_centre_id.set(menucenter.m_centre_id)
