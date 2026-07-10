@@ -1,5 +1,9 @@
+from app.dbfunctions.workspacefunctions import getWorkspaceData
+
 def setWorkspaceOutput(wsps):
     ws_datas = wsps.ws_data.get()
+    if ws_datas is None :
+        getWorkspaceData(wsps)
     ws_data = []
     for ws in ws_datas:
         row = {
