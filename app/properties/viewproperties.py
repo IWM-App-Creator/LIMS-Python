@@ -9,6 +9,7 @@ class viewproperties:
         self.view_url = ContextVar("view_url", default = "")
         self.view_type = ContextVar("view_type", default = "Table")
         self.view_qry = ContextVar("view_qry", default = "")
+        self.qry_col_list = ContextVar("qry_col_list", default = "")
 
         self.view_qry_data = ContextVar("view_qry_data", default = [])
         self.total_record = ContextVar("total_record", default = 0)
@@ -47,8 +48,8 @@ class viewproperties:
         self.primary_col = ContextVar("primary_col", default = "")
         self.primary_colnm = ContextVar("primary_colnm", default = "") 
         self.delete_col = ContextVar("delete_col", default = "")
-        self.show_deleted = ContextVar("show_deleted", default = "")
-        self.enable_newline = ContextVar("enable_newline", default = "0")
+        self.show_deleted = ContextVar("show_deleted", default = "0")
+        self.enable_newline = ContextVar("enable_newline", default = "1")
         self.enable_join_save = ContextVar("enable_join_save", default = "0")
         self.is_child_view = ContextVar("is_child_view", default = "0")
         self.enable_child_srch = ContextVar("enable_child_srch", default = "0")

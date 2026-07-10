@@ -44,6 +44,8 @@ def setQueryColStmt(dbps):
         tmpsql = tmpsql + " NULL"
     if default_val != "":
         tmpsql = tmpsql + " DEFAULT " + default_val
+    if data_type in ("varchar", "text", "longtext", "tinytext"):
+       tmpsql = tmpsql + " CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
     colqry.append(tmpsql)
     if is_index == 1:
         colindex.append(f"INDEX `{col_name}` (`{col_name}` ASC)")
@@ -51,25 +53,23 @@ def setQueryColStmt(dbps):
     dbps.colsql.set(colqry)
     dbps.colindex.set(colindex)
 
-def prepareCreateQueryFromCols():
-    print("prepareCreateQueryFromCols")
-    # create_sql = f"""
-    # CREATE TABLE `{table_name}` (
-    #     {", ".join(columns)}
-    #     {"," if primary or indexes else ""}
-    #     {primary}
-    #     {"," if primary and indexes else ""}
-    #     {", ".join(indexes)}
-    # )
-    # ENGINE=InnoDB
-    # DEFAULT CHARSET=utf8
-    # COLLATE=utf8_general_ci
-    # AUTO_INCREMENT=1;
-    # """
-    # print(create_sql)
-
-# def setQueryColStmt():
-#     print("setQueryColStatement")
+def executeCreateTableQuery(dbps):
+    table_name = dbps.table_name.get()
+    colqry = dbps.colsql.get() or []
+    indexes = dbps.colindex.get() or []
+    sql_parts = colqry.copy()
+    if indexes:
+        sql_parts.extend(indexes)
+    create_sql = f"""
+    CREATE TABLE `{table_name}` (
+        {", ".join(sql_parts)}
+    )
+    ENGINE=InnoDB
+    DEFAULT CHARSET=utf8
+    COLLATE=utf8_general_ci
+    AUTO_INCREMENT=1;
+    """
+    # DB.executeDBStatement(create_sql)
 
 def getPrimaryColParam(table_id, col_name, col_alias, rank):
     colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "bigint", "length": "11", "default_val": "", "is_primary": 1, "is_index": 1, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": "", "rank": rank}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "NUMBER", "qry_alias": "mtbl", "col_key": 1, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank} }
@@ -150,3 +150,24 @@ def isUserColumn(colname: str, exclude_ppl: int = 0) -> bool:
     if not exclude_ppl:
         is_user = is_user or colname.startswith("ppl_")
     return is_user
+
+
+def getViewCaseQuery(qrycolnm, col_name):
+    qry = ""
+    if isUserColumn(col_name, 0): # Single User
+        qry = (
+            f"CASE WHEN {qrycolnm} != '' THEN "
+            f"(SELECT CONCAT(first_name, '**', last_name) "
+            f"FROM systemconfig.users "
+            f"WHERE users.id = {qrycolnm}) "
+            f"ELSE '' END"
+        )
+    elif isPeopleColumn(col_name): # Multiple People
+        qry = (
+            f"CASE WHEN {qrycolnm} != '' THEN "
+            f"(SELECT GROUP_CONCAT(CONCAT(first_name, '**', last_name) SEPARATOR ', ') "
+            f"FROM systemconfig.users "
+            f"WHERE FIND_IN_SET(users.id, {qrycolnm})) "
+            f"ELSE '' END"
+        )
+    return qry

@@ -2,6 +2,7 @@ import json
 from app.utils.common import select, DB, userps
 from app.dbfunctions.dbtablesfunctions import getDBTableData
 from app.dbfunctions.viewlayoutfunctions import getViewLayoutDataByID
+from app.functions.generalfunctions import sortObjectsByKey
 from app.properties.dbproperties import dbps
 from app.functions import dbhelper as dbhlp
 
@@ -265,8 +266,24 @@ class CreateViewHelper:
         viewps.blank_view_cols.set(blank_view_cols) # Set To Property
 
     @staticmethod
+    def getDefaultViewOptions(viewps):
+        view_options = {}
+        view_options["table_id"] = viewps.table_id.get()
+        view_options["table_name"] = viewps.table_name.get()
+        view_options["primary_col"] = viewps.primary_col.get() + "|" + viewps.primary_colnm.get()
+        view_options["delete_col"] = viewps.delete_col.get()
+        view_options["enable_newline"] = viewps.enable_newline.get()
+        view_options["enable_join_save"] = viewps.enable_join_save.get()
+        view_options["show_deleted"] = viewps.show_deleted.get()
+        view_options["is_child_view"] = viewps.is_child_view.get()
+        view_options["enable_child_srch"] = viewps.enable_child_srch.get()
+        view_options["enable_chart"] = viewps.enable_chart.get()
+        view_options["view_qry"] = viewps.view_qry.get()
+        viewps.view_options.set(view_options) # Set To Property
+        print("View Options --> ", viewps.view_options.get() )
+
+    @staticmethod
     def setColForView(dbps, viewps):
-        print("setColForView col_id --> ", dbps.col_id.get())
         view_cols_item = {}
         # {"view_cols": [{"rank": 10, "col_id": 3255, "colkey": 1, "col_name": "join_v1_id", "col_type": "NUMBER", "table_id": 198, "col_alias": "ID", "link_text": "", "qry_alias": "mtbl", "url_prefix": "", "date_format": null, "calc_formula": null, "lookup_colid": 0, "lookup_colnm": ""}}
         view_cols_item = {
@@ -286,6 +303,85 @@ class CreateViewHelper:
             "rank": dbps.rank.get(),
         }
         viewps.view_cols_item.set(view_cols_item) # Set To Property
+
+    @staticmethod 
+    def generateViewQuery(viewps) :
+        view_cols = viewps.view_cols.get()
+        sortObjectsByKey(view_cols["view_cols"], 'rank', 'desc'); # Sort By Rank
+        # print("generateViewQuery --> ", view_cols)
+        view_cols = view_cols.get("view_cols", [])
+        qry_col_list = ""
+        for col in view_cols:
+            if createviewhlp.isColExcludedFromQuery(col):
+                print("col_name --> ", col["col_name"])
+                col_id = col["col_id"]
+                col_name = col["col_name"]
+                qry_alias = col["qry_alias"]
+
+                qrycolnm = f"{qry_alias}.{col_name}"
+                displayas = f"{col_id}{col_name}_{qry_alias}"
+                tmpqry = f"{qrycolnm} AS `{displayas}`, " # Select Qry Column
+                if dbhlp.isUserColumn(col_name, 0): # People / User column
+                    qrycolnm = dbhlp.getViewCaseQuery(qrycolnm, col_name)
+                    displayas = f"{col['col_id']}{col_name}_lbl_{qry_alias}"
+                    tmpqry += f"{qrycolnm} AS `{displayas}`, " # Append User Label Value
+                # Display As / Map Column
+                # if (col["col_type"] in ("MAPCOL", "DISPLAYAS") and col["lookup_colid"] > 0 ):
+                #     displayas = f"{col['col_id']}{dvps.col_name.get()}_lbl_{qry_alias}"
+                #     tmpqry += f"{col['lookup_colnm']} AS `{displayas}`, "
+            qry_col_list = qry_col_list + tmpqry
+
+        viewps.qry_col_list.set(qry_col_list) # Set To Properties
+
+    @staticmethod
+    def getLeftJoinQuery(dvps):
+        merge_tbl = dvps.view_joins.get().get("view_joins", [])
+        join_qry = ""
+        join_del_qry = ""
+        for tjoin in merge_tbl:
+            join_alias = tjoin["join_alias"]
+            join_to_alias = ""
+            if tjoin["table_id_1"] == dvps.table_id.get():
+                join_to_alias = "mtbl"
+            else:
+                for tmploop in merge_tbl:
+                    if tjoin["table_id_1"] == tmploop["table_id_2"]:
+                        join_to_alias = tmploop["join_alias"]
+                        break
+
+            join_qry += (
+                f" LEFT JOIN {tjoin['table_name_2']} {join_alias}"
+                f" ON {join_alias}.{tjoin['col_name_2']}"
+                f" = {join_to_alias}.{tjoin['col_name_1']}"
+            )
+            if tjoin.get("enable_del", 0) == 0:
+                join_del_qry += (
+                    f" AND ({join_alias}.is_delete = 0 "
+                    f"OR {join_alias}.is_delete IS NULL)"
+                )
+        dvps.join_qry.set(join_qry)
+        dvps.join_del_qry.set(join_del_qry)
+    
+    @staticmethod
+    def getFullViewQuery(dvps):
+        db_query = (
+            f"SELECT DISTINCT {dvps.qry_col_list.get()} "
+            f"FROM {dvps.table_name.get()} mtbl"
+            f"{dvps.join_qry.get()}"
+        )
+        if dvps.show_deleted.get() == 0:
+            db_query += " WHERE mtbl.is_delete = 0"
+        else:
+            db_query += (
+                f" WHERE mtbl.{dvps.primary_colnm.get()} != ''"
+            )
+        if dvps.join_del_qry.get():
+            db_query += dvps.join_del_qry.get()
+        dvps.db_query.set(db_query)
+
+    @staticmethod 
+    def isColExcludedFromQuery(col: dict) -> bool:
+        return col.get("col_type") != "PCHILD"
 
 createviewhlp = CreateViewHelper()
 

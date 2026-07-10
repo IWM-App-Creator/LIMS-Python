@@ -4,7 +4,7 @@ from app.dbfunctions.dbfunctions import getCreateTableSqlFromSchema
 from app.dbfunctions.dbtablesfunctions import insertTableDataToDB, insertUpdateTblCol
 from app.dbfunctions.logfunctions import saveErrorLogtoDB
 from app.functions.viewhelper import viewhlp, createviewhlp
-from app.functions.dbhelper import setQueryColStmt, prepareCreateQueryFromCols
+from app.functions.dbhelper import setQueryColStmt, executeCreateTableQuery
 from app.functions.generalfunctions import sortObjectsByKey, generateRandomString, addUpdateJson, updateNestedJsonVal, insertNestedJsonAfter, insertNestedJsonBefore, removeNestedJsonVal
 from app.properties.viewproperties import viewps
 from app.properties.dbproperties import dbps
@@ -97,58 +97,74 @@ def createBlankView (request: Request):
         viewps.pin_to_menu.set(params.get("pin_to_menu", 0))
         dbps.primary_col_nm.set(view_name.lower().replace(" ", "_") + "_id") 
         dbps.primary_col_alias.set(view_name + " ID")
+        table_id = 0
+        table_name = generateRandomString()
+        v_c_item = []
 
         # Step 1 : Insert Into Sys DB Table
         # dbps.table_alias.set(view_name)
-        # dbps.table_name.set(generateRandomString())
+        # dbps.table_name.set(table_name)
         # table_id = insertTableDataToDB(dbps)
         # if not table_id:
         #     return raiseInvalidError("Table Not Created ", 401)
-        # dbps.table_name.set(table_id)
-        # print("table_id --> ", table_id)
-        # dbps.table_id.set(204)
-        # dbps.table_name.set("krxtqesaep")
+        # dbps.table_id.set(table_id)
+        
+        dbps.table_id.set(181)
+        dbps.table_name.set("wtyrqqgmka")
 
         # Step 2 : Insert Into Sys DB Table Col
         createviewhlp.getDefaultAddViewCols(viewps) # Get Column List Based On View Type
         blank_view_cols = viewps.blank_view_cols.get()
-        v_c_item = []
+        # dbps.colsql.set([]) # For SQL Query
+        # dbps.colindex.set([]) # For SQL Query
         for blnkvcol in blank_view_cols:
             col_name = blnkvcol.get("col_name")
             dbps.col_id.set(0) 
             dbps.col_name.set(col_name)
             dbps.col_alias.set(blnkvcol.get("col_alias"))
-            dbps.col_options.set(blnkvcol.get("col_options"))
+            col_options = blnkvcol.get("col_options")
+            dbps.col_options.set(col_options)
             dbps.rank.set(blnkvcol.get("rank"))
-            insertUpdateTblCol(dbps) # Save to sys_new_db_tables_cols
+            # insertUpdateTblCol(dbps) # Save to sys_new_db_tables_cols
+            # setQueryColStmt(dbps) # Set Col/Index For SQL Query
             # Set View Col Option To JSON
+            if col_options.get("is_primary") == 1: # Set Primary Col ID & Name
+                viewps.primary_col.set(f"{dbps.col_id.get()}")
+                viewps.primary_colnm.set(col_name)
+            if col_name == "is_delete": # Set Is Delete Col ID & Name
+                viewps.delete_col.set(f"{dbps.col_id.get()}|is_delete")
             updateNestedJsonVal(fulljson = blnkvcol, jsonkey = "view_cols", srchkey= "col_name", srchval = col_name, updkey = "col_id", updval = dbps.col_id.get())
             view_cols = blnkvcol.get("view_cols")
             v_c_item.append(view_cols)
-        
-        # Step 3 : Generate Create Table Query & Execute
-        dbps.table_id.set(181)
-        dbps.table_name.set("wtyrqqgmka")
-        blank_view_cols = viewps.blank_view_cols.get()
-        
-        dbps.colsql.set([])
-        dbps.colindex.set([])
-        for blnkvcol in blank_view_cols:            
-            dbps.col_name.set(blnkvcol.get("col_name"))
-            dbps.col_options.set(blnkvcol.get("col_options"))
-            setQueryColStmt(dbps)
+            
 
-        print("indexes --> ", ", ".join(dbps.colsql.get()))
-        print("indexes --> ", ", ".join(dbps.colindex.get()))
-        # if indexes:
-            # qry += ", " + ", ".join(indexes)
-        # getCreateTableSqlFromSchema(viewps)
+        # Step 3 : Generate Create Table Query & Execute
+        # executeCreateTableQuery(dbps)
 
         # Step 4 : Insert Into Sys View Table
-        # view_cols = {}
-        # view_cols["view_cols"] = v_c_item
-        # viewps.view_cols.set(view_cols) 
+        # viewps.table_id.set(table_id)
+        # # viewps.table_name.set(table_name)
+        viewps.table_id.set(181)
+        viewps.table_name.set("wtyrqqgmka")
+        view_cols = {}
+        view_cols["view_cols"] = v_c_item
+        viewps.view_cols.set(view_cols)
         # print("v_c_item --> ", viewps.view_cols.get())
+        
+        createviewhlp.getDefaultViewOptions(viewps) # Get View Options
+
+        # Generate Query 
+        createviewhlp.generateViewQuery(viewps)
+        createviewhlp.getLeftJoinQuery(viewps)
+        createviewhlp.getFullViewQuery(viewps)
+        
+        # TO DO
+        # Append Query To View Options
+        # $dvps->view_options = $GeneralFunctions->addUpdateToJson($gfps, "view_qry", $dvps->db_query, $dvps->view_options); 
+
+        # viewps.view_joins.set({"view_joins": []})
+        # viewps.view_child.set({"view_child": []})
+        # viewps.view_actions.set({"view_actions": []})
         # insertUpdateView(viewps)
 
         # Step 5 : Set Menu
