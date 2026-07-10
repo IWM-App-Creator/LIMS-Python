@@ -37,7 +37,6 @@ def getUserDetail(): # token: str
         "first_name": userps.first_name.get(),
         "last_name": userps.last_name.get(),
         "email": userps.email.get(),
-        "user_settings": userps.user_settings.get(),
     }
     # --------------------------
     # Get User Menu
@@ -72,6 +71,7 @@ def getUserDetail(): # token: str
             "status": True,
             "message": "User Data",
             "user_dict": user_dict,
+            "user_settings": userps.user_settings.get(),
             "menu_centre": menups.menu_centre.get(),
             "active_menu_cid": menups.m_centre_id.get(),
             "user_menu": menups.menus_output.get(),
