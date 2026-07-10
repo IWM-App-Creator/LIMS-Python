@@ -13,21 +13,23 @@ class AssociationProperties:
         self.col_id = ContextVar("col_id", default = 0)
         self.col_p_val = ContextVar("col_p_val", default = 0)
 
+        self.access_json = ContextVar("access_json", default = {})
         self.is_owner = ContextVar("is_owner", default = 0)
         self.is_edit = ContextVar("is_edit", default = 0)
         self.is_view = ContextVar("is_view", default = 0)
         self.is_noaccess = ContextVar("is_noaccess", default = 0)
-
         self.dyncviews = ContextVar("dyncviews", default = "")
         self.custlink = ContextVar("custlink", default = "")
         self.menucntr = ContextVar("menucntr", default = "")
         self.modules = ContextVar("modules", default = "")
         self.dashboardcntr = ContextVar("dashboardcntr", default = "")
-
         self.defmenucntr = ContextVar("defmenucntr", default = 0)
         self.defdashboard = ContextVar("defdashboard", default = 0)
 
+        self.ass_users_data = ContextVar("ass_users_data", default = [])
+
         self.access_json = ContextVar("access_json", default = {})
         self.fetch_single = ContextVar("fetch_single", default = 0)
+        self.is_distinct = ContextVar("is_distinct", default = 0)
 
 associationps = AssociationProperties()
