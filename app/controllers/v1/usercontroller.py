@@ -6,6 +6,7 @@ from app.functions.workspacehelper import setWorkspaceOutput
 from app.functions.dashboardhelper import setDashboardOutput
 from app.dbfunctions.menufunctions import getUserMenuList, getDynamicMenuCenter
 from app.dbfunctions.dashboardfunctions import getUserDashboards
+from app.dbfunctions.workspacefunctions import getWorkspaceData
 from app.properties.menuproperties import menups
 from app.properties.workspaceproperties import wsps
 from app.properties.dashboardproperties import dps
@@ -56,6 +57,7 @@ def getUserDetail(): # token: str
     # --------------------------
     wsps.domain_flag.set(0)
     wsps.fetch_single.set(0)
+    getWorkspaceData(wsps)
     setWorkspaceOutput(wsps)
     # --------------------------
     # Get Dashboard List
