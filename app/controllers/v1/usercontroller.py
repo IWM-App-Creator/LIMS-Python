@@ -4,7 +4,7 @@ from app.dbfunctions.userfunctions import getUserDataFromDB
 from app.properties.dbproperties import dbps
 from app.functions.menuhelper import getActiveMenuCenterID, setUserMenusOutput, setUserMenuCenterOutput
 from app.functions.workspacehelper import setWorkspaceOutput
-from app.functions.dashboardhelper import setDashboardOutput
+from app.functions.dashboardhelper import setDashboardOutput, getActiveDashboard
 from app.dbfunctions.menufunctions import getUserMenuList, getDynamicMenuCenter
 from app.dbfunctions.dashboardfunctions import getUserDashboards
 from app.dbfunctions.workspacefunctions import getWorkspaceData
@@ -65,7 +65,9 @@ def getUserDetail(): # token: str
     # Get Dashboard List
     # --------------------------
     getUserDashboards(dps)
+    getActiveDashboard(dps)
     setDashboardOutput(dps)
+    user_dict['active_dash_id'] = dps.active_dash_id.get()
     # --------------------------
     # Merge All Data & Send Response
     # --------------------------
