@@ -10,7 +10,8 @@ def getTestData(request: Request):
     getCustomViewByAssociation(associationps)
     getMenuCenterByAssociation(associationps)
     associationps.view_id.set(124)
-    userAssociationView(associationps)
+    association_users = userAssociationView(associationps)
+    print("association_users --> ", association_users)
     asso_notify = getAssociationsForNotification(associationps)
     print("asso_notify --> ", asso_notify)
 
