@@ -16,7 +16,6 @@ class UserProperties:
         self.first_name = ContextVar("first_name", default = "")
         self.last_name = ContextVar("last_name", default = "")
         self.email = ContextVar("email", default = "")
-        self.user_settings = ContextVar("user_settings", default = "")
         self.usermenus = ContextVar("usermenus", default = [])
 
         self.user_timezone = ContextVar("user_timezone", default = "")

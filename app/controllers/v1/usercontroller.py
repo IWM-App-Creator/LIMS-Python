@@ -1,3 +1,4 @@
+import json
 from app.utils.common import DB, select, JSONResponse, raiseAPIError, userps
 from app.dbfunctions.userfunctions import getUserDataFromDB
 from app.properties.dbproperties import dbps
@@ -31,7 +32,6 @@ def getUserDetail(): # token: str
     userps.first_name.set(user.first_name)
     userps.last_name.set(user.last_name)
     userps.email.set(user.email)
-    userps.user_settings.set(user.user_settings)
     user_dict = {
         "user_id": userps.user_id.get(),
         "role_id": userps.role_id.get(),
@@ -39,6 +39,7 @@ def getUserDetail(): # token: str
         "last_name": userps.last_name.get(),
         "email": userps.email.get(),
     }
+    user_dict.update(user.user_settings)
     # --------------------------
     # Get User Menu
     # --------------------------
@@ -52,6 +53,7 @@ def getUserDetail(): # token: str
     getUserMenuList(menups) # Get User Active Menu
     setUserMenusOutput(menups) # Set Menu Output
     setUserMenuCenterOutput(menups) # Set Menu Centres
+    user_dict["active_menu_cid"] = menups.m_centre_id.get()
     # --------------------------
     # Get Workspace List
     # --------------------------
@@ -73,9 +75,7 @@ def getUserDetail(): # token: str
             "status": True,
             "message": "User Data",
             "user_dict": user_dict,
-            "user_settings": userps.user_settings.get(),
             "menu_centre": menups.menu_centre.get(),
-            "active_menu_cid": menups.m_centre_id.get(),
             "user_menu": menups.menus_output.get(),
             "ws_list" : wsps.ws_data.get(),
             "dashboard_list" : dps.dashboards_data.get()
