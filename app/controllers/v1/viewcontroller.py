@@ -1,10 +1,11 @@
 from app.utils.common import DB, Request, RequestData, JSONResponse, raiseAPIError, raiseInvalidError, nowWithTimeZone
 from app.dbfunctions.viewfunctions import getViewDataByID, insertUpdateView
+from app.dbfunctions.dbfunctions import getCreateTableSqlFromSchema
 from app.dbfunctions.dbtablesfunctions import insertTableDataToDB, insertUpdateTblCol
 from app.dbfunctions.logfunctions import saveErrorLogtoDB
 from app.functions.viewhelper import viewhlp, createviewhlp
-from app.functions.dbhelper import setColOptions
-from app.functions.generalfunctions import sortObjectsByKey, generateRandomString
+from app.functions.dbhelper import setQueryColStmt, prepareCreateQueryFromCols
+from app.functions.generalfunctions import sortObjectsByKey, generateRandomString, addUpdateJson, updateNestedJsonVal, insertNestedJsonAfter, insertNestedJsonBefore, removeNestedJsonVal
 from app.properties.viewproperties import viewps
 from app.properties.dbproperties import dbps
 
@@ -105,41 +106,53 @@ def createBlankView (request: Request):
         #     return raiseInvalidError("Table Not Created ", 401)
         # dbps.table_name.set(table_id)
         # print("table_id --> ", table_id)
-        # table_id = 204
-        dbps.table_id.set(204)
-        dbps.table_name.set("krxtqesaep")
+        # dbps.table_id.set(204)
+        # dbps.table_name.set("krxtqesaep")
 
         # Step 2 : Insert Into Sys DB Table Col
         createviewhlp.getDefaultAddViewCols(viewps) # Get Column List Based On View Type
         blank_view_cols = viewps.blank_view_cols.get()
         v_c_item = []
         for blnkvcol in blank_view_cols:
-            dbps.blnkvcol.set(blnkvcol)
-            # Set Col ID, Name, Alias, ColOption & Rank
-            # dbps.col_id.set(0) 
-            # dbps.col_name.set(blnkvcol.get("col_name"))
-            # dbps.col_alias.set(blnkvcol.get("col_alias"))
-            # setColOptions(dbps) # Set Table Col Option To JSON
-            # dbps.rank.set(blnkvcol.get("rank"))
-            # insertUpdateTblCol(dbps) # Save to sys_new_db_tables_cols
-            3310, 3311
-            dbps.col_id.set(3310)
-            # {"view_cols": [{"rank": 10, "col_id": 3255, "colkey": 1, "col_name": "join_v1_id", "col_type": "NUMBER", "table_id": 198, "col_alias": "ID", "link_text": "", "qry_alias": "mtbl", "url_prefix": "", "date_format": null, "calc_formula": null, "lookup_colid": 0, "lookup_colnm": ""}}
-            createviewhlp.setColForView(dbps, viewps) # Set View Col Option To JSON
-            v_c_item.append( viewps.view_cols_item.get() )
-        # Get Cols Json for View
-        view_cols = {}
-        view_cols["view_cols"] = v_c_item
-        viewps.view_cols.set(view_cols) # Set View Cols To Property
-
+            col_name = blnkvcol.get("col_name")
+            dbps.col_id.set(0) 
+            dbps.col_name.set(col_name)
+            dbps.col_alias.set(blnkvcol.get("col_alias"))
+            dbps.col_options.set(blnkvcol.get("col_options"))
+            dbps.rank.set(blnkvcol.get("rank"))
+            insertUpdateTblCol(dbps) # Save to sys_new_db_tables_cols
+            # Set View Col Option To JSON
+            updateNestedJsonVal(fulljson = blnkvcol, jsonkey = "view_cols", srchkey= "col_name", srchval = col_name, updkey = "col_id", updval = dbps.col_id.get())
+            view_cols = blnkvcol.get("view_cols")
+            v_c_item.append(view_cols)
+        
         # Step 3 : Generate Create Table Query & Execute
-        insertUpdateView(viewps)
+        dbps.table_id.set(181)
+        dbps.table_name.set("wtyrqqgmka")
+        blank_view_cols = viewps.blank_view_cols.get()
+        
+        dbps.colsql.set([])
+        dbps.colindex.set([])
+        for blnkvcol in blank_view_cols:            
+            dbps.col_name.set(blnkvcol.get("col_name"))
+            dbps.col_options.set(blnkvcol.get("col_options"))
+            setQueryColStmt(dbps)
+
+        print("indexes --> ", ", ".join(dbps.colsql.get()))
+        print("indexes --> ", ", ".join(dbps.colindex.get()))
+        # if indexes:
+            # qry += ", " + ", ".join(indexes)
+        # getCreateTableSqlFromSchema(viewps)
 
         # Step 4 : Insert Into Sys View Table
-        insertUpdateView(viewps)
+        # view_cols = {}
+        # view_cols["view_cols"] = v_c_item
+        # viewps.view_cols.set(view_cols) 
+        # print("v_c_item --> ", viewps.view_cols.get())
+        # insertUpdateView(viewps)
 
         # Step 5 : Set Menu
-        insertUpdateView(viewps)
+        # insertUpdateView(viewps)
 
         # $viewdtl = explode("~~", $viewdtl);
         # $view_id = $viewdtl[0];

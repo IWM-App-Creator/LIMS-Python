@@ -241,25 +241,27 @@ class ViewHelper:
 viewhlp = ViewHelper()
 
 class CreateViewHelper:
-    
+
     @staticmethod
     def getDefaultAddViewCols(viewps):
         view_name = viewps.view_name.get()
+        table_id = viewps.table_id.get()
+        dbps.table_id
         primary_col_nm = view_name.lower().replace(" ", "_") + "_id"
         primary_col_alias = view_name + " ID"
         blank_view_cols = []
         rank = 10
-        blank_view_cols.append( dbhlp.getPrimaryColParam(primary_col_nm, primary_col_alias, rank) )
+        blank_view_cols.append( dbhlp.getPrimaryColParam(table_id, primary_col_nm, primary_col_alias, rank) )
         rank = rank + 10
-        blank_view_cols.append( dbhlp.getStatusColParam("Status", "1", rank) )
+        blank_view_cols.append( dbhlp.getStatusColParam(table_id, "Status", "1", rank) )
         # rank = rank + 10
-        # blank_view_cols.append( dbhlp.getIsDeleteColParam(rank) )
+        # blank_view_cols.append( dbhlp.getIsDeleteColParam(table_id, rank) )
         # rank = rank + 10
-        # blank_view_cols.append( dbhlp.getIsMetadataColParam(rank) )
+        # blank_view_cols.append( dbhlp.getIsMetadataColParam(table_id, rank) )
         # rank = rank + 10
-        # blank_view_cols.append( dbhlp.getCreatedByColParam(rank) )
+        # blank_view_cols.append( dbhlp.getCreatedByColParam(table_id, rank) )
         # rank = rank + 10
-        # blank_view_cols.append( dbhlp.getCreatedDateColParam(rank) )
+        # blank_view_cols.append( dbhlp.getCreatedDateColParam(table_id, rank) )
         viewps.blank_view_cols.set(blank_view_cols) # Set To Property
 
     @staticmethod

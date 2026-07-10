@@ -23,7 +23,6 @@ def getTableColumnCount(dbps):
     tbl_col_srch = dbps.tbl_col_srch.get()
     columns = dbps.all_db_tbl_col.get()
     for col in columns:
-        # print(dict(col._mapping))
         if col.Field.startswith(f"{tbl_col_srch}"):
             tbl_col_cnt = tbl_col_cnt + 1
     dbps.tbl_col_cnt.set(tbl_col_cnt)
@@ -46,6 +45,89 @@ def getCreateTableSqlFromSchema(dbps):
         )
         sql_qry = sql_qry + ";\n\n"
     dbps.create_qry.set(sql_qry) # Set Query To Properties
+
+def executeCreateQuery(table_id: int, table_name: str):
+    # tblcols = DB.getTableMeta("sys_db_tables_cols")
+    # stmt = (
+    #     select(tblcols)
+    #     .where(
+    #         tblcols.c.table_id == table_id,
+    #         tblcols.c.is_delete == 0
+    #     )
+    #     .order_by(tblcols.c.rank.asc())
+    # )
+    # dbtablecols = DB.executeDBSelect(stmt)
+    # columns = []
+    # indexes = []
+    # primary = ""
+
+    print(create_sql)
+    
+    for col in dbtablecols:
+        col_name = col.col_name.lower()
+        data_type = col.data_type.lower()
+        if col.is_primary == 1:
+            columns.append(
+                f"`{col_name}` {data_type}({col.length}) NOT NULL AUTO_INCREMENT"
+            )
+            primary = f"PRIMARY KEY (`{col_name}`)"
+            continue
+        # Build datatype
+        if data_type in ("datetime", "json", "text", "longtext", "tinytext"):
+            datatype_sql = data_type.upper()
+        else:
+            datatype_sql = f"{data_type}({col.length})"
+        sql = f"`{col_name}` {datatype_sql} NULL"
+        # Default value
+        if col.default_val not in (None, ""):
+            if data_type in (
+                "varchar",
+                "text",
+                "longtext",
+                "tinytext",
+                "datetime",
+                "date",
+                "timestamp",
+            ):
+                sql += f" DEFAULT '{col.default_val}'"
+            else:
+                sql += f" DEFAULT {col.default_val}"
+        elif data_type in ("int", "bigint", "tinyint", "decimal", "float", "double"):
+            sql += " DEFAULT 0"
+        columns.append(sql)
+        if col.is_index == 1 and data_type != "json":
+            indexes.append(f"INDEX `{col_name}` (`{col_name}` ASC)")
+    # create_sql = f"""
+    # CREATE TABLE `{table_name}` (
+    #     {", ".join(columns)}
+    #     {"," if primary or indexes else ""}
+    #     {primary}
+    #     {"," if primary and indexes else ""}
+    #     {", ".join(indexes)}
+    # )
+    # ENGINE=InnoDB
+    # DEFAULT CHARSET=utf8
+    # COLLATE=utf8_general_ci
+    # AUTO_INCREMENT=1;
+    # """
+    # print(create_sql)
+    # DB.executeDBStatement(text(create_sql))
+    # # Convert text columns to utf8mb4
+    # for col in dbtablecols:
+    #     data_type = col.data_type.lower()
+    #     if data_type in ("varchar", "text", "longtext", "tinytext"):
+    #         if data_type == "varchar":
+    #             datatype = f"VARCHAR({col.length})"
+    #         else:
+    #             datatype = data_type.upper()
+    #         alter_sql = f"""
+    #         ALTER TABLE `{table_name}`
+    #         MODIFY `{col.col_name.lower()}`
+    #         {datatype}
+    #         CHARACTER SET utf8mb4
+    #         COLLATE utf8mb4_unicode_ci;
+    #         """
+    #         DB.executeDBStatement(text(alter_sql))
 
 def generateDBColumnAlterQuery(dbps):
     schema_name = userps.schema_name.get()
@@ -147,75 +229,3 @@ def removeColumnUnique(dbps):
         dbps.alter_action.set("remove_unique_col")
         alter_qry = generateDBColumnAlterQuery(dbps)
         DB.executeDBStatement(text(alter_qry))
-
-
-# type_map = {
-#     "DDL": "dd",
-#     "People/Assign To": "ppl",
-#     "YesNo": "yn",
-#     "TrueFalse": "tf",
-#     "Geolocation": "lat"
-# }
-
-# public function getColumnCount($rlps) {
-#         $columns = DB::select('describe ' . $rlps->table_name);
-#         $rlps->col_cnt = 0;
-#         if($rlps->col_type == "DDL") {
-#             $rlps->col_type = "dd";
-#         } else if($rlps->col_type == "People/Assign To") {
-#             $rlps->col_type = "ppl";
-#         } else if($rlps->col_type == "YesNo") {
-#             $rlps->col_type = "yn";
-#         } else if($rlps->col_type == "TrueFalse") {
-#             $rlps->col_type = "tf";
-#         } else if($rlps->col_type == "Geolocation") {
-#             $rlps->col_type = "lat";
-#         }
-#         foreach ($columns as $col) {
-#             if($col->Field == "is_delete") {
-#                 $rlps->previous_col = $rlps->tmp_col;
-#             }
-#             $rlps->tmp_col = $col->Field;
-#             if($col->Field == $rlps->col_name) {
-#                 $rlps->fetch_flag = 2;
-#                 $rlps->error_msg = "Column already exists, Duplicate column name " . $rlps->col_name;
-#                 break;
-#             }
-#             if (str_contains($col->Field, strtolower($rlps->col_type) . "_")) {
-#                 $rlps->col_cnt = $rlps->col_cnt + 1;
-#             }
-#         }
-#         $rlps->col_name = strtolower($rlps->col_type) . "_" . ($rlps->col_cnt + 1);
-#     }
-
-# if (str_contains($col->Field, 'status')) {
-#         $statuscnt = $statuscnt + 1;
-#     }
-#     if (str_contains($col->Field, 'ppl_')) {
-#         $usercnt = $usercnt + 1;
-#     }
-#     if (str_contains($col->Field, 'dd_')) {
-#         $ddlcnt = $ddlcnt + 1;
-#     }
-#     if (str_contains($col->Field, 'yn_')) {
-#         $yesnocnt = $yesnocnt + 1;
-#     }
-#     if (str_contains($col->Field, 'tf_')) {
-#         $turefalsecnt = $turefalsecnt + 1;
-#     }
-#     if (str_contains($col->Field, 'lat_')) {
-#         $latcnt = $latcnt + 1;
-#     }
-#     if (str_contains($col->Field, 'calc_')) {
-#         $calccnt = $calccnt + 1;
-#     }
-#     if (str_contains($col->Field, 'rating_')) {
-#         $ratingcnt = $ratingcnt + 1;
-#     }
-#     if (str_contains($col->Field, 'barcode_')) {
-#         $barcodecnt = $barcodecnt + 1;
-#     }
-#     if (str_contains($col->Field, 'sign_')) {
-#         $signcnt = $signcnt + 1;
-#     }
-# if($txtcol_dval == "" && ($txt_data_type == "int" || $txt_data_type == "bigint" || $txt_data_type == "float" || $txt_data_type == "decimal" || $txt_data_type == "double") ) {

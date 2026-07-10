@@ -2,8 +2,6 @@ import os
 import json
 import secrets
 import string
-from datetime import datetime
-from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 from app.properties.usersproperties import userps
 from app.properties.globalproperties import globalps
 
@@ -58,65 +56,80 @@ def getWSUserRole(ws_role_id: int) -> str:
         2: "User"
     }.get(ws_role_id, "No Access")
 
-def addUpdateJson(data: dict, key: str, value):
-    if value not in (None, ""):
-        data[key] = value
-
-def modifyJsonObject(generalps):
-    try:
-        itmjson = generalps.itmjson.get()
-        tmpjson = json.loads(itmjson) if itmjson else {}
-        operation = generalps.operation.get()
-        jsonkey = generalps.jsonkey.get()
-        match operation:
-            case "ADD_UPDATE":
-                tmpjson[jsonkey] = generalps.jsonval.get()
-            case "REMOVE":
-                tmpjson.pop(jsonkey, None)
-        generalps.itmjson.set(json.dumps(tmpjson))
-    except Exception:
-        pass
-
-def modifyJsonArray(generalps):
-    try:
-        itmjson = generalps.itmjson.get()
-        tmpjson = json.loads(itmjson) if itmjson else {}
-        jsonkey = generalps.jsonkey.get()
-        if jsonkey not in tmpjson or not isinstance(tmpjson[jsonkey], list):
-            tmpjson[jsonkey] = []
-        operation = generalps.operation.get()
-        matchkey = generalps.matchkey.get()
-        matchvalue = generalps.matchvalue.get()
-        match operation:
-            case "ADD":
-                tmpjson[jsonkey].append(generalps.jsonval.get())
-            case "UPDATE":
-                for i, row in enumerate(tmpjson[jsonkey]):
-                    if row.get(matchkey) == matchvalue:
-                        tmpjson[jsonkey][i] = generalps.jsonval.get()
-                        break
-            case "REMOVE":
-                tmpjson[jsonkey] = [
-                    row
-                    for row in tmpjson[jsonkey]
-                    if row.get(matchkey) != matchvalue
-                ]
-        generalps.itmjson.set(json.dumps(tmpjson))
-    except Exception:
-        pass
-
-def getJsonObjectByKey(generalps):
-    try:
-        itmjson = generalps.itmjson.get()
-        tmpjson = json.loads(itmjson) if itmjson else {}
-        generalps.jsonkeyval.set(
-            tmpjson.get(generalps.jsonkey.get(), "")
-        )
-    except Exception:
-        generalps.jsonkeyval.set("")
-
 def sortObjectsByKey(arr, key, direction = "asc"):
     arr.sort(
         key = lambda x: x.get(key),
         reverse = (direction.lower() == "desc")
     )
+
+def addUpdateJson(data: dict, key: str, value):
+    if value not in (None, ""):
+        data[key] = value
+
+def removeJsonKey(data: dict, key: str):
+    return data.pop(key, None) is not None
+
+def updateNestedJsonVal(fulljson: dict, jsonkey: str, srchkey: str, srchval: str, updkey: str, updval):
+    nested = fulljson.get(jsonkey)
+    if isinstance(nested, dict):
+        if srchval is None or nested.get(srchkey) == srchval:
+            nested[updkey] = updval
+            return True
+        return False
+    elif isinstance(nested, list):
+        updated = False
+        for item in nested:
+            if item.get(srchkey) == srchval or srchval is None:
+                item[updkey] = updval
+                updated = True
+                # Stop after first match only when searching for a value
+                if srchval is not None:
+                    break
+        return updated
+    return False
+
+def insertNestedJsonAfter(fulljson: dict, jsonkey: str, srchkey: str, srchval, new_item: dict ):
+    nested = fulljson.get(jsonkey)
+    if isinstance(nested, dict):
+        fulljson[jsonkey] = [nested]
+        nested = fulljson[jsonkey]
+    if not isinstance(nested, list):
+        return False
+    for i, item in enumerate(nested):
+        if item.get(srchkey) == srchval:
+            nested.insert(i + 1, new_item)
+            return True
+    return False
+
+def insertNestedJsonBefore(fulljson: dict, jsonkey: str, srchkey: str, srchval, new_item: dict):
+    nested = fulljson.get(jsonkey)
+    if isinstance(nested, dict):
+        fulljson[jsonkey] = [nested]
+        nested = fulljson[jsonkey]
+    if not isinstance(nested, list):
+        return False
+    for i, item in enumerate(nested):
+        if item.get(srchkey) == srchval:
+            nested.insert(i, new_item)
+            return True
+
+    return False
+
+def removeNestedJsonVal(fulljson: dict, jsonkey: str, srchkey: str, srchval):
+    nested = fulljson.get(jsonkey)
+    if isinstance(nested, dict):
+        if srchval is None or nested.get(srchkey) == srchval:
+            del fulljson[jsonkey]
+            return True
+        return False
+    if not isinstance(nested, list):
+        return False
+    removed = False
+    for i in range(len(nested) - 1, -1, -1):
+        if srchval is None or nested[i].get(srchkey) == srchval:
+            del nested[i]
+            removed = True
+            # Remove only the first matching item
+            if srchval is not None:
+                break
+    return removed

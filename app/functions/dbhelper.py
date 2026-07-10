@@ -24,29 +24,60 @@ from app.functions.generalfunctions import addUpdateJson
 #     return False
 # insertViewColBefore(data, 3255, new_col)
 
-def setColOptions(dbps):
-    blnkvcol = dbps.blnkvcol.get()
-    col_options = {}
-    addUpdateJson(col_options, "data_type",  blnkvcol.get("data_type"))
-    addUpdateJson(col_options, "length",  blnkvcol.get("length"))
-    addUpdateJson(col_options, "default_val",  blnkvcol.get("default_val"))
-    addUpdateJson(col_options, "is_primary",  blnkvcol.get("is_primary"))
-    addUpdateJson(col_options, "is_index",  blnkvcol.get("is_index"))
-    addUpdateJson(col_options, "is_unique",  blnkvcol.get("is_unique"))
-    addUpdateJson(col_options, "is_mandatory",  blnkvcol.get("is_mandatory"))
-    addUpdateJson(col_options, "notify_user",  blnkvcol.get("notify_user"))
-    addUpdateJson(col_options, "actv_log_cols",  blnkvcol.get("actv_log_cols"))
-    addUpdateJson(col_options, "col_data_items",  blnkvcol.get("col_data_items"))
-    dbps.col_options.set(col_options)
+def setQueryColStmt(dbps):
+    colqry = dbps.colsql.get()
+    colindex = dbps.colindex.get()
+    col_name = dbps.col_name.get()
+    col_options = dbps.col_options.get()
+    data_type = col_options.get("data_type")
+    length = col_options.get("length")
+    default_val = col_options.get("default_val")
+    is_primary = col_options.get("is_primary")
+    is_index = col_options.get("is_index")
+    # Prepare Col Query
+    tmpsql = col_name + " " + data_type
+    if length not in ("", 0):
+        tmpsql = tmpsql + " (" + length + ")"
+    if is_primary == 1:
+        tmpsql = tmpsql + " NOT NULL AUTO_INCREMENT"
+    else : 
+        tmpsql = tmpsql + " NULL"
+    if default_val != "":
+        tmpsql = tmpsql + " DEFAULT " + default_val
+    colqry.append(tmpsql)
+    if is_index == 1:
+        colindex.append(f"INDEX `{col_name}` (`{col_name}` ASC)")
+    # Set To Property
+    dbps.colsql.set(colqry)
+    dbps.colindex.set(colindex)
 
-def getPrimaryColParam(col_name, col_alias, rank):
-    colopt = {"col_name": col_name, "col_alias": col_alias, "data_type": "bigint", "length": 11, "default_val": 0, "is_primary": 1, "is_index": 1, "is_unique": 0, "is_mandatory": 1, "notify_user": 0, "actv_log_cols": 0, "col_data_items": "", "col_type": "NUMBER", "col_key": 1, "rank": rank }
-    # "col_options": {"length": "11", "is_index": 0, "data_type": "bigint", "is_unique": 0, "is_primary": 1, "default_val": "0", "notify_user": 0, "is_mandatory": 0, "actv_log_cols": 0}
+def prepareCreateQueryFromCols():
+    print("prepareCreateQueryFromCols")
+    # create_sql = f"""
+    # CREATE TABLE `{table_name}` (
+    #     {", ".join(columns)}
+    #     {"," if primary or indexes else ""}
+    #     {primary}
+    #     {"," if primary and indexes else ""}
+    #     {", ".join(indexes)}
+    # )
+    # ENGINE=InnoDB
+    # DEFAULT CHARSET=utf8
+    # COLLATE=utf8_general_ci
+    # AUTO_INCREMENT=1;
+    # """
+    # print(create_sql)
+
+# def setQueryColStmt():
+#     print("setQueryColStatement")
+
+def getPrimaryColParam(table_id, col_name, col_alias, rank):
+    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "bigint", "length": "11", "default_val": "", "is_primary": 1, "is_index": 1, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": "", "rank": rank}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "NUMBER", "qry_alias": "mtbl", "col_key": 1, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank} }
     return colopt
 
-def getStatusColParam(col_alias, cnt, rank):
+def getStatusColParam(table_id, col_alias, cnt, rank):
     col_name = "status_" + cnt
-    colopt = {"col_name": col_name, "col_alias": col_alias, "data_type": "int", "length": 4, "default_val": 0, "is_primary": 0, "is_index": 1, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": "", "col_type": "STATUS", "col_key": 0, "rank": rank }
+    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "int", "length": "4", "default_val": "0", "is_primary": 0, "is_index": 1, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": "", "rank": rank}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "STATUS", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank} }
     return colopt
 
 def getDropdownColParam(col_alias, cnt, rank):

@@ -63,4 +63,7 @@ class DBProperties:
         self.db_col_type = ContextVar("db_col_type", default = {})
         self.blnkvcol = ContextVar("blnkvcol", default = {})    
 
+        # View / DB Column Types
+        self.colsql = ContextVar("colsql", default = [])
+        self.colindex = ContextVar("colindex", default = [])
 dbps = DBProperties()
