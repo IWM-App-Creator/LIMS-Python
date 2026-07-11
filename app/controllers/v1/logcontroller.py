@@ -1,7 +1,7 @@
 from app.utils.common import RequestData, Request, JSONResponse, raiseAPIError, formatDate
 from app.services.firebase.firebase_service import send_push
 from app.dbfunctions.logfunctions import getDBErrorLog, saveErrorLogtoDB, resolveError
-from app.functions.generalfunctions import formatUserDisplayName
+from app.helper.generalfunctions import formatUserDisplayName
 from app.properties.logproperties import logps
 
 # http://tesetws1.localhost:8000/api/v1/log/geterrors?page_no=1&error_id=&section=View&item_id=178

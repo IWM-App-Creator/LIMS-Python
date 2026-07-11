@@ -1,6 +1,6 @@
 from app.utils.common import select, DB, Request, RequestData, JSONResponse, raiseAPIError, raiseInvalidError, userps
 from app.dbfunctions.menufunctions import getPublicOrUserMenuCenters, getDynamicMenu, getDynamicMenuCenter, getUserMenuList, insertUpdateUserMenu
-from app.functions.menuhelper import resetMenuProperties, setMenuInputParam, setUserMenusOutput, setUserMenuCenterOutput
+from app.helper.menuhelper import resetMenuProperties, setMenuInputParam, setUserMenusOutput, setUserMenuCenterOutput
 from app.dbfunctions.logfunctions import saveErrorLogtoDB
 from app.dbfunctions.customviewfunctions import addUpdateCustomView
 from app.properties.menuproperties import menups

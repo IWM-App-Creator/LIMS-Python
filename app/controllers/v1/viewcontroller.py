@@ -3,9 +3,9 @@ from app.dbfunctions.viewfunctions import getViewDataByID, insertUpdateView
 from app.dbfunctions.dbfunctions import getCreateTableSqlFromSchema
 from app.dbfunctions.dbtablesfunctions import insertTableDataToDB, insertUpdateTblCol
 from app.dbfunctions.logfunctions import saveErrorLogtoDB
-from app.functions.viewhelper import viewhlp, createviewhlp
-from app.functions.dbhelper import setQueryColStmt, executeCreateTableQuery
-from app.functions.generalfunctions import sortObjectsByKey, generateRandomString, addUpdateJson, updateNestedJsonVal, insertNestedJsonAfter, insertNestedJsonBefore, removeNestedJsonVal
+from app.helper.viewhelper import viewhlp, createviewhlp
+from app.helper.dbhelper import setQueryColStmt, executeCreateTableQuery
+from app.helper.generalfunctions import sortObjectsByKey, generateRandomString, addUpdateJson, updateNestedJsonVal, insertNestedJsonAfter, insertNestedJsonBefore, removeNestedJsonVal
 from app.properties.viewproperties import viewps
 from app.properties.dbproperties import dbps
 
@@ -88,6 +88,7 @@ def saveTableData (request: Request):
 # http://xytovet.localhost:8000/api/v1/view/create?view_name=Python View&view_type=Table&pin_to_menu=1
 
 # api/dyncol/add?view_id=166&col_id=0&tab_id=0&all_usr_flg=1&col_type=DDL&col_alias=DDl&txt_data_type=varchar&txtcol_length=255&txtcol_index=0&txtcol_dval=&orderflag=Right&ordercol_id=3017&notify_user=0
+# http://testws1.localhost:8000/api/v1/view/create?view_name=Python%20View&view_type=Table&pin_to_menu=1
 def createBlankView (request: Request):
     try:
         params = RequestData.params(request)

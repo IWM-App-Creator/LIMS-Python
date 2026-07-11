@@ -10,7 +10,7 @@ from app.httphelper.errorhandler import error_handler
 from app.httphelper.requestcontext import request_context
 from app.httphelper.authhandler import auth_handler
 
-from app.functions.generalfunctions import setEnvVariables
+from app.helper.generalfunctions import setEnvVariables
 
 load_dotenv(Path(__file__).parent.parent / ".env")
 

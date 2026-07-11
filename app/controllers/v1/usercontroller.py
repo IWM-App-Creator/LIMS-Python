@@ -2,9 +2,9 @@ import json
 from app.utils.common import DB, select, JSONResponse, raiseAPIError, userps
 from app.dbfunctions.userfunctions import getUserDataFromDB
 from app.properties.dbproperties import dbps
-from app.functions.menuhelper import getActiveMenuCenterID, setUserMenusOutput, setUserMenuCenterOutput
-from app.functions.workspacehelper import setWorkspaceOutput
-from app.functions.dashboardhelper import setDashboardOutput, getActiveDashboard
+from app.helper.menuhelper import getActiveMenuCenterID, setUserMenusOutput, setUserMenuCenterOutput
+from app.helper.workspacehelper import setWorkspaceOutput
+from app.helper.dashboardhelper import setDashboardOutput, getActiveDashboard
 from app.dbfunctions.menufunctions import getUserMenuList, getDynamicMenuCenter
 from app.dbfunctions.dashboardfunctions import getUserDashboards
 from app.dbfunctions.workspacefunctions import getWorkspaceData

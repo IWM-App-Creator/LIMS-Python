@@ -2,8 +2,8 @@ import os
 from fastapi import Request
 from fastapi.responses import JSONResponse
 from app.httphelper.publicendpoints import isPublicEndpoint
-from app.functions.authfunctions import authfnct
-from app.functions.generalfunctions import getHostName
+from app.helper.authfunctions import authfnct
+from app.helper.generalfunctions import getHostName
 from app.properties.globalproperties import globalps
 from app.properties.usersproperties import userps
 

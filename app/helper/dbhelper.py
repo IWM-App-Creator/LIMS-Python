@@ -1,4 +1,4 @@
-from app.functions.generalfunctions import addUpdateJson
+from app.helper.generalfunctions import addUpdateJson
 
 # def updateViewCol(view_json: dict, col_id: int, **updates):
 #     for col in view_json.get("view_cols", []):

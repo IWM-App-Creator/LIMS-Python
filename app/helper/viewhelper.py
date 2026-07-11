@@ -2,9 +2,9 @@ import json
 from app.utils.common import select, DB, userps
 from app.dbfunctions.dbtablesfunctions import getDBTableData
 from app.dbfunctions.viewlayoutfunctions import getViewLayoutDataByID
-from app.functions.generalfunctions import sortObjectsByKey
+from app.helper.generalfunctions import sortObjectsByKey
 from app.properties.dbproperties import dbps
-from app.functions import dbhelper as dbhlp
+from app.helper import dbhelper as dbhlp
 
 class ViewHelper:
 

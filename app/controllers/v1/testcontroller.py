@@ -1,5 +1,5 @@
 from app.utils.common import select, DB, Request, RequestData, JSONResponse, raiseAPIError, userps
-from app.functions.associationhelper import getViewIdByAssociation, getCustomViewByAssociation, getMenuCenterByAssociation
+from app.helper.associationhelper import getViewIdByAssociation, getCustomViewByAssociation, getMenuCenterByAssociation
 from app.dbfunctions.associationfunctions import userAssociationView, getAssociationsForNotification
 from app.properties.associationproperties import associationps
 
