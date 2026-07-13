@@ -4,7 +4,8 @@ PUBLIC_APIS = {
     "/favicon.ico",
     "/backend/docs",
     "/api/v1/workspace/isvalidws",
-    "/backend/api/v1/workspace/isvalidws",
+    "/api/v1/workspace/isvalidws",
+    "/api/v1/workspace/getlist",
 }
 
 PUBLIC_PREFIXES = (

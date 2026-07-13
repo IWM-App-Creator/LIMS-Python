@@ -1,7 +1,7 @@
 from app.utils.common import DB, select, userps
-from app.properties.usersproperties import userps
     
 def getWorkspaceData(wsps):
+    print(userps.user_id.get())
     workspace_master = DB.getTableMeta("workspace_master", "systemconfig").alias("ws")
     users_workspace = DB.getTableMeta("users_workspace", "systemconfig").alias("wsusr")
     stmt = (
