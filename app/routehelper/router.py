@@ -8,6 +8,7 @@ from app.endpoints.v1.workspace import router as workspace_router
 from app.endpoints.v1.association import router as association_router
 from app.endpoints.v1.dbtable import router as dbtable_router
 from app.endpoints.v1.view import router as view_router
+from app.endpoints.v1.viewlayout import router as viewly_router
 from app.endpoints.v1.menu import router as menu_router
 from app.endpoints.v1.widget import router as widget_router
 
@@ -29,6 +30,7 @@ def routerGroup():
     apirouter.include_router(association_router, prefix = prefix, tags = ["Association"])
     apirouter.include_router(dbtable_router, prefix = prefix, tags = ["Table"])
     apirouter.include_router(view_router, prefix = prefix, tags = ["View"])
+    apirouter.include_router(viewly_router, prefix = prefix, tags = ["View Layout"])
     apirouter.include_router(menu_router, prefix = prefix, tags = ["Menu"])
     apirouter.include_router(widget_router, prefix = prefix, tags = ["Widget"])
 
