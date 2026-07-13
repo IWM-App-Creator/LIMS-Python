@@ -1,47 +1,46 @@
 from fastapi import APIRouter
 from app.controllers.v1 import viewcontroller as viewapi
 
-router = APIRouter(prefix = "/view")
+router = APIRouter(prefix = "/viewly")
 
 ROUTES = [
     ("/create", viewapi.createBlankView, ["GET"]),
-    ("/getlist", viewapi.getViewList, ["GET"]),
-    ("/getdata", viewapi.getViewData, ["GET"]),
-    ("/childstatus", viewapi.getViewChildStatus, ["GET"]),
-    ("/duplicate", viewapi.duplicateFullView, ["GET"]),
+    
+    ("/jointblcolor", viewapi.setJoinTblColor, ["GET"]), # Route::any('view/jointblcolor', 'App\Http\Controllers\ModelData\LayoutAPIController@setJoinTblColor');
 
-    ("/savetbldata", viewapi.saveTableData, ["GET"]),
+    ("/upddatefrmt", viewapi.updateViewDateFormat, ["GET"]), # Route::any('view/upddatefrmt', 'App\Http\Controllers\ModelData\LayoutAPIController@updateViewDateFormat'); 
+
+    ("/childstatus", viewapi.getViewChildStatus, ["GET"]), # Route::any('layout/options', 'App\Http\Controllers\ModelData\LayoutAPIController@saveLayoutOptions');
+
+    ("/srchthreshold", viewapi.duplicateFullView, ["GET"]), # Route::any('', 'App\Http\Controllers\ModelData\LayoutAPIController@saveSrchThreshold');
+
+
+    ("/savetbldata", viewapi.saveTableData, ["GET"]), # Route::any('layout/cndtcolclr', 'App\Http\Controllers\ModelData\LayoutAPIController@saveConditionalColColor');
+
     ("/duplicateitem", viewapi.duplicateItemData, ["GET"]),
-
     # ("/group", viewapi.saveUserViewGroup, ["GET"]), # Move To Layout
-
-    ("/lookupdata", viewapi.getLookupData, ["GET"]),
-    ("/filterdata", viewapi.getDataForFilter, ["GET"]),
-    ("/getquery", viewapi.getRawViewQuery, ["GET"]),
-    ("/checkurl", viewapi.getViewURL, ["GET"]),
 ]
 
 for path, handler, methods in ROUTES:
-    router.add_api_route(path, handler, methods=methods)
+    router.add_api_route(path, handler, methods = methods)
 
-# Route::any('view/getids', 'App\Http\Controllers\ModelData\DynamicViewAPIController@getPrimaryKeyIds');
 
-# Route::any('view/share', 'App\Http\Controllers\ModelData\DynamicViewAPIController@saveViewShare');
-# Route::any('view/savecatdata', 'App\Http\Controllers\ModelData\DynamicViewAPIController@saveViewCatData');
-# Route::any('custview/savecatdata', 'App\Http\Controllers\ModelData\DynamicViewAPIController@saveCustomViewCatData');
-# Route::any('view/getcols', 'App\Http\Controllers\ModelData\DynamicViewAPIController@getViewColumns');
-# Route::any('view/itemremrst', 'App\Http\Controllers\ModelData\DynamicViewAPIController@itemRemoveRestore');
-# Route::any('view/resetall', 'App\Http\Controllers\ModelData\DynamicViewAPIController@resetAllDynamicView');
-# Route::any('view/getcharts', 'App\Http\Controllers\ModelData\DyncViewChartAPIController@getViewChart');
+# Route::any('layout/mergecolumn', 'App\Http\Controllers\ModelData\LayoutAPIController@mergeViewColumn'); ** DB Table Function
+# Route::any('layout/getoptions', 'App\Http\Controllers\ModelData\LayoutAPIController@getLayoutOptions'); ** Remove
+# Route::any('layout/getview', 'App\Http\Controllers\ModelData\LayoutAPIController@getSaveFilterView'); ** Move To View Filter
+# Route::any('layout/reset', 'App\Http\Controllers\ModelData\LayoutAPIController@resetUserViewLayout'); ** Remove
+# Route::any('layout/copyfilter', 'App\Http\Controllers\ModelData\LayoutAPIController@copySaveFilterView'); ** Move To View Filter
+# Route::any('layout/removeview', 'App\Http\Controllers\ModelData\LayoutAPIController@removeSaveFilterView'); ** Move To View Filter
+# Route::any('layout/savedarkmode', 'App\Http\Controllers\ModelData\LayoutAPIController@saveDarkMode'); ** Move To User
 
-# Route::any('view/setdisplayas', 'App\Http\Controllers\ModelData\DynamicViewAPIController@setDisplayasCol');
-# Route::any('view/enabledeljointbl', 'App\Http\Controllers\ModelData\DynamicViewAPIController@enableDisableJoinTblDelete');
-# Route::any('endpoint/getdyncactions', 'App\Http\Controllers\ModelData\DynamicViewAPIController@getEndPointDyncActions');
-# Route::any('view/savechild', 'App\Http\Controllers\ModelData\DynamicViewAPIController@saveChildView');
-# Route::any('view/childsummary', 'App\Http\Controllers\ModelData\DynamicViewAPIController@saveChildSummary');
-# Route::any('view/makehidden', 'App\Http\Controllers\ModelData\DynamicViewAPIController@makeHiddenColumn');
-# Route::any('layout/mergecolumn', 'App\Http\Controllers\ModelData\LayoutAPIController@mergeViewColumn');
-# Route::any('view/jointblcolor', 'App\Http\Controllers\ModelData\LayoutAPIController@setJoinTblColor');
-# Route::any('view/upddatefrmt', 'App\Http\Controllers\ModelData\LayoutAPIController@updateViewDateFormat');
-# Route::any('view/transfer', 'App\Http\Controllers\ModelData\DynamicFormAPIController@transferViewData');
-
+# View Column Data
+# Route::any('get/stddltemplate', 'App\Http\Controllers\ModelData\LayoutAPIController@getStDdlTemplateList');
+# Route::any('status/gettemplate', 'App\Http\Controllers\ModelData\LayoutAPIController@getStatusFromTemplate');
+# Route::any('opt/manageitem', 'App\Http\Controllers\ModelData\LayoutAPIController@manageDynamicOPT');
+# Route::any('opt/rank', 'App\Http\Controllers\ModelData\LayoutAPIController@manageOptRank');
+# Route::any('opt/getdefault', 'App\Http\Controllers\ModelData\LayoutAPIController@getDefaultOpt');
+# Route::any('opt/upddefault', 'App\Http\Controllers\ModelData\LayoutAPIController@updateDefaultOptValue');
+# Route::any('dd/manageitem', 'App\Http\Controllers\ModelData\LayoutAPIController@manageDyanmicDropdown');
+# Route::any('dd/rank', 'App\Http\Controllers\ModelData\LayoutAPIController@manageDyncDdRank');
+# Route::any('dd/gettemplate', 'App\Http\Controllers\ModelData\LayoutAPIController@getDropdownFromTemplate');
+# Route::any('tinymce/saveimg', 'App\Http\Controllers\ModelData\LayoutAPIController@saveTinyMCEImage');
