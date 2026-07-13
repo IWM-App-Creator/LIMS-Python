@@ -13,6 +13,7 @@ from app.properties.menuproperties import menups
 from app.helper.menuhelper import getLastMenuRankByCMID
 
 # http://testws1.localhost:8000/api/v1/view/getdata?view_id=178
+# http://testws1.localhost:8000/api/v1/view/getdata?view_id=182
 def getViewData(request: Request):
     try:
         params = RequestData.params(request)
@@ -55,13 +56,13 @@ def getViewData(request: Request):
         # viewps.sorting.set(sorting)
         # viewps.primary_colnm.set(0)
         # setViewSorting(viewps) # Get Sorting
-        # print("primary_colnm --", viewps.primary_colnm.get())
+        # print("primary_colnm --> ", viewps.primary_colnm.get())
         #     if($dvps->sorting) {
                 # $dvps->view_qry = $dvps->view_qry . " order by " . $dvps->sorting;
         #     }
         view_qry = f"{view_qry} Order By {sorting}"
         viewhlp.setViewPaging(viewps) # Get Paging
-
+    
         # TO DO : Appending Notification Query
         # createviewhlp.getNotificationCountQuery(viewps)
 
@@ -196,11 +197,6 @@ def createBlankView (request: Request):
             }
         )
     except Exception as e:
-
-        "(pymysql.err.OperationalError) (4109, 'Failed to generate invisible primary key. Auto-increment column already exists.')\n[SQL: \n    CREATE TABLE `byhevssdon` (\n        python_view_id bigint (11) NOT NULL AUTO_INCREMENT, status_1 int (4) NULL DEFAULT 0, created_by bigint (11) NULL DEFAULT 0, created_date datetime NULL, INDEX `python_view_id` (`python_view_id` ASC), INDEX `status_1` (`status_1` ASC), INDEX `created_by` (`created_by` ASC)\n    )\n    ENGINE=InnoDB\n    DEFAULT CHARSET=utf8\n    COLLATE=utf8_general_ci\n    AUTO_INCREMENT=1;\n    ]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)"
-
-
-        print("view_url --> ", str(e))
         saveErrorLogtoDB ("CreateView", 0, "createBlankView", str(e)) # Log Error To DB
         raiseAPIError(str(e), 500)
 

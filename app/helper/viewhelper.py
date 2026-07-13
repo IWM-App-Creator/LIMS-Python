@@ -189,7 +189,7 @@ class ViewHelper:
     @staticmethod
     def getRecordCount(viewps):
         view_qry = viewps.view_qry.get()
-        tmpstr = view_qry.split(f"From {viewps.table_name.get()} mtbl")[1]
+        tmpstr = view_qry.split(f"FROM {viewps.table_name.get()} mtbl")[1]
         tmpstr = tmpstr.strip()
         cnt_qry = f"Select count(*) as total_record From {viewps.table_name.get()} mtbl {tmpstr}"
         cnt_qry = cnt_qry.split("Order By")[0]
