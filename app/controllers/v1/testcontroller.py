@@ -1,26 +1,10 @@
 from app.utils.common import select, DB, Request, RequestData, JSONResponse, raiseAPIError, userps
-from app.helper.associationhelper import getViewIdByAssociation, getCustomViewByAssociation, getMenuCenterByAssociation
-from app.dbfunctions.associationfunctions import userAssociationView, getAssociationsForNotification
-from app.properties.associationproperties import associationps
+from app.dbfunctions.dbtablesfunctions import getLastColValFromTbl
 
 def getTestData(request: Request):
-    # print("getTestData --> ")
-    # associationps.user_id.set(userps.user_id.get())
-    # getViewIdByAssociation(associationps)
-    # getCustomViewByAssociation(associationps)
-    # getMenuCenterByAssociation(associationps)
-    # associationps.view_id.set(124)
-    # association_users = userAssociationView(associationps)
-    # print("association_users --> ", association_users)
-    # asso_notify = getAssociationsForNotification(associationps)
-    # print("asso_notify --> ", asso_notify)
-    return JSONResponse (
-            status_code = 200,
-            content = {
-                "status": True,
-                "message": "View Data",
-            }
-        )
+    print("getTestData --> ")
+    menu_rank = getLastColValFromTbl("sys_dynamic_menu", "rank", (DB.getTableMeta("sys_dynamic_menu").c.created_by == userps.user_id.get()), "rank", "desc")
+    print("menu_rank --> ", menu_rank)
 
 def saveTestData (request: Request):
     print("saveTestData --> ")

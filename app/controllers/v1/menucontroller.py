@@ -107,6 +107,7 @@ def saveUserMenu(request: Request):
             menups.m_centre_id.set(None)
             menups.m_type.set(0)
             getDynamicMenu(menups)
+            # getLastColValFromTbl("sys_dynamic_menu", "rank", (DB.getTableMeta("sys_dynamic_menu").c.created_by == userps.user_id.get()), "rank", "desc")
             user_menu = menups.menu_cntr_data.get()
             if user_menu:
                 menups.rank.set(user_menu.rank + 1)

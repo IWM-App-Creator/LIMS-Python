@@ -153,3 +153,23 @@ def insertUpdateTblCol(dbps) :
         stmt = insert(tblcols).values(**values)
         col_id = DB.executeDBInsert(stmt)
     dbps.col_id.set(col_id)
+
+def getLastColValFromTbl(table_name, col_name, where_clause, order_col, order_by = "desc"):
+    table = DB.getTableMeta(table_name)
+    if col_name not in (None, "", 0):
+        stmt = select(table.c[col_name])
+    else:
+        stmt = select(table)
+    if where_clause is not None:
+        stmt = stmt.where(where_clause)
+    stmt = stmt.where(table.c.is_delete == 0)
+    if order_col not in (None, "", 0):
+        if order_by == "desc":
+            stmt = stmt.order_by(table.c[order_col].desc())
+        else:
+            stmt = stmt.order_by(table.c[order_col].asc())
+    else :
+        stmt = stmt.order_by(table.c[col_name].desc())
+    stmt = stmt.limit(1)
+    data = DB.executeDBSelectSingle(stmt)
+    return data[0]
