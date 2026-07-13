@@ -1,7 +1,17 @@
+# urlstr --> ../../miidata/api/opt/manageitem?user_id=3779&api_secret=w@lHB)6*2AVsZf.spyff&col_id=3277&db_manage_ids=||&is_deleted=||&txtlabels=StV2 1||StV2 2&colorcodes=#E495A5||#D89F7F&opt_type=Status
+
+
+
 
 ========Merge Column of different Table========
 api/layout/mergecolumn?user_id=3837&api_secret=tsJq3X3F6fL98qEUz88-&view_id=2&table_id=2&lookup_tbl_id=1&add_cols=[{"col_id":52,"col_name":"yn_1","col_alias":"YN","col_type":"YN_INT","colkey":0,"lookup_colid":0,"lookup_tblid":0},{"col_id":845,"col_name":"time","col_alias":"Time","col_type":"DATETIME","colkey":0,"lookup_colid":0,"lookup_tblid":0}]&rmv_cols=[]&all_user=1&order_colid=3013
 
+
+
+
+
+
+Later 
 ========Change Header and Body Color of different Table========
 /api/view/jointblcolor?user_id=3837&api_secret=tsJq3X3F6fL98qEUz88-&view_id=2&table_id_2=1&table_id_1=2&bg_color_opt=Header and Body&color_code=#55b8d0
 

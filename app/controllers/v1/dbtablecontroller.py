@@ -1,6 +1,8 @@
 from app.utils.common import Request, JSONResponse, RequestData, raiseAPIError
 from app.dbfunctions.dbtablesfunctions import getDBTableData
 from app.dbfunctions.dbfunctions import getTableColumnCount
+from app.dbfunctions.viewfunctions import getViewDataByID
+from app.helper.viewhelper import viewhlp
 from app.properties.dbproperties import dbps
 from app.properties.viewproperties import viewps
 
@@ -44,30 +46,39 @@ def updateDBTableAlias (request: Request):
     print("updateDBTableAlias --> ")
 
 # http://testws1.localhost:8000/api/v1/dbtable/addcol
+# miidata/api/dyncol/add?user_id=3779&api_secret=w@lHB)6*2AVsZf.spyff&view_id=181&col_id=0&tab_id=0&all_usr_flg=1&col_type=Status&col_name=status_2&col_alias=Status 2&txt_data_type=int&txtcol_length=4&txtcol_index=1&txtcol_dval=0&is_private=0&dync_cat_id=0&orderflag=Right&ordercol_id=3272&notify_user=0
+
 def addDynamicColumn (request: Request):
     params = RequestData.params(request)
 
-    view_col_type = params.get("view_col_type", "")
-    dbps.view_col_type.set(view_col_type)
-    # $view_id = empty(Input::get('view_id')) ? "0" : Input::get('view_id');
-    # $col_alias = empty(Input::get('col_alias')) ? "" : Input::get('col_alias');
-    # $view_col_type = empty(Input::get('view_col_type')) ? "" : Input::get('view_col_type');
-    # $col_type = empty(Input::get('col_type')) ? "" : Input::get('col_type');
-    # $txtcol_length = empty(Input::get('txtcol_length')) ? "1" : Input::get('txtcol_length');
-    # $txtcol_dval = empty(Input::get('txtcol_dval')) ? "" : Input::get('txtcol_dval');
-    # $txtcol_index = empty(Input::get('txtcol_index')) ? "0" : Input::get('txtcol_index');
-    # $ordercol_id = empty(Input::get('ordercol_id')) ? "0" : Input::get('ordercol_id');
-    # $orderflag = empty(Input::get('orderflag')) ? "Right" : Input::get('orderflag'); //Left - Right
-    # $tab_id = empty(Input::get('tab_id')) ? "1" : Input::get('tab_id');
-    # $all_usr_flg = empty(Input::get('all_usr_flg')) ? "0" : Input::get('all_usr_flg');
-    # $notify_user = empty(Input::get('notify_user')) ? "0" : Input::get('notify_user');
-    # $col_data_items = empty(Input::get('col_data_items')) ? "" : Input::get('col_data_items');
-    # dbps.col_alias.set(params.get("view_id", ""))
-    print("addDynamicColumn --> ")
-    dbps.table_id.set(204)
-    dbps.table_name.set("wtyrqqgmka")
+    print("addViewColumn --> ")
+    params = RequestData.params(request)
+    viewps.view_id.set(params.get("view_id", "0"))
+    
+    col_alias = params.get("col_alias", "0")
+    col_name = col_alias.lower().replace(" ", "_")
+    
+    viewps.col_alias.set(col_alias)
+    # viewps.col_name.set(col_name)
 
-    # Step 1 : Update Column Name For Specific Column Type
+    # col_type -->  STATUS
+    # =Status
+    # &
+    # &=Status 2
+    # &txt_data_type=int&txtcol_length=4&txtcol_index=1&txtcol_dval=0
+    # &is_private=0
+    # &dync_cat_id=0
+    # &orderflag=Right
+    # &ordercol_id=3272
+    # &notify_user=0
+    
+    # view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "NUMBER", "qry_alias": "mtbl", "col_key": 1, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank} }
+
+    # Step 1 : Get View Data
+    getViewDataByID(viewps) # Get View Data
+    viewhlp.setViewDataProperties(viewps) # Set View Properties
+
+    view_col_type = params.get("view_col_type", "") # Get From Property (setViewDataProperties)
     if view_col_type in ("Status", "DDL", "YesNo", "TrueFalse", "People/Assign To", "Calc", "Rating", "Barcode", "Sign", "Geolocation") :
         match dbps.view_col_type.get():
             case "Status":
@@ -103,15 +114,17 @@ def addDynamicColumn (request: Request):
         getTableColumnCount(dbps)
         tmpcnt = dbps.tbl_col_cnt.get() + 1
         col_name = col_name + tmpcnt # Append Count + 1
-        print(col_name)
+    print("col_name --> ", col_name)
+        
+    # Step 2 : Add To Table Col 
+        # getStatusColParam
+        # col_options --> viewcols mate
+        # view_cols --> for View
+        
+        # Log --> Don't save
 
-        # 
-    
-    # Step 2 : Create Array For Adding New Column
-    # blank_view_cols.append( dbhlp.getStatusColParam("Status", "1", rank) )
-
-    # Step 3 : Get Query For Adding Table Column
-        # insertUpdateView(viewps)
+    # Step 3 : Generate DB Add Column Query
+        # Log --> Don't save
 
     # Step 4 : Add New Column To View
 

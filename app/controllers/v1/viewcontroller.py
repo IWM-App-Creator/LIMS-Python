@@ -93,11 +93,7 @@ def saveTableData (request: Request):
         # saveErrorLogtoDB ("View", viewps.view_id.get(), "getViewData", str(e)) # Log Error To DB
         raiseAPIError(str(e), 500)
 
-# http://xytovet.localhost:8000/api/v1/view/create?view_name=Python View&view_type=Table&pin_to_menu=1
-
-# api/dyncol/add?view_id=166&col_id=0&tab_id=0&all_usr_flg=1&col_type=DDL&col_alias=DDl&txt_data_type=varchar&txtcol_length=255&txtcol_index=0&txtcol_dval=&orderflag=Right&ordercol_id=3017&notify_user=0
-
-# http://testws1.localhost:8000/api/v1/view/create?view_name=reactv1&view_type=Table&pin_to_menu=0
+# http://testws1.localhost:8000/api/v1/view/create?view_name=reactv1&view_type=Table&pin_to_menu=0&m_centre_id=1
 def createBlankView (request: Request):
     try:
         params = RequestData.params(request)
@@ -111,7 +107,6 @@ def createBlankView (request: Request):
         table_id = 0
         table_name = generateRandomString()
         v_c_item = []
-
         print("view_name --> ", view_name)
         print("table_name --> ", table_name)
         # Step 1 : Insert Into Sys DB Table

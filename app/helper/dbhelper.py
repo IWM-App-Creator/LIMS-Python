@@ -132,7 +132,6 @@ def isUserColumn(colname: str, exclude_ppl: int = 0) -> bool:
         is_user = is_user or colname.startswith("ppl_")
     return is_user
 
-
 def getViewCaseQuery(qrycolnm, col_name):
     qry = ""
     if isUserColumn(col_name, 0): # Single User
