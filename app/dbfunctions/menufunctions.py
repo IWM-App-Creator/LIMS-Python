@@ -149,3 +149,18 @@ def insertUpdateUserMenu(menups):
         stmt = insert(usermenu).values(**values)
         menu_id = DB.executeDBInsert(stmt)
     menups.menu_id.set(menu_id)
+
+def getDynamicMenuRank(menups):
+    m_centre_id = menups.m_centre_id.get()
+    created_by = menups.created_by.get()
+    dync_menu = DB.getTableMeta("sys_dynamic_menu").alias("sdm")
+    stmt = (
+        select(dync_menu)
+    )
+    if m_centre_id not in (None, "", 0):
+        stmt = stmt.where(dync_menu.c.m_centre_id == m_centre_id)
+    if created_by not in (None, "", 0):
+        stmt = stmt.where(dync_menu.c.created_by == created_by)
+    stmt = stmt.order_by(dync_menu.c.rank.desc())
+    last_rank = DB.executeDBSelectSingle(stmt)
+    menups.last_menu_rank.set(last_rank.rank)

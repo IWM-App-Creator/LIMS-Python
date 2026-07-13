@@ -2,7 +2,7 @@ import json
 from app.utils.common import userps
 from app.properties.associationproperties import associationps
 from app.dbfunctions.associationfunctions import getAssociationUsers
-from app.dbfunctions.menufunctions import getDynamicMenuCenter
+from app.dbfunctions.menufunctions import getDynamicMenuCenter, getDynamicMenuRank
 
 def resetMenuProperties(menups):
     menups.m_centre_id.set(None)
@@ -34,6 +34,10 @@ def setMenuInputParam(menups, params):
     menups.is_new_tab.set(params.get("is_new_tab", None))
     menups.add_custom_view.set(params.get("add_custom_view", None))
     menups.is_section.set(params.get("is_section", None))
+
+def getLastMenuRankByCMID(menups):
+    menups.created_by.set(userps.user_id.get())
+    getDynamicMenuRank(menups)
 
 def getActiveMenuCenterID(menups):
     # menups.usr_flag.set(0)
