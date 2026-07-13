@@ -1,24 +1,24 @@
 from fastapi import APIRouter
-from app.controllers.v1 import viewcontroller as viewapi
+from app.controllers.v1 import viewlayoutcontroller as viewapi
 
 router = APIRouter(prefix = "/viewly")
 
 ROUTES = [
-    ("/create", viewapi.createBlankView, ["GET"]),
+    # ("/create", viewapi.createBlankView, ["GET"]),
     
     ("/jointblcolor", viewapi.setJoinTblColor, ["GET"]), # Route::any('view/jointblcolor', 'App\Http\Controllers\ModelData\LayoutAPIController@setJoinTblColor');
 
-    ("/upddatefrmt", viewapi.updateViewDateFormat, ["GET"]), # Route::any('view/upddatefrmt', 'App\Http\Controllers\ModelData\LayoutAPIController@updateViewDateFormat'); 
+    # ("/upddatefrmt", viewapi.updateViewDateFormat, ["GET"]), # Route::any('view/upddatefrmt', 'App\Http\Controllers\ModelData\LayoutAPIController@updateViewDateFormat'); 
 
-    ("/childstatus", viewapi.getViewChildStatus, ["GET"]), # Route::any('layout/options', 'App\Http\Controllers\ModelData\LayoutAPIController@saveLayoutOptions');
+    # ("/childstatus", viewapi.getViewChildStatus, ["GET"]), # Route::any('layout/options', 'App\Http\Controllers\ModelData\LayoutAPIController@saveLayoutOptions');
 
-    ("/srchthreshold", viewapi.duplicateFullView, ["GET"]), # Route::any('', 'App\Http\Controllers\ModelData\LayoutAPIController@saveSrchThreshold');
+    # ("/srchthreshold", viewapi.duplicateFullView, ["GET"]), # Route::any('', 'App\Http\Controllers\ModelData\LayoutAPIController@saveSrchThreshold');
 
 
-    ("/savetbldata", viewapi.saveTableData, ["GET"]), # Route::any('layout/cndtcolclr', 'App\Http\Controllers\ModelData\LayoutAPIController@saveConditionalColColor');
+    # ("/savetbldata", viewapi.saveTableData, ["GET"]), # Route::any('layout/cndtcolclr', 'App\Http\Controllers\ModelData\LayoutAPIController@saveConditionalColColor');
 
-    ("/duplicateitem", viewapi.duplicateItemData, ["GET"]),
-    # ("/group", viewapi.saveUserViewGroup, ["GET"]), # Move To Layout
+    # ("/duplicateitem", viewapi.duplicateItemData, ["GET"]),
+    # # ("/group", viewapi.saveUserViewGroup, ["GET"]), # Move To Layout
 ]
 
 for path, handler, methods in ROUTES:

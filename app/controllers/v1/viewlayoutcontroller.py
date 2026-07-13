@@ -1,20 +1,20 @@
 from app.utils.common import DB, Request, RequestData, JSONResponse, raiseAPIError, raiseInvalidError, nowWithTimeZone, userps
 from app.properties.dbproperties import dbps
 from app.dbfunctions.viewfunctions import getViewDataByID
-from app.dbfunctions.viewlayoutfunctions import viewlayoutfunctions
+from app.dbfunctions.viewlayoutfunctions import getViewLayoutDataByID
 from app.helper.viewhelper import viewhlp
-from app.helper.viewlayouthelper import viewlayoutfunctions
+from app.helper.viewlayouthelper import setViewLayoutParam
 from app.properties.viewproperties import viewps
 from app.properties.viewlayoutproperties import viewlyps
 
 # http://xytovet.localhost:8000/api/v1/view/getdata
-def getViewData (request: Request):
+def setJoinTblColor (request: Request):
     try:
-        params = RequestData.params(request)
-        viewhlp.setViewInputParam(viewps, params) # Get Input Param Data
-        getViewDataByID(viewps) # Get View Data
-        viewdata = getViewDataByID(dbps) # Execute Function to User Get Data
-        print("getViewData --> ", viewdata)
+        # params = RequestData.params(request)
+        # viewhlp.setViewInputParam(viewps, params) # Get Input Param Data
+        # getViewDataByID(viewps) # Get View Data
+        # viewdata = getViewDataByID(dbps) # Execute Function to User Get Data
+        print("setJoinTblColor --> ")
     except Exception as e:
         # saveErrorLogtoDB ("View", viewps.view_id.get(), "getViewData", str(e)) # Log Error To DB
         raiseAPIError(str(e), 500)
