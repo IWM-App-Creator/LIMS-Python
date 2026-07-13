@@ -46,7 +46,7 @@ def getDBTableData(dbps):
         stmt = stmt.where(tblmaster.c.is_delete == is_del_tbl)
     if is_del_col != "-1":
         stmt = stmt.where(tblcols.c.is_delete == is_del_col)
-    # print("stmt --> ", stmt)
+    print("stmt --> ", stmt)
     return DB.executeDBSelect(stmt)
 
 def insertTableDataToDB(dbps) :

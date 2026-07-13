@@ -38,6 +38,7 @@ class DBProperties:
         self.all_db_tables = ContextVar("all_db_tables", default = "")
         self.all_db_tbl_col = ContextVar("all_db_tbl_col", default = "")
 
+        self.col_cnt = ContextVar("col_cnt", default = 0)
         self.tbl_col_srch = ContextVar("tbl_col_srch", default = "")
         self.tbl_col_cnt = ContextVar("all_db_tbl_col", default = "")
         
