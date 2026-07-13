@@ -1,0 +1,39 @@
+
+========Merge Column of different Table========
+api/layout/mergecolumn?user_id=3837&api_secret=tsJq3X3F6fL98qEUz88-&view_id=2&table_id=2&lookup_tbl_id=1&add_cols=[{"col_id":52,"col_name":"yn_1","col_alias":"YN","col_type":"YN_INT","colkey":0,"lookup_colid":0,"lookup_tblid":0},{"col_id":845,"col_name":"time","col_alias":"Time","col_type":"DATETIME","colkey":0,"lookup_colid":0,"lookup_tblid":0}]&rmv_cols=[]&all_user=1&order_colid=3013
+
+========Change Header and Body Color of different Table========
+/api/view/jointblcolor?user_id=3837&api_secret=tsJq3X3F6fL98qEUz88-&view_id=2&table_id_2=1&table_id_1=2&bg_color_opt=Header and Body&color_code=#55b8d0
+
+========Change Date Time Format of Column========
+api/view/upddatefrmt?user_id=3837&api_secret=tsJq3X3F6fL98qEUz88-&view_id=2&col_id=2968&date_format=d/m/Y H:i:s
+
+========Show Hide and Shuffle Column and also mandatory activity and pin columns========
+api/layout/options?tab_id=0&user_id=3837&api_secret=MdN5MR2RBcSACFm1KH3k&view_id=171&page_size=10&sortby=&sortorder=&col_metadata=[{"tab_id":"0","col_metadata":[{"col_id":"3067","is_pin":"0","col_name":"rushi_2_id","th_width":"157.1px"},{"col_id":"3253","is_pin":"0","col_name":"show_hide_setting_id","th_width":"158.517px"},{"col_id":"3017","is_pin":"0","col_name":"status_1","th_width":"120.283px"},{"col_id":"3251","is_pin":"0","col_name":"dipak_2_id","th_width":"133.95px"},{"col_id":"3075","is_pin":"0","col_name":"float","th_width":"118.933px"},{"col_id":"3073","is_pin":"0","col_name":"text","th_width":"105.233px"},{"col_id":"3250","is_pin":"0","col_name":"tf_1","th_width":"144.8px"},{"col_id":"3074","is_pin":"0","col_name":"integer","th_width":"124.617px"},{"col_id":"3068","is_pin":"0","col_name":"status_1","th_width":"120.283px"}]}]&auto_refresh=0&refresh_alert=0&enable_join_save=0&newlineflag=0&enable_newline=0&showdelflag=0&showdeleted=0&tbl_del_show=[]&showchartflag=0&enable_chart=0&updtabtype=&is_tab_view=0&alltab_ids=0&enable_child_srch=0&actlogcols=3067~~0,3253~~0,3017~~1,3251~~0,3075~~1,3073~~0,3250~~0,3074~~0,3068~~0,&grp_colnm=&lo_curr_tab=0&mandatorylogcols=3067~~0,3253~~0,3017~~0,3251~~0,3075~~0,3073~~1,3250~~1,3074~~0,3068~~0,
+
+========Get Layout Options of all tabs========
+api/layout/getoptions?user_id=3837&api_secret=tsJq3X3F6fL98qEUz88-&view_id=2&istab_view=1&grp_colnm=cfmwppmvju.status_1&alltabids=613,614,615,648,649,0
+
+========Get Save Filter Options========
+api/layout/getview?user_id=3837&api_secret=tsJq3X3F6fL98qEUz88-&view_id=2
+
+========Reset Layout Options========
+api/layout/reset?user_id=3837&api_secret=tsJq3X3F6fL98qEUz88-&view_id=2
+
+========Update Save Filter and (save filter and add to dashboard from notification which is share by other)========
+api/layout/copyfilter?user_id=3837&api_secret=tsJq3X3F6fL98qEUz88-&view_id=2
+
+========Remove Save Filter========
+api/layout/removeview?user_id=3837&api_secret=tsJq3X3F6fL98qEUz88-&save_id=2
+
+========Set Dark Mode========
+api/layout/savedarkmode?user_id=3837&api_secret=tsJq3X3F6fL98qEUz88-&is_darkmode=1
+
+========Add Dynamic Column========
+api/dyncol/add?user_id=3837&api_secret=MdN5MR2RBcSACFm1KH3k&view_id=166&col_id=0&tab_id=0&all_usr_flg=1&col_type=DDL&col_name=ddl&col_alias=DDl&txt_data_type=varchar&txtcol_length=255&txtcol_index=0&txtcol_dval=&is_private=0&dync_cat_id=0&orderflag=Right&ordercol_id=3017&notify_user=0
+
+========Set Threashold Search========
+api/srch/threshold?user_id=3837&api_secret=tsJq3X3F6fL98qEUz88-&tab_id=613&view_id=2&col_id=3013&srch_threshold=3&is_tab_view=1&alltab_ids=613,614,615,648,649,0&updtabtype=
+
+========Set Conditional Color========
+api/layout/cndtcolclr?tab_id=613&user_id=3837&api_secret=tsJq3X3F6fL98qEUz88-&view_id=2&col_colors=[{"itemcnt":"0","itmidnm":"3013--speciesid","cndt_colclr":"#0971b5","col_cndt":"=","selval":"93","sellbl":"93","col_alias":"speciesid","datatype":"DISPLAYAS"}]&is_tab_view=1&alltab_ids=613,614,615,648,649,0&updtabtype=currtab
