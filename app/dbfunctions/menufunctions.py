@@ -105,9 +105,7 @@ def getUserMenuList(menups):
     menups.menu_cntr_data.set(DB.executeDBSelect(stmt))
 
 def insertUpdateUserMenu(menups):
-    menu_id = 0
     usermenu = DB.getTableMeta("sys_dynamic_menu")
-    where_clause = (usermenu.c.menu_id == menups.menu_id.get())
     values = {}
     if menups.m_centre_id.get() not in (None, "", 0):
         values["m_centre_id"] = menups.m_centre_id.get()
@@ -135,14 +133,14 @@ def insertUpdateUserMenu(menups):
         values["rank"] = menups.rank.get()
     if menups.is_delete.get() not in (None, ""):
         values["is_delete"] = menups.is_delete.get()
-    if menups.menu_id.get() not in (None, "", 0): # Update existing record
+    menu_id = menups.menu_id.get()
+    if menu_id not in (None, "", 0): # Update existing record
         stmt = (
             update(usermenu)
-            .where(where_clause)
+            .where(usermenu.c.menu_id == menu_id)
             .values(**values)
         )
         DB.executeDBUpdate(stmt)
-        menu_id = menups.menu_id.get()
     else : # Insert new record
         values["created_by"] = userps.user_id.get()
         values["created_date"] = nowWithTimeZone()

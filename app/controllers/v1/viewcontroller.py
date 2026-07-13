@@ -10,6 +10,7 @@ from app.helper.generalfunctions import sortObjectsByKey, generateRandomString, 
 from app.properties.viewproperties import viewps
 from app.properties.dbproperties import dbps
 from app.properties.menuproperties import menups
+from app.helper.menuhelper import getLastMenuRankByCMID
 
 # http://testws1.localhost:8000/api/v1/view/getdata?view_id=178
 def getViewData(request: Request):
@@ -60,6 +61,10 @@ def getViewData(request: Request):
         #     }
         view_qry = f"{view_qry} Order By {sorting}"
         viewhlp.setViewPaging(viewps) # Get Paging
+
+        # TO DO : Appending Notification Query
+        # createviewhlp.getNotificationCountQuery(viewps)
+
         view_qry = f"{view_qry} LIMIT {viewps.offset.get()}, {viewps.page_size.get()}"
         viewps.view_qry.set(view_qry)
         view_qry_data = DB.executeDBStatement(view_qry) # Execute Query To Get View Data
@@ -90,7 +95,8 @@ def saveTableData (request: Request):
 # http://xytovet.localhost:8000/api/v1/view/create?view_name=Python View&view_type=Table&pin_to_menu=1
 
 # api/dyncol/add?view_id=166&col_id=0&tab_id=0&all_usr_flg=1&col_type=DDL&col_alias=DDl&txt_data_type=varchar&txtcol_length=255&txtcol_index=0&txtcol_dval=&orderflag=Right&ordercol_id=3017&notify_user=0
-# http://testws1.localhost:8000/api/v1/view/create?view_name=Python%20View&view_type=Table&pin_to_menu=1
+
+# http://testws1.localhost:8000/api/v1/view/create?view_name=reactv1&view_type=Table&pin_to_menu=0
 def createBlankView (request: Request):
     try:
         params = RequestData.params(request)
@@ -105,22 +111,25 @@ def createBlankView (request: Request):
         table_name = generateRandomString()
         v_c_item = []
 
+        print("view_name --> ", view_name)
+        print("table_name --> ", table_name)
         # Step 1 : Insert Into Sys DB Table
-        # dbps.table_alias.set(view_name)
-        # dbps.table_name.set(table_name)
-        # table_id = insertTableDataToDB(dbps)
-        # if not table_id:
-        #     return raiseInvalidError("Table Not Created ", 401)
-        # dbps.table_id.set(table_id)
-        
-        dbps.table_id.set(181)
-        dbps.table_name.set("wtyrqqgmka")
+        dbps.table_alias.set(view_name)
+        dbps.table_name.set(table_name)
+        table_id = insertTableDataToDB(dbps)
+        if not table_id:
+            return raiseInvalidError("Table Not Created ", 401)
+        dbps.table_id.set(table_id)
+        print("table_id --> ", dbps.table_id.get())
 
         # Step 2 : Insert Into Sys DB Table Col
         createviewhlp.getDefaultAddViewCols(viewps) # Get Column List Based On View Type
         blank_view_cols = viewps.blank_view_cols.get()
-        # dbps.colsql.set([]) # For SQL Query
-        # dbps.colindex.set([]) # For SQL Query
+        dbps.colsql.set([]) # For SQL Query
+        dbps.colprimary.set("") # For SQL Query
+        dbps.colindex.set([]) # For SQL Query
+
+        # print("table_id --> ", dbps.table_id.get())
         for blnkvcol in blank_view_cols:
             col_name = blnkvcol.get("col_name")
             dbps.col_id.set(0) 
@@ -129,26 +138,26 @@ def createBlankView (request: Request):
             col_options = blnkvcol.get("col_options")
             dbps.col_options.set(col_options)
             dbps.rank.set(blnkvcol.get("rank"))
-            # insertUpdateTblCol(dbps) # Save to sys_new_db_tables_cols
-            # setQueryColStmt(dbps) # Set Col/Index For SQL Query
+            insertUpdateTblCol(dbps) # Save to sys_new_db_tables_cols
+            setQueryColStmt(dbps) # Set Col/Index For SQL Query
             # Set View Col Option To JSON
             if col_options.get("is_primary") == 1: # Set Primary Col ID & Name For View Options
                 viewps.primary_col.set(f"{dbps.col_id.get()}")
                 viewps.primary_colnm.set(col_name)
             if col_name == "is_delete": # Set Is Delete Col ID & Name For View Options
                 viewps.delete_col.set(f"{dbps.col_id.get()}|is_delete")
-            updateNestedJsonVal(fulljson = blnkvcol, jsonkey = "view_cols", srchkey= "col_name", srchval = col_name, updkey = "col_id", updval = dbps.col_id.get())
-            view_cols = blnkvcol.get("view_cols")
-            v_c_item.append(view_cols)
+
+            if col_name not in ("is_delete", "is_metadata"): # Excluded Columns From View
+                updateNestedJsonVal(fulljson = blnkvcol, jsonkey = "view_cols", srchkey= "col_name", srchval = col_name, updkey = "col_id", updval = dbps.col_id.get())
+                view_cols = blnkvcol.get("view_cols")
+                v_c_item.append(view_cols)
 
         # Step 3 : Generate Create Table Query & Execute
-        # executeCreateTableQuery(dbps)
+        executeCreateTableQuery(dbps)
 
         # Step 4 : Insert Into Sys View Table
-        # viewps.table_id.set(table_id)
-        # viewps.table_name.set(table_name)
-        viewps.table_id.set(181)
-        viewps.table_name.set("wtyrqqgmka")
+        viewps.table_id.set(table_id)
+        viewps.table_name.set(table_name)
         view_url = generateRandomString(length = 12, hasdigits = 1)
         viewps.view_url.set(view_url)
         view_cols = {}
@@ -158,24 +167,25 @@ def createBlankView (request: Request):
         createviewhlp.generateViewQuery(viewps)
         createviewhlp.getLeftJoinQuery(viewps)
         createviewhlp.getFullViewQuery(viewps)
-        # print("v_c_item --> ", viewps.view_cols.get())
         createviewhlp.getDefaultViewOptions(viewps) # Set View Options
-        # viewps.view_joins.set({"view_joins": []}) # Set View Joins Tables
-        # viewps.view_child.set({"view_child": []}) # Set View Child
-        # viewps.view_actions.set({"view_actions": []}) # Set View Actions
-        # insertUpdateView(viewps)
+        viewps.view_joins.set({"view_joins": []}) # Set View Joins Tables
+        viewps.view_child.set({"view_child": []}) # Set View Child
+        viewps.view_actions.set({"view_actions": []}) # Set View Actions
+        insertUpdateView(viewps)
+        print("view_id --> ", viewps.view_id.get())
 
         # Step 5 : Set Menu If Pin
         if viewps.pin_to_menu.get() == 1:
-            print("pin_to_menu --> ", viewps.pin_to_menu.get())
-            # menups.menu_name.set(view_name)
-            # menups.m_type.set(1)
-            # menups.view_id.set(viewps.view_id.get())
-            # insertUpdateUserMenu(menups)
-        
+            menups.menu_name.set(view_name)
+            menups.m_type.set(1)
+            menups.view_id.set(viewps.view_id.get())
+            getLastMenuRankByCMID(menups) # Get Last Menu Rank
+            insertUpdateUserMenu(menups) # Add To Menu
+
         # Step 6 : Return JSON
         getHostName(request)
         view_url = "https://" + userps.req_host.get() + "/view/" + view_url
+        print("view_url --> ", view_url)
         return JSONResponse (
             status_code = 200,
             content = {
@@ -186,7 +196,12 @@ def createBlankView (request: Request):
             }
         )
     except Exception as e:
-        # saveErrorLogtoDB ("View", viewps.view_id.get(), "getViewData", str(e)) # Log Error To DB
+
+        "(pymysql.err.OperationalError) (4109, 'Failed to generate invisible primary key. Auto-increment column already exists.')\n[SQL: \n    CREATE TABLE `byhevssdon` (\n        python_view_id bigint (11) NOT NULL AUTO_INCREMENT, status_1 int (4) NULL DEFAULT 0, created_by bigint (11) NULL DEFAULT 0, created_date datetime NULL, INDEX `python_view_id` (`python_view_id` ASC), INDEX `status_1` (`status_1` ASC), INDEX `created_by` (`created_by` ASC)\n    )\n    ENGINE=InnoDB\n    DEFAULT CHARSET=utf8\n    COLLATE=utf8_general_ci\n    AUTO_INCREMENT=1;\n    ]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)"
+
+
+        print("view_url --> ", str(e))
+        saveErrorLogtoDB ("CreateView", 0, "createBlankView", str(e)) # Log Error To DB
         raiseAPIError(str(e), 500)
 
 # http://xytovet.localhost:8000/api/v1/view/getlist

@@ -1,6 +1,6 @@
 from app.utils.common import DB, select, text, userps
 import re
-from sqlalchemy import inspect
+# from sqlalchemy import inspect
 
 def getDBTablesFromSchema(dbps):
     schema_name = userps.schema_name.get()

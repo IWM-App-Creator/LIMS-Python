@@ -17,16 +17,16 @@ def getViewDataByID(viewps):
 def insertUpdateView(viewps) :
     tblview = DB.getTableMeta("sys_new_dynamic_view")
     values = {}
-    print("view_name --> ", viewps.view_name.get())
-    print("view_name --> ", viewps.view_name.get())
-    print("view_url --> ", viewps.view_url.get())
-    print("view_type --> ", viewps.view_type.get())
-    print("view_options --> ", viewps.view_options.get())
-    print("view_cols --> ", viewps.view_cols.get())
-    print("view_joins --> ", viewps.view_joins.get())
+    # print("view_name --> ", viewps.view_name.get())
+    # print("view_name --> ", viewps.view_name.get())
+    # print("view_url --> ", viewps.view_url.get())
+    # print("view_type --> ", viewps.view_type.get())
+    # print("view_options --> ", viewps.view_options.get())
+    # print("view_cols --> ", viewps.view_cols.get())
+    # print("view_joins --> ", viewps.view_joins.get())
 
-    if viewps.view_id.get() not in (None, ""):
-        values["view_name"] = viewps.view_id.get()
+    if viewps.view_name.get() not in (None, ""):
+        values["view_name"] = viewps.view_name.get()
     if viewps.view_url.get() not in (None, ""):
         values["url"] = viewps.view_url.get()
     if viewps.view_type.get() not in (None, ""):
@@ -51,18 +51,18 @@ def insertUpdateView(viewps) :
         values["is_delete"] = viewps.is_delete.get()
     # Check for Insert / Update
     view_id = viewps.view_id.get()
-    print("view_id --> ", view_id)
     if view_id not in (None, "0", ""): # Update existing record
         stmt = (
             update(tblview)
             .where(tblview.c.view_id == view_id)
             .values(**values)
         )
-        # DB.executeDBUpdate(stmt)
+        DB.executeDBUpdate(stmt)
     else : # Insert new record
         values["created_by"] = userps.user_id.get() # Include Create By
         values["created_date"] = nowWithTimeZone() # Include Create Date
         stmt = insert(tblview).values(**values)
-        print("stmt --> ", stmt)
-        # viewps = DB.executeDBInsert(stmt)
+        # print("stmt --> ", stmt)
+        view_id = DB.executeDBInsert(stmt)
     viewps.view_id.set(view_id)
+

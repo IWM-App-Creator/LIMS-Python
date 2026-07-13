@@ -20,11 +20,11 @@ class DBProperties:
         self.length = ContextVar("length", default = "")
         self.is_mandatory = ContextVar("is_mandatory", default = "")
         self.default_val = ContextVar("default_val", default = "")
-        self.is_primary = ContextVar("is_primary", default = "")
-        self.is_index = ContextVar("is_index", default = "")
-        self.is_unique = ContextVar("is_unique", default = "")
-        self.notify_user = ContextVar("notify_user", default = "")
-        self.actv_log_cols = ContextVar("actv_log_cols", default = "")
+        self.is_primary = ContextVar("is_primary", default = 0)
+        self.is_index = ContextVar("is_index", default = 0)
+        self.is_unique = ContextVar("is_unique", default = 0)
+        self.notify_user = ContextVar("notify_user", default = 0)
+        self.actv_log_cols = ContextVar("actv_log_cols", default = 0)
         self.col_data_items = ContextVar("col_data_items", default = "")
         self.rank = ContextVar("rank", default = 0)
 
@@ -65,5 +65,7 @@ class DBProperties:
 
         # View / DB Column Types
         self.colsql = ContextVar("colsql", default = [])
+        self.colprimary = ContextVar("colprimary", default = "")
         self.colindex = ContextVar("colindex", default = [])
+
 dbps = DBProperties()

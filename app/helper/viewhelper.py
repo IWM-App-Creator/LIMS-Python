@@ -255,14 +255,14 @@ class CreateViewHelper:
         blank_view_cols.append( dbhlp.getPrimaryColParam(table_id, primary_col_nm, primary_col_alias, rank) )
         rank = rank + 10
         blank_view_cols.append( dbhlp.getStatusColParam(table_id, "Status", "1", rank) )
-        # rank = rank + 10
-        # blank_view_cols.append( dbhlp.getIsDeleteColParam(table_id, rank) )
-        # rank = rank + 10
-        # blank_view_cols.append( dbhlp.getIsMetadataColParam(table_id, rank) )
-        # rank = rank + 10
-        # blank_view_cols.append( dbhlp.getCreatedByColParam(table_id, rank) )
-        # rank = rank + 10
-        # blank_view_cols.append( dbhlp.getCreatedDateColParam(table_id, rank) )
+        rank = rank + 10
+        blank_view_cols.append( dbhlp.getIsDeleteColParam(table_id, rank) )
+        rank = rank + 10
+        blank_view_cols.append( dbhlp.getIsMetadataColParam(table_id, rank) )
+        rank = rank + 10
+        blank_view_cols.append( dbhlp.getCreatedByColParam(table_id, rank) )
+        rank = rank + 10
+        blank_view_cols.append( dbhlp.getCreatedDateColParam(table_id, rank) )
         viewps.blank_view_cols.set(blank_view_cols) # Set To Property
 
     @staticmethod
@@ -280,7 +280,7 @@ class CreateViewHelper:
         view_options["enable_chart"] = viewps.enable_chart.get()
         view_options["view_qry"] = viewps.view_qry.get()
         viewps.view_options.set(view_options) # Set To Property
-        print("getDefaultViewOptions View Options --> ", viewps.view_options.get() )
+        # print("getDefaultViewOptions View Options --> ", viewps.view_options.get() )
 
     @staticmethod
     def setColForView(dbps, viewps):
@@ -307,8 +307,7 @@ class CreateViewHelper:
     @staticmethod 
     def generateViewQuery(viewps) :
         view_cols = viewps.view_cols.get()
-        sortObjectsByKey(view_cols["view_cols"], 'rank', 'desc'); # Sort By Rank
-        # print("generateViewQuery --> ", view_cols)
+        sortObjectsByKey(view_cols["view_cols"], 'rank', 'asc'); # Sort By Rank
         view_cols = view_cols.get("view_cols", [])
         qry_col_list = ""
         for col in view_cols:
@@ -330,8 +329,37 @@ class CreateViewHelper:
                 #     tmpqry += f"{col['lookup_colnm']} AS `{displayas}`, "
             qry_col_list = qry_col_list + tmpqry
         viewps.qry_col_list.set(qry_col_list) # Set To Properties
+        createviewhlp.includeDeleteQuery(viewps)
+        viewps.qry_col_list.set( viewps.qry_col_list.get().rstrip(", ") ) # Stripe Last , and space.
         # print("qry_col_list --> ", viewps.qry_col_list.get())
+    
+    @staticmethod
+    def includeDeleteQuery(viewps):
+        qry_col_list = viewps.qry_col_list.get()
+        qry_col_list += "mtbl.is_delete, " # Main table
+        # # Joined tables
+        # view_joins = viewps.view_joins.get()
+        # merge_tbl = view_joins.get("view_joins", []) if isinstance(view_joins, dict) else []
+        # for tjoin in merge_tbl:
+        #     qry_col_list += f"{tjoin['join_alias']}.is_delete, "
+        viewps.qry_col_list.set(qry_col_list)
 
+    @staticmethod
+    def getNotificationCountQuery(viewps):
+        noti_cntcol = (
+            "(SELECT CONCAT("
+            "SUM(CASE WHEN is_read = 0 THEN 1 ELSE 0 END), '|', "
+            "SUM(CASE WHEN is_archive = 0 THEN 1 ELSE 0 END)"
+            ") "
+            "FROM sys_notificaitons "
+            f"WHERE item_id = mtbl.{viewps.primary_colnm.get()} "
+            f"AND table_id = {viewps.table_id.get()} "
+            f"AND to_user_id = {userps.user_id.get()} "
+            "AND is_delete = 0"
+            ") AS noti_cnt"
+        )
+        viewps.qry_col_list.set(viewps.qry_col_list.get() + noti_cntcol)
+        
     @staticmethod
     def getLeftJoinQuery(viewps):
         view_joins = viewps.view_joins.get()
@@ -367,7 +395,7 @@ class CreateViewHelper:
                 )
         viewps.join_qry.set(join_qry)
         viewps.join_del_qry.set(join_del_qry)
-        # print("join_del_qry --> ", viewps.join_del_qry.get())
+        # print("getLeftJoinQuery --> ", viewps.join_del_qry.get())
     
     @staticmethod
     def getFullViewQuery(viewps):
@@ -385,7 +413,7 @@ class CreateViewHelper:
         if viewps.join_del_qry.get():
             view_qry += viewps.join_del_qry.get()
         viewps.view_qry.set(view_qry)
-        print("join_del_qry --> ", viewps.view_qry.get())
+        print("getFullViewQuery --> ", viewps.view_qry.get())
 
     @staticmethod 
     def isColExcludedFromQuery(col: dict) -> bool:
