@@ -10,6 +10,9 @@ class viewproperties:
         self.view_type = ContextVar("view_type", default = "Table")
         self.view_qry = ContextVar("view_qry", default = "")
         self.qry_col_list = ContextVar("qry_col_list", default = "")
+        self.join_qry = ContextVar("join_qry", default = "")
+        self.join_del_qry = ContextVar("join_del_qry", default = "")
+        
 
         self.view_qry_data = ContextVar("view_qry_data", default = [])
         self.total_record = ContextVar("total_record", default = 0)

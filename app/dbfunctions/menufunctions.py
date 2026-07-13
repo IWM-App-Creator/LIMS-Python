@@ -143,7 +143,7 @@ def insertUpdateUserMenu(menups):
         )
         DB.executeDBUpdate(stmt)
         menu_id = menups.menu_id.get()
-    else :  # Insert new record
+    else : # Insert new record
         values["created_by"] = userps.user_id.get()
         values["created_date"] = nowWithTimeZone()
         stmt = insert(usermenu).values(**values)

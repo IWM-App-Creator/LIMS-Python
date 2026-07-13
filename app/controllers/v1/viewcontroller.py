@@ -1,13 +1,15 @@
-from app.utils.common import DB, Request, RequestData, JSONResponse, raiseAPIError, raiseInvalidError, nowWithTimeZone
+from app.utils.common import DB, Request, RequestData, JSONResponse, raiseAPIError, raiseInvalidError, nowWithTimeZone, userps
 from app.dbfunctions.viewfunctions import getViewDataByID, insertUpdateView
 from app.dbfunctions.dbfunctions import getCreateTableSqlFromSchema
 from app.dbfunctions.dbtablesfunctions import insertTableDataToDB, insertUpdateTblCol
 from app.dbfunctions.logfunctions import saveErrorLogtoDB
 from app.helper.viewhelper import viewhlp, createviewhlp
 from app.helper.dbhelper import setQueryColStmt, executeCreateTableQuery
-from app.helper.generalfunctions import sortObjectsByKey, generateRandomString, addUpdateJson, updateNestedJsonVal, insertNestedJsonAfter, insertNestedJsonBefore, removeNestedJsonVal
+from app.dbfunctions.menufunctions import insertUpdateUserMenu
+from app.helper.generalfunctions import sortObjectsByKey, generateRandomString, addUpdateJson, updateNestedJsonVal, insertNestedJsonAfter, insertNestedJsonBefore, removeNestedJsonVal, getHostName
 from app.properties.viewproperties import viewps
 from app.properties.dbproperties import dbps
+from app.properties.menuproperties import menups
 
 # http://testws1.localhost:8000/api/v1/view/getdata?view_id=178
 def getViewData(request: Request):
@@ -96,6 +98,7 @@ def createBlankView (request: Request):
         viewps.view_name.set(view_name)
         viewps.view_type.set(params.get("view_type", ""))
         viewps.pin_to_menu.set(params.get("pin_to_menu", 0))
+        menups.m_centre_id.set(params.get("m_centre_id", 0))
         dbps.primary_col_nm.set(view_name.lower().replace(" ", "_") + "_id") 
         dbps.primary_col_alias.set(view_name + " ID")
         table_id = 0
@@ -129,57 +132,59 @@ def createBlankView (request: Request):
             # insertUpdateTblCol(dbps) # Save to sys_new_db_tables_cols
             # setQueryColStmt(dbps) # Set Col/Index For SQL Query
             # Set View Col Option To JSON
-            if col_options.get("is_primary") == 1: # Set Primary Col ID & Name
+            if col_options.get("is_primary") == 1: # Set Primary Col ID & Name For View Options
                 viewps.primary_col.set(f"{dbps.col_id.get()}")
                 viewps.primary_colnm.set(col_name)
-            if col_name == "is_delete": # Set Is Delete Col ID & Name
+            if col_name == "is_delete": # Set Is Delete Col ID & Name For View Options
                 viewps.delete_col.set(f"{dbps.col_id.get()}|is_delete")
             updateNestedJsonVal(fulljson = blnkvcol, jsonkey = "view_cols", srchkey= "col_name", srchval = col_name, updkey = "col_id", updval = dbps.col_id.get())
             view_cols = blnkvcol.get("view_cols")
             v_c_item.append(view_cols)
-            
 
         # Step 3 : Generate Create Table Query & Execute
         # executeCreateTableQuery(dbps)
 
         # Step 4 : Insert Into Sys View Table
         # viewps.table_id.set(table_id)
-        # # viewps.table_name.set(table_name)
+        # viewps.table_name.set(table_name)
         viewps.table_id.set(181)
         viewps.table_name.set("wtyrqqgmka")
+        view_url = generateRandomString(length = 12, hasdigits = 1)
+        viewps.view_url.set(view_url)
         view_cols = {}
         view_cols["view_cols"] = v_c_item
         viewps.view_cols.set(view_cols)
-        # print("v_c_item --> ", viewps.view_cols.get())
-        
-        createviewhlp.getDefaultViewOptions(viewps) # Get View Options
-
         # Generate Query 
         createviewhlp.generateViewQuery(viewps)
         createviewhlp.getLeftJoinQuery(viewps)
         createviewhlp.getFullViewQuery(viewps)
-        
-        # TO DO
-        # Append Query To View Options
-        # $dvps->view_options = $GeneralFunctions->addUpdateToJson($gfps, "view_qry", $dvps->db_query, $dvps->view_options); 
-
-        # viewps.view_joins.set({"view_joins": []})
-        # viewps.view_child.set({"view_child": []})
-        # viewps.view_actions.set({"view_actions": []})
+        # print("v_c_item --> ", viewps.view_cols.get())
+        createviewhlp.getDefaultViewOptions(viewps) # Set View Options
+        # viewps.view_joins.set({"view_joins": []}) # Set View Joins Tables
+        # viewps.view_child.set({"view_child": []}) # Set View Child
+        # viewps.view_actions.set({"view_actions": []}) # Set View Actions
         # insertUpdateView(viewps)
 
-        # Step 5 : Set Menu
-        # insertUpdateView(viewps)
-
-        # $viewdtl = explode("~~", $viewdtl);
-        # $view_id = $viewdtl[0];
-        # $view_url = "https://" . $GeneralFunctions->getDomainNameFromURL() . "/view/" . $viewdtl[2];
-        # if($pin_to_menu == 1) {
-        #     $ModelFunctionsController->addViewToMenu($user_id, $view_id, $view_name);
-        # }
+        # Step 5 : Set Menu If Pin
+        if viewps.pin_to_menu.get() == 1:
+            print("pin_to_menu --> ", viewps.pin_to_menu.get())
+            # menups.menu_name.set(view_name)
+            # menups.m_type.set(1)
+            # menups.view_id.set(viewps.view_id.get())
+            # insertUpdateUserMenu(menups)
         
-        # /* Step 4 : Update Rank */
-
+        # Step 6 : Return JSON
+        getHostName(request)
+        view_url = "https://" + userps.req_host.get() + "/view/" + view_url
+        return JSONResponse (
+            status_code = 200,
+            content = {
+                "status": True,
+                "message": "View Created Successfully!",
+                "view_id": viewps.view_id.get(),
+                "view_url": view_url,
+            }
+        )
     except Exception as e:
         # saveErrorLogtoDB ("View", viewps.view_id.get(), "getViewData", str(e)) # Log Error To DB
         raiseAPIError(str(e), 500)

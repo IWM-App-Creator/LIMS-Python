@@ -280,7 +280,7 @@ class CreateViewHelper:
         view_options["enable_chart"] = viewps.enable_chart.get()
         view_options["view_qry"] = viewps.view_qry.get()
         viewps.view_options.set(view_options) # Set To Property
-        print("View Options --> ", viewps.view_options.get() )
+        print("getDefaultViewOptions View Options --> ", viewps.view_options.get() )
 
     @staticmethod
     def setColForView(dbps, viewps):
@@ -313,11 +313,10 @@ class CreateViewHelper:
         qry_col_list = ""
         for col in view_cols:
             if createviewhlp.isColExcludedFromQuery(col):
-                print("col_name --> ", col["col_name"])
+                # print("col_name --> ", col["col_name"])
                 col_id = col["col_id"]
                 col_name = col["col_name"]
                 qry_alias = col["qry_alias"]
-
                 qrycolnm = f"{qry_alias}.{col_name}"
                 displayas = f"{col_id}{col_name}_{qry_alias}"
                 tmpqry = f"{qrycolnm} AS `{displayas}`, " # Select Qry Column
@@ -330,18 +329,25 @@ class CreateViewHelper:
                 #     displayas = f"{col['col_id']}{dvps.col_name.get()}_lbl_{qry_alias}"
                 #     tmpqry += f"{col['lookup_colnm']} AS `{displayas}`, "
             qry_col_list = qry_col_list + tmpqry
-
         viewps.qry_col_list.set(qry_col_list) # Set To Properties
+        # print("qry_col_list --> ", viewps.qry_col_list.get())
 
     @staticmethod
-    def getLeftJoinQuery(dvps):
-        merge_tbl = dvps.view_joins.get().get("view_joins", [])
+    def getLeftJoinQuery(viewps):
+        view_joins = viewps.view_joins.get()
+        if isinstance(view_joins, dict):
+            merge_tbl = view_joins.get("view_joins", [])
+        else:
+            merge_tbl = []
+        # print("getLeftJoinQuery view_joins --> ", viewps.view_joins.get())
+        # merge_tbl = viewps.view_joins.get().get("view_joins", [])
+        # print("getLeftJoinQuery --> ", merge_tbl)
         join_qry = ""
         join_del_qry = ""
         for tjoin in merge_tbl:
             join_alias = tjoin["join_alias"]
             join_to_alias = ""
-            if tjoin["table_id_1"] == dvps.table_id.get():
+            if tjoin["table_id_1"] == viewps.table_id.get():
                 join_to_alias = "mtbl"
             else:
                 for tmploop in merge_tbl:
@@ -359,25 +365,27 @@ class CreateViewHelper:
                     f" AND ({join_alias}.is_delete = 0 "
                     f"OR {join_alias}.is_delete IS NULL)"
                 )
-        dvps.join_qry.set(join_qry)
-        dvps.join_del_qry.set(join_del_qry)
+        viewps.join_qry.set(join_qry)
+        viewps.join_del_qry.set(join_del_qry)
+        # print("join_del_qry --> ", viewps.join_del_qry.get())
     
     @staticmethod
-    def getFullViewQuery(dvps):
-        db_query = (
-            f"SELECT DISTINCT {dvps.qry_col_list.get()} "
-            f"FROM {dvps.table_name.get()} mtbl"
-            f"{dvps.join_qry.get()}"
+    def getFullViewQuery(viewps):
+        view_qry = (
+            f"SELECT DISTINCT {viewps.qry_col_list.get()} "
+            f"FROM {viewps.table_name.get()} mtbl"
+            f"{viewps.join_qry.get()}"
         )
-        if dvps.show_deleted.get() == 0:
-            db_query += " WHERE mtbl.is_delete = 0"
+        if viewps.show_deleted.get() == "0":
+            view_qry += " WHERE mtbl.is_delete = 0"
         else:
-            db_query += (
-                f" WHERE mtbl.{dvps.primary_colnm.get()} != ''"
+            view_qry += (
+                f" WHERE mtbl.{viewps.primary_colnm.get()} != ''"
             )
-        if dvps.join_del_qry.get():
-            db_query += dvps.join_del_qry.get()
-        dvps.db_query.set(db_query)
+        if viewps.join_del_qry.get():
+            view_qry += viewps.join_del_qry.get()
+        viewps.view_qry.set(view_qry)
+        print("join_del_qry --> ", viewps.view_qry.get())
 
     @staticmethod 
     def isColExcludedFromQuery(col: dict) -> bool:
