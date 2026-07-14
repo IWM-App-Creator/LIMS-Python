@@ -61,6 +61,8 @@ def addDynamicColumn(request: Request):
         orderflag = params.get("orderflag", "Right")
         ordercol_id = params.get("ordercol_id", 0)
         notify_user = params.get("notify_user", 0)
+        dbps.data_type.set(params.get("data_type", ""))
+        dbps.length.set(params.get("length", 0))
         dbps.default_val.set(params.get("default_val", ""))
         dbps.view_col_type.set(params.get("view_col_type", "")) # Get From Property (setViewDataProperties)
 
