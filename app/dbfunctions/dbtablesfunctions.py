@@ -46,7 +46,6 @@ def getDBTableData(dbps):
         stmt = stmt.where(tblmaster.c.is_delete == is_del_tbl)
     if is_del_col != "-1":
         stmt = stmt.where(tblcols.c.is_delete == is_del_col)
-    print("stmt --> ", stmt)
     return DB.executeDBSelect(stmt)
 
 def insertTableDataToDB(dbps) :
@@ -153,3 +152,33 @@ def insertUpdateTblCol(dbps) :
         stmt = insert(tblcols).values(**values)
         col_id = DB.executeDBInsert(stmt)
     dbps.col_id.set(col_id)
+
+def getAllDBTableData(dbps):
+    table_id = dbps.table_id.get()
+    table_ids = dbps.table_ids.get()
+    col_id = dbps.col_id.get()
+    col_ids = dbps.col_ids.get()
+    col_name = dbps.col_name.get()
+    is_primary = dbps.is_primary.get()
+    is_del_col = dbps.is_del_col.get()
+    # print("is_del_tbl --> ", is_del_tbl)
+    # print("is_del_col --> ", is_del_col)
+    tblcols = DB.getTableMeta("sys_new_db_tables_cols").alias("tblcols")
+    stmt = (
+        select(tblcols)
+    )
+    if table_id not in (None, "", 0):
+        stmt = stmt.where(tblcols.c.table_id == table_id)
+    if table_ids:
+        stmt = stmt.where(tblcols.c.table_id.in_(table_ids))
+    if col_id not in (None, "", 0):
+        stmt = stmt.where(tblcols.c.col_id == col_id)
+    if col_ids:
+        stmt = stmt.where(tblcols.c.col_id.in_(col_ids))
+    if col_name not in (None, ""):
+        stmt = stmt.where(tblcols.c.col_name == col_name)
+    if is_primary:
+        stmt = stmt.where(func.json_unquote(func.json_extract(tblcols.c.col_options, "$.is_primary") ) == "1" )
+    # if is_del_col != "-1":
+    #     stmt = stmt.where(tblcols.c.is_delete == is_del_col)
+    return DB.executeDBSelect(stmt)

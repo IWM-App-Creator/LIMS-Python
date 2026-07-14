@@ -1,6 +1,6 @@
-from app.utils.common import DB
+from app.utils.common import DB, text, userps, select, update
 from app.dbfunctions.dbfunctions import getTableColumnCount
-from app.dbfunctions.dbtablesfunctions import getDBTableData
+from app.dbfunctions.dbtablesfunctions import getAllDBTableData
 
 def setQueryColStmt(dbps):
     colqry = dbps.colsql.get()
@@ -58,29 +58,35 @@ def getPrimaryColParam(table_id, col_name, col_alias, rank):
     colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "bigint", "length": "11", "default_val": "", "is_primary": 1, "is_index": 1, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": "", "rank": rank}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "NUMBER", "qry_alias": "mtbl", "col_key": 1, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank} }
     return colopt
 
-def getStatusColParam(table_id, col_alias, cnt, rank):
+def getStatusColParam(table_id, col_alias, cnt, default_val, rank):
     col_name = "status_" + str(cnt)
-    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "int", "length": "4", "default_val": "0", "is_primary": 0, "is_index": 1, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": "", "rank": rank}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "STATUS", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank} }
+    if default_val == "":
+        default_val = 0
+    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "int", "length": "4", "default_val": default_val, "is_primary": 0, "is_index": 1, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": "", "rank": rank}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "STATUS", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank} }
     return colopt
 
-def getDropdownColParam(table_id, col_alias, cnt, rank):
+def getDropdownColParam(table_id, col_alias, cnt, default_val, rank):
     col_name = "dd_" + str(cnt)
-    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "text", "length": "", "default_val": "", "is_primary": 0, "is_index": 0, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": "", "rank": rank}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "DROPDOWN", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank} }
+    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "text", "length": "", "default_val": default_val, "is_primary": 0, "is_index": 0, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": "", "rank": rank}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "DROPDOWN", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank} }
     return colopt
 
-def getYesNoColParam(table_id, col_alias, cnt, rank):
+def getYesNoColParam(table_id, col_alias, cnt, default_val, rank):
     col_name = "yn_" + str(cnt)
-    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "int", "length": "4", "default_val": "0", "is_primary": 0, "is_index": 1, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": [{"label": "YES", "clrcode": "#10b759", "opt_val": "1"}, {"label": "NO", "clrcode": "#c66565", "opt_val": "2"}, {"label": "Unassigned", "clrcode": "#d2d2d2", "opt_val": "0"}], "rank": rank}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "YN_INT", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank} }
+    if default_val == "":
+        default_val = 0
+    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "int", "length": "4", "default_val": default_val, "is_primary": 0, "is_index": 1, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": [{"label": "YES", "clrcode": "#10b759", "opt_val": "1"}, {"label": "NO", "clrcode": "#c66565", "opt_val": "2"}, {"label": "Unassigned", "clrcode": "#d2d2d2", "opt_val": "0"}], "rank": rank}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "YN_INT", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank} }
     return colopt
 
-def getTrueFalseColParam(table_id, col_alias, cnt, rank):
+def getTrueFalseColParam(table_id, col_alias, cnt, default_val, rank):
     col_name = "tf_" + str(cnt)
-    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "int", "length": "4", "default_val": "0", "is_primary": 0, "is_index": 1, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": [{"label": "True", "clrcode": "#10b759", "opt_val": "1"}, {"label": "False", "clrcode": "#c66565", "opt_val": "2"}, {"label": "Unassigned", "clrcode": "#d2d2d2", "opt_val": "0"}], "rank": rank}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "TF_INT", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank} }
+    if default_val == "":
+        default_val = 0
+    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "int", "length": "4", "default_val": default_val, "is_primary": 0, "is_index": 1, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": [{"label": "True", "clrcode": "#10b759", "opt_val": "1"}, {"label": "False", "clrcode": "#c66565", "opt_val": "2"}, {"label": "Unassigned", "clrcode": "#d2d2d2", "opt_val": "0"}], "rank": rank}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "TF_INT", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank} }
     return colopt
 
-def getPeopleColParam(table_id, col_alias, cnt, notify_user, rank):
+def getPeopleColParam(table_id, col_alias, cnt, notify_user, default_val, rank):
     col_name = "ppl_" + str(cnt)
-    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "varchar", "length": "250", "default_val": "", "is_primary": 0, "is_index": 0, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": "", "rank": rank}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "FULLNAME", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank} }
+    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "varchar", "length": "250", "default_val": default_val, "is_primary": 0, "is_index": 0, "is_unique": 0, "is_mandatory": 0, "notify_user": notify_user, "actv_log_cols": 0, "col_data_items": "", "rank": rank}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "FULLNAME", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank} }
     return colopt
 
 # NUMBER, FLOAT(DECIMAL), GEO LOCATION
@@ -180,5 +186,47 @@ def getViewColumnCount(dbps):
         getTableColumnCount(dbps)
 
 def setTableColumnRank(dbps):
-    col_data = getDBTableData(dbps)
-    print("setTableColumnRank col_data --> ", col_data)
+    col_data = getAllDBTableData(dbps)
+    return col_data[0].rank
+
+def updateDBTableSequence(dbps):
+    sys_db_tables_cols = DB.getTableMeta("sys_db_tables_cols")
+    table_name = dbps.table_name.get()
+    table_id = dbps.table_id.get()
+    schema_name = userps.schema_name.get()
+    stmt = text(f"DESCRIBE `{schema_name}`.`{table_name}`")
+    rank = 10
+    for col in DB.executeDBStatement(stmt):
+        col_name = col.Field
+        stmt = (
+            select(sys_db_tables_cols.c.col_id)
+            .where(sys_db_tables_cols.c.table_id == table_id)
+            .where(sys_db_tables_cols.c.col_name == col_name)
+            .where(sys_db_tables_cols.c.is_delete == 0)
+        )
+        tblcol = DB.executeDBSelectSingle(stmt)
+        if tblcol:
+            upd_stmt = (
+                update(sys_db_tables_cols)
+                .where(sys_db_tables_cols.c.col_id == tblcol.col_id)
+                .values(rank=rank)
+            )
+            DB.executeDBUpdate(upd_stmt)
+        rank += 10
+
+def insertViewColumn(view_json: dict, target_col_id: int, new_col: dict, position: str = "after") -> bool:
+    view_cols = view_json.get("view_cols", [])
+    if not isinstance(view_cols, list):
+        return False
+    inserted = False
+    for i, col in enumerate(view_cols):
+        if col.get("col_id") == target_col_id:
+            index = i if position == "before" else i + 1
+            view_cols.insert(index, new_col)
+            inserted = True
+            break
+    if not inserted:
+        return False
+    for i, col in enumerate(view_cols):
+        col["rank"] = (i + 1) * 10
+    return True

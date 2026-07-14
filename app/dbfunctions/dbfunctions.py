@@ -22,10 +22,16 @@ def getTableColumnCount(dbps):
     tbl_col_cnt = 0
     tbl_col_srch = dbps.tbl_col_srch.get()
     columns = dbps.all_db_tbl_col.get()
+    tmpcol = ""
     for col in columns:
+        if col.Field == "is_delete":
+            dbps.after_col.set(tmpcol)
+        tmpcol = col.Field
         if col.Field.startswith(f"{tbl_col_srch}"):
             tbl_col_cnt = tbl_col_cnt + 1
     dbps.tbl_col_cnt.set(tbl_col_cnt)
+    if dbps.after_col.get() == "":
+        dbps.after_col.set(tmpcol)
 
 def getCreateTableSqlFromSchema(dbps):
     schema_name = userps.schema_name.get()
@@ -137,17 +143,17 @@ def generateDBColumnAlterQuery(dbps):
     after_col = dbps.after_col.get()
     data_type = dbps.data_type.get()
     length = dbps.length.get()
+    default_val = dbps.default_val.get()
     if length not in (None, ""):
         data_type = f"{data_type}({length})"
 
     default_clause = ""
-    default_val = dbps.default_val.get()
     if default_val not in (None, ""):
-        default_clause = f" {default_val}"
+        default_clause = f"{default_val}"
 
     after_clause = ""
     if after_col not in (None, ""):
-        after_clause = f"`{after_col}`"
+        after_clause = f"{after_col}"
 
     extra_clause = ""
     extra = dbps.extra.get()
