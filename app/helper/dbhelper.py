@@ -109,10 +109,22 @@ def getGeolocationColParam(table_id, col_alias, cnt, rank):
     return colopt
 
 # NUMBER, FLOAT(DECIMAL), GEO LOCATION
+def getNumberColParam(table_id, col_alias, rank):
+    col_name = col_alias.lower().replace(" ", "_")
+    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "int", "length": "", "default_val": "", "is_primary": 0, "is_index": 0, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": ""}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "NUMBER", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank}, "rank": rank}
+    return colopt
 
 # Text, URL, EMAIL, TEL, UPLOAD, FORMULA, SIGN, BARCODE
+def getTextColParam(table_id, col_alias, rank):
+    col_name = col_alias.lower().replace(" ", "_")
+    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "varchar", "length": "", "default_val": "", "is_primary": 0, "is_index": 0, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": ""}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "TEXT", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank}, "rank": rank}
+    return colopt
 
 # DATE & LAST UPDATE
+def getDateColParam(table_id, col_alias, rank):
+    col_name = col_alias.lower().replace(" ", "_")
+    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "decimal", "length": "", "default_val": "", "is_primary": 0, "is_index": 0, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": ""}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "DATETIME", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank}, "rank": rank}
+    return colopt
 
 # Float : {"length": "10,3", "is_index": 1, "data_type": "float", "is_unique": 0, "is_primary": 0, "default_val": null, "notify_user": 0, "csv_col_name": null, "csv_col_type": null, "is_mandatory": 0, "actv_log_cols": 0, "csv_map_col_nm": null}
   
@@ -202,7 +214,7 @@ def getViewColumnCount(dbps):
                 dbps.tbl_col_srch.set("sign_")
             case "Geolocation":
                 dbps.tbl_col_srch.set("lat_")
-        getTableColumnCount(dbps)
+    getTableColumnCount(dbps)
 
 def setRankByColID(dbps):
     col_data = getDBColData(dbps)

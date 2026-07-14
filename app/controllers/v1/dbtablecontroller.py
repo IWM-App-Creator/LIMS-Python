@@ -48,7 +48,7 @@ def getDBTableColumns (request: Request):
 def updateDBTableAlias (request: Request):
     print("updateDBTableAlias --> ")
 
-# http://testws1.localhost:8000/api/v1/dbtable/addcol?view_id=181&all_usr_flg=1&view_col_type=Status&col_alias=Status Col&default_val=&orderflag=left&ordercol_id=3302&notify_user=0
+# http://testws1.localhost:8000/api/v1/dbtable/addcol?view_id=181&all_usr_flg=1&view_col_type=Numbers&col_alias=Decimal Col&default_val=&orderflag=left&ordercol_id=3302&notify_user=0&data_type=decimal&length=10,8&is_index=
 def addDynamicColumn(request: Request):
     print("addDynamicColumn --> ")
     status = False
@@ -57,13 +57,13 @@ def addDynamicColumn(request: Request):
         params = RequestData.params(request)
         viewps.view_id.set(params.get("view_id", 0))
         dbps.col_alias.set(params.get("col_alias", ""))
-        col_name = params.get("col_alias", "").lower().replace(" ", "_")
         orderflag = params.get("orderflag", "Right")
         ordercol_id = params.get("ordercol_id", 0)
         notify_user = params.get("notify_user", 0)
         dbps.data_type.set(params.get("data_type", ""))
-        dbps.length.set(params.get("length", 0))
+        dbps.length.set(params.get("length", "0"))
         dbps.default_val.set(params.get("default_val", ""))
+        dbps.is_index.set(params.get("is_index", 0))
         dbps.view_col_type.set(params.get("view_col_type", "")) # Get From Property (setViewDataProperties)
 
         # Step 1 : Set View Data and Column Data
@@ -78,11 +78,13 @@ def addDynamicColumn(request: Request):
         dbps.table_id.set(viewps.table_id.get())
         dbps.table_name.set(viewps.table_name.get())
         dbhlp.getViewColumnCount(dbps)
-        dbps.col_cnt.set(dbps.tbl_col_cnt.get() + 1)
+        if dbps.tbl_col_cnt.get() not in (None, "", 0):
+            dbps.col_cnt.set(dbps.tbl_col_cnt.get() + 1)
 
         # Step 2 : Add To Table Col
         colopt = {}
         tmpcnt = dbps.col_cnt.get()
+        print("tmpcnt --> ", tmpcnt)
         match dbps.view_col_type.get():
             case "Status":
                 colopt = dbhlp.getStatusColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
@@ -124,6 +126,41 @@ def addDynamicColumn(request: Request):
                 if dbps.default_val.get() == "":
                     dbps.default_val.set(0)
                 updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
+            case "Numbers":
+                colopt = dbhlp.getNumberColParam(dbps.table_id.get(), dbps.col_alias.get(), order_rank)
+                if dbps.is_index.get() == "":
+                    dbps.is_index.set(0)
+                if dbps.length.get() == "":
+                    dbps.length.set(0)
+                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
+                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "data_type", updval = dbps.data_type.get())
+                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "is_index", updval = dbps.is_index.get())
+                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "length", updval = dbps.length.get())
+            case "Text":
+                colopt = dbhlp.getTextColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
+                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
+            case "URL":
+                colopt = dbhlp.getTextColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
+                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
+            case "Email":
+                colopt = dbhlp.getTextColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
+                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
+            case "Tel":
+                colopt = dbhlp.getTextColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
+                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
+            case "Colour":
+                colopt = dbhlp.getTextColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
+                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
+            case "Upload":
+                colopt = dbhlp.getTextColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
+                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
+            case "Date":
+                colopt = dbhlp.getDateColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
+                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
+            case "LastUpdated":
+                colopt = dbhlp.getDateColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
+                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
+        print("colopt --> ", colopt)
         col_name = colopt.get("col_name", "")
         dbps.col_id.set(0) 
         dbps.col_name.set(col_name)
@@ -131,11 +168,12 @@ def addDynamicColumn(request: Request):
         col_options = colopt.get("col_options", {})
         dbps.col_options.set(col_options)
         dbps.rank.set(colopt.get("rank", 0))
-        insertUpdateTblCol(dbps) # Save to sys_new_db_tables_cols
-        updateDBTableSequence(dbps) # Update Sequence for DB Table
+        # insertUpdateTblCol(dbps) # Save to sys_new_db_tables_cols
+        # updateDBTableSequence(dbps) # Update Sequence for DB Table
         # Update Col ID : Used in View Col
         updateNestedJsonVal(fulljson = colopt, jsonkey = "view_cols", srchkey= "col_name", srchval = col_name, updkey = "col_id", updval = dbps.col_id.get())
         view_cols = colopt.get("view_cols", {})
+        print("view_cols --> ", view_cols)
 
         # Step 3 : Generate DB Query to Add Column
         dbps.alter_action.set("add_col")
@@ -143,7 +181,9 @@ def addDynamicColumn(request: Request):
         dbps.length.set(col_options.get("length", 0))
         dbps.default_val.set(col_options.get("default_val", ""))
         generateDBColumnAlterQuery(dbps)
-        DB.executStatementOnly(text(dbps.alter_qry.get()))
+        print("alter_qry --> ", dbps.alter_qry.get())
+        # DB.executStatementOnly(text(dbps.alter_qry.get()))
+        return
 
         # Step 4 : Add New Column To View and update view Query
         view_json = viewps.view_cols.get()
@@ -178,7 +218,7 @@ def addDynamicColumn(request: Request):
             "message": message,
             "new_col_id": dbps.col_id.get()
         }
-    ) 
+    )
 
 # http://testws1.localhost:8000/api/v1/dbtable/renamecol
 def updateDBTblColAlias (request: Request):
