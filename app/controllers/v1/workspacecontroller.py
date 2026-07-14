@@ -1,37 +1,20 @@
-from app.utils.common import Request, RequestData, JSONResponse, raiseAPIError, userps
-from app.dbfunctions.workspacefunctions import isWorkspaceValid, getWorkspaceData
+from app.utils.common import DB, Request, RequestData, JSONResponse, raiseAPIError, raiseInvalidError, nowWithTimeZone, userps
+from app.dbfunctions.logfunctions import saveErrorLogtoDB
+import app.dbfunctions.workspacefunctions as wsfn
 from app.helper.workspacehelper import setWorkspaceOutput
 from app.properties.workspaceproperties import wsps
 
-def getWorkspaceList (request: Request):
-    wsps.domain_flag.set(0)
-    wsps.fetch_single.set(0)
-
-    userps.user_id.set(3779) # Temp
-    getWorkspaceData(wsps)
-    setWorkspaceOutput(wsps)
-    return JSONResponse (
-        status_code = 200,
-        content = {
-            "status": True,
-            "message": "Work Space Data",
-            "ws_list" : wsps.ws_data.get(),
-        }
-    )
-
 def isWSValid (subdomain: str):
-    # IF auth. Calling validateWorkspace -->
-    workspace_id = isWorkspaceValid(subdomain) # Execute Function to User WS Data
+    workspace_id = wsfn.isWorkspaceValid(subdomain) # Execute Function to User WS Data
     if workspace_id == "0" and subdomain != "auth" : # Invalid Workspace
         return JSONResponse (
             status_code = 200,
             content = {
                 "status": False,
-                "message": "Valid Workspace",
+                "message": "In-Valid Workspace",
                 "workspace_id": workspace_id
             }
         )
-    #     raiseAPIError("Invalid Workspace", 401)
     return JSONResponse (
         status_code = 200,
         content = {
@@ -40,3 +23,22 @@ def isWSValid (subdomain: str):
             "workspace_id": workspace_id
         }
     )
+
+# http://testws1.localhost:8000/api/v1/workspace/getlist?txtsearch=test
+def getWorkspaceList(request: Request):
+    try:
+        params = RequestData.params(request)
+        wsps.ws_srch.set(params.get("txtsearch", "") )
+        wsfn.getWSListByUsers(wsps)
+        setWorkspaceOutput(wsps)
+        return JSONResponse (
+            status_code = 200,
+            content = {
+                "status": True,
+                "message": "Workspace List",
+                "ws_list" : wsps.ws_data.get(),
+            }
+        )
+    except Exception as e:
+        saveErrorLogtoDB ("Workspace", 0, "getWorkspaceList", str(e))
+        raiseAPIError(str(e), 500)

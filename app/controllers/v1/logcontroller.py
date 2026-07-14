@@ -4,7 +4,7 @@ from app.dbfunctions.logfunctions import getDBErrorLog, saveErrorLogtoDB, resolv
 from app.helper.generalfunctions import formatUserDisplayName
 from app.properties.logproperties import logps
 
-# http://tesetws1.localhost:8000/api/v1/log/geterrors?page_no=1&error_id=&section=View&item_id=178
+# http://testws1.localhost:8000/api/v1/log/geterrors?page_no=1&error_id=&section=View&item_id=178
 def getErrorLog(request: Request):
     try:
         params = RequestData.params(request)
@@ -50,7 +50,7 @@ def getErrorLog(request: Request):
     # result = verify_token(token)
     # return result
 
-# http://tesetws1.localhost:8000/api/v1//log/saveerror?section=View&item_id=178&notes=notes&error_msg=test error message
+# http://testws1.localhost:8000/api/v1//log/saveerror?section=View&item_id=178&notes=notes&error_msg=test error message
 async def saveErrorLog(section: str, item_id: str, notes: str, error_msg: str):
     try:
         error_id = saveErrorLogtoDB(section, item_id, notes, error_msg)
@@ -65,7 +65,7 @@ async def saveErrorLog(section: str, item_id: str, notes: str, error_msg: str):
     except Exception as e:
         raiseAPIError(str(e), 500)
 
-# http://tesetws1.localhost:8000/api/v1/log/removeerror?view_id=178
+# http://testws1.localhost:8000/api/v1/log/removeerror?view_id=178
 def removeErrorLog(error_id: str):
     try:
         resolveError(error_id)

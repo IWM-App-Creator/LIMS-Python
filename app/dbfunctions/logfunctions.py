@@ -49,21 +49,21 @@ def getDBErrorLog(logps):
 def saveErrorLogtoDB(section: str, item_id: str, notes: str, error_msg: str):
     tb = traceback.extract_tb(sys.exc_info()[2])[-1]
     notes = f"{notes} :- {tb.filename} : ({tb.name} - {tb.lineno}"
-    # print(notes)
-    sys_error_log = DB.getTableMeta("sys_error_log")
-    stmt = (
-        insert(sys_error_log)
-        .values(
-            section = section,
-            item_id = item_id,
-            notes = notes,
-            error_msg = error_msg,
-            created_by = userps.user_id.get(),
-            created_date = nowWithTimeZone()
-        )
-    )
-    error_id = DB.executeDBInsert(stmt)
-    return error_id
+    print("Exception --> ", f" {tb.filename} : ({tb.name} - {tb.lineno}")
+    # sys_error_log = DB.getTableMeta("sys_error_log")
+    # stmt = (
+    #     insert(sys_error_log)
+    #     .values(
+    #         section = section,
+    #         item_id = item_id,
+    #         notes = notes,
+    #         error_msg = error_msg,
+    #         created_by = userps.user_id.get(),
+    #         created_date = nowWithTimeZone()
+    #     )
+    # )
+    # error_id = DB.executeDBInsert(stmt)
+    # return error_id
 
 def resolveError(error_id: str):
     sys_error_log = DB.getTableMeta("sys_error_log")

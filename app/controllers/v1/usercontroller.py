@@ -3,11 +3,11 @@ from app.utils.common import DB, select, JSONResponse, raiseAPIError, userps
 from app.dbfunctions.userfunctions import getUserDataFromDB
 from app.properties.dbproperties import dbps
 from app.helper.menuhelper import getActiveMenuCenterID, setUserMenusOutput, setUserMenuCenterOutput
-from app.helper.workspacehelper import setWorkspaceOutput
+from app.helper.workspacehelper import setUserWSOutput
 from app.helper.dashboardhelper import setDashboardOutput, getActiveDashboard
 from app.dbfunctions.menufunctions import getUserMenuList, getDynamicMenuCenter
 from app.dbfunctions.dashboardfunctions import getUserDashboards
-from app.dbfunctions.workspacefunctions import getWorkspaceData
+from app.dbfunctions.workspacefunctions import getUserWSData
 from app.properties.menuproperties import menups
 from app.properties.workspaceproperties import wsps
 from app.properties.dashboardproperties import dps
@@ -59,8 +59,8 @@ def getUserDetail(): # token: str
     # --------------------------
     wsps.domain_flag.set(0)
     wsps.fetch_single.set(0)
-    getWorkspaceData(wsps)
-    setWorkspaceOutput(wsps)
+    getUserWSData(wsps)
+    setUserWSOutput(wsps)
     # --------------------------
     # Get Dashboard List
     # --------------------------

@@ -1,5 +1,5 @@
 from fastapi import Request
-from sqlalchemy import select, func, text, insert, update, delete, or_
+from sqlalchemy import select, func, text, insert, update, delete, or_, case
 from app.dbhelper.db_helper import DB
 from app.httphelper.requesthelper import RequestData
 from fastapi.responses import JSONResponse
@@ -17,6 +17,7 @@ __all__ = [
     "delete",
     "func",
     "or_",
+    "case",
     "Request",
     "RequestData",
     "JSONResponse",

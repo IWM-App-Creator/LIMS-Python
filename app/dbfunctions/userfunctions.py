@@ -12,3 +12,10 @@ def getUserDataFromDB():
         stmt = stmt.where(tbluser.c.email == email)
     user = DB.executeDBSelectSingle(stmt) # Execute Query
     return user
+
+
+def getUserDataByID(user_id):
+    tbluser = DB.getTableMeta("users", "systemconfig").alias("usr")
+    stmt = select(tbluser).where(tbluser.c.id == user_id)
+    user = DB.executeDBSelectSingle(stmt) # Execute Query
+    return user
