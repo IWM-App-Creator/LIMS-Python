@@ -82,6 +82,9 @@ def addDynamicColumn(request: Request):
     match dbps.view_col_type.get():
         case "Status":
             colopt = dbhlp.getStatusColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, dbps.default_val.get(), order_rank)
+            # print(colopt)
+            # updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = "50")
+            # print(colopt)
         case "DDL":
             colopt = dbhlp.getDropdownColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, dbps.default_val.get(), order_rank)
         case "YesNo":
@@ -100,6 +103,7 @@ def addDynamicColumn(request: Request):
             colopt = dbhlp.getDropdownColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, dbps.default_val.get(), order_rank)
         case "Geolocation":
             colopt = dbhlp.getDropdownColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, dbps.default_val.get(), order_rank)
+    # return
     col_name = colopt.get("col_name", "")
     dbps.col_id.set(0) 
     dbps.col_name.set(col_name)
