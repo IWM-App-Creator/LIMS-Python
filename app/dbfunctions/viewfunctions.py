@@ -24,7 +24,7 @@ def insertUpdateView(viewps) :
     # print("view_options --> ", viewps.view_options.get())
     # print("view_cols --> ", viewps.view_cols.get())
     # print("view_joins --> ", viewps.view_joins.get())
-
+    
     if viewps.view_name.get() not in (None, ""):
         values["view_name"] = viewps.view_name.get()
     if viewps.view_url.get() not in (None, ""):

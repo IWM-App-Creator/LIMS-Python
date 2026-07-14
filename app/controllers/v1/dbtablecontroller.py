@@ -75,6 +75,7 @@ def addDynamicColumn(request: Request):
             order_rank = col_order_rank + 1
         getViewDataByID(viewps) # Get View Data
         viewhlp.setViewDataProperties(viewps) # Set View Properties
+        # Set Table To DB Properties
         dbps.table_id.set(viewps.table_id.get())
         dbps.table_name.set(viewps.table_name.get())
         dbhlp.getViewColumnCount(dbps)
