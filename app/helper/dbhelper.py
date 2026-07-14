@@ -83,6 +83,31 @@ def getPeopleColParam(table_id, col_alias, cnt, notify_user, rank):
     colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "varchar", "length": "250", "default_val": "", "is_primary": 0, "is_index": 0, "is_unique": 0, "is_mandatory": 0, "notify_user": notify_user, "actv_log_cols": 0, "col_data_items": ""}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "FULLNAME", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank}, "rank": rank}
     return colopt
 
+def getCalculationColParam(table_id, col_alias, cnt, rank):
+    col_name = "calc_" + str(cnt)
+    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "text", "length": "", "default_val": "", "is_primary": 0, "is_index": 0, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": ""}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "CALC", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank}, "rank": rank}
+    return colopt
+
+def getRatingColParam(table_id, col_alias, cnt, rank):
+    col_name = "rating_" + str(cnt)
+    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "int", "length": "4", "default_val": "0", "is_primary": 0, "is_index": 0, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": ""}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "RATING", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank}, "rank": rank}
+    return colopt
+
+def getBarcodeColParam(table_id, col_alias, cnt, rank):
+    col_name = "barcode_" + str(cnt)
+    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "varchar", "length": "", "default_val": "", "is_primary": 0, "is_index": 0, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": ""}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "BARCODE", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank}, "rank": rank}
+    return colopt
+
+def getSignatureColParam(table_id, col_alias, cnt, rank):
+    col_name = "sign_" + str(cnt)
+    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "varchar", "length": "", "default_val": "", "is_primary": 0, "is_index": 0, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": ""}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "SIGN", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank}, "rank": rank}
+    return colopt
+
+def getGeolocationColParam(table_id, col_alias, cnt, rank):
+    col_name = "lat_" + str(cnt)
+    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "decimal", "length": "11,8", "default_val": "", "is_primary": 0, "is_index": 0, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": ""}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "NUMBER", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank}, "rank": rank}
+    return colopt
+
 # NUMBER, FLOAT(DECIMAL), GEO LOCATION
 
 # Text, URL, EMAIL, TEL, UPLOAD, FORMULA, SIGN, BARCODE

@@ -104,21 +104,21 @@ def addDynamicColumn(request: Request):
                 colopt = dbhlp.getPeopleColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, notify_user, order_rank)
                 updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
             case "Calc":
-                colopt = dbhlp.getDropdownColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
+                colopt = dbhlp.getCalculationColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
                 updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
             case "Rating":
-                colopt = dbhlp.getDropdownColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
+                colopt = dbhlp.getRatingColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
                 if dbps.default_val.get() == "":
                     dbps.default_val.set(0)
                 updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
             case "Barcode":
-                colopt = dbhlp.getDropdownColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
+                colopt = dbhlp.getBarcodeColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
                 updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
             case "Sign":
-                colopt = dbhlp.getDropdownColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
+                colopt = dbhlp.getSignatureColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
                 updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
             case "Geolocation":
-                colopt = dbhlp.getDropdownColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
+                colopt = dbhlp.getGeolocationColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
                 if dbps.default_val.get() == "":
                     dbps.default_val.set(0)
                 updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
