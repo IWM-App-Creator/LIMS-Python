@@ -7,7 +7,8 @@ from app.helper.viewhelper import viewhlp
 from app.helper import dbhelper as dbhlp
 from app.properties.dbproperties import dbps
 from app.properties.viewproperties import viewps
-from app.helper.generalfunctions import sortObjectsByKey, generateRandomString, addUpdateJson, updateNestedJsonVal, insertNestedJsonAfter, insertNestedJsonBefore, removeNestedJsonVal, getHostName
+from app.helper.generalfunctions import sortObjectsByKey, updateNestedJsonVal
+from app.helper.dbaddcolhelper import getColumnParams
 
 # http://testws1.localhost:8000/api/v1/dbtable/gettbls
 def getDBTableList (request: Request):
@@ -59,11 +60,15 @@ def addDynamicColumn(request: Request):
         dbps.col_alias.set(params.get("col_alias", ""))
         orderflag = params.get("orderflag", "Right")
         ordercol_id = params.get("ordercol_id", 0)
-        notify_user = params.get("notify_user", 0)
+        dbps.notify_user.set(params.get("notify_user", 0))
         dbps.data_type.set(params.get("data_type", ""))
         dbps.length.set(params.get("length", "0"))
         dbps.default_val.set(params.get("default_val", ""))
         dbps.is_index.set(params.get("is_index", 0))
+        dbps.date_format.set(params.get("date_format", ""))
+        dbps.url_prefix.set(params.get("url_prefix", ""))
+        dbps.link_text.set(params.get("link_text", ""))
+        dbps.calc_formula.set(params.get("calc_formula", ""))
         dbps.view_col_type.set(params.get("view_col_type", "")) # Get From Property (setViewDataProperties)
 
         # Step 1 : Set View Data and Column Data
@@ -73,6 +78,7 @@ def addDynamicColumn(request: Request):
             order_rank = col_order_rank - 1
         else:
             order_rank = col_order_rank + 1
+        dbps.rank.set(order_rank)
         getViewDataByID(viewps) # Get View Data
         viewhlp.setViewDataProperties(viewps) # Set View Properties
         # Set Table To DB Properties
@@ -83,84 +89,7 @@ def addDynamicColumn(request: Request):
             dbps.col_cnt.set(dbps.tbl_col_cnt.get() + 1)
 
         # Step 2 : Add To Table Col
-        colopt = {}
-        tmpcnt = dbps.col_cnt.get()
-        print("tmpcnt --> ", tmpcnt)
-        match dbps.view_col_type.get():
-            case "Status":
-                colopt = dbhlp.getStatusColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
-                if dbps.default_val.get() == "":
-                    dbps.default_val.set(0)
-                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
-            case "DDL":
-                colopt = dbhlp.getDropdownColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
-                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
-            case "YesNo":
-                colopt = dbhlp.getYesNoColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
-                if dbps.default_val.get() == "":
-                    dbps.default_val.set(0)
-                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
-            case "TrueFalse":
-                colopt = dbhlp.getTrueFalseColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
-                if dbps.default_val.get() == "":
-                    dbps.default_val.set(0)
-                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
-            case "People/Assign To":
-                colopt = dbhlp.getPeopleColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, notify_user, order_rank)
-                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
-            case "Calc":
-                colopt = dbhlp.getCalculationColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
-                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
-            case "Rating":
-                colopt = dbhlp.getRatingColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
-                if dbps.default_val.get() == "":
-                    dbps.default_val.set(0)
-                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
-            case "Barcode":
-                colopt = dbhlp.getBarcodeColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
-                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
-            case "Sign":
-                colopt = dbhlp.getSignatureColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
-                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
-            case "Geolocation":
-                colopt = dbhlp.getGeolocationColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
-                if dbps.default_val.get() == "":
-                    dbps.default_val.set(0)
-                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
-            case "Numbers":
-                colopt = dbhlp.getNumberColParam(dbps.table_id.get(), dbps.col_alias.get(), order_rank)
-                if dbps.is_index.get() == "":
-                    dbps.is_index.set(0)
-                if dbps.length.get() == "":
-                    dbps.length.set(0)
-                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
-                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "data_type", updval = dbps.data_type.get())
-                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "is_index", updval = dbps.is_index.get())
-                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "length", updval = dbps.length.get())
-            case "Text":
-                colopt = dbhlp.getTextColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
-                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
-            case "URL":
-                colopt = dbhlp.getTextColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
-                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
-            case "Email":
-                colopt = dbhlp.getTextColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
-                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
-            case "Tel":
-                colopt = dbhlp.getTextColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
-                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
-            case "Colour":
-                colopt = dbhlp.getTextColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
-                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
-            case "Upload":
-                colopt = dbhlp.getTextColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
-                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
-            case "Date":
-                colopt = dbhlp.getDateColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
-                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
-            case "LastUpdated":
-                colopt = dbhlp.getDateColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
-                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
+        colopt = getColumnParams(dbps)
         print("colopt --> ", colopt)
         col_name = colopt.get("col_name", "")
         dbps.col_id.set(0) 
