@@ -1,7 +1,7 @@
-from app.utils.common import Request, JSONResponse, RequestData, raiseAPIError
-from app.dbfunctions.dbtablesfunctions import getDBTableData, insertTableDataToDB, insertUpdateTblCol
+from app.utils.common import Request, JSONResponse, RequestData, raiseAPIError, DB, text
+from app.dbfunctions.dbtablesfunctions import getDBTableData, insertTableDataToDB, insertUpdateTblCol, updateDBTableSequence
 from app.helper.dbhelper import setQueryColStmt, executeCreateTableQuery
-from app.dbfunctions.viewfunctions import getViewDataByID
+from app.dbfunctions.viewfunctions import getViewDataByID, insertUpdateView
 from app.dbfunctions.dbfunctions import generateDBColumnAlterQuery
 from app.helper.viewhelper import viewhlp
 from app.helper import dbhelper as dbhlp
@@ -48,92 +48,135 @@ def getDBTableColumns (request: Request):
 def updateDBTableAlias (request: Request):
     print("updateDBTableAlias --> ")
 
-# http://testws1.localhost:8000/api/v1/dbtable/addcol?view_id=181&all_usr_flg=1&view_col_type=Status&col_alias=Status 2&default_val=&orderflag=Right&ordercol_id=3272&notify_user=0
-
+# http://testws1.localhost:8000/api/v1/dbtable/addcol?view_id=181&all_usr_flg=1&view_col_type=Status&col_alias=Status Col&default_val=&orderflag=left&ordercol_id=3302&notify_user=0
 def addDynamicColumn(request: Request):
     print("addDynamicColumn --> ")
-    params = RequestData.params(request)
-    viewps.view_id.set(params.get("view_id", 0))
-    dbps.col_alias.set(params.get("col_alias", ""))
-    col_name = params.get("col_alias", "").lower().replace(" ", "_")
-    orderflag = params.get("orderflag", "Right")
-    ordercol_id = params.get("ordercol_id", 0)
-    notify_user = params.get("notify_user", 0)
-    dbps.default_val.set(params.get("default_val", ""))
-    dbps.view_col_type.set(params.get("view_col_type", "")) # Get From Property (setViewDataProperties)
+    status = False
+    message = "Invalid Request"
+    try:
+        params = RequestData.params(request)
+        viewps.view_id.set(params.get("view_id", 0))
+        dbps.col_alias.set(params.get("col_alias", ""))
+        col_name = params.get("col_alias", "").lower().replace(" ", "_")
+        orderflag = params.get("orderflag", "Right")
+        ordercol_id = params.get("ordercol_id", 0)
+        notify_user = params.get("notify_user", 0)
+        dbps.default_val.set(params.get("default_val", ""))
+        dbps.view_col_type.set(params.get("view_col_type", "")) # Get From Property (setViewDataProperties)
 
-    # Step 1 : Set View Data and Column Data
-    dbps.col_id.set(ordercol_id)
-    col_order_rank = dbhlp.setRankByColID(dbps) # Fetch Rank 
-    if orderflag.upper() == "LEFT":
-        order_rank = col_order_rank - 1
-    else:
-        order_rank = col_order_rank + 1
-    getViewDataByID(viewps) # Get View Data
-    viewhlp.setViewDataProperties(viewps) # Set View Properties
-    dbps.table_id.set(viewps.table_id.get())
-    dbps.table_name.set(viewps.table_name.get())
-    dbhlp.getViewColumnCount(dbps)
-    dbps.col_cnt.set(dbps.tbl_col_cnt.get() + 1)
+        # Step 1 : Set View Data and Column Data
+        dbps.col_id.set(ordercol_id)
+        col_order_rank = dbhlp.setRankByColID(dbps) # Fetch Rank 
+        if orderflag.upper() == "LEFT":
+            order_rank = col_order_rank - 1
+        else:
+            order_rank = col_order_rank + 1
+        getViewDataByID(viewps) # Get View Data
+        viewhlp.setViewDataProperties(viewps) # Set View Properties
+        dbps.table_id.set(viewps.table_id.get())
+        dbps.table_name.set(viewps.table_name.get())
+        dbhlp.getViewColumnCount(dbps)
+        dbps.col_cnt.set(dbps.tbl_col_cnt.get() + 1)
 
-    # Step 2 : Add To Table Col
-    colopt = {}
-    tmpcnt = dbps.col_cnt.get()
-    match dbps.view_col_type.get():
-        case "Status":
-            colopt = dbhlp.getStatusColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, dbps.default_val.get(), order_rank)
-            # print(colopt)
-            # updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = "50")
-            # print(colopt)
-        case "DDL":
-            colopt = dbhlp.getDropdownColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, dbps.default_val.get(), order_rank)
-        case "YesNo":
-            colopt = dbhlp.getYesNoColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, dbps.default_val.get(), order_rank)
-        case "TrueFalse":
-            colopt = dbhlp.getTrueFalseColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, dbps.default_val.get(), order_rank)
-        case "People/Assign To":
-            colopt = dbhlp.getPeopleColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, notify_user, dbps.default_val.get(), order_rank)
-        case "Calc":
-            colopt = dbhlp.getDropdownColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, dbps.default_val.get(), order_rank)
-        case "Rating":
-            colopt = dbhlp.getDropdownColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, dbps.default_val.get(), order_rank)
-        case "Barcode":
-            colopt = dbhlp.getDropdownColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, dbps.default_val.get(), order_rank)
-        case "Sign":
-            colopt = dbhlp.getDropdownColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, dbps.default_val.get(), order_rank)
-        case "Geolocation":
-            colopt = dbhlp.getDropdownColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, dbps.default_val.get(), order_rank)
-    # return
-    col_name = colopt.get("col_name", "")
-    dbps.col_id.set(0) 
-    dbps.col_name.set(col_name)
-    dbps.col_alias.set(colopt.get("col_alias", ""))
-    col_options = colopt.get("col_options", {})
-    dbps.col_options.set(col_options)
-    dbps.rank.set(col_options.get("rank", 0))
-    # insertUpdateTblCol(dbps) # Save to sys_new_db_tables_cols
-    # dbhlp.updateDBTableSequence(dbps) # Update Sequence for DB Table
-    # Update Col ID : Used in View Col
-    updateNestedJsonVal(fulljson = colopt, jsonkey = "view_cols", srchkey= "col_name", srchval = col_name, updkey = "col_id", updval = dbps.col_id.get())
-    view_cols = colopt.get("view_cols", {})
+        # Step 2 : Add To Table Col
+        colopt = {}
+        tmpcnt = dbps.col_cnt.get()
+        match dbps.view_col_type.get():
+            case "Status":
+                colopt = dbhlp.getStatusColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
+                if dbps.default_val.get() == "":
+                    dbps.default_val.set(0)
+                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
+            case "DDL":
+                colopt = dbhlp.getDropdownColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
+                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
+            case "YesNo":
+                colopt = dbhlp.getYesNoColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
+                if dbps.default_val.get() == "":
+                    dbps.default_val.set(0)
+                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
+            case "TrueFalse":
+                colopt = dbhlp.getTrueFalseColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
+                if dbps.default_val.get() == "":
+                    dbps.default_val.set(0)
+                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
+            case "People/Assign To":
+                colopt = dbhlp.getPeopleColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, notify_user, order_rank)
+                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
+            case "Calc":
+                colopt = dbhlp.getDropdownColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
+                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
+            case "Rating":
+                colopt = dbhlp.getDropdownColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
+                if dbps.default_val.get() == "":
+                    dbps.default_val.set(0)
+                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
+            case "Barcode":
+                colopt = dbhlp.getDropdownColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
+                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
+            case "Sign":
+                colopt = dbhlp.getDropdownColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
+                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
+            case "Geolocation":
+                colopt = dbhlp.getDropdownColParam(dbps.table_id.get(), dbps.col_alias.get(), tmpcnt, order_rank)
+                if dbps.default_val.get() == "":
+                    dbps.default_val.set(0)
+                updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "default_val", updval = dbps.default_val.get())
+        col_name = colopt.get("col_name", "")
+        dbps.col_id.set(0) 
+        dbps.col_name.set(col_name)
+        dbps.col_alias.set(colopt.get("col_alias", ""))
+        col_options = colopt.get("col_options", {})
+        dbps.col_options.set(col_options)
+        dbps.rank.set(colopt.get("rank", 0))
+        insertUpdateTblCol(dbps) # Save to sys_new_db_tables_cols
+        updateDBTableSequence(dbps) # Update Sequence for DB Table
+        # Update Col ID : Used in View Col
+        updateNestedJsonVal(fulljson = colopt, jsonkey = "view_cols", srchkey= "col_name", srchval = col_name, updkey = "col_id", updval = dbps.col_id.get())
+        view_cols = colopt.get("view_cols", {})
 
-    # Step 3 : Generate DB Query to Add Column
-    dbps.alter_action.set("add_col")
-    dbps.data_type.set(col_options.get("data_type", ""))
-    dbps.length.set(col_options.get("length", 0))
-    dbps.default_val.set(col_options.get("default_val", ""))
-    generateDBColumnAlterQuery(dbps)
-    print(dbps.alter_qry.get())
+        # Step 3 : Generate DB Query to Add Column
+        dbps.alter_action.set("add_col")
+        dbps.data_type.set(col_options.get("data_type", ""))
+        dbps.length.set(col_options.get("length", 0))
+        dbps.default_val.set(col_options.get("default_val", ""))
+        generateDBColumnAlterQuery(dbps)
+        DB.executStatementOnly(text(dbps.alter_qry.get()))
 
-    # Step 4 : Add New Column To View and update view Query
-    view_json = viewps.view_cols.get()
-    view_json["view_cols"].append(view_cols)
-    sortObjectsByKey(view_json["view_cols"], 'rank', 'asc'); # Sort By Rank
-    for i, col in enumerate(view_json["view_cols"]):
-        col["rank"] = (i + 1) * 10
-    print("view_json --> ", view_json)
-
-    # Step 5 : Update Layout As Required
+        # Step 4 : Add New Column To View and update view Query
+        view_json = viewps.view_cols.get()
+        view_json["view_cols"].append(view_cols)
+        sortObjectsByKey(view_json["view_cols"], 'rank', 'asc'); # Sort By Rank
+        for i, col in enumerate(view_json["view_cols"]):
+            col["rank"] = (i + 1) * 10
+        viewps.view_name.set("")
+        viewps.view_url.set("")
+        viewps.view_type.set("")
+        viewps.view_options.set("")
+        viewps.view_cols.set(view_json)
+        viewps.view_joins.set("")
+        viewps.view_child.set("")
+        viewps.view_actions.set("")
+        viewps.dync_cat_id.set("")
+        viewps.short_desc.set("")
+        viewps.preview_img.set("")
+        viewps.is_delete.set("")
+        insertUpdateView(viewps)
+        status = True
+        message = dbps.col_alias.get() + " Added Successfully"
+    except Exception as e:
+        message = "Error in Adding Column"
+        # saveErrorLogtoDB ("View", viewps.view_id.get(), "getViewData", str(e)) # Log Error To DB
+        raiseAPIError(str(e), 500)
+    # Output
+    return JSONResponse (
+        status_code = 200,
+        content = {
+            "status": status,
+            "message": message,
+            "new_col_id": dbps.col_id.get()
+        }
+    ) 
 
 # http://testws1.localhost:8000/api/v1/dbtable/renamecol
 def updateDBTblColAlias (request: Request):

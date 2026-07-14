@@ -184,26 +184,11 @@ def getDBColData(dbps):
     return DB.executeDBSelect(stmt)
 
 def updateDBTableSequence(dbps):
-    sys_db_tables_cols = DB.getTableMeta("sys_db_tables_cols")
-    table_name = dbps.table_name.get()
-    table_id = dbps.table_id.get()
-    schema_name = userps.schema_name.get()
-    stmt = text(f"DESCRIBE `{schema_name}`.`{table_name}`")
+    db_tbl_cols = DB.getTableMeta("sys_new_db_tables_cols")
+    stmt = select(db_tbl_cols).where(db_tbl_cols.c.table_id == dbps.table_id.get()).where(db_tbl_cols.c.is_delete == 0).order_by(db_tbl_cols.c.rank.asc())
+    rows = DB.executeDBSelect(stmt)
     rank = 10
-    for col in DB.executeDBStatement(stmt):
-        col_name = col.Field
-        stmt = (
-            select(sys_db_tables_cols.c.col_id)
-            .where(sys_db_tables_cols.c.table_id == table_id)
-            .where(sys_db_tables_cols.c.col_name == col_name)
-            .where(sys_db_tables_cols.c.is_delete == 0)
-        )
-        tblcol = DB.executeDBSelectSingle(stmt)
-        if tblcol:
-            upd_stmt = (
-                update(sys_db_tables_cols)
-                .where(sys_db_tables_cols.c.col_id == tblcol.col_id)
-                .values(rank=rank)
-            )
-            DB.executeDBUpdate(upd_stmt)
+    for row in rows:
+        stmt = update(db_tbl_cols).where(db_tbl_cols.c.col_id == row.col_id).values(rank = rank)
+        DB.executeDBUpdate(stmt)
         rank += 10

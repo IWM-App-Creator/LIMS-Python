@@ -55,38 +55,32 @@ def executeCreateTableQuery(dbps):
     DB.executeDBStatement(create_sql)
 
 def getPrimaryColParam(table_id, col_name, col_alias, rank):
-    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "bigint", "length": "11", "default_val": "", "is_primary": 1, "is_index": 1, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": "", "rank": rank}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "NUMBER", "qry_alias": "mtbl", "col_key": 1, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank} }
+    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "bigint", "length": "11", "default_val": "", "is_primary": 1, "is_index": 1, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": ""}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "NUMBER", "qry_alias": "mtbl", "col_key": 1, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank}, "rank": rank}
     return colopt
 
-def getStatusColParam(table_id, col_alias, cnt, default_val, rank):
+def getStatusColParam(table_id, col_alias, cnt, rank):
     col_name = "status_" + str(cnt)
-    if default_val == "":
-        default_val = 0
-    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "int", "length": "4", "default_val": default_val, "is_primary": 0, "is_index": 1, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": "", "rank": rank}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "STATUS", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank} }
+    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "int", "length": "4", "default_val": 0, "is_primary": 0, "is_index": 1, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": ""}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "STATUS", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank}, "rank": rank}
     return colopt
 
-def getDropdownColParam(table_id, col_alias, cnt, default_val, rank):
+def getDropdownColParam(table_id, col_alias, cnt, rank):
     col_name = "dd_" + str(cnt)
-    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "text", "length": "", "default_val": default_val, "is_primary": 0, "is_index": 0, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": "", "rank": rank}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "DROPDOWN", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank} }
+    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "text", "length": "", "default_val": "", "is_primary": 0, "is_index": 0, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": ""}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "DROPDOWN", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank}, "rank": rank}
     return colopt
 
-def getYesNoColParam(table_id, col_alias, cnt, default_val, rank):
+def getYesNoColParam(table_id, col_alias, cnt, rank):
     col_name = "yn_" + str(cnt)
-    if default_val == "":
-        default_val = 0
-    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "int", "length": "4", "default_val": default_val, "is_primary": 0, "is_index": 1, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": [{"label": "YES", "clrcode": "#10b759", "opt_val": "1"}, {"label": "NO", "clrcode": "#c66565", "opt_val": "2"}, {"label": "Unassigned", "clrcode": "#d2d2d2", "opt_val": "0"}], "rank": rank}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "YN_INT", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank} }
+    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "int", "length": "4", "default_val": 0, "is_primary": 0, "is_index": 1, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": [{"label": "YES", "clrcode": "#10b759", "opt_val": "1"}, {"label": "NO", "clrcode": "#c66565", "opt_val": "2"}, {"label": "Unassigned", "clrcode": "#d2d2d2", "opt_val": "0"}]}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "YN_INT", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank}, "rank": rank}
     return colopt
 
-def getTrueFalseColParam(table_id, col_alias, cnt, default_val, rank):
+def getTrueFalseColParam(table_id, col_alias, cnt, rank):
     col_name = "tf_" + str(cnt)
-    if default_val == "":
-        default_val = 0
-    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "int", "length": "4", "default_val": default_val, "is_primary": 0, "is_index": 1, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": [{"label": "True", "clrcode": "#10b759", "opt_val": "1"}, {"label": "False", "clrcode": "#c66565", "opt_val": "2"}, {"label": "Unassigned", "clrcode": "#d2d2d2", "opt_val": "0"}], "rank": rank}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "TF_INT", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank} }
+    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "int", "length": "4", "default_val": 0, "is_primary": 0, "is_index": 1, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": [{"label": "True", "clrcode": "#10b759", "opt_val": "1"}, {"label": "False", "clrcode": "#c66565", "opt_val": "2"}, {"label": "Unassigned", "clrcode": "#d2d2d2", "opt_val": "0"}]}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "TF_INT", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank}, "rank": rank}
     return colopt
 
-def getPeopleColParam(table_id, col_alias, cnt, notify_user, default_val, rank):
+def getPeopleColParam(table_id, col_alias, cnt, notify_user, rank):
     col_name = "ppl_" + str(cnt)
-    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "varchar", "length": "250", "default_val": default_val, "is_primary": 0, "is_index": 0, "is_unique": 0, "is_mandatory": 0, "notify_user": notify_user, "actv_log_cols": 0, "col_data_items": "", "rank": rank}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "FULLNAME", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank} }
+    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "varchar", "length": "250", "default_val": "", "is_primary": 0, "is_index": 0, "is_unique": 0, "is_mandatory": 0, "notify_user": notify_user, "actv_log_cols": 0, "col_data_items": ""}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "FULLNAME", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank}, "rank": rank}
     return colopt
 
 # NUMBER, FLOAT(DECIMAL), GEO LOCATION
@@ -98,19 +92,19 @@ def getPeopleColParam(table_id, col_alias, cnt, notify_user, default_val, rank):
 # Float : {"length": "10,3", "is_index": 1, "data_type": "float", "is_unique": 0, "is_primary": 0, "default_val": null, "notify_user": 0, "csv_col_name": null, "csv_col_type": null, "is_mandatory": 0, "actv_log_cols": 0, "csv_map_col_nm": null}
   
 def getIsDeleteColParam(table_id, rank):
-    colopt = {"table_id": table_id, "col_name": "is_delete", "col_alias": "ID Deleted", "col_options": {"data_type": "int", "length": "1", "default_val": "0", "is_primary": 0, "is_index": 1, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 1, "col_data_items": "", "rank": rank}, "view_cols": {"col_id": "", "col_name": "is_delete", "col_alias": "ID Deleted", "col_type": "DEL_INT", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank} }
+    colopt = {"table_id": table_id, "col_name": "is_delete", "col_alias": "ID Deleted", "col_options": {"data_type": "int", "length": "1", "default_val": "0", "is_primary": 0, "is_index": 1, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 1, "col_data_items": ""}, "view_cols": {"col_id": "", "col_name": "is_delete", "col_alias": "ID Deleted", "col_type": "DEL_INT", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank}, "rank": rank}
     return colopt
 
 def getIsMetadataColParam(table_id, rank):
-    colopt = {"table_id": table_id, "col_name": "is_metadata", "col_alias": "Metadata", "col_options": {"data_type": "json", "length": "", "default_val": "", "is_primary": 0, "is_index": 0, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": "", "rank": rank}, "view_cols": {"col_id": "", "col_name": "is_metadata", "col_alias": "Metadata", "col_type": "META_DATA", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank} }
+    colopt = {"table_id": table_id, "col_name": "is_metadata", "col_alias": "Metadata", "col_options": {"data_type": "json", "length": "", "default_val": "", "is_primary": 0, "is_index": 0, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": ""}, "view_cols": {"col_id": "", "col_name": "is_metadata", "col_alias": "Metadata", "col_type": "META_DATA", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank}, "rank": rank}
     return colopt
 
 def getCreatedByColParam(table_id, rank):
-    colopt = {"table_id": table_id, "col_name": "created_by", "col_alias": "Created By", "col_options": {"data_type": "bigint", "length": "11", "default_val": "0", "is_primary": 0, "is_index": 1, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": "", "rank": rank}, "view_cols": {"col_id": "", "col_name": "created_by", "col_alias": "Created By", "col_type": "FULLNAME", "qry_alias": "mtbl", "col_key": 2, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 492, "lookup_colnm": "", "rank": rank} }
+    colopt = {"table_id": table_id, "col_name": "created_by", "col_alias": "Created By", "col_options": {"data_type": "bigint", "length": "11", "default_val": "0", "is_primary": 0, "is_index": 1, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": ""}, "view_cols": {"col_id": "", "col_name": "created_by", "col_alias": "Created By", "col_type": "FULLNAME", "qry_alias": "mtbl", "col_key": 2, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 492, "lookup_colnm": "", "rank": rank}, "rank": rank}
     return colopt
 
 def getCreatedDateColParam(table_id, rank):
-    colopt = {"table_id": table_id, "col_name": "created_date", "col_alias": "Created Date", "col_options": {"data_type": "datetime", "length": "", "default_val": "", "is_primary": 0, "is_index": 0, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": "", "rank": rank}, "view_cols": {"col_id": "", "col_name": "created_date", "col_alias": "Created Date", "col_type": "DATETIME", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank} }
+    colopt = {"table_id": table_id, "col_name": "created_date", "col_alias": "Created Date", "col_options": {"data_type": "datetime", "length": "", "default_val": "", "is_primary": 0, "is_index": 0, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": ""}, "view_cols": {"col_id": "", "col_name": "created_date", "col_alias": "Created Date", "col_type": "DATETIME", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank}, "rank": rank}
     return colopt
 
 def isStatusColumn(colname: str) -> bool:

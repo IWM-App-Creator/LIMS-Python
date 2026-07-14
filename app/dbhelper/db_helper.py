@@ -87,6 +87,16 @@ class DB:
             return result.fetchall()
 
     @staticmethod
+    def executStatementOnly(stmt):
+        with dbconn.begin() as conn:
+            schema_name = userps.schema_name.get()
+            if schema_name:
+                conn.execute(text(f"USE `{schema_name}`"))
+            if isinstance(stmt, str):
+                stmt = text(stmt)
+            return conn.execute(stmt)
+
+    @staticmethod
     def executeDBScalar(stmt):
         with dbconn.begin() as conn:
             schema_name = userps.schema_name.get()
