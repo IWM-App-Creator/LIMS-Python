@@ -1,4 +1,6 @@
 from app.utils.common import DB, select, insert, delete, func, userps, nowWithTimeZone
+import traceback
+import sys
 
 def getDBErrorLog(logps):
     page_no = logps.page_no.get()
@@ -45,6 +47,8 @@ def getDBErrorLog(logps):
     logps.logdata.set(logdata)
 
 def saveErrorLogtoDB(section: str, item_id: str, notes: str, error_msg: str):
+    tb = traceback.extract_tb(sys.exc_info()[2])[-1]
+    notes = f"{notes} :- {tb.filename} : ({tb.name} - {tb.lineno}",
     sys_error_log = DB.getTableMeta("sys_error_log")
     stmt = (
         insert(sys_error_log)

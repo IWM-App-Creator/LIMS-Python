@@ -20,9 +20,18 @@ def getWorkspaceList (request: Request):
     )
 
 def isWSValid (subdomain: str):
+    # IF auth. Calling validateWorkspace -->
     workspace_id = isWorkspaceValid(subdomain) # Execute Function to User WS Data
-    if workspace_id == "0" : # Invalid Workspace
-        raiseAPIError("Invalid Workspace", 401)
+    if workspace_id == "0" and subdomain != "auth" : # Invalid Workspace
+        return JSONResponse (
+            status_code = 200,
+            content = {
+                "status": False,
+                "message": "Valid Workspace",
+                "workspace_id": workspace_id
+            }
+        )
+    #     raiseAPIError("Invalid Workspace", 401)
     return JSONResponse (
         status_code = 200,
         content = {
