@@ -1,6 +1,6 @@
 from app.utils.common import DB, text, userps, select, update
 from app.dbfunctions.dbfunctions import getTableColumnCount
-from app.dbfunctions.dbtablesfunctions import getAllDBTableData
+from app.dbfunctions.dbtablesfunctions import getDBColData
 
 def setQueryColStmt(dbps):
     colqry = dbps.colsql.get()
@@ -19,7 +19,7 @@ def setQueryColStmt(dbps):
     if is_primary == 1: # Col Primary
         tmpsql = tmpsql + " NOT NULL AUTO_INCREMENT"
         dbps.colprimary.set("PRIMARY KEY (`" + col_name + "`)") # Col Primary
-    else : 
+    else:
         tmpsql = tmpsql + " NULL"
     if default_val != "":
         tmpsql = tmpsql + " DEFAULT " + default_val
@@ -185,48 +185,6 @@ def getViewColumnCount(dbps):
                 dbps.tbl_col_srch.set("lat_")
         getTableColumnCount(dbps)
 
-def setTableColumnRank(dbps):
-    col_data = getAllDBTableData(dbps)
+def setRankByColID(dbps):
+    col_data = getDBColData(dbps)
     return col_data[0].rank
-
-def updateDBTableSequence(dbps):
-    sys_db_tables_cols = DB.getTableMeta("sys_db_tables_cols")
-    table_name = dbps.table_name.get()
-    table_id = dbps.table_id.get()
-    schema_name = userps.schema_name.get()
-    stmt = text(f"DESCRIBE `{schema_name}`.`{table_name}`")
-    rank = 10
-    for col in DB.executeDBStatement(stmt):
-        col_name = col.Field
-        stmt = (
-            select(sys_db_tables_cols.c.col_id)
-            .where(sys_db_tables_cols.c.table_id == table_id)
-            .where(sys_db_tables_cols.c.col_name == col_name)
-            .where(sys_db_tables_cols.c.is_delete == 0)
-        )
-        tblcol = DB.executeDBSelectSingle(stmt)
-        if tblcol:
-            upd_stmt = (
-                update(sys_db_tables_cols)
-                .where(sys_db_tables_cols.c.col_id == tblcol.col_id)
-                .values(rank=rank)
-            )
-            DB.executeDBUpdate(upd_stmt)
-        rank += 10
-
-def insertViewColumn(view_json: dict, target_col_id: int, new_col: dict, position: str = "after") -> bool:
-    view_cols = view_json.get("view_cols", [])
-    if not isinstance(view_cols, list):
-        return False
-    inserted = False
-    for i, col in enumerate(view_cols):
-        if col.get("col_id") == target_col_id:
-            index = i if position == "before" else i + 1
-            view_cols.insert(index, new_col)
-            inserted = True
-            break
-    if not inserted:
-        return False
-    for i, col in enumerate(view_cols):
-        col["rank"] = (i + 1) * 10
-    return True

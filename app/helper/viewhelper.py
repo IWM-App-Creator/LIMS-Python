@@ -170,23 +170,6 @@ class ViewHelper:
         return srt
 
     @staticmethod
-    def setViewPaging(viewps):
-        user_setting = viewps.user_setting.get() or {}
-        current_tab = f"tab_{viewps.tab_id.get()}"
-        tab_setting = user_setting.get(current_tab)
-        # print("tab_setting --> ", tab_setting)
-        if tab_setting:
-            page_size = tab_setting.get("page_size", 10)
-            if page_size in ("", "0"):
-                page_size = 10
-            viewps.page_size.set(page_size)
-            offset = (int(viewps.page_no.get()) - 1) * int(viewps.page_size.get())
-            viewps.offset.set(offset)
-        else :
-            viewps.page_size.set(10)
-            viewps.offset.set(0)
-
-    @staticmethod
     def getRecordCount(viewps):
         view_qry = viewps.view_qry.get()
         tmpstr = view_qry.split(f"FROM {viewps.table_name.get()} mtbl")[1]

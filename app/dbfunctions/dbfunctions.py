@@ -52,89 +52,6 @@ def getCreateTableSqlFromSchema(dbps):
         sql_qry = sql_qry + ";\n\n"
     dbps.create_qry.set(sql_qry) # Set Query To Properties
 
-def executeCreateQuery(table_id: int, table_name: str):
-    # tblcols = DB.getTableMeta("sys_db_tables_cols")
-    # stmt = (
-    #     select(tblcols)
-    #     .where(
-    #         tblcols.c.table_id == table_id,
-    #         tblcols.c.is_delete == 0
-    #     )
-    #     .order_by(tblcols.c.rank.asc())
-    # )
-    # dbtablecols = DB.executeDBSelect(stmt)
-    # columns = []
-    # indexes = []
-    # primary = ""
-
-    print(create_sql)
-    
-    for col in dbtablecols:
-        col_name = col.col_name.lower()
-        data_type = col.data_type.lower()
-        if col.is_primary == 1:
-            columns.append(
-                f"`{col_name}` {data_type}({col.length}) NOT NULL AUTO_INCREMENT"
-            )
-            primary = f"PRIMARY KEY (`{col_name}`)"
-            continue
-        # Build datatype
-        if data_type in ("datetime", "json", "text", "longtext", "tinytext"):
-            datatype_sql = data_type.upper()
-        else:
-            datatype_sql = f"{data_type}({col.length})"
-        sql = f"`{col_name}` {datatype_sql} NULL"
-        # Default value
-        if col.default_val not in (None, ""):
-            if data_type in (
-                "varchar",
-                "text",
-                "longtext",
-                "tinytext",
-                "datetime",
-                "date",
-                "timestamp",
-            ):
-                sql += f" DEFAULT '{col.default_val}'"
-            else:
-                sql += f" DEFAULT {col.default_val}"
-        elif data_type in ("int", "bigint", "tinyint", "decimal", "float", "double"):
-            sql += " DEFAULT 0"
-        columns.append(sql)
-        if col.is_index == 1 and data_type != "json":
-            indexes.append(f"INDEX `{col_name}` (`{col_name}` ASC)")
-    # create_sql = f"""
-    # CREATE TABLE `{table_name}` (
-    #     {", ".join(columns)}
-    #     {"," if primary or indexes else ""}
-    #     {primary}
-    #     {"," if primary and indexes else ""}
-    #     {", ".join(indexes)}
-    # )
-    # ENGINE=InnoDB
-    # DEFAULT CHARSET=utf8
-    # COLLATE=utf8_general_ci
-    # AUTO_INCREMENT=1;
-    # """
-    # print(create_sql)
-    # DB.executeDBStatement(text(create_sql))
-    # # Convert text columns to utf8mb4
-    # for col in dbtablecols:
-    #     data_type = col.data_type.lower()
-    #     if data_type in ("varchar", "text", "longtext", "tinytext"):
-    #         if data_type == "varchar":
-    #             datatype = f"VARCHAR({col.length})"
-    #         else:
-    #             datatype = data_type.upper()
-    #         alter_sql = f"""
-    #         ALTER TABLE `{table_name}`
-    #         MODIFY `{col.col_name.lower()}`
-    #         {datatype}
-    #         CHARACTER SET utf8mb4
-    #         COLLATE utf8mb4_unicode_ci;
-    #         """
-    #         DB.executeDBStatement(text(alter_sql))
-
 def generateDBColumnAlterQuery(dbps):
     schema_name = userps.schema_name.get()
     table_name = dbps.table_name.get()
@@ -145,7 +62,7 @@ def generateDBColumnAlterQuery(dbps):
     length = dbps.length.get()
     default_val = dbps.default_val.get()
     if length not in (None, ""):
-        data_type = f"{data_type}({length})"
+        data_type = f"{data_type} ({length})"
 
     default_clause = ""
     if default_val not in (None, ""):
@@ -159,6 +76,9 @@ def generateDBColumnAlterQuery(dbps):
     extra = dbps.extra.get()
     if extra:
         extra_clause = f" {extra}" # $qps->extra = "CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;";
+
+    # if data_type in ("varchar", "text", "longtext", "tinytext"):
+    #    tmpsql = tmpsql + " CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
 
     alter_action = dbps.alter_action.get().lower()
     match alter_action:

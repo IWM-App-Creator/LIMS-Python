@@ -1,4 +1,4 @@
-from app.utils.common import DB, select, insert, update, func, userps, nowWithTimeZone
+from app.utils.common import DB, select, insert, update, func, text, userps, nowWithTimeZone
 
 def getDBTableData(dbps):
     table_id = dbps.table_id.get()
@@ -153,7 +153,7 @@ def insertUpdateTblCol(dbps) :
         col_id = DB.executeDBInsert(stmt)
     dbps.col_id.set(col_id)
 
-def getAllDBTableData(dbps):
+def getDBColData(dbps):
     table_id = dbps.table_id.get()
     table_ids = dbps.table_ids.get()
     col_id = dbps.col_id.get()
@@ -182,3 +182,28 @@ def getAllDBTableData(dbps):
     # if is_del_col != "-1":
     #     stmt = stmt.where(tblcols.c.is_delete == is_del_col)
     return DB.executeDBSelect(stmt)
+
+def updateDBTableSequence(dbps):
+    sys_db_tables_cols = DB.getTableMeta("sys_db_tables_cols")
+    table_name = dbps.table_name.get()
+    table_id = dbps.table_id.get()
+    schema_name = userps.schema_name.get()
+    stmt = text(f"DESCRIBE `{schema_name}`.`{table_name}`")
+    rank = 10
+    for col in DB.executeDBStatement(stmt):
+        col_name = col.Field
+        stmt = (
+            select(sys_db_tables_cols.c.col_id)
+            .where(sys_db_tables_cols.c.table_id == table_id)
+            .where(sys_db_tables_cols.c.col_name == col_name)
+            .where(sys_db_tables_cols.c.is_delete == 0)
+        )
+        tblcol = DB.executeDBSelectSingle(stmt)
+        if tblcol:
+            upd_stmt = (
+                update(sys_db_tables_cols)
+                .where(sys_db_tables_cols.c.col_id == tblcol.col_id)
+                .values(rank=rank)
+            )
+            DB.executeDBUpdate(upd_stmt)
+        rank += 10

@@ -9,7 +9,6 @@ from app.properties.dbproperties import dbps
 from app.properties.viewproperties import viewps
 from app.helper.generalfunctions import sortObjectsByKey, generateRandomString, addUpdateJson, updateNestedJsonVal, insertNestedJsonAfter, insertNestedJsonBefore, removeNestedJsonVal, getHostName
 
-
 # http://testws1.localhost:8000/api/v1/dbtable/gettbls
 def getDBTableList (request: Request):
     # $user_id = empty(Input::get('user_id')) ? "1" : Input::get('user_id');
@@ -65,10 +64,10 @@ def addDynamicColumn(request: Request):
 
     # Step 1 : Set View Data and Column Data
     dbps.col_id.set(ordercol_id)
-    col_order_rank = dbhlp.setTableColumnRank(dbps)
+    col_order_rank = dbhlp.setRankByColID(dbps) # Fetch Rank 
     if orderflag.upper() == "LEFT":
         order_rank = col_order_rank - 1
-    else :
+    else:
         order_rank = col_order_rank + 1
     getViewDataByID(viewps) # Get View Data
     viewhlp.setViewDataProperties(viewps) # Set View Properties
@@ -110,6 +109,7 @@ def addDynamicColumn(request: Request):
     dbps.rank.set(col_options.get("rank", 0))
     # insertUpdateTblCol(dbps) # Save to sys_new_db_tables_cols
     # dbhlp.updateDBTableSequence(dbps) # Update Sequence for DB Table
+    # Update Col ID : Used in View Col
     updateNestedJsonVal(fulljson = colopt, jsonkey = "view_cols", srchkey= "col_name", srchval = col_name, updkey = "col_id", updval = dbps.col_id.get())
     view_cols = colopt.get("view_cols", {})
 
@@ -130,7 +130,6 @@ def addDynamicColumn(request: Request):
     print("view_json --> ", view_json)
 
     # Step 5 : Update Layout As Required
-
 
 # http://testws1.localhost:8000/api/v1/dbtable/renamecol
 def updateDBTblColAlias (request: Request):

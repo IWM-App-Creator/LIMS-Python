@@ -48,7 +48,8 @@ def getDBErrorLog(logps):
 
 def saveErrorLogtoDB(section: str, item_id: str, notes: str, error_msg: str):
     tb = traceback.extract_tb(sys.exc_info()[2])[-1]
-    notes = f"{notes} :- {tb.filename} : ({tb.name} - {tb.lineno}",
+    notes = f"{notes} :- {tb.filename} : ({tb.name} - {tb.lineno}"
+    # print(notes)
     sys_error_log = DB.getTableMeta("sys_error_log")
     stmt = (
         insert(sys_error_log)
