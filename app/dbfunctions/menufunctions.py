@@ -5,13 +5,23 @@ def getMenuCentreData(menups):
     stmt = select(dync_menu_centre)
     if menups.m_centre_id.get() not in (None, "", 0):
         stmt = stmt.where(dync_menu_centre.c.m_centre_id == menups.m_centre_id.get())
-    if menups.is_public.get() not in (None, "", 0):
+    if menups.is_public.get() not in (None, ""):
         stmt = stmt.where(dync_menu_centre.c.is_public == menups.is_public.get())
-    if menups.is_active.get() not in (None, "", 0):
+    if menups.is_active.get() not in (None, ""):
         stmt = stmt.where(dync_menu_centre.c.is_active == menups.is_active.get())
     if menups.created_by.get() not in (None, "", 0):
         stmt = stmt.where(dync_menu_centre.c.created_by == menups.created_by.get())
+    if menups.m_centre_ids.get() not in (None, [], ""):
+        stmt = stmt.where(
+            or_(
+                dync_menu_centre.c.m_centre_id.in_(menups.m_centre_ids.get()),
+                dync_menu_centre.c.is_public == 1,
+                dync_menu_centre.c.created_by == userps.user_id.get()
+            )
+        )
     stmt = stmt.where(dync_menu_centre.c.is_delete == 0)
+    stmt = stmt.order_by(dync_menu_centre.c.m_centre_id.asc())
+    stmt = stmt.distinct()
     return DB.executeDBSelect(stmt)
 
 def insertUpdateMenuCentre(menups):
