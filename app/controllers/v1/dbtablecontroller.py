@@ -3,7 +3,7 @@ from app.dbfunctions.dbtablesfunctions import getDBTableData, insertTableDataToD
 from app.helper.dbhelper import setQueryColStmt, executeCreateTableQuery
 from app.dbfunctions.viewfunctions import getViewDataByID, insertUpdateView
 from app.dbfunctions.dbfunctions import generateDBColumnAlterQuery
-from app.helper.viewhelper import viewhlp
+from app.helper.viewhelper import viewhlp, createviewhlp
 from app.helper import dbhelper as dbhlp
 from app.properties.dbproperties import dbps
 from app.properties.viewproperties import viewps
@@ -56,22 +56,12 @@ def addDynamicColumn(request: Request):
     message = "Invalid Request"
     try:
         params = RequestData.params(request)
-        viewps.view_id.set(params.get("view_id", 0))
-        dbps.col_alias.set(params.get("col_alias", ""))
         orderflag = params.get("orderflag", "Right")
         ordercol_id = params.get("ordercol_id", 0)
-        dbps.notify_user.set(params.get("notify_user", 0))
-        dbps.data_type.set(params.get("data_type", ""))
-        dbps.length.set(params.get("length", "0"))
-        dbps.default_val.set(params.get("default_val", ""))
-        dbps.is_index.set(params.get("is_index", 0))
-        dbps.date_format.set(params.get("date_format", ""))
-        dbps.url_prefix.set(params.get("url_prefix", ""))
-        dbps.link_text.set(params.get("link_text", ""))
-        dbps.calc_formula.set(params.get("calc_formula", ""))
-        dbps.view_col_type.set(params.get("view_col_type", "")) # Get From Property (setViewDataProperties)
+        viewps.view_id.set(params.get("view_id", 0))
+        dbhlp.setDBParams(dbps, params)
 
-        # Step 1 : Set View Data and Column Data
+        # Step 1 : Set View Data and Order Rank or Column
         dbps.col_id.set(ordercol_id)
         col_order_rank = dbhlp.setRankByColID(dbps) # Fetch Rank 
         if orderflag.upper() == "LEFT":
@@ -85,27 +75,22 @@ def addDynamicColumn(request: Request):
         dbps.table_id.set(viewps.table_id.get())
         dbps.table_name.set(viewps.table_name.get())
         dbhlp.getViewColumnCount(dbps)
-        if dbps.tbl_col_cnt.get() not in (None, "", 0):
+        if dbps.tbl_col_cnt.get() not in (None, ""):
             dbps.col_cnt.set(dbps.tbl_col_cnt.get() + 1)
 
         # Step 2 : Add To Table Col
         colopt = getColumnParams(dbps)
-        if dbps.default_val.get() == "":
-            dbps.is_null.set(1)
-        print("colopt --> ", colopt)
-        col_name = colopt.get("col_name", "")
         dbps.col_id.set(0) 
-        dbps.col_name.set(col_name)
+        dbps.col_name.set(colopt.get("col_name", ""))
         dbps.col_alias.set(colopt.get("col_alias", ""))
         col_options = colopt.get("col_options", {})
         dbps.col_options.set(col_options)
         dbps.rank.set(colopt.get("rank", 0))
-        # insertUpdateTblCol(dbps) # Save to sys_new_db_tables_cols
-        # updateDBTableSequence(dbps) # Update Sequence for DB Table
+        insertUpdateTblCol(dbps) # Save to sys_new_db_tables_cols
+        updateDBTableSequence(dbps) # Update Sequence for DB Table
         # Update Col ID : Used in View Col
-        updateNestedJsonVal(fulljson = colopt, jsonkey = "view_cols", srchkey= "col_name", srchval = col_name, updkey = "col_id", updval = dbps.col_id.get())
+        updateNestedJsonVal(fulljson = colopt, jsonkey = "view_cols", srchkey= "col_name", srchval = dbps.col_name.get(), updkey = "col_id", updval = dbps.col_id.get())
         view_cols = colopt.get("view_cols", {})
-        print("view_cols --> ", view_cols)
 
         # Step 3 : Generate DB Query to Add Column
         dbps.alter_action.set("add_col")
@@ -113,9 +98,7 @@ def addDynamicColumn(request: Request):
         dbps.length.set(col_options.get("length", 0))
         dbps.default_val.set(col_options.get("default_val", ""))
         generateDBColumnAlterQuery(dbps)
-        print("alter_qry --> ", dbps.alter_qry.get())
-        # DB.executStatementOnly(text(dbps.alter_qry.get()))
-        return
+        DB.executStatementOnly(text(dbps.alter_qry.get()))
 
         # Step 4 : Add New Column To View and update view Query
         view_json = viewps.view_cols.get()
@@ -123,12 +106,14 @@ def addDynamicColumn(request: Request):
         sortObjectsByKey(view_json["view_cols"], 'rank', 'asc'); # Sort By Rank
         for i, col in enumerate(view_json["view_cols"]):
             col["rank"] = (i + 1) * 10
+        viewps.view_cols.set(view_json)
+        createviewhlp.generateViewQuery(viewps)
+        createviewhlp.getLeftJoinQuery(viewps)
+        createviewhlp.getFullViewQuery(viewps)
+        createviewhlp.getDefaultViewOptions(viewps) # Set View Options
         viewps.view_name.set("")
         viewps.view_url.set("")
         viewps.view_type.set("")
-        viewps.view_options.set("")
-        viewps.view_cols.set(view_json)
-        viewps.view_joins.set("")
         viewps.view_child.set("")
         viewps.view_actions.set("")
         viewps.dync_cat_id.set("")

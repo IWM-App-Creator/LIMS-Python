@@ -2,6 +2,19 @@ from app.utils.common import DB, text, userps, select, update
 from app.dbfunctions.dbfunctions import getTableColumnCount
 from app.dbfunctions.dbtablesfunctions import getDBColData
 
+def setDBParams(dbps, params):
+    dbps.col_alias.set(params.get("col_alias", ""))
+    dbps.notify_user.set(params.get("notify_user", 0))
+    dbps.data_type.set(params.get("data_type", ""))
+    dbps.length.set(params.get("length", "0"))
+    dbps.default_val.set(params.get("default_val", ""))
+    dbps.is_index.set(params.get("is_index", 0))
+    dbps.date_format.set(params.get("date_format", ""))
+    dbps.url_prefix.set(params.get("url_prefix", ""))
+    dbps.link_text.set(params.get("link_text", ""))
+    dbps.calc_formula.set(params.get("calc_formula", ""))
+    dbps.view_col_type.set(params.get("view_col_type", "")) # Get From Property (setViewDataProperties)
+
 def setQueryColStmt(dbps):
     colqry = dbps.colsql.get()
     colindex = dbps.colindex.get()

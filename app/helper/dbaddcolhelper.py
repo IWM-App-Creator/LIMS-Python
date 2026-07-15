@@ -3,6 +3,8 @@ from app.helper import dbhelper as dbhlp
 from app.helper.generalfunctions import updateNestedJsonVal
 
 def getColumnParams(dbps):
+    if dbps.default_val.get() == "":
+        dbps.is_null.set(1)
     colopt = {}
     match dbps.view_col_type.get():
         case "Status":
@@ -34,8 +36,10 @@ def getColumnParams(dbps):
             updateNestedJsonVal(fulljson = colopt, jsonkey = "view_cols", srchkey= None, srchval = None, updkey = "calc_formula", updval = dbps.calc_formula.get())
         case "Barcode":
             colopt = dbhlp.getBarcodeColParam(dbps.table_id.get(), dbps.col_alias.get(), dbps.col_cnt.get(), dbps.rank.get())
+            updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "length", updval = 255)
         case "Sign":
             colopt = dbhlp.getSignatureColParam(dbps.table_id.get(), dbps.col_alias.get(), dbps.col_cnt.get(), dbps.rank.get())
+            updateNestedJsonVal(fulljson = colopt, jsonkey = "col_options", srchkey= None, srchval = None, updkey = "length", updval = 255)
         case "Geolocation":
             colopt = dbhlp.getGeolocationColParam(dbps.table_id.get(), dbps.col_alias.get(), dbps.col_cnt.get(), dbps.rank.get())
         case "Numbers":
