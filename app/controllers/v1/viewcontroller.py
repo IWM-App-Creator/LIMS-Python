@@ -5,12 +5,10 @@ from app.dbfunctions.dbtablesfunctions import insertTableDataToDB, insertUpdateT
 from app.dbfunctions.logfunctions import saveErrorLogtoDB
 from app.helper.viewhelper import viewhlp, createviewhlp
 from app.helper.dbhelper import setQueryColStmt, executeCreateTableQuery
-from app.dbfunctions.menufunctions import insertUpdateUserMenu
 from app.helper.generalfunctions import sortObjectsByKey, generateRandomString, addUpdateJson, updateNestedJsonVal, insertNestedJsonAfter, insertNestedJsonBefore, removeNestedJsonVal, getHostName
 from app.properties.viewproperties import viewps
 from app.properties.dbproperties import dbps
 from app.properties.menuproperties import menups
-from app.helper.menuhelper import getLastMenuRankByCMID
 
 # http://testws1.localhost:8000/api/v1/view/getdata?view_id=178
 # http://testws1.localhost:8000/api/v1/view/getdata?view_id=182
@@ -171,12 +169,12 @@ def createBlankView (request: Request):
         print("view_id --> ", viewps.view_id.get())
 
         # Step 5 : Set Menu If Pin
-        if viewps.pin_to_menu.get() == 1:
-            menups.menu_name.set(view_name)
-            menups.m_type.set(1)
-            menups.view_id.set(viewps.view_id.get())
-            getLastMenuRankByCMID(menups) # Get Last Menu Rank
-            insertUpdateUserMenu(menups) # Add To Menu
+        # if viewps.pin_to_menu.get() == 1:
+            # menups.menu_name.set(view_name)
+            # menups.m_type.set(1)
+            # menups.view_id.set(viewps.view_id.get())
+            # getLastMenuRankByCMID(menups) # Get Last Menu Rank
+            # insertUpdateUserMenu(menups) # Add To Menu
 
         # Step 6 : Return JSON
         getHostName(request)

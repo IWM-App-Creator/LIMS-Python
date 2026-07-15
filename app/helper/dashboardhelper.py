@@ -1,20 +1,14 @@
 import json
-from app.dbfunctions.dashboardfunctions import getUserDashboards
+from app.dbfunctions.dashboardfunctions import getDashboardData
 
-def setDashboardOutput(dps):
-    dash_arr = dps.dashboards_data.get()
+def getUserDashboards(dps):
+    dashboards = getDashboardData(dps)
     dashboards_data = []
-    for dashboard in dash_arr:
+    for dash in dashboards:
         row = {
-            "dashboard_id": dashboard.dashboard_id,
-            "dashboard_name": dashboard.dashboard_name,
-            "is_active": dashboard.is_active
+            "dashboard_id": dash.dashboard_id,
+            "dashboard_name": dash.dashboard_name,
+            "is_active": dash.is_active
         }
         dashboards_data.append(row)
     dps.dashboards_data.set(dashboards_data)
-
-def getActiveDashboard(dps):
-    dash_arr = dps.dashboards_data.get()
-    for act_dash in dash_arr:
-        if act_dash.is_active == 1:
-            dps.active_dash_id.set(act_dash.dashboard_id)

@@ -2,12 +2,9 @@ import json
 from app.utils.common import DB, select, JSONResponse, raiseAPIError, userps
 from app.dbfunctions.userfunctions import getUserDataFromDB
 from app.properties.dbproperties import dbps
-from app.helper.menuhelper import getActiveMenuCenterID, setUserMenusOutput, setUserMenuCenterOutput
+from app.helper.menuhelper import getUserMenuList
 from app.helper.workspacehelper import getUserWSList
-from app.helper.dashboardhelper import setDashboardOutput, getActiveDashboard
-from app.dbfunctions.menufunctions import getUserMenuList, getDynamicMenuCenter
-from app.dbfunctions.dashboardfunctions import getUserDashboards
-from app.dbfunctions.workspacefunctions import getUserWSData
+from app.helper.dashboardhelper import getUserDashboards
 from app.properties.menuproperties import menups
 from app.properties.workspaceproperties import wsps
 from app.properties.dashboardproperties import dps
@@ -43,31 +40,15 @@ def getUserDetail(): # token: str
     # --------------------------
     # Get User Menu
     # --------------------------
-    menups.created_by.set(userps.user_id.get())
-    menups.m_centre_id.set(None)
-    menups.is_active.set(None)
-    menups.is_public.set(None)
-    menups.fetch_single.set(None)
-    getDynamicMenuCenter(menups) # Get All Menu Centre By User
-    getActiveMenuCenterID(menups) # find m_center_id from user_id
-    getUserMenuList(menups) # Get User Active Menu
-    setUserMenusOutput(menups) # Set Menu Output
-    setUserMenuCenterOutput(menups) # Set Menu Centres
-    user_dict["active_menu_cid"] = menups.m_centre_id.get()
+    getUserMenuList(menups)
     # --------------------------
     # Get Workspace List
     # --------------------------
-    # wsps.domain_flag.set(0)
-    # wsps.fetch_single.set(0)
-    # getUserWSData(wsps)
     getUserWSList(wsps)
     # --------------------------
     # Get Dashboard List
     # --------------------------
     getUserDashboards(dps)
-    getActiveDashboard(dps)
-    setDashboardOutput(dps)
-    user_dict['active_dash_id'] = dps.active_dash_id.get()
     # --------------------------
     # Merge All Data & Send Response
     # --------------------------
@@ -77,8 +58,7 @@ def getUserDetail(): # token: str
             "status": True,
             "message": "User Data",
             "user_dict": user_dict,
-            "menu_centre": menups.menu_centre.get(),
-            "user_menu": menups.menus_output.get(),
+            "menu_centre": menups.menu_cntr_data.get(),
             "ws_list" : wsps.ws_data.get(),
             "dashboard_list" : dps.dashboards_data.get()
         }
