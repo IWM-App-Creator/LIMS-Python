@@ -31,6 +31,7 @@ class DBProperties:
         self.actv_log_cols = ContextVar("actv_log_cols", default = 0)
         self.col_data_items = ContextVar("col_data_items", default = "")
         self.rank = ContextVar("rank", default = 0)
+        self.is_null = ContextVar("is_null", default = 0)
 
         # View Related Columns Properties
         self.qry_alias = ContextVar("qry_alias", default = "mtbl")

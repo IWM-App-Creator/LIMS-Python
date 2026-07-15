@@ -61,12 +61,16 @@ def generateDBColumnAlterQuery(dbps):
     data_type = dbps.data_type.get()
     length = dbps.length.get()
     default_val = dbps.default_val.get()
+    is_null = dbps.is_null.get()
     if length not in (None, ""):
         data_type = f"{data_type}({length})"
 
     default_clause = ""
     if default_val not in (None, ""):
-        default_clause = f"{default_val}"
+        default_clause = f"'{default_val}'"
+    
+    if is_null == 1 and default_val in (None, ""):
+        default_clause = "NULL"
 
     after_clause = ""
     if after_col not in (None, ""):
@@ -87,7 +91,7 @@ def generateDBColumnAlterQuery(dbps):
                 f"ALTER TABLE `{schema_name}`.`{table_name}` "
                 f"ADD COLUMN `{col_name}` "
                 f"{data_type} NULL "
-                f"DEFAULT '{default_clause}' "
+                f"DEFAULT {default_clause} "
                 f"AFTER `{after_clause}`;"
             )
 

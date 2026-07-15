@@ -80,7 +80,7 @@ def getTrueFalseColParam(table_id, col_alias, cnt, rank):
 
 def getPeopleColParam(table_id, col_alias, cnt, notify_user, rank):
     col_name = "ppl_" + str(cnt)
-    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "varchar", "length": "250", "default_val": "", "is_primary": 0, "is_index": 0, "is_unique": 0, "is_mandatory": 0, "notify_user": notify_user, "actv_log_cols": 0, "col_data_items": ""}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "FULLNAME", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank}, "rank": rank}
+    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "varchar", "length": "250", "default_val": "", "is_primary": 0, "is_index": 1, "is_unique": 0, "is_mandatory": 0, "notify_user": notify_user, "actv_log_cols": 0, "col_data_items": ""}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "FULLNAME", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank}, "rank": rank}
     return colopt
 
 def getCalculationColParam(table_id, col_alias, cnt, rank):
@@ -90,7 +90,7 @@ def getCalculationColParam(table_id, col_alias, cnt, rank):
 
 def getRatingColParam(table_id, col_alias, cnt, rank):
     col_name = "rating_" + str(cnt)
-    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "int", "length": "4", "default_val": "0", "is_primary": 0, "is_index": 0, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": ""}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "RATING", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank}, "rank": rank}
+    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "int", "length": "4", "default_val": 0, "is_primary": 0, "is_index": 0, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": ""}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "RATING", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank}, "rank": rank}
     return colopt
 
 def getBarcodeColParam(table_id, col_alias, cnt, rank):
@@ -123,7 +123,7 @@ def getTextColParam(table_id, col_alias, rank):
 # DATE & LAST UPDATE
 def getDateColParam(table_id, col_alias, rank):
     col_name = col_alias.lower().replace(" ", "_")
-    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "decimal", "length": "", "default_val": "", "is_primary": 0, "is_index": 0, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": ""}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "DATETIME", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank}, "rank": rank}
+    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "datetime", "length": "", "default_val": "", "is_primary": 0, "is_index": 0, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": ""}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "DATETIME", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank}, "rank": rank}
     return colopt
 
 # Float : {"length": "10,3", "is_index": 1, "data_type": "float", "is_unique": 0, "is_primary": 0, "default_val": null, "notify_user": 0, "csv_col_name": null, "csv_col_type": null, "is_mandatory": 0, "actv_log_cols": 0, "csv_map_col_nm": null}

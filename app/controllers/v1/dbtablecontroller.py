@@ -90,6 +90,8 @@ def addDynamicColumn(request: Request):
 
         # Step 2 : Add To Table Col
         colopt = getColumnParams(dbps)
+        if dbps.default_val.get() == "":
+            dbps.is_null.set(1)
         print("colopt --> ", colopt)
         col_name = colopt.get("col_name", "")
         dbps.col_id.set(0) 
