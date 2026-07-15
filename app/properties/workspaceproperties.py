@@ -7,6 +7,7 @@ class WorkspaceProperties:
         self.ws_url = ContextVar("ws_url", default = "")
         self.schema_name = ContextVar("schema_name", default = "")
         self.ws_logo = ContextVar("ws_logo", default = "")
+        self.ws_logo_file = ContextVar("ws_logo_file", default = "")
         self.ai_priority = ContextVar("ai_priority", default = "default")
         self.is_setup = ContextVar("is_setup", default = 0)
         self.size_limit = ContextVar("size_limit", default = 1024)
@@ -25,4 +26,6 @@ class WorkspaceProperties:
         self.ws_srch = ContextVar("ws_srch", default = "")
         self.ws_data = ContextVar("ws_output", default = [])
 
+        self.db_upd_vals = ContextVar("db_upd_vals", default = {})
+        
 wsps = WorkspaceProperties()

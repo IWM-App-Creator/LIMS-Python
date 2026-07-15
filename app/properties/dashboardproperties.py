@@ -10,4 +10,6 @@ class DashboardProperties:
         self.dashboards_data = ContextVar("dashboards_data", default = [])
         self.fetch_single = ContextVar("fetch_single", default = 0)
 
+        self.db_upd_vals = ContextVar("db_upd_vals", default = {})
+
 dps = DashboardProperties()

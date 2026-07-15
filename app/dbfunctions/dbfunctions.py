@@ -2,6 +2,44 @@ from app.utils.common import DB, select, text, userps
 import re
 # from sqlalchemy import inspect
 
+def createWSDBSchema(new_schema_name: str):
+    system_schema = "systemconfig"
+    # Create schema
+    DB.executeDBStatement(
+        text(f"CREATE SCHEMA `{new_schema_name}`")
+    )
+    # Get all tables from system schema
+    stmt = text(f"""
+        SELECT table_name
+        FROM information_schema.tables
+        WHERE table_schema = :schema_name
+    """)
+    tables = DB.executeDBStatement(
+        stmt,
+        {"schema_name": system_schema}
+    )
+    # Copy only sys_* tables
+    for row in tables:
+        table_name = row.table_name
+        if table_name.startswith("sys_"):
+            DB.executeDBStatement(
+                text(
+                    f"""
+                    CREATE TABLE `{new_schema_name}`.`{table_name}`
+                    LIKE `{system_schema}`.`{table_name}`
+                    """
+                )
+            )
+    # Fix auto increment
+    DB.executeDBStatement(
+        text(
+            f"""
+            ALTER TABLE `{new_schema_name}`.`sys_db_tables_cols`
+            AUTO_INCREMENT = 1000
+            """
+        )
+    )
+
 def getDBTablesFromSchema(dbps):
     schema_name = userps.schema_name.get()
     # Get All Tables

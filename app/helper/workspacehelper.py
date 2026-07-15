@@ -1,8 +1,14 @@
 from pathlib import Path
-from app.utils.common import formatDate
+from app.utils.common import formatDate, DB, text, nowWithTimeZone, userps
+from app.dbfunctions.dbfunctions import createWSDBSchema
 from app.dbfunctions.userfunctions import getUserDataByID
-from app.helper.generalfunctions import formatUserDisplayName
+from app.dbfunctions.dashboardfunctions import insertUpdateDashboard
+from app.helper.generalfunctions import formatUserDisplayName, generateRandomString
 import app.dbfunctions.workspacefunctions as wsfnct
+import app.properties.dbproperties as dps
+import shutil
+import time
+from fastapi import UploadFile
 
 def getWorkspaceByUser(wsps):
     wsfnct.getWSListByUsers(wsps)
@@ -49,7 +55,7 @@ def getWorkspaceByUser(wsps):
 def getUserWSList(wsps):
     wsps.domain_flag.set(0)
     wsps.fetch_single.set(0)
-    getUserWSData(wsps)
+    wsfnct.getUserWSData(wsps)
     ws_datas = wsps.ws_data.get()
     ws_data = []
     for ws in ws_datas:
@@ -65,36 +71,124 @@ def getUserWSList(wsps):
     wsps.ws_data.set(ws_data)
 
 def createWorkspace(wsps):
-    # wsps.workspace_id.set(params.get("workspace_id", 0) )
-    #     wsps.workspace_name.set(params.get("workspace_name", "") )
-    #     wsps.ws_url.set(params.get("ws_url", "") )
-    #     wsps.size_limit.set(params.get("size_limit", 1024) )
     print("createWorkspace --> ")
+    # Step 1 : Add To Workspace
+    schema_name = generateRandomString(length = 12, hasdigits = 1)
+    wsps.schema_name.set(schema_name)
+    uploadWorkspaceLogo(wsps, wsps.ws_url.get(), wsps.ws_logo_file.get()) # Upload File Functions Here
+    wsfnct.insertUpdateWorkspace(wsps) # Create New Workspace # workspace_id
+    # Step 2 : Assign WS to User
+    # $user_wp_id = $WSFunctionsController->assignUserToWorkspace($workspace_id, $user_id, $user_id, 1, 0);
+
+    # Step 3 : /* Email User */
+    # $u_name = $userdtlarr->first_name . " " . $userdtlarr->last_name;
+    # $password = "Your Password";
+    # $WSFunctionsController->sendWSInvitationEmail($u_name, $userdtlarr->email, $password, $workspace_id);
+    
+    # Step 4 : Setup Schema & Create System Tables
+    createWSDBSchema(schema_name) # Create Schema & Copy Table
+    copyActionData(schema_name) # Copy Action Table Data
+    copyWidgetData(schema_name) # Copy Widget Table Data
+    copyIntegrationData(schema_name) # Copy Integration Table Data
+
+def copyActionData(new_schema_name: str):
+    DB.executeDBStatement(
+        text(f"""
+            INSERT INTO `{new_schema_name}`.sys_dynamic_actions
+            SELECT *
+            FROM systemconfig.sys_dynamic_actions
+            WHERE yn_global = 1
+        """)
+    )
+    updateCreatedBy(new_schema_name, "sys_dynamic_actions")
+
+def copyWidgetData(new_schema_name: str):
+    DB.executeDBStatement(
+        text(f"""
+            INSERT INTO `{new_schema_name}`.sys_widgets_category
+            SELECT *
+            FROM systemconfig.sys_widgets_category
+        """)
+    )
+    DB.executeDBStatement(
+        text(f"""
+            INSERT INTO `{new_schema_name}`.sys_widget_master
+            SELECT *
+            FROM systemconfig.sys_widget_master
+        """)
+    )
+    updateCreatedBy(new_schema_name, "sys_widgets_category")
+    updateCreatedBy(new_schema_name, "sys_widget_master")
+
+    dps.dashboard_name.set("Default")
+    dps.is_active.set(1)
+    insertUpdateDashboard(dps) # Create Blank Dashboard
+    # dashboard_id = dps.dashboard_id.get()
+    # assignWidgetToUser(new_schema_name, 1, dashboard_id, user_wp_id, 1)
+    # assignWidgetToUser(new_schema_name, 2, dashboard_id, user_wp_id, 2)
+    # assignWidgetToUser(new_schema_name, 3, dashboard_id, user_wp_id, 3)
+
+def copyIntegrationData(new_schema_name: str):
+    DB.executeDBStatement(
+        text(f"""
+            INSERT INTO `{new_schema_name}`.sys_integration_cat
+            SELECT *
+            FROM systemconfig.sys_integration_cat
+        """)
+    )
+    DB.executeDBStatement(
+        text(f"""
+            INSERT INTO `{new_schema_name}`.sys_integration_master
+            SELECT *
+            FROM systemconfig.sys_integration_master
+        """)
+    )
+    updateCreatedBy(new_schema_name, "sys_integration_cat")
+    updateCreatedBy(new_schema_name, "sys_integration_master")
+
+def updateCreatedBy(schema_name: str, table_name: str):
+    DB.executeDBStatement(
+        text(f"""
+            UPDATE `{schema_name}`.`{table_name}`
+            SET
+                created_by = :created_by,
+                created_date = :created_date
+        """),
+        {
+            "created_by": userps.user_id.get(),
+            "created_date": nowWithTimeZone()
+        }
+    )
 
 def updateWorkspace(wsps):
-    workspace_id = wsps.workspace_id.get()
-    wsdata = wsfnct.getWorkspaceByID(workspace_id)
+    wsfnct.getSingleWorkspaceData(wsps) # Get Workspace by ID
+    wsdata = wsps.ws_data.get()
+    ws_url = ""
+    if wsdata :
+        ws_url = wsdata.ws_url
+    uploadWorkspaceLogo(wsps, ws_url, wsps.ws_logo_file.get()) # Upload File Functions Here
+    db_upd_vals = {}
+    if wsps.workspace_name.get() not in (None, ""):
+        db_upd_vals["workspace_name"] = wsps.workspace_name.get()
+    if wsps.size_limit.get() not in (None, ""):
+        db_upd_vals["size_limit"] = wsps.size_limit.get()
+    if wsps.ws_logo.get() not in (None, ""):
+        db_upd_vals["ws_logo"] = wsps.ws_logo.get()
+    wsps.db_upd_vals.set(db_upd_vals)
+    wsfnct.insertUpdateWorkspace(wsps)
 
-    # if($wsdtl) {
-    #     $ws_url = $wsdtl->ws_url;
-    # }
-    # $data = array();
-    # $data['workspace_name'] = $workspace_name;
-    # $data['size_limit'] = $size_limit;
-    
-    # uploadWorkspaceLogo(ws.ws_url)
-    # WorkspaceDB.updateWorkspace()
-    # return getWorkspaceResponse()
-
-def uploadWorkspaceLogo(ws_url, file):
-    print("uploadWorkspaceLogo--> ")
-    # if not file:
-    #     return None
-    # ext = Path(file.filename).suffix
-    # filename = f"{ws_url}_{int(time.time())}{ext}"
-    # filepath = UPLOAD_PATH / ws_url / filename
-    # file.save(filepath)
-    # return filename
+def uploadWorkspaceLogo(wsps, ws_url: str, ws_logo_file: UploadFile | None) -> str | None:
+    if ws_logo_file is None or not ws_logo_file.filename:
+        wsps.ws_logo.set("")
+    destination_path = Path("wsassets/uploads") / ws_url # Destination Folder.
+    destination_path.mkdir(parents = True, exist_ok = True)
+    extension = Path(ws_logo_file.filename).suffix # Get extension
+    filename = f"{ws_url}_{int(time.time())}".replace(" ", "_") # Generate filename
+    ws_logo = f"{filename}{extension}"
+    # Save file
+    with open(destination_path / ws_logo, "wb") as buffer:
+        shutil.copyfileobj(ws_logo_file.file, buffer)
+    wsps.ws_logo.set(ws_logo)
 
 def getWSCommonFolderArray():
     WS_COMMON_FOLDERS = [

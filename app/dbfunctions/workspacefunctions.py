@@ -1,6 +1,5 @@
 from app.utils.common import DB, select, insert, update, or_, func, case, userps, nowWithTimeZone
 
-
 def getWSListByUsers(wsps):
     userid = userps.user_id.get()
     if wsps.ws_usr_id.get() > 0 :
@@ -98,32 +97,37 @@ def getUserWSData(wsps):
     else:
         wsps.ws_data.set(DB.executeDBSelect(stmt))
 
-def getWorkspaceByID(wsps):
+def getSingleWorkspaceData(wsps):
     workspace = DB.getTableMeta("workspace_master", "systemconfig").alias("ws")
-    stmt = (
-        select(workspace)
-        .where(workspace.c.workspace_id == userps.workspace_id.get())
-        .limit(1)
-    )
+    stmt = ( select(workspace) )
+    if wsps.ws_url.get() == 1:
+        stmt = stmt.where(workspace.c.workspace_id == wsps.workspace_id.get())
+    if wsps.ws_url.get() == 1:
+        stmt = stmt.where(workspace.c.ws_url == wsps.ws_url.get())
+    stmt = stmt.limit(1)
     wsps.ws_data.set(DB.executeDBSelectSingle(stmt))
 
-
-def insertUpdateView(wsps) :
+def insertUpdateWorkspace(wsps) :
     workspace = DB.getTableMeta("workspace_master", "systemconfig").alias("ws")
     values = {}
-    # print("view_name --> ", viewps.view_name.get())
-    # print("view_name --> ", viewps.view_name.get())
-    # print("view_url --> ", viewps.view_url.get())
-    # print("view_type --> ", viewps.view_type.get())
-    # print("view_options --> ", viewps.view_options.get())
-    # print("view_cols --> ", viewps.view_cols.get())
-    # print("view_joins --> ", viewps.view_joins.get())
-    
-    if wsps.view_name.get() not in (None, ""):
-        values["view_name"] = wsps.view_name.get()
-        
-    # if viewps.is_delete.get() not in (None, ""):
-    #     values["is_delete"] = viewps.is_delete.get()
+    db_upd_vals = wsps.db_upd_vals.get() 
+    if db_upd_vals is not None :
+       values = db_upd_vals
+    else :
+        if wsps.workspace_name.get() not in (None, ""):
+            values["workspace_name"] = wsps.workspace_name.get()
+        if wsps.ws_url.get() not in (None, ""):
+            values["ws_url"] = wsps.ws_url.get()
+        if wsps.schema_name.get() not in (None, ""):
+            values["schema_name"] = wsps.schema_name.get()
+        if wsps.ws_logo.get() not in (None, ""):
+            values["ws_logo"] = wsps.ws_logo.get()
+        if wsps.ai_priority.get() not in (None, ""):
+            values["ai_priority"] = wsps.ai_priority.get()
+        if wsps.is_setup.get() not in (None, ""):
+            values["is_setup"] = wsps.is_setup.get()
+        if wsps.size_limit.get() not in (None, ""):
+            values["size_limit"] = wsps.size_limit.get()
     # Check for Insert / Update
     workspace_id = wsps.workspace_id.get()
     if workspace_id not in (None, 0, ""): # Update existing record
@@ -132,17 +136,16 @@ def insertUpdateView(wsps) :
             .where(workspace.c.workspace_id == workspace_id)
             .values(**values)
         )
-        DB.executeDBUpdate(stmt)
-
+        print("stmt --> ", stmt)
+        # DB.executeDBUpdate(stmt)
         # workspace_id, workspace_name, ws_url, schema_name, ws_logo, ai_priority, is_setup, size_limit, status_1, is_delete, created_by, is_metadata, created_date
     else : # Insert new record
         values["created_by"] = userps.user_id.get() # Include Create By
         values["created_date"] = nowWithTimeZone() # Include Create Date
         stmt = insert(workspace).values(**values)
-        workspace_id = DB.executeDBInsert(stmt)
+        print("stmt --> ", stmt)
+        # workspace_id = DB.executeDBInsert(stmt)
     wsps.workspace_id.set(workspace_id)
-
-
 
 def getWorkspaceActiveURL():
     workspace_master = DB.getTableMeta("workspace_master", "systemconfig").alias("ws")

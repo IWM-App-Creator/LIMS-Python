@@ -1,5 +1,5 @@
 import json
-from app.dbfunctions.dashboardfunctions import getDashboardData
+from app.dbfunctions.dashboardfunctions import getDashboardData, insertUpdateDashboard
 
 def getUserDashboards(dps):
     dashboards = getDashboardData(dps)
@@ -12,3 +12,6 @@ def getUserDashboards(dps):
         }
         dashboards_data.append(row)
     dps.dashboards_data.set(dashboards_data)
+
+def saveUserDashboards(dps):
+    insertUpdateDashboard(dps)
