@@ -40,9 +40,17 @@ def doLogin(email: str, password: str):
     )
 
 def validateJWT(token: str):
-    # result = verify_token(token)
-    result = authfnct.verifyJWTToken(token)
-    return result
+    payload = authfnct.verifyJWTToken(token)
+    if payload is None : # Invalid Token
+        raiseAPIError("Invalid Token", 401)
+    return JSONResponse (
+        status_code = 200,
+        content = {
+            "status": True,
+            "message": "Valid Token.",
+            "payload": payload
+        }
+    )
 
 def forgotPassword(email: str):
     result = authfnct.verifyJWTToken(token)

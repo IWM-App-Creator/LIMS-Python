@@ -2,9 +2,10 @@ from pathlib import Path
 from app.utils.common import formatDate
 from app.dbfunctions.userfunctions import getUserDataByID
 from app.helper.generalfunctions import formatUserDisplayName
-from app.dbfunctions.workspacefunctions import getUserWSData
+import app.dbfunctions.workspacefunctions as wsfnct
 
-def setWorkspaceOutput(wsps):
+def getWorkspaceByUser(wsps):
+    wsfnct.getWSListByUsers(wsps)
     ws_datas = wsps.ws_data.get()
     ws_data = []
     for ws in ws_datas:
@@ -62,6 +63,38 @@ def getUserWSList(wsps):
         }
         ws_data.append(row)
     wsps.ws_data.set(ws_data)
+
+def createWorkspace(wsps):
+    # wsps.workspace_id.set(params.get("workspace_id", 0) )
+    #     wsps.workspace_name.set(params.get("workspace_name", "") )
+    #     wsps.ws_url.set(params.get("ws_url", "") )
+    #     wsps.size_limit.set(params.get("size_limit", 1024) )
+    print("createWorkspace --> ")
+
+def updateWorkspace(wsps):
+    workspace_id = wsps.workspace_id.get()
+    wsdata = wsfnct.getWorkspaceByID(workspace_id)
+
+    # if($wsdtl) {
+    #     $ws_url = $wsdtl->ws_url;
+    # }
+    # $data = array();
+    # $data['workspace_name'] = $workspace_name;
+    # $data['size_limit'] = $size_limit;
+    
+    # uploadWorkspaceLogo(ws.ws_url)
+    # WorkspaceDB.updateWorkspace()
+    # return getWorkspaceResponse()
+
+def uploadWorkspaceLogo(ws_url, file):
+    print("uploadWorkspaceLogo--> ")
+    # if not file:
+    #     return None
+    # ext = Path(file.filename).suffix
+    # filename = f"{ws_url}_{int(time.time())}{ext}"
+    # filepath = UPLOAD_PATH / ws_url / filename
+    # file.save(filepath)
+    # return filename
 
 def getWSCommonFolderArray():
     WS_COMMON_FOLDERS = [

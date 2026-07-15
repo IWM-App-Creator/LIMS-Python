@@ -1,4 +1,5 @@
-from app.utils.common import DB, select, or_, func, case, userps
+from app.utils.common import DB, select, insert, update, or_, func, case, userps, nowWithTimeZone
+
 
 def getWSListByUsers(wsps):
     userid = userps.user_id.get()
@@ -96,6 +97,52 @@ def getUserWSData(wsps):
         wsps.ws_data.set(DB.executeDBSelectSingle(stmt))
     else:
         wsps.ws_data.set(DB.executeDBSelect(stmt))
+
+def getWorkspaceByID(wsps):
+    workspace = DB.getTableMeta("workspace_master", "systemconfig").alias("ws")
+    stmt = (
+        select(workspace)
+        .where(workspace.c.workspace_id == userps.workspace_id.get())
+        .limit(1)
+    )
+    wsps.ws_data.set(DB.executeDBSelectSingle(stmt))
+
+
+def insertUpdateView(wsps) :
+    workspace = DB.getTableMeta("workspace_master", "systemconfig").alias("ws")
+    values = {}
+    # print("view_name --> ", viewps.view_name.get())
+    # print("view_name --> ", viewps.view_name.get())
+    # print("view_url --> ", viewps.view_url.get())
+    # print("view_type --> ", viewps.view_type.get())
+    # print("view_options --> ", viewps.view_options.get())
+    # print("view_cols --> ", viewps.view_cols.get())
+    # print("view_joins --> ", viewps.view_joins.get())
+    
+    if wsps.view_name.get() not in (None, ""):
+        values["view_name"] = wsps.view_name.get()
+        
+    # if viewps.is_delete.get() not in (None, ""):
+    #     values["is_delete"] = viewps.is_delete.get()
+    # Check for Insert / Update
+    workspace_id = wsps.workspace_id.get()
+    if workspace_id not in (None, 0, ""): # Update existing record
+        stmt = (
+            update(workspace)
+            .where(workspace.c.workspace_id == workspace_id)
+            .values(**values)
+        )
+        DB.executeDBUpdate(stmt)
+
+        # workspace_id, workspace_name, ws_url, schema_name, ws_logo, ai_priority, is_setup, size_limit, status_1, is_delete, created_by, is_metadata, created_date
+    else : # Insert new record
+        values["created_by"] = userps.user_id.get() # Include Create By
+        values["created_date"] = nowWithTimeZone() # Include Create Date
+        stmt = insert(workspace).values(**values)
+        workspace_id = DB.executeDBInsert(stmt)
+    wsps.workspace_id.set(workspace_id)
+
+
 
 def getWorkspaceActiveURL():
     workspace_master = DB.getTableMeta("workspace_master", "systemconfig").alias("ws")
