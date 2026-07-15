@@ -1,7 +1,7 @@
 from app.utils.common import Request, JSONResponse, RequestData, raiseAPIError, DB, text, raiseInvalidError
 from app.dbfunctions.dbtablesfunctions import getDBTableData, insertTableDataToDB, insertUpdateTblCol, updateDBTableSequence
 from app.helper.dbhelper import setQueryColStmt, executeCreateTableQuery
-from app.dbfunctions.viewfunctions import getViewDataByID, insertUpdateView, updateViewCols
+from app.dbfunctions.viewfunctions import getViewDataByID, insertUpdateView
 from app.dbfunctions.dbfunctions import generateDBColumnAlterQuery
 from app.helper.viewhelper import viewhlp, createviewhlp
 from app.helper import dbhelper as dbhlp
@@ -142,15 +142,13 @@ def addDynamicColumn(request: Request):
         createviewhlp.getLeftJoinQuery(viewps)
         createviewhlp.getFullViewQuery(viewps)
         createviewhlp.getDefaultViewOptions(viewps) # Set View Options
-        viewps.view_name.set("")
-        viewps.view_url.set("")
-        viewps.view_type.set("")
-        viewps.view_child.set("")
-        viewps.view_actions.set("")
-        viewps.dync_cat_id.set("")
-        viewps.short_desc.set("")
-        viewps.preview_img.set("")
-        viewps.is_delete.set("")
+        viewps.db_upd_vals.set(
+            {
+                "view_options": viewps.view_options.get(),
+                "view_cols": viewps.view_cols.get(),
+                "view_joins": viewps.view_joins.get()
+            }
+        )
         insertUpdateView(viewps)
         status = True
         message = dbps.col_alias.get() + " Added Successfully"
@@ -185,7 +183,8 @@ def updateDBTblColAlias(request: Request):
             getViewDataByID(viewps) # Get View Data
             viewhlp.setViewDataProperties(viewps) # Set View Properties
             updateNestedJsonVal(fulljson = viewps.view_cols.get(), jsonkey = "view_cols", srchkey= "col_id", srchval = dbps.col_id.get(), updkey = "col_alias", updval = dbps.col_alias.get())
-            updateViewCols(viewps) # Save to Dynamic View
+            viewps.db_upd_vals.set({"view_cols": viewps.view_cols.get()})
+            insertUpdateView(viewps)
             # Update in View Layout
         elif flag.upper() == "USER":
             print("User Update")

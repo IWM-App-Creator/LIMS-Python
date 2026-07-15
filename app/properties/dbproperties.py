@@ -74,4 +74,6 @@ class DBProperties:
         self.colprimary = ContextVar("colprimary", default = "")
         self.colindex = ContextVar("colindex", default = [])
 
+        self.db_upd_vals = ContextVar("db_upd_vals", default = {})
+
 dbps = DBProperties()

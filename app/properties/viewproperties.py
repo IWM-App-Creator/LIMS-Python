@@ -71,4 +71,6 @@ class viewproperties:
         self.blank_view_cols = ContextVar("blank_view_cols", default = 0)
         self.pin_to_menu = ContextVar("pin_to_menu", default = 0)
 
+        self.db_upd_vals = ContextVar("db_upd_vals", default = {})
+
 viewps = viewproperties()

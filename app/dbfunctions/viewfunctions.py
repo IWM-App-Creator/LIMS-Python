@@ -17,38 +17,33 @@ def getViewDataByID(viewps):
 def insertUpdateView(viewps) :
     tblview = DB.getTableMeta("sys_new_dynamic_view")
     values = {}
-    # print("view_name --> ", viewps.view_name.get())
-    # print("view_name --> ", viewps.view_name.get())
-    # print("view_url --> ", viewps.view_url.get())
-    # print("view_type --> ", viewps.view_type.get())
-    # print("view_options --> ", viewps.view_options.get())
-    # print("view_cols --> ", viewps.view_cols.get())
-    # print("view_joins --> ", viewps.view_joins.get())
-    
-    if viewps.view_name.get() not in (None, ""):
-        values["view_name"] = viewps.view_name.get()
-    if viewps.view_url.get() not in (None, ""):
-        values["url"] = viewps.view_url.get()
-    if viewps.view_type.get() not in (None, ""):
-        values["view_type"] = viewps.view_type.get()
-    if viewps.view_options.get() not in (None, "", []):
-        values["view_options"] = viewps.view_options.get()
-    if viewps.view_cols.get() not in (None, "", []):
-        values["view_cols"] = viewps.view_cols.get()
-    if viewps.view_joins.get() not in (None, "", []):
-        values["view_joins"] = viewps.view_joins.get()
-    if viewps.view_child.get() not in (None, "", []):
-        values["view_child"] = viewps.view_child.get()
-    if viewps.view_actions.get() not in (None, "", []):
-        values["view_actions"] = viewps.view_actions.get()
-    if viewps.dync_cat_id.get() not in (None, ""):
-        values["dync_cat_id"] = viewps.dync_cat_id.get()
-    if viewps.short_desc.get() not in (None, ""):
-        values["short_desc"] = viewps.short_desc.get()
-    if viewps.preview_img.get() not in (None, ""):
-        values["preview_img"] = viewps.preview_img.get()
-    if viewps.is_delete.get() not in (None, ""):
-        values["is_delete"] = viewps.is_delete.get()
+    if viewps.db_upd_vals.get() not in (None, "", {}):
+        values = viewps.db_upd_vals.get()
+    else:
+        if viewps.view_name.get() not in (None, ""):
+            values["view_name"] = viewps.view_name.get()
+        if viewps.view_url.get() not in (None, ""):
+            values["url"] = viewps.view_url.get()
+        if viewps.view_type.get() not in (None, ""):
+            values["view_type"] = viewps.view_type.get()
+        if viewps.view_options.get() not in (None, "", []):
+            values["view_options"] = viewps.view_options.get()
+        if viewps.view_cols.get() not in (None, "", []):
+            values["view_cols"] = viewps.view_cols.get()
+        if viewps.view_joins.get() not in (None, "", []):
+            values["view_joins"] = viewps.view_joins.get()
+        if viewps.view_child.get() not in (None, "", []):
+            values["view_child"] = viewps.view_child.get()
+        if viewps.view_actions.get() not in (None, "", []):
+            values["view_actions"] = viewps.view_actions.get()
+        if viewps.dync_cat_id.get() not in (None, ""):
+            values["dync_cat_id"] = viewps.dync_cat_id.get()
+        if viewps.short_desc.get() not in (None, ""):
+            values["short_desc"] = viewps.short_desc.get()
+        if viewps.preview_img.get() not in (None, ""):
+            values["preview_img"] = viewps.preview_img.get()
+        if viewps.is_delete.get() not in (None, ""):
+            values["is_delete"] = viewps.is_delete.get()
     # Check for Insert / Update
     view_id = viewps.view_id.get()
     if view_id not in (None, "0", ""): # Update existing record
@@ -65,43 +60,3 @@ def insertUpdateView(viewps) :
         # print("stmt --> ", stmt)
         view_id = DB.executeDBInsert(stmt)
     viewps.view_id.set(view_id)
-
-def updateViewCols(viewps):
-    dync_view = DB.getTableMeta("sys_new_dynamic_view")
-    if viewps.view_id.get() not in (None, "", 0):
-        stmt = (
-            update(dync_view)
-            .where(dync_view.c.view_id == viewps.view_id.get())
-            .values(view_cols = viewps.view_cols.get())
-        )
-        DB.executeDBUpdate(stmt)
-
-def updateViewJoins(viewps):
-    dync_view = DB.getTableMeta("sys_new_dynamic_view")
-    if viewps.view_id.get() not in (None, "", 0):
-        stmt = (
-            update(dync_view)
-            .where(dync_view.c.view_id == viewps.view_id.get())
-            .values(view_joins = viewps.view_joins.get())
-        )
-        DB.executeDBUpdate(stmt)
-
-def updateViewChilds(viewps):
-    dync_view = DB.getTableMeta("sys_new_dynamic_view")
-    if viewps.view_id.get() not in (None, "", 0):
-        stmt = (
-            update(dync_view)
-            .where(dync_view.c.view_id == viewps.view_id.get())
-            .values(view_child = viewps.view_child.get())
-        )
-        DB.executeDBUpdate(stmt)
-
-def updateViewChilds(viewps):
-    dync_view = DB.getTableMeta("sys_new_dynamic_view")
-    if viewps.view_id.get() not in (None, "", 0):
-        stmt = (
-            update(dync_view)
-            .where(dync_view.c.view_id == viewps.view_id.get())
-            .values(view_actions = viewps.view_actions.get())
-        )
-        DB.executeDBUpdate(stmt)
