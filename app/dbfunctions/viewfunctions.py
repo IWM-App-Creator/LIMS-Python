@@ -75,3 +75,33 @@ def updateViewCols(viewps):
             .values(view_cols = viewps.view_cols.get())
         )
         DB.executeDBUpdate(stmt)
+
+def updateViewJoins(viewps):
+    dync_view = DB.getTableMeta("sys_new_dynamic_view")
+    if viewps.view_id.get() not in (None, "", 0):
+        stmt = (
+            update(dync_view)
+            .where(dync_view.c.view_id == viewps.view_id.get())
+            .values(view_joins = viewps.view_joins.get())
+        )
+        DB.executeDBUpdate(stmt)
+
+def updateViewChilds(viewps):
+    dync_view = DB.getTableMeta("sys_new_dynamic_view")
+    if viewps.view_id.get() not in (None, "", 0):
+        stmt = (
+            update(dync_view)
+            .where(dync_view.c.view_id == viewps.view_id.get())
+            .values(view_child = viewps.view_child.get())
+        )
+        DB.executeDBUpdate(stmt)
+
+def updateViewChilds(viewps):
+    dync_view = DB.getTableMeta("sys_new_dynamic_view")
+    if viewps.view_id.get() not in (None, "", 0):
+        stmt = (
+            update(dync_view)
+            .where(dync_view.c.view_id == viewps.view_id.get())
+            .values(view_actions = viewps.view_actions.get())
+        )
+        DB.executeDBUpdate(stmt)
