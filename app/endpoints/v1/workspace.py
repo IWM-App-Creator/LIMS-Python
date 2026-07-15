@@ -6,9 +6,8 @@ router = APIRouter(prefix = "/workspace")
 ROUTES = [
     ("/isvalidws", wsapi.isWSValid, ["GET"]),
     ("/getlist", wsapi.getWorkspaceList, ["GET"]),
-    # ("/getlistuser", wsapi.getUserWorkspaceList, ["GET"]),
 
-    # ("/save", wsapi.saveWorkspace, ["GET"]),
+    ("/save", wsapi.saveWorkspace, ["GET"]),
     # ("/activation", wsapi.activationWorkspace, ["GET"]),
     # ("/accept", wsapi.acceptWorkspaceInvitation, ["GET"]),
     # ("/recreate", wsapi.reCreateWSSchema, ["GET"]),

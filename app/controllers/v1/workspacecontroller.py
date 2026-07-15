@@ -45,9 +45,10 @@ def getWorkspaceList(request: Request):
         raiseAPIError(str(e), 500)
 
 # http://testws1.localhost:8000/api/v1/workspace/getlist?txtsearch=test
-def getUserWorkspaceList(request: Request):
+def saveWorkspace(request: Request):
     try:
        print("")
     except Exception as e:
         saveErrorLogtoDB ("Workspace", 0, "getWorkspaceList", str(e))
         raiseAPIError(str(e), 500)
+
