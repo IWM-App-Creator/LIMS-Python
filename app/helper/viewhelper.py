@@ -2,9 +2,11 @@ import json
 from app.utils.common import select, DB, userps
 from app.dbfunctions.dbtablesfunctions import getDBTableData
 from app.dbfunctions.viewlayoutfunctions import getViewLayoutDataByID
-from app.helper.generalfunctions import sortObjectsByKey
+from app.helper.generalfunctions import sortObjectsByKey, updateNestedJsonVal
 from app.properties.dbproperties import dbps
 from app.helper import dbhelper as dbhlp
+
+from app.helper.templatehelper import getPriorityTemplate
 
 class ViewHelper:
 
@@ -230,6 +232,7 @@ class CreateViewHelper:
     def getDefaultAddViewCols(viewps):
         view_name = viewps.view_name.get()
         table_id = viewps.table_id.get()
+        view_type = viewps.view_type.get()
         dbps.table_id
         primary_col_nm = view_name.lower().replace(" ", "_") + "_id"
         primary_col_alias = view_name + " ID"
@@ -237,8 +240,33 @@ class CreateViewHelper:
         rank = 10
         blank_view_cols.append( dbhlp.getPrimaryColParam(table_id, primary_col_nm, primary_col_alias, rank) )
         rank = rank + 10
+        if view_type in ("TaskList", "ScrumBoard") :
+            blank_view_cols.append( dbhlp.getTextColParam(table_id, "Title", rank) ) # Title Column
+            rank = rank + 10
         blank_view_cols.append( dbhlp.getStatusColParam(table_id, "Status", "1", rank) )
         rank = rank + 10
+        if view_type == "ScrumBoard" :
+            blank_view_cols.append( dbhlp.getDropdownColParam(table_id, "Label", "1", rank) ) # Label (DDL) Column
+            rank = rank + 10
+            blank_view_cols.append( dbhlp.getPeopleColParam(table_id, "People", "1", 1, rank) ) # PPL Column
+            rank = rank + 10
+            blank_view_cols.append( dbhlp.getTextColParam(table_id, "Description", rank) ) # Title Description
+            rank = rank + 10
+            blank_view_cols.append( dbhlp.getDateColParam(table_id, "Due Date", rank) ) # DueDate Column
+            rank = rank + 10
+
+        if view_type == "TaskList" :
+            # Task -->  , title, status_2, status_3
+            blank_view_cols.append( dbhlp.getTextColParam(table_id, "Title", rank) ) # Tick Column
+            rank = rank + 10 
+            blank_view_cols.append( dbhlp.getStatusColParam(table_id, "Priority", "2", rank) ) # Priority(Status) Column
+            updateNestedJsonVal(fulljson = blank_view_cols, jsonkey = "col_options", srchkey= "", srchval = "", updkey = "col_data_items", updval = getPriorityTemplate)
+            rank = rank + 10
+            blank_view_cols.append( dbhlp.getPeopleColParam(table_id, "People", "1", 1, rank) ) # PPL Column
+            rank = rank + 10
+            blank_view_cols.append( dbhlp.getDateColParam(table_id, "Date", rank) ) # Date Column
+            rank = rank + 10
+
         blank_view_cols.append( dbhlp.getIsDeleteColParam(table_id, rank) )
         rank = rank + 10
         blank_view_cols.append( dbhlp.getIsMetadataColParam(table_id, rank) )

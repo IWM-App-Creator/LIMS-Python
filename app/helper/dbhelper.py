@@ -91,6 +91,11 @@ def getTrueFalseColParam(table_id, col_alias, cnt, rank):
     colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "int", "length": "4", "default_val": 0, "is_primary": 0, "is_index": 1, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": [{"label": "True", "clrcode": "#10b759", "opt_val": "1"}, {"label": "False", "clrcode": "#c66565", "opt_val": "2"}, {"label": "Unassigned", "clrcode": "#d2d2d2", "opt_val": "0"}]}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "TF_INT", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank}, "rank": rank}
     return colopt
 
+def getTickColParam(table_id, col_alias, cnt, rank): #Tick(Yes/No).
+    col_name = "tick_" + str(cnt)
+    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "int", "length": "4", "default_val": 0, "is_primary": 0, "is_index": 1, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": [{"label": "YES", "clrcode": "#10b759", "opt_val": "1"}, {"label": "NO", "clrcode": "#d2d2d2", "opt_val": "0"}]}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "TICK_INT", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank}, "rank": rank}
+    return colopt
+
 def getPeopleColParam(table_id, col_alias, cnt, notify_user, rank):
     col_name = "ppl_" + str(cnt)
     colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "varchar", "length": "250", "default_val": "", "is_primary": 0, "is_index": 1, "is_unique": 0, "is_mandatory": 0, "notify_user": notify_user, "actv_log_cols": 0, "col_data_items": ""}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "FULLNAME", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank}, "rank": rank}
@@ -130,7 +135,7 @@ def getNumberColParam(table_id, col_alias, rank):
 # Text, URL, EMAIL, TEL, UPLOAD, FORMULA, SIGN, BARCODE
 def getTextColParam(table_id, col_alias, rank):
     col_name = col_alias.lower().replace(" ", "_")
-    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "varchar", "length": "", "default_val": "", "is_primary": 0, "is_index": 0, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": ""}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "TEXT", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank}, "rank": rank}
+    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "varchar", "length": "250", "default_val": "", "is_primary": 0, "is_index": 0, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": ""}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "TEXT", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank}, "rank": rank}
     return colopt
 
 # DATE & LAST UPDATE
@@ -205,7 +210,7 @@ def getViewCaseQuery(qrycolnm, col_name):
     return qry
 
 def getViewColumnCount(dbps):
-    if dbps.view_col_type.get() in ("Status", "DDL", "YesNo", "TrueFalse", "People/Assign To", "Calc", "Rating", "Barcode", "Sign", "Geolocation") :
+    if dbps.view_col_type.get() in ("Status", "DDL", "YesNo", "TrueFalse", "Tick" "People/Assign To", "Calc", "Rating", "Barcode", "Sign", "Geolocation") :
         match dbps.view_col_type.get():
             case "Status":
                 dbps.tbl_col_srch.set("status_")
@@ -215,6 +220,8 @@ def getViewColumnCount(dbps):
                 dbps.tbl_col_srch.set("yn_")
             case "TrueFalse":
                 dbps.tbl_col_srch.set("tf_")
+            case "TICK":
+                dbps.tbl_col_srch.set("tick_")
             case "People/Assign To":
                 dbps.tbl_col_srch.set("ppl_")
             case "Calc":
