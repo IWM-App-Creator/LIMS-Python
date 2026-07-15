@@ -44,7 +44,10 @@ def setWorkspaceOutput(wsps):
         ws_data.append(row)
     wsps.ws_data.set(ws_data)
 
-def setUserWSOutput(wsps):
+def getUserWSList(wsps):
+    # wsps.domain_flag.set(0)
+    # wsps.fetch_single.set(0)
+    # getUserWSData(wsps)
     ws_datas = wsps.ws_data.get()
     ws_data = []
     for ws in ws_datas:

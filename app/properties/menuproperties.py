@@ -2,6 +2,8 @@ from contextvars import ContextVar
 
 class MenuProperties:
     def __init__(self):
+
+        # m_centre_id, centre_name, ref_m_c_id, short_desc, preview_img, dync_cat_id, is_public, is_active, is_delete, created_by, is_metadata, created_date
         self.m_centre_id = ContextVar("m_centre_id", default = "")
         self.m_centre_ids = ContextVar("m_centre_ids", default = [])
 

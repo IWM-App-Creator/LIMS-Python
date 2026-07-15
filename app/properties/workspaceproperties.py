@@ -14,7 +14,6 @@ class WorkspaceProperties:
         self.file_count = ContextVar("file_count", default = 1024)
         self.used_size = ContextVar("used_size", default = 1024)
 
-
         self.user_wp_id = ContextVar("user_wp_id", default = 0)
         self.ws_usr_id = ContextVar("user_id", default = 0)
         self.ws_role_id = ContextVar("ws_role_id", default = 2)
