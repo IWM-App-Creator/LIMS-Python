@@ -72,14 +72,14 @@ def removeJsonKey(data: dict, key: str):
 def updateNestedJsonVal(fulljson: dict, jsonkey: str, srchkey: str, srchval: str, updkey: str, updval):
     nested = fulljson.get(jsonkey)
     if isinstance(nested, dict):
-        if srchval is None or srchkey is None or nested.get(srchkey) == srchval:
+        if srchval is None or srchkey is None or str(nested.get(srchkey)) == str(srchval):
             nested[updkey] = updval
             return True
         return False
     elif isinstance(nested, list):
         updated = False
         for item in nested:
-            if item.get(srchkey) == srchval or srchval is None:
+            if str(item.get(srchkey)) == str(srchval) or srchval is None:
                 item[updkey] = updval
                 updated = True
                 # Stop after first match only when searching for a value

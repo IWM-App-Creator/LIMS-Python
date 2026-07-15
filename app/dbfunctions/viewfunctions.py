@@ -66,3 +66,12 @@ def insertUpdateView(viewps) :
         view_id = DB.executeDBInsert(stmt)
     viewps.view_id.set(view_id)
 
+def updateViewCols(viewps):
+    dync_view = DB.getTableMeta("sys_new_dynamic_view")
+    if viewps.view_id.get() not in (None, "", 0):
+        stmt = (
+            update(dync_view)
+            .where(dync_view.c.view_id == viewps.view_id.get())
+            .values(view_cols = viewps.view_cols.get())
+        )
+        DB.executeDBUpdate(stmt)

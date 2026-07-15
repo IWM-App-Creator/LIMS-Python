@@ -1,7 +1,7 @@
-from app.utils.common import Request, JSONResponse, RequestData, raiseAPIError, DB, text
+from app.utils.common import Request, JSONResponse, RequestData, raiseAPIError, DB, text, raiseInvalidError
 from app.dbfunctions.dbtablesfunctions import getDBTableData, insertTableDataToDB, insertUpdateTblCol, updateDBTableSequence
 from app.helper.dbhelper import setQueryColStmt, executeCreateTableQuery
-from app.dbfunctions.viewfunctions import getViewDataByID, insertUpdateView
+from app.dbfunctions.viewfunctions import getViewDataByID, insertUpdateView, updateViewCols
 from app.dbfunctions.dbfunctions import generateDBColumnAlterQuery
 from app.helper.viewhelper import viewhlp, createviewhlp
 from app.helper import dbhelper as dbhlp
@@ -42,8 +42,39 @@ def getDBTableList (request: Request):
     )
 
 # http://testws1.localhost:8000/api/v1/dbtable/getcols
-def getDBTableColumns (request: Request):
-    print("getDBTableList --> ")
+def getDBTableColumns(request: Request):
+    print("getDBTableColumns --> ")
+    try:
+        params = RequestData.params(request)
+        dbps.table_id.set(params.get("table_id", 0))
+        if dbps.table_id.get() in (None, "", 0):
+            return raiseInvalidError("Table ID Not Found", 401)
+        table_data = getDBTableData(dbps) # Get DB Table Data
+        db_tbl = []
+        for tbl in table_data:
+            if tbl.col_name not in ("is_delete", "is_metadata"):
+                row = {
+                    "table_id": tbl.table_id,
+                    "table_name": tbl.table_name,
+                    "table_alias": tbl.table_alias,
+                    "col_id": tbl.col_id,
+                    "col_name": tbl.col_name,
+                    "col_alias": tbl.col_alias,
+                    "col_options": tbl.col_options
+                }
+                db_tbl.append(row)
+        return JSONResponse (
+            status_code = 200,
+            content = {
+                "status": True,
+                "message": "DB Table Data",
+                "db_tbl": db_tbl
+            }
+        )
+    except Exception as e:
+        # saveErrorLogtoDB ("DBTable", dbps.table_id.get(), "getDBTableColumns", str(e)) # Log Error To DB
+        raiseAPIError(str(e), 500)
+    
 
 # http://testws1.localhost:8000/api/v1/dbtable/updatetbl
 def updateDBTableAlias (request: Request):
@@ -125,7 +156,7 @@ def addDynamicColumn(request: Request):
         message = dbps.col_alias.get() + " Added Successfully"
     except Exception as e:
         message = "Error in Adding Column"
-        # saveErrorLogtoDB ("View", viewps.view_id.get(), "getViewData", str(e)) # Log Error To DB
+        # saveErrorLogtoDB ("DBTable", viewps.view_id.get(), "addDynamicColumn", str(e)) # Log Error To DB
         raiseAPIError(str(e), 500)
     # Output
     return JSONResponse (
@@ -138,9 +169,27 @@ def addDynamicColumn(request: Request):
     )
 
 # http://testws1.localhost:8000/api/v1/dbtable/renamecol
-def updateDBTblColAlias (request: Request):
+def updateDBTblColAlias(request: Request):
     try:
         print("updateDBTblColAlias --> ")
+        params = RequestData.params(request)
+        dbps.col_id.set(params.get("col_id", 0))
+        dbps.col_alias.set(params.get("col_alias", ""))
+        viewps.view_id.set(params.get("view_id", 0))
+        flag = params.get("flag", "")
+        if dbps.col_id.get() in (None, "", 0):
+            return raiseInvalidError("Column ID Not Found", 401)
+        if flag.upper() == "COL":
+            insertUpdateTblCol(dbps)
+        elif flag.upper() == "VIEW":
+            getViewDataByID(viewps) # Get View Data
+            viewhlp.setViewDataProperties(viewps) # Set View Properties
+            updateNestedJsonVal(fulljson = viewps.view_cols.get(), jsonkey = "view_cols", srchkey= "col_id", srchval = dbps.col_id.get(), updkey = "col_alias", updval = dbps.col_alias.get())
+            updateViewCols(viewps) # Save to Dynamic View
+            # Update in View Layout
+        elif flag.upper() == "USER":
+            print("User Update")
+            # Update in View Layout
     except Exception as e:
         # saveErrorLogtoDB ("View", viewps.view_id.get(), "getViewData", str(e)) # Log Error To DB
         raiseAPIError(str(e), 500)

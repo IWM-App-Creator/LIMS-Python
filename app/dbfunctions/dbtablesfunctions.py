@@ -46,6 +46,7 @@ def getDBTableData(dbps):
         stmt = stmt.where(tblmaster.c.is_delete == is_del_tbl)
     if is_del_col != "-1":
         stmt = stmt.where(tblcols.c.is_delete == is_del_col)
+    stmt = stmt.order_by(tblcols.c.rank.asc())
     return DB.executeDBSelect(stmt)
 
 def insertTableDataToDB(dbps) :
@@ -126,9 +127,9 @@ def insertUpdateTable(dbps):
 
 def insertUpdateTblCol(dbps) :
     tblcols = DB.getTableMeta("sys_new_db_tables_cols")
-    values = {
-        "table_id": dbps.table_id.get(),
-    }
+    values = {}
+    if dbps.table_id.get() not in (None, "", 0):
+        values["table_id"] = dbps.table_id.get()
     if dbps.col_name.get() not in (None, ""):
         values["col_name"] = dbps.col_name.get()
     if dbps.col_alias.get() not in (None, ""):
@@ -139,13 +140,14 @@ def insertUpdateTblCol(dbps) :
         values["rank"] = dbps.rank.get()
     # Check for Insert / Update
     col_id = dbps.col_id.get()
-    if col_id > 0 : # Update existing record
+    if col_id not in (None, "", 0) : # Update existing record
         stmt = (
             update(tblcols)
             .where(tblcols.c.col_id == col_id)
             .values(**values)
         )
-        DB.executeDBUpdate(stmt)
+        print("stmt --> ", stmt)
+        # DB.executeDBUpdate(stmt)
     else : # Insert new record
         values["created_by"] = userps.user_id.get() # Include Create By
         values["created_date"] = nowWithTimeZone() # Include Create Date
