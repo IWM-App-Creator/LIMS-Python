@@ -190,6 +190,13 @@ def updateDBTblColAlias(request: Request):
         elif flag.upper() == "USER":
             print("User Update")
             # Update in View Layout
+        return JSONResponse(
+            status_code = 200,
+            content = {
+                "status": True,
+                "message": dbps.col_alias.get() + " Updated Successfully"
+            }
+        )
     except Exception as e:
         # saveErrorLogtoDB ("View", viewps.view_id.get(), "getViewData", str(e)) # Log Error To DB
         raiseAPIError(str(e), 500)
