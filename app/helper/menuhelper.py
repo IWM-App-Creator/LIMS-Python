@@ -10,10 +10,13 @@ def getUserMenuList(menups):
     menus = getMenuCentreData(menups)
     menu_list = []
     for menu in menus:
+        menu_json = menu.menu_json
+        if menu_json in (None, "", []):
+            menu_json = []
         row = {
             "m_centre_id": menu.m_centre_id,
             "centre_name": menu.centre_name,
-            "menu_json": menu.menu_json,
+            "menu_json": menu_json,
             "short_desc": menu.short_desc,
             "preview_img": menu.preview_img,
             "is_public": menu.is_public,
