@@ -53,9 +53,15 @@ def validateJWT(token: str):
     )
 
 def forgotPassword(email: str):
-    result = authfnct.verifyJWTToken(token)
-    return result
+    print("forgotPassword ")
+    # Get Email
+    # Get User Data
+    # Send Email With template
+    # return result
 
-def resetPassword(token: str, newpass: str, confirm_pass: str):
+def resetPassword(token: str, newpass: str):
     result = authfnct.verifyJWTToken(token)
+    # Validate Token
+    # Get User_ID, and email
+    # Update Password.
     return result

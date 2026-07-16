@@ -22,7 +22,6 @@ def getWorkspaceByUser(wsps):
         usages = (used_size * 100 ) / ws.size_limit
         created_name = "";
         user = getUserDataByID(ws.created_by)
-
         total_users = int(getattr(ws, "ownercnt", 0)) + int(getattr(ws, "usercnt", 0)) + int(getattr(ws, "noaccesscnt", 0))
         if user:
             first_name = getattr(user, "first_name", "")

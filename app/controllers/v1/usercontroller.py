@@ -64,5 +64,8 @@ def getUserDetail(): # token: str
         }
     )
 
+def updateUserProfile():
+    print("updateUserProfile:")
+
 def getUserList():
     print("getUserList:")

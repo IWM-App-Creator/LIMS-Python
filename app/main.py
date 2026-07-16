@@ -41,8 +41,6 @@ app.add_middleware (
     allow_origins = [
         "http://localhost:5173",
         "http://localhost:5174",
-        "http://127.0.0.1:5173",
-        "http://127.0.0.1:5174",
     ],
     allow_origin_regex=r"^https://([a-zA-Z0-9-]+\.)?xytovet\.com$",
     allow_credentials = True,
