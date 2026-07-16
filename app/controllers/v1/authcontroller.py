@@ -99,8 +99,8 @@ def resetPassword(key: str, newpass: str):
             content=result
         )
     salt = bcrypt.gensalt()
-    newpass = bcrypt.hashpw(newpass.encode("utf-8"), salt)
-    newpass = newpass.decode("utf-8")
+    newpass = bcrypt.hashpw(newpass.encode(), salt)
+    newpass = newpass.decode()
     user_id = result["payload"]["user_id"]
     userps.user_id.set(user_id)
     userps.db_upd_vals.set({"password": newpass})

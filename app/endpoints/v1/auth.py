@@ -6,8 +6,8 @@ router = APIRouter(prefix = "/auth")
 ROUTES = [
     ("/login", authapi.doLogin, ["GET"]),
     ("/validatejwt", authapi.validateJWT, ["GET"]),
-    ("/forgotpassword", authapi.forgotPassword, ["POST"]),
-    ("/resetpassword", authapi.resetPassword, ["POST"]),
+    ("/forgotpassword", authapi.forgotPassword, ["GET"]),
+    ("/resetpassword", authapi.resetPassword, ["GET"]),
 ]
 
 for path, handler, methods in ROUTES:

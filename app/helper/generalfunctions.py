@@ -24,19 +24,22 @@ def getHostName(request):
     userps.req_host.set(host)
     userps.req_subdomain.set(hostsd.split(".")[0])
 
-def uploadFile(ws_url: str, file_url: str, file: UploadFile | None) -> str | None:
-    file = ""
+def uploadFile(ws_url: str, file_url: str, file: UploadFile) -> str | None:
+    file_name = ""
     file_url = ws_url + "/" + file_url
+    print("uploadFile --> ", file_url)
+    print("filename --> ", file.filename)
+    return
     if file is not None or file.filename is not None:
         destination_path = Path("wsassets/uploads") / file_url # Destination Folder.
         destination_path.mkdir(parents = True, exist_ok = True)
         extension = Path(file.filename).suffix # Get extension
         filename = f"{file_url}_{int(time.time())}".replace(" ", "_") # Generate filename
-        file = f"{filename}{extension}"
+        file_name = f"{filename}{extension}"
         # Save file
-        with open(destination_path / file, "wb") as buffer:
+        with open(destination_path / file_name, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
-    return file
+    return file_name
 
 def generateRandomString(length: int = 10, hasdigits: int = 0) -> str:
     alphabet = string.ascii_lowercase
