@@ -64,7 +64,7 @@ def forgotPassword(email: str):
     userps.email.set(email) # Set Email To Property
     user = getUserDataFromDB() # Get User Data
     if user in (None, "", 0):
-        return raiseInvalidError("Invalid email, Please enter register email id.", 401)
+        return raiseInvalidError("Invalid email, Please enter register email id.", 200)
     jwt_token = authfnct.createFPJWTToken(user.id, user.email)
     env = Environment(loader=FileSystemLoader("app/assets/emailtemplate"))
     template = env.get_template("forgotpass.html")
