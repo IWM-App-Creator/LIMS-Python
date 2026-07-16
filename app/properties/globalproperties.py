@@ -18,5 +18,6 @@ class GlobalProperties:
         self.MAIL_PASSWORD = "G}8oG]6Kmb{K"
         self.MAIL_ENCRYPTION="tls"
         self.MAIL_FROM_ADDRESS = "info@miidata.io"
+        self.MAIL_FROM_NAME = "MiiData"
 
 globalps = GlobalProperties()

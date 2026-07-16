@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Forgot Password</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+    <body>
+        <table width="600px" cellspacing="0" cellpadding="0" border="0" bgcolor="#FFFFFF" style="border:1px solid #F3923D">
+            <tbody>
+                <tr>
+                    <td align="center" valign="middle" >
+                        <img src="" alt="" style="width: 150px;padding: 10px 0;">
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding-left:10px"><p></p>
+                        <table border="0" cellspacing="2" cellpadding="2">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <p style="font-family:Verdana,Arial,Helvetica,sans-serif;font-size:12px">
+                                            Dear {{ name }},
+                                            <br><br>
+                                            Please find your login details below.
+                                            Once you login, you can reset password.
+                                        </p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="font-family:Verdana,Arial,Helvetica,sans-serif;font-size:12px">
+                                        Email&nbsp;:&nbsp;{{ email }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="font-family:Verdana,Arial,Helvetica,sans-serif;font-size:12px">
+                                        Please <a href="{{ reset_url }}">Click Here</a> to update password.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="font-family:Verdana,Arial,Helvetica,sans-serif;font-size:12px">
+                                    <br><br>
+                                        Please email as if you have any questions
+                                    <br><br>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding-left:10px">
+                        <table border="0" cellspacing="2" cellpadding="2">
+                            <tbody>
+                                <tr>
+                                    <td height="15px"></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" align="left" valign="top" style="font-family:Verdana,Arial,Helvetica,sans-serif;font-size:12px">Thanks,<br></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" align="left" valign="top" style="font-family:Verdana,Arial,Helvetica,sans-serif;font-size:12px">
+                                        Team Xytovet
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td height="5px"></td>
+                </tr>
+            </tbody>
+        </table>
+    </body>
+</html>
