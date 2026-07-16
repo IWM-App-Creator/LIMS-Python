@@ -84,7 +84,7 @@ def getViewData(request: Request):
         raiseAPIError(str(e), 500)
 
 # http://xytovet.localhost:8000/api/v1/view/savetbldata
-def saveTableData (request: Request):
+def saveTableData(request: Request):
     try:
         print("saveTableData --> ")
     except Exception as e:
@@ -92,7 +92,7 @@ def saveTableData (request: Request):
         raiseAPIError(str(e), 500)
 
 # http://testws1.localhost:8000/api/v1/view/create?view_name=reactv1&view_type=Table&pin_to_menu=0&m_centre_id=1
-def createBlankView (request: Request):
+def createBlankView(request: Request):
     try:
         params = RequestData.params(request)
         view_name = params.get("view_name", "")
@@ -194,7 +194,7 @@ def createBlankView (request: Request):
         raiseAPIError(str(e), 500)
 
 # http://xytovet.localhost:8000/api/v1/view/getlist
-def getViewList (request: Request):
+def getViewList(request: Request):
     try:
         print("getViewList --> ")
     except Exception as e:
@@ -202,7 +202,7 @@ def getViewList (request: Request):
         raiseAPIError(str(e), 500)
 
 # http://xytovet.localhost:8000/api/v1/view/childstatus
-def getViewChildStatus (request: Request):
+def getViewChildStatus(request: Request):
     try:
         print("getViewChildStatus --> ")
     except Exception as e:
@@ -210,26 +210,26 @@ def getViewChildStatus (request: Request):
         raiseAPIError(str(e), 500)
 
 # http://xytovet.localhost:8000/api/v1/view/duplicate
-def duplicateFullView (request: Request):
+def duplicateFullView(request: Request):
     print("duplicateFullView --> ")
 
 # http://xytovet.localhost:8000/api/v1/view/duplicateitem
-def duplicateItemData (request: Request):
+def duplicateItemData(request: Request):
     print("duplicateItemData --> ")
 
 # http://xytovet.localhost:8000/api/v1/view/lookupdata
-def getLookupData (request: Request):
+def getLookupData(request: Request):
     print("getLookupData --> ")
+    params = RequestData.params(request)
 
 # http://xytovet.localhost:8000/api/v1/view/filterdata
-def getDataForFilter (request: Request):
+def getDataForFilter(request: Request):
     print("getDataForFilter --> ")
 
-
 # http://xytovet.localhost:8000/api/v1/view/getquery
-def getRawViewQuery (request: Request):
+def getRawViewQuery(request: Request):
     print("getRawViewQuery --> ")
 
 # http://xytovet.localhost:8000/api/v1/view/checkurl
-def getViewURL (request: Request):
+def getViewURL(request: Request):
     print("getViewURL --> ")

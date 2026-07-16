@@ -96,7 +96,7 @@ def insertNestedJsonAfter(fulljson: dict, jsonkey: str, srchkey: str, srchval, n
     if not isinstance(nested, list):
         return False
     for i, item in enumerate(nested):
-        if item.get(srchkey) == srchval:
+        if str(item.get(srchkey)) == str(srchval):
             nested.insert(i + 1, new_item)
             return True
     return False
@@ -109,7 +109,7 @@ def insertNestedJsonBefore(fulljson: dict, jsonkey: str, srchkey: str, srchval, 
     if not isinstance(nested, list):
         return False
     for i, item in enumerate(nested):
-        if item.get(srchkey) == srchval:
+        if str(item.get(srchkey)) == str(srchval):
             nested.insert(i, new_item)
             return True
 
@@ -118,7 +118,7 @@ def insertNestedJsonBefore(fulljson: dict, jsonkey: str, srchkey: str, srchval, 
 def removeNestedJsonVal(fulljson: dict, jsonkey: str, srchkey: str, srchval):
     nested = fulljson.get(jsonkey)
     if isinstance(nested, dict):
-        if srchval is None or nested.get(srchkey) == srchval:
+        if srchval is None or str(nested.get(srchkey)) == str(srchval):
             del fulljson[jsonkey]
             return True
         return False
@@ -126,7 +126,7 @@ def removeNestedJsonVal(fulljson: dict, jsonkey: str, srchkey: str, srchval):
         return False
     removed = False
     for i in range(len(nested) - 1, -1, -1):
-        if srchval is None or nested[i].get(srchkey) == srchval:
+        if srchval is None or str(nested[i].get(srchkey)) == str(srchval):
             del nested[i]
             removed = True
             # Remove only the first matching item
