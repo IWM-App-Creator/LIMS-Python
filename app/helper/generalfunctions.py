@@ -27,9 +27,6 @@ def getHostName(request):
 def uploadFile(ws_url: str, file_url: str, file: UploadFile) -> str | None:
     file_name = ""
     file_url = ws_url + "/" + file_url
-    print("uploadFile --> ", file_url)
-    print("filename --> ", file.filename)
-    return
     if file is not None or file.filename is not None:
         destination_path = Path("wsassets/uploads") / file_url # Destination Folder.
         destination_path.mkdir(parents = True, exist_ok = True)

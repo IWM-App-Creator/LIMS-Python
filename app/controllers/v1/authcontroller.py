@@ -77,7 +77,7 @@ def forgotPassword(email: str):
         email=user.email,
         reset_url=reset_url
     )
-    notifyps.to_email.set("rushirko05@gmail.com")
+    notifyps.to_email.set(user.email)
     notifyps.subject.set("Miidata : Forgot Password")
     notifyps.html.set(html_body)
     notifyps.bcc.set("miidata@genotypingaustralia.com.au")

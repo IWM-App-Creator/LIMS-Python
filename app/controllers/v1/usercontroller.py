@@ -83,7 +83,6 @@ async def updateUserProfile(user_id: int, first_name: str, last_name: str, compa
     print("phone:", phone)
     print("timezone:", timezone)
     print("profile_pic:", profile_pic.filename)
-    return
     if profile_pic not in (None, "", 0):
         uploadFile(userps.ws_url.get(), "users/", profile_pic)
 
