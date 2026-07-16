@@ -95,8 +95,8 @@ def resetPassword(key: str, newpass: str):
     result = authfnct.verifyJWTToken(key) # Verify Token
     if not result["status"]: # if Token is Invalid or expired
         return JSONResponse(
-            status_code=401,
-            content=result
+            status_code = 200,
+            content = result
         )
     salt = bcrypt.gensalt()
     newpass = bcrypt.hashpw(newpass.encode(), salt)
