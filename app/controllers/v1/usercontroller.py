@@ -1,13 +1,16 @@
 import json
-from app.utils.common import DB, select, JSONResponse, raiseAPIError, userps
+from app.utils.common import DB, select, Request, RequestData, JSONResponse, raiseAPIError, userps
 from app.dbfunctions.userfunctions import getUserDataFromDB
 from app.properties.dbproperties import dbps
+from app.helper.generalfunctions import uploadFile
 from app.helper.menuhelper import getUserMenuList
 from app.helper.workspacehelper import getUserWSList
 from app.helper.dashboardhelper import getUserDashboards
 from app.properties.menuproperties import menups
 from app.properties.workspaceproperties import wsps
 from app.properties.dashboardproperties import dps
+from fastapi import UploadFile, File
+
 
 # http://xytovet.localhost:8000/api/v1/user/getdetail?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMzc3OSIsInJvbGVfaWQiOiIxIiwiZW1haWwiOiJjaGludGFuaXQyMkBnbWFpbC5jb20iLCJleHAiOjE3ODMzMjQ3ODR9.AY-PMOH78_p-Jj9v3L1Hd_stU6NXcRWdmoBYHtVnjgo
 def getUserDetail(): # token: str
@@ -64,8 +67,17 @@ def getUserDetail(): # token: str
         }
     )
 
-def updateUserProfile():
-    print("updateUserProfile:")
+async def updateUserProfile(user_id: int, first_name: str, last_name: str, company_name: str, email: str, phone: str, timezone: str, profile_pic: UploadFile = File(None)):
+    print("updateUserProfile --> ")
+    userps.othr_userid.set(user_id)
+    userps.first_name.set(first_name)
+    userps.last_name.set(last_name)
+    userps.company_name.set(company_name)
+    userps.email.set(email)
+    userps.phone.set(phone)
+    userps.user_timezone.set(timezone)
+    if profile_pic not in (None, "", 0):
+        uploadFile()
 
 def getUserList():
     print("getUserList:")

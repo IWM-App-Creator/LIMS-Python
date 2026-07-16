@@ -91,8 +91,8 @@ def forgotPassword(email: str):
         }
     )
 
-def resetPassword(token: str, newpass: str):
-    result = authfnct.verifyJWTToken(token) # Verify Token
+def resetPassword(key: str, newpass: str):
+    result = authfnct.verifyJWTToken(key) # Verify Token
     if not result["status"]: # if Token is Invalid or expired
         return JSONResponse(
             status_code=401,

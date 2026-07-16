@@ -18,6 +18,8 @@ class UserProperties:
         self.email = ContextVar("email", default = "")
         self.phone = ContextVar("phone", default = "")
         self.password = ContextVar("password", default = "")
+        self.company_name = ContextVar("company_name", default = "")
+        self.profile_pic = ContextVar("profile_pic", default = "")
         self.user_settings = ContextVar("user_settings", default = {})
         self.usermenus = ContextVar("usermenus", default = [])
         self.othr_userid = ContextVar("othr_userid", default = "")

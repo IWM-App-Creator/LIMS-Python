@@ -2,6 +2,10 @@ import os
 import json
 import secrets
 import string
+import shutil
+import time
+from pathlib import Path
+from fastapi import UploadFile
 from app.properties.usersproperties import userps
 from app.properties.globalproperties import globalps
 
@@ -19,6 +23,20 @@ def getHostName(request):
     hostsd = host.split(":")[0]
     userps.req_host.set(host)
     userps.req_subdomain.set(hostsd.split(".")[0])
+
+def uploadFile(ws_url: str, file_url: str, file: UploadFile | None) -> str | None:
+    file = ""
+    file_url = ws_url + "/" + file_url
+    if file is not None or file.filename is not None:
+        destination_path = Path("wsassets/uploads") / file_url # Destination Folder.
+        destination_path.mkdir(parents = True, exist_ok = True)
+        extension = Path(file.filename).suffix # Get extension
+        filename = f"{file_url}_{int(time.time())}".replace(" ", "_") # Generate filename
+        file = f"{filename}{extension}"
+        # Save file
+        with open(destination_path / file, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+    return file
 
 def generateRandomString(length: int = 10, hasdigits: int = 0) -> str:
     alphabet = string.ascii_lowercase
