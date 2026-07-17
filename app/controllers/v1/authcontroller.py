@@ -41,10 +41,7 @@ def doLogin(email: str, password: str):
 def validateJWT(token: str):
     payload = authfnct.verifyJWTToken(token)
     if not payload["status"]: # if Token is Invalid or expired
-        return JSONResponse(
-            status_code = 401,
-            content=payload
-        )
+        return raiseInvalidError(payload["message"], 401)
     return JSONResponse (
         status_code = 200,
         content = {
