@@ -67,7 +67,7 @@ def getUserDetail(): # token: str
         }
     )
 
-async def updateUserProfile(file: UploadFile):
+def updateUserProfile(file: UploadFile):
     print("updateUserProfile --> ", file.filename)
 
 def getUserList():

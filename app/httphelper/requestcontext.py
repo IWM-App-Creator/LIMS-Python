@@ -23,8 +23,13 @@ async def request_context(request: Request, call_next):
         content_type = request.headers.get("Content-Type", "")
         if "application/json" in content_type:
             request.state.params = await request.json()
+        elif "multipart/form-data" in content_type:
+            request.state.params = {}
+        elif "application/x-www-form-urlencoded" in content_type:
+            form = await request.form()
+            request.state.params = dict(form)
         else:
-            request.state.params = dict(await request.form())
+            request.state.params = {}
 
     # --------------------------
     # Validate Workspace

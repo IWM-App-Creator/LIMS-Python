@@ -91,19 +91,16 @@ def forgotPassword(email: str):
         }
     )
 
-def resetPassword(token: str, newpass: str):
+def resetPassword(token: str, password: str):
     result = authfnct.verifyJWTToken(token) # Verify Token
     if not result["status"]: # if Token is Invalid or expired
-        return JSONResponse(
-            status_code = 200,
-            content = result
-        )
+        return raiseInvalidError(result["message"], 200)
     salt = bcrypt.gensalt()
-    newpass = bcrypt.hashpw(newpass.encode(), salt)
-    newpass = newpass.decode()
+    password = bcrypt.hashpw(password.encode(), salt)
+    password = password.decode()
     user_id = result["payload"]["user_id"]
     userps.user_id.set(user_id)
-    userps.db_upd_vals.set({"password": newpass})
+    userps.db_upd_vals.set({"password": password})
     insertUpdateUserData() # Update Password in DB
     return JSONResponse(
         status_code=200,
