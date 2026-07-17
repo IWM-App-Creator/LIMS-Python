@@ -1,7 +1,7 @@
 from pathlib import Path
 from app.utils.common import formatDate, DB, text, nowWithTimeZone, userps
 from app.dbfunctions.dbfunctions import createWSDBSchema
-from app.dbfunctions.userfunctions import getUserDataByID
+from app.dbfunctions.userfunctions import getUserDataFromDB
 from app.dbfunctions.dashboardfunctions import insertUpdateDashboard
 from app.helper.generalfunctions import formatUserDisplayName, generateRandomString, uploadFile
 import app.dbfunctions.workspacefunctions as wsfnct
@@ -21,7 +21,8 @@ def getWorkspaceByUser(wsps):
         used_size = wsps.used_size.get()
         usages = (used_size * 100 ) / ws.size_limit
         created_name = "";
-        user = getUserDataByID(ws.created_by)
+        userps.othr_userid.set(ws.created_by)
+        user = getUserDataFromDB()
         total_users = int(getattr(ws, "ownercnt", 0)) + int(getattr(ws, "usercnt", 0)) + int(getattr(ws, "noaccesscnt", 0))
         if user:
             first_name = getattr(user, "first_name", "")

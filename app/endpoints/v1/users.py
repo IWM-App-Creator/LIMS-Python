@@ -5,6 +5,7 @@ router = APIRouter(prefix = "/user")
 
 ROUTES = [
     ("/getdetail", usersapi.getUserDetail, ["GET"]),
+    ("/search", usersapi.searchWSUser, ["GET"]),
     ("/updateprofile", usersapi.updateUserProfile, ["POST"]),
     ("/changepassword", usersapi.changeUserPassword, ["POST"]),
     ("/getlist", usersapi.getUserList, ["GET"]),

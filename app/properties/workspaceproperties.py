@@ -21,6 +21,7 @@ class WorkspaceProperties:
         self.is_invited = ContextVar("is_invited", default = 1)
         self.is_accepted = ContextVar("is_accepted", default = 0)
 
+        self.chk_ws_role = ContextVar("chk_ws_role", default = 1)
         self.domain_flag = ContextVar("domain_flag", default = 1)
         self.fetch_single = ContextVar("fetch_single", default = 1)
         self.ws_srch = ContextVar("ws_srch", default = "")

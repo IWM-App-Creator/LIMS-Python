@@ -3,6 +3,7 @@ import bcrypt
 from app.utils.common import DB, select, Request, RequestData, JSONResponse, raiseAPIError, raiseInvalidError, userps
 from app.dbfunctions.userfunctions import getUserDataFromDB, insertUpdateUserData
 from app.dbfunctions.logfunctions import saveErrorLogtoDB
+from app.dbfunctions.workspacefunctions import getUserWSData
 from app.properties.dbproperties import dbps
 from app.helper.generalfunctions import uploadFile, addUpdateJson
 from app.helper.userhelper import setUserProperties
@@ -17,20 +18,10 @@ from fastapi import UploadFile, File
 # http://xytovet.localhost:8000/api/v1/user/getdetail?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMzc3OSIsInJvbGVfaWQiOiIxIiwiZW1haWwiOiJjaGludGFuaXQyMkBnbWFpbC5jb20iLCJleHAiOjE3ODMzMjQ3ODR9.AY-PMOH78_p-Jj9v3L1Hd_stU6NXcRWdmoBYHtVnjgo
 def getUserDetail(): # token: str
     print("getUserDetail:", userps.user_id.get())
-    # --------------------------
-    # Get User Data
-    # --------------------------
-    # tbluser = DB.getTableMeta("users", "systemconfig").alias("usr")
-    # stmt = (
-    #     select(tbluser).where(tbluser.c.id == userps.user_id.get())
-    # )
-    # user = DB.executeDBSelectSingle(stmt)
-    # if not user: # Invalid User
-    #     raiseAPIError("Invalid User ID", 401)
-
+    userps.othr_userid.set(userps.user_id.get())
     user = getUserDataFromDB() # Execute Function to User Get Data
     if not user: # Invalid User
-        raiseAPIError("Invalid Email", 401)
+        raiseAPIError("User Not Found", 401)
     userps.first_name.set(user.first_name)
     userps.last_name.set(user.last_name)
     userps.email.set(user.email)
@@ -68,6 +59,54 @@ def getUserDetail(): # token: str
             "dashboard_list" : dps.dashboards_data.get()
         }
     )
+
+def searchWSUser(request: Request):
+    print("searchWSUser --> ")
+    try:
+        params = RequestData.params(request)
+        userps.email.set(params.get("email", ""))
+        user = getUserDataFromDB()
+        if user:
+            user_data = {
+                "user_id": user.id,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "role_id": user.role_id
+            }
+            wsps.chk_ws_role.set(0)
+            wsps.ws_usr_id.set(user.id)
+            wsps.domain_flag.set(0)
+            wsps.fetch_single.set(0)
+            getUserWSData(wsps)
+            userws_dtl = []
+            for ws in wsps.ws_data.get():
+                if int(ws.ws_role_id) == 1:
+                    role_lbl = "Owner"
+                elif int(ws.ws_role_id) == 2:
+                    role_lbl = "User"
+                else:
+                    role_lbl = "No Access"
+                row = {
+                    "workspace_id": getattr(ws, "workspace_id", 0),
+                    "workspace_name": getattr(ws, "workspace_name", ""),
+                    "ws_role_id": getattr(ws, "ws_role_id", 0),
+                    "ws_role_lbl": role_lbl
+                }
+                userws_dtl.append(row)
+            user_data['userws_dtl'] = userws_dtl
+            return JSONResponse(
+                status_code = 200,
+                content = {
+                    "status": True,
+                    "message": "User Data",
+                    "user_data": user_data
+                }
+            )
+        else:
+            return raiseInvalidError("User Not Found", 401)
+    except Exception as e:
+        saveErrorLogtoDB ("User", userps.othr_userid.get(), "searchWSUser", str(e)) # Log Error To DB
+        raiseAPIError(str(e), 500)
 
 async def updateUserProfile(request: Request):
     try:
@@ -111,7 +150,8 @@ async def updateUserProfile(request: Request):
 def changeUserPassword(request: Request):
     try:
         params = RequestData.params(request)
-        setUserProperties(userps, params) # set params to user properties
+        userps.othr_userid.set(params.get("othr_userid", ""))
+        userps.password.set(params.get("password", ""))
         if userps.othr_userid.get() in (None, "", 0):
             return raiseInvalidError("User Not Found", 401)
         user = getUserDataFromDB()

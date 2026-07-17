@@ -1,9 +1,7 @@
 from app.utils.common import select, DB, userps, update, insert
 
 def getUserDataFromDB():
-    user_id = userps.user_id.get() # Get User ID
-    if userps.othr_userid.get() not in (None, "", 0):
-        user_id = userps.othr_userid.get()
+    user_id = userps.othr_userid.get() # Get User ID
     email = userps.email.get() # Get User Email
     # Prepare Query
     tbluser = DB.getTableMeta("users", "systemconfig").alias("usr")
@@ -12,13 +10,6 @@ def getUserDataFromDB():
         stmt = stmt.where(tbluser.c.id == user_id)
     if email not in (None, ""):
         stmt = stmt.where(tbluser.c.email == email)
-    user = DB.executeDBSelectSingle(stmt) # Execute Query
-    return user
-
-
-def getUserDataByID(user_id):
-    tbluser = DB.getTableMeta("users", "systemconfig").alias("usr")
-    stmt = select(tbluser).where(tbluser.c.id == user_id)
     user = DB.executeDBSelectSingle(stmt) # Execute Query
     return user
 

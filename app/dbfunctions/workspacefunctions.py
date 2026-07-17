@@ -86,10 +86,11 @@ def getUserWSData(wsps):
             users_workspace.c.workspace_id == workspace_master.c.workspace_id,
         )
         .where(workspace_master.c.is_delete == 0)
-        .where(users_workspace.c.ws_role_id < 3)
         .where(users_workspace.c.is_delete == 0)
         .where(users_workspace.c.user_id == userid)
     )
+    if wsps.chk_ws_role.get() == 1:
+        stmt = stmt.where(users_workspace.c.ws_role_id < 3)
     if wsps.domain_flag.get() == 1:
         stmt = stmt.where(workspace_master.c.ws_url == userps.req_subdomain.get())
     if wsps.fetch_single.get() == 1:
