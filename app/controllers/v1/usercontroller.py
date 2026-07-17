@@ -65,6 +65,8 @@ def searchWSUser(request: Request):
     try:
         params = RequestData.params(request)
         userps.email.set(params.get("email", ""))
+        if userps.email.get() in (None, ""):
+            return raiseInvalidError("Invalid Email", 401)
         user = getUserDataFromDB()
         if user:
             user_data = {
