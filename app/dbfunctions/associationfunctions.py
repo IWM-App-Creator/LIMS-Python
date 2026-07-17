@@ -1,4 +1,4 @@
-from app.utils.common import DB, select, func, userps, or_
+from app.utils.common import DB, select, func, text, userps, or_
 
 def getAssociationData(associationps):
     association = DB.getTableMeta("sys_associations").alias("a")
@@ -69,41 +69,32 @@ def getAssociationDesignation(associationps):
     else :
         return DB.executeDBSelect(stmt)
 
-def userAssociationView(associationps):
-    print("userAssociationView --> ")
-    association_users = DB.getTableMeta("sys_association_users")
-    associations = DB.getTableMeta("sys_associations")
-    designation = DB.getTableMeta("sys_designation")
-    stmt = (
-        select(
-            association_users,
-            designation.c.designation_name,
-            associations.c.name,
-            associations.c.full_access
+def getViewAssociationByUser(associationps):
+    user_id = associationps.view_id.get()
+    view_id = associationps.view_id.get()
+    print("userAssociationView user_id --> ", user_id)
+    print("userAssociationView view_id --> ", view_id)
+    association_users = DB.getTableMeta("sys_association_users").alias("sa_user")
+    associations = DB.getTableMeta("sys_associations").alias("sa")
+    designation = DB.getTableMeta("sys_designation").alias("sd")
+    stmt = ( 
+        select(association_users, designation.c.designation_name, associations.c.name, associations.c.full_access)
+        .outerjoin(
+            associations,
+            association_users.c.associations_id == associations.c.associations_id,
         )
-        .select_from(
-            association_users
-            .outerjoin(
-                associations,
-                association_users.c.associations_id == associations.c.associations_id
-            )
-            .outerjoin(
-                designation,
-                association_users.c.designation_id == designation.c.designation_id
-            )
+        .outerjoin(
+            designation,
+            association_users.c.designation_id == designation.c.designation_id,
         )
-        .where(association_users.c.user_id == associationps.user_id.get())
-        .where(association_users.c.is_delete == 0)
+        .where(
+            association_users.c.user_id == user_id,
+            association_users.c.is_delete == 0,
+            text(f"FIND_IN_SET('{view_id}', dyncviews)")
+        )
+        .order_by(association_users.c.col_p_val.asc())
     )
-    stmt = stmt.where(
-        func.find_in_set(
-            associationps.view_id.get(),
-            func.json_unquote(
-                func.json_extract(association_users.c.access_json, "$.dyncviews")
-            )
-        ) > 0
-    )
-    stmt = stmt.order_by(association_users.c.col_p_val.asc())
+    print("stmt --> ", stmt)
     return DB.executeDBSelect(stmt)
 
 def getAssociationsForNotification(associationps):
@@ -154,3 +145,78 @@ def getAssociationsForNotification(associationps):
         }
         asso_notify.append(row)
     return asso_notify
+
+#   public function checkViewAssociation($dvps) {
+#         $dvps->full_access = 0;
+#         $dvps->prmqry = "";
+#         $asso_tbl = "mltb";
+#         $asso_col = "";
+#         $assocol_ids = array();
+#         // $GeneralFunctions = new GeneralFunctions();
+#         // DB::enableQueryLog();
+#         $dvps->assousers = DB::table('sys_association_users')
+#                                 ->select('sys_association_users.*', 'sys_designation.designation_name', 'sys_associations.name', 'sys_associations.full_access')
+#                                 ->leftjoin('sys_associations', 'sys_association_users.associations_id', '=', 'sys_associations.associations_id')
+#                                 ->leftjoin('sys_designation', 'sys_association_users.designation_id', '=', 'sys_designation.designation_id')
+#                                 ->whereRaw("FIND_IN_SET('" . $dvps->view_id . "', dyncviews)")
+#                                 ->where('sys_association_users.user_id', $dvps->user_id)
+#                                 ->where('sys_association_users.is_delete', '0')
+#                                 ->orderBy('col_p_val', 'ASC') 
+#                                 ->get();
+#         // $query_array = DB::getQueryLog();
+#         // $GeneralFunctions->displayQuery($query_array);
+#         // exit;
+#         foreach($dvps->assousers as $assousr) {
+#             if($assousr->full_access == 1) {
+#                 $dvps->full_access = 1;
+#                 if($dvps->fa_is_owner == 0 &&  $assousr->is_owner > 0) {
+#                     $dvps->fa_asso_id = $assousr->associations_id;
+#                     $dvps->fa_dsgn_id = $assousr->designation_id;
+#                     $dvps->fa_dsgn_nm = $assousr->designation_name;
+#                     $dvps->fa_is_owner = $assousr->is_owner;
+#                     $dvps->fa_is_edit = "1"; //$assousr->is_edit;
+#                     $dvps->fa_is_view = "1"; // $assousr->is_view;
+#                     $dvps->fa_is_noaccess = "1"; // $assousr->is_noaccess;
+#                 } else if($dvps->fa_is_edit == 0 &&  $assousr->is_edit > 0) {
+#                     $dvps->fa_asso_id = $assousr->associations_id;
+#                     $dvps->fa_dsgn_id = $assousr->designation_id;
+#                     $dvps->fa_dsgn_nm = $assousr->designation_name;
+#                     $dvps->fa_is_owner = $assousr->is_owner;
+#                     $dvps->fa_is_edit = $assousr->is_edit;
+#                     $dvps->fa_is_view = "1"; //$assousr->is_view;
+#                     $dvps->fa_is_noaccess = "1"; //$assousr->is_noaccess;
+#                 } else if($dvps->fa_is_view == 0 &&  $assousr->is_view > 0) {
+#                     $dvps->fa_asso_id = $assousr->associations_id;
+#                     $dvps->fa_dsgn_id = $assousr->designation_id;
+#                     $dvps->fa_dsgn_nm = $assousr->designation_name;
+#                     $dvps->fa_is_owner = $assousr->is_owner;
+#                     $dvps->fa_is_edit = $assousr->is_edit;
+#                     $dvps->fa_is_view = $assousr->is_view;
+#                     $dvps->fa_is_noaccess = "1"; //$assousr->is_noaccess;
+#                 } else if($dvps->fa_is_noaccess == 0 &&  $assousr->is_noaccess > 0) {
+#                     $dvps->fa_asso_id = $assousr->associations_id;
+#                     $dvps->fa_dsgn_id = $assousr->designation_id;
+#                     $dvps->fa_dsgn_nm = $assousr->designation_name;
+#                     $dvps->fa_is_owner = $assousr->is_owner;
+#                     $dvps->fa_is_edit = $assousr->is_edit;
+#                     $dvps->fa_is_view = $assousr->is_view;
+#                     $dvps->fa_is_noaccess = $assousr->is_noaccess;
+#                 }
+#             }
+#             array_push($assocol_ids, $assousr->col_p_val);
+#         }
+#         if($dvps->full_access == 0) {
+#             foreach($dvps->assousers as $assousr) {
+#                 if(!$asso_col) {
+#                     /* Get Table Column Name */
+#                     foreach($dvps->viewcols as $viewcol) {
+#                         if($assousr->col_id == $viewcol->col_id) {
+#                             $asso_tbl = $viewcol->table_name;
+#                             $asso_col = $viewcol->col_name;
+#                         }
+#                     }
+#                 }
+#             }
+#             $dvps->prmqry = $asso_tbl . "." . $asso_col . " In (" . implode(",", $assocol_ids) . ")";
+#         }
+#     }

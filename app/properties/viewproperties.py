@@ -12,11 +12,21 @@ class viewproperties:
         self.qry_col_list = ContextVar("qry_col_list", default = "")
         self.join_qry = ContextVar("join_qry", default = "")
         self.join_del_qry = ContextVar("join_del_qry", default = "")
-        
 
         self.view_qry_data = ContextVar("view_qry_data", default = [])
         self.total_record = ContextVar("total_record", default = 0)
         self.item_list = ContextVar("item_list", default = [])
+
+        # Association Properties
+        self.association_qry = ContextVar("association_qry", default = "")
+        self.full_access = ContextVar("full_access", default = 0)
+        self.fa_asso_id = ContextVar("fa_asso_id", default = 0)
+        self.fa_dsgn_id = ContextVar("fa_dsgn_id", default = 0)
+        self.fa_dsgn_nm = ContextVar("fa_dsgn_nm", default = "")
+        self.fa_is_owner = ContextVar("fa_is_owner", default = 0)
+        self.fa_is_edit = ContextVar("fa_is_edit", default = 0)
+        self.fa_is_view = ContextVar("fa_is_view", default = 0)
+        self.fa_is_noaccess = ContextVar("fa_is_noaccess", default = 0)
 
         self.tab_id = ContextVar("tab_id", default = "0")
         self.page_no = ContextVar("page_no", default = 1)

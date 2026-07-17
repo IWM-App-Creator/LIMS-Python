@@ -4,10 +4,19 @@ import app.dbfunctions.workspacefunctions as wsfnct
 from app.helper.workspacehelper import getWorkspaceByUser, updateWorkspace, createWorkspace
 from app.properties.workspaceproperties import wsps
 
-# http://testws1.localhost:8000/api/v1/workspace/isvalidws?subdomain=testws1
-def isWSValid (subdomain: str):
-    workspace_id = wsfnct.isWorkspaceValid(subdomain) # Execute Function to User WS Data
-    if workspace_id == "0" and subdomain != "auth" : # Invalid Workspace
+# http://testws1.localhost:8000/api/v1/workspace/isvalidws?subdomain=testws1&pagepath=login
+def isWSValid (subdomain: str, pagepath: str):
+    workspace_id = 0
+    isvalid = 0
+    if subdomain and subdomain != "auth":
+        workspace_id = wsfnct.isWorkspaceValid(subdomain) # Execute Function to User WS Data
+        isvalid = 1
+    
+    if subdomain == "auth" and pagepath in ("", "login", "forgotpassword", "resetpassword"):
+        print("pagepath --> ", pagepath)
+        isvalid = 1
+    
+    if workspace_id == "0" or isvalid == 0 : # Invalid Workspace
         return JSONResponse (
             status_code = 200,
             content = {
@@ -75,4 +84,3 @@ async def saveWorkspace(request: Request):
     except Exception as e:
         saveErrorLogtoDB ("Workspace", 0, "getWorkspaceList", str(e))
         raiseAPIError(str(e), 500)
-

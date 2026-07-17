@@ -10,6 +10,7 @@ from app.properties.viewproperties import viewps
 from app.properties.dbproperties import dbps
 from app.properties.menuproperties import menups
 
+# http://testws1.localhost:8000/api/v1/view/getdata?view_id=125
 # http://testws1.localhost:8000/api/v1/view/getdata?view_id=178
 # http://testws1.localhost:8000/api/v1/view/getdata?view_id=182
 def getViewData(request: Request):
@@ -34,6 +35,15 @@ def getViewData(request: Request):
         dataarr = []
         viewps.view_qry_data.set(dataarr)
         view_qry = viewps.view_qry.get() # Get Query
+        
+        viewhlp.checkViewAssociation(viewps) # Check Associations
+        print("association_qry --", viewps.association_qry.get())
+        
+        # // checkViewAssociation. --> userAssociationView
+        # if($dvps->prmqry) {
+        #     $db_query = $db_query . " AND ( " . $dvps->prmqry . ")";
+        # }
+        
         # print("primary_colnm --", viewps.primary_colnm.get())
         #     $dvps->rawqry = "";
         #     if($dvps->txtsearch) {
@@ -49,7 +59,10 @@ def getViewData(request: Request):
         #     // if($dvps->association_limit) {
         #     //     $DynamicViewFunctions->getViewAssociationLimit($dvps);
         #     // }
-        #     // checkViewAssociation.
+        #     
+
+       
+
         sorting = f"mtbl.{viewps.primary_colnm.get()} DESC"
         # viewps.sorting.set(sorting)
         # viewps.primary_colnm.set(0)
@@ -60,10 +73,7 @@ def getViewData(request: Request):
         #     }
         view_qry = f"{view_qry} Order By {sorting}"
         viewhlp.setViewPaging(viewps) # Get Paging
-    
-        # TO DO : Appending Notification Query
-        # createviewhlp.getNotificationCountQuery(viewps)
-
+        view_qry = view_qry.replace("#USER_ID#", str(userps.user_id.get())) # Update Notification Query User ID
         view_qry = f"{view_qry} LIMIT {viewps.offset.get()}, {viewps.page_size.get()}"
         viewps.view_qry.set(view_qry)
         view_qry_data = DB.executeDBStatement(view_qry) # Execute Query To Get View Data
@@ -79,6 +89,20 @@ def getViewData(request: Request):
                 "view_data": viewps.output_array.get()
             }
         )
+    
+        # Association View Wise
+        # $tmpdata = array();
+        # $tmpdata['view_id'] = $view_id;
+        # $tmpdata['admin_access'] = $admin_access;
+        # $tmpdata['association_access'] = $association_access;
+        # $tmpdata['association_users'] = $association_users;
+        # if($association_view) {
+        #     $tmpdata['asso_view_id'] = $association_view->asso_view_id;
+        #     $tmpdata['view_asso_json'] = json_decode($association_view->view_asso_json);
+        # } else {
+        #     $tmpdata['asso_view_id'] = "";
+        #     $tmpdata['view_asso_json'] = [];
+        # }
     except Exception as e:
         saveErrorLogtoDB ("View", viewps.view_id.get(), "getViewData", str(e)) # Log Error To DB
         raiseAPIError(str(e), 500)

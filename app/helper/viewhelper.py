@@ -2,8 +2,10 @@ import json
 from app.utils.common import select, DB, userps
 from app.dbfunctions.dbtablesfunctions import getDBTableData
 from app.dbfunctions.viewlayoutfunctions import getViewLayoutDataByID
+from app.dbfunctions.associationfunctions import getViewAssociationByUser
 from app.helper.generalfunctions import sortObjectsByKey, updateNestedJsonVal
 from app.properties.dbproperties import dbps
+from app.properties.associationproperties import associationps
 from app.helper import dbhelper as dbhlp
 
 from app.helper.templatehelper import getPriorityTemplate
@@ -85,6 +87,70 @@ class ViewHelper:
             viewps.action_group_list.set(viewlayout.action_group_list)
             viewps.user_setting.set(viewlayout.user_setting)
 
+    @staticmethod
+    def checkViewAssociation(viewps):
+        associationps.user_id.set(userps.user_id.get())
+        associationps.view_id.set(viewps.view_id.get())
+        assousers = getViewAssociationByUser(associationps)
+        # print("assousers --> ", assousers)
+        viewps.full_access.set(0)
+        viewps.association_qry.set("")
+        assocol_ids = []
+        asso_tbl = "mtbl"
+        asso_col = ""
+        for assoc in assousers:
+            if assoc.full_access == 1:
+                viewps.full_access.set(1)
+                viewhlp.setHighestPermission(assoc)
+            assocol_ids.append(assoc.col_p_val)
+        
+        if viewps.full_access.get() == 0:
+            for assoc in assousers:
+                if asso_col:
+                    print("IF 1")
+                    break
+                for col in viewps.viewcols.get():
+                    if assoc.col_id == col.col_id:
+                        print("IF 2")
+                        asso_tbl = col.table_name
+                        asso_col = col.col_name
+                        break
+            if assocol_ids:
+                viewps.association_qry.set(f"{asso_tbl}.{asso_col} IN ({','.join(map(str, assocol_ids))})")
+
+    @staticmethod
+    def setHighestPermission(viewps, assoc):
+        if viewps.fa_is_owner.get() == 0 and assoc.is_owner > 0:
+            viewhlp.copyAssociation(viewps, assoc)
+            viewps.fa_is_edit.set(1)
+            viewps.fa_is_view.set(1)
+            viewps.fa_is_noaccess.set(1)
+
+        elif viewps.fa_is_edit.get() == 0 and assoc.is_edit > 0:
+            viewhlp.copyAssociation(viewps, assoc)
+            viewps.fa_is_edit.set(assoc.is_edit)
+            viewps.fa_is_view.set(1)
+            viewps.fa_is_noaccess.set(1)
+
+        elif viewps.fa_is_view.get() == 0 and assoc.is_view > 0:
+            viewhlp.copyAssociation(viewps, assoc)
+            viewps.fa_is_view.set(assoc.is_view)
+            viewps.fa_is_noaccess.set(1)
+
+        elif viewps.fa_is_noaccess.get() == 0 and assoc.is_noaccess > 0:
+            viewhlp.copyAssociation(viewps, assoc)
+            viewps.fa_is_noaccess.set(assoc.is_noaccess)
+    
+    @staticmethod
+    def copyAssociation(viewps, assoc):
+        viewps.fa_asso_id.set(assoc.associations_id)
+        viewps.fa_dsgn_id.set(assoc.designation_id)
+        viewps.fa_dsgn_nm.set(assoc.designation_name)
+        viewps.fa_is_owner.set(assoc.is_owner)
+        viewps.fa_is_edit.set(assoc.is_edit)
+        viewps.fa_is_view.set(assoc.is_view)
+        viewps.fa_is_noaccess.set(assoc.is_noaccess)
+        
     @staticmethod
     def setViewSorting(viewps):
         user_setting = viewps.user_setting.get() or {}
@@ -209,6 +275,40 @@ class ViewHelper:
                 "is_delete": getattr(data, "is_delete", 0),
                 "noti_cnt": getattr(data, "noti_cnt", "")
             }
+            # Join Table Is Delete
+            # foreach($dvps->tablenames as $tbl) {
+            #     $is_main_tbl = 0;
+            #     if($tbl && explode("|", $tbl)[0] == $dvps->table_id) {
+            #         $is_main_tbl = 1;
+            #     }
+            #     if($is_main_tbl == 0) {
+            #         $tbl_alias = explode("|", $tbl)[1] . "_is_delete";
+            #         $item_array[$tbl_alias] = $data->$tbl_alias;
+            #     }
+            # }
+            # Association Per Item
+            # if($dvps->full_access == 1) { /* Full Access */
+            #     $item_array['associations_id'] = $dvps->fa_asso_id;
+            #     $item_array['designation_id'] = $dvps->fa_dsgn_id;
+            #     $item_array['designation_name'] = $dvps->fa_dsgn_nm;
+            #     $item_array['is_owner'] = $dvps->fa_is_owner;
+            #     $item_array['is_edit'] = $dvps->fa_is_edit;
+            #     $item_array['is_view'] = $dvps->fa_is_view;
+            #     $item_array['is_noaccess'] = $dvps->fa_is_noaccess;
+            # } else { /* Limited Access */
+            #     foreach($dvps->assousers as $assousr) {
+            #         if($data->$item_id_name == $assousr->col_p_val) {
+            #             $item_array['associations_id'] = $assousr->associations_id;
+            #             $item_array['designation_id'] = $assousr->designation_id;
+            #             $item_array['designation_name'] = $assousr->designation_name;
+            #             $item_array['is_owner'] = $assousr->is_owner;
+            #             $item_array['is_edit'] = $assousr->is_edit;
+            #             $item_array['is_view'] = $assousr->is_view;
+            #             $item_array['is_noaccess'] = $assousr->is_noaccess;
+            #             break;
+            #         }
+            #     }
+            # }
             for colhd in view_cols:
                 col_id = colhd["col_id"]
                 col_name = colhd["col_name"]
