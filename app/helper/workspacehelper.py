@@ -3,7 +3,7 @@ from app.utils.common import formatDate, DB, text, nowWithTimeZone, userps
 from app.dbfunctions.dbfunctions import createWSDBSchema
 from app.dbfunctions.userfunctions import getUserDataByID
 from app.dbfunctions.dashboardfunctions import insertUpdateDashboard
-from app.helper.generalfunctions import formatUserDisplayName, generateRandomString
+from app.helper.generalfunctions import formatUserDisplayName, generateRandomString, uploadFile
 import app.dbfunctions.workspacefunctions as wsfnct
 import app.properties.dbproperties as dps
 import shutil
@@ -74,7 +74,7 @@ def createWorkspace(wsps):
     # Step 1 : Add To Workspace
     schema_name = generateRandomString(length = 12, hasdigits = 1)
     wsps.schema_name.set(schema_name)
-    uploadWorkspaceLogo(wsps, wsps.ws_url.get(), wsps.ws_logo_file.get()) # Upload File Functions Here
+    wsps.ws_logo.set(uploadFile(wsps.ws_url.get(), "", wsps.ws_logo_file.get())) # Upload File Functions Here
     wsfnct.insertUpdateWorkspace(wsps) # Create New Workspace # workspace_id
     # Step 2 : Assign WS to User
     # $user_wp_id = $WSFunctionsController->assignUserToWorkspace($workspace_id, $user_id, $user_id, 1, 0);
@@ -165,7 +165,7 @@ def updateWorkspace(wsps):
     ws_url = ""
     if wsdata :
         ws_url = wsdata.ws_url
-    uploadWorkspaceLogo(wsps, ws_url, wsps.ws_logo_file.get()) # Upload File Functions Here
+    wsps.ws_logo.set(uploadFile(ws_url, "", wsps.ws_logo_file.get())) # Upload File Functions Here
     db_upd_vals = {}
     if wsps.workspace_name.get() not in (None, ""):
         db_upd_vals["workspace_name"] = wsps.workspace_name.get()
@@ -175,19 +175,6 @@ def updateWorkspace(wsps):
         db_upd_vals["ws_logo"] = wsps.ws_logo.get()
     wsps.db_upd_vals.set(db_upd_vals)
     wsfnct.insertUpdateWorkspace(wsps)
-
-def uploadWorkspaceLogo(wsps, ws_url: str, ws_logo_file: UploadFile | None) -> str | None:
-    if ws_logo_file is None or not ws_logo_file.filename:
-        wsps.ws_logo.set("")
-    destination_path = Path("wsassets/uploads") / ws_url # Destination Folder.
-    destination_path.mkdir(parents = True, exist_ok = True)
-    extension = Path(ws_logo_file.filename).suffix # Get extension
-    filename = f"{ws_url}_{int(time.time())}".replace(" ", "_") # Generate filename
-    ws_logo = f"{filename}{extension}"
-    # Save file
-    with open(destination_path / ws_logo, "wb") as buffer:
-        shutil.copyfileobj(ws_logo_file.file, buffer)
-    wsps.ws_logo.set(ws_logo)
 
 def getWSCommonFolderArray():
     WS_COMMON_FOLDERS = [

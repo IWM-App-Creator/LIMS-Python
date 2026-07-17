@@ -24,19 +24,44 @@ def getHostName(request):
     userps.req_host.set(host)
     userps.req_subdomain.set(hostsd.split(".")[0])
 
-def uploadFile(ws_url: str, file_url: str, file: UploadFile) -> str | None:
-    file_name = ""
-    file_url = ws_url + "/" + file_url
-    if file is not None or file.filename is not None:
-        destination_path = Path("wsassets/uploads") / file_url # Destination Folder.
-        destination_path.mkdir(parents = True, exist_ok = True)
-        extension = Path(file.filename).suffix # Get extension
-        filename = f"{file_url}_{int(time.time())}".replace(" ", "_") # Generate filename
-        file_name = f"{filename}{extension}"
-        # Save file
-        with open(destination_path / file_name, "wb") as buffer:
-            shutil.copyfileobj(file.file, buffer)
-    return file_name
+def uploadFile(ws_url: str, folder: str, file: UploadFile) -> str | None:
+    if file is None or not file.filename:
+        return None
+    destination_path = Path("wsassets/uploads") / ws_url / folder
+    destination_path.mkdir(parents=True, exist_ok=True, mode=0o777)
+    stem = Path(file.filename).stem          # abc
+    extension = Path(file.filename).suffix   # .png
+    filename = f"{stem}_{int(time.time())}{extension}"
+    with open(destination_path / filename, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+    return filename
+
+def makeDirectory(path: str | Path) -> Path:
+    directory = Path(path)
+    directory.mkdir(parents=True, exist_ok=True, mode=0o777)
+    # Optional: Set permissions on Linux/macOS
+    try:
+        os.chmod(directory, 0o777)
+    except Exception:
+        # Ignored on Windows
+        pass
+    return directory
+
+def removeDirectory(path: str | Path) -> bool:
+    directory = Path(path)
+    if directory.exists() and directory.is_dir():
+        shutil.rmtree(directory)
+        return True
+    return False
+
+from pathlib import Path
+
+def removeFile(path: str | Path) -> bool:
+    file_path = Path(path)
+    if file_path.exists() and file_path.is_file():
+        file_path.unlink()
+        return True
+    return False
 
 def generateRandomString(length: int = 10, hasdigits: int = 0) -> str:
     alphabet = string.ascii_lowercase
