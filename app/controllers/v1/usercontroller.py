@@ -67,24 +67,8 @@ def getUserDetail(): # token: str
         }
     )
 
-async def updateUserProfile(user_id: int, first_name: str, last_name: str, company_name: str, email: str, phone: str, timezone: str, profile_pic: UploadFile = File(None)):
-    userps.othr_userid.set(user_id)
-    userps.first_name.set(first_name)
-    userps.last_name.set(last_name)
-    userps.company_name.set(company_name)
-    userps.email.set(email)
-    userps.phone.set(phone)
-    userps.user_timezone.set(timezone)
-    print("othr_userid:", userps.othr_userid.get())
-    print("first_name:", first_name)
-    print("last_name:", last_name)
-    print("company_name:", company_name)
-    print("email:", email)
-    print("phone:", phone)
-    print("timezone:", timezone)
-    print("profile_pic:", profile_pic.filename)
-    if profile_pic not in (None, "", 0):
-        uploadFile(userps.ws_url.get(), "users/", profile_pic)
+async def updateUserProfile(file: UploadFile):
+    print("updateUserProfile --> ", file.filename)
 
 def getUserList():
     print("getUserList:")
