@@ -13,4 +13,7 @@ class RequestData:
     @staticmethod
     async def file(request: Request, field_name: str) -> UploadFile | None:
         form = await request.form()
-        return form.get(field_name)
+        file = form.get(field_name)
+        if isinstance(file, UploadFile):
+            return file
+        return None
