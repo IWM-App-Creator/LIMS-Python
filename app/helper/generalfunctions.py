@@ -28,7 +28,7 @@ def uploadFile(ws_url: str, folder: str, file: UploadFile) -> str | None:
     if file is None or not file.filename:
         return None
     destination_path = Path("wsassets/uploads") / ws_url / folder
-    destination_path.mkdir(parents=True, exist_ok=True, mode=0o777)
+    destination_path = makeDirectory(destination_path)
     stem = Path(file.filename).stem          # abc
     extension = Path(file.filename).suffix   # .png
     filename = f"{stem}_{int(time.time())}{extension}"
@@ -53,8 +53,6 @@ def removeDirectory(path: str | Path) -> bool:
         shutil.rmtree(directory)
         return True
     return False
-
-from pathlib import Path
 
 def removeFile(path: str | Path) -> bool:
     file_path = Path(path)
