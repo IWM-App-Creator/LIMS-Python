@@ -96,8 +96,10 @@ class ViewHelper:
         viewps.full_access.set(0)
         viewps.association_qry.set("")
         assocol_ids = []
-        asso_tbl = "mtbl"
+        qry_alias = "mtbl"
         asso_col = ""
+        view_cols = viewps.view_cols.get()
+        view_cols = view_cols.get("view_cols", [])
         for assoc in assousers:
             if assoc.full_access == 1:
                 viewps.full_access.set(1)
@@ -107,16 +109,14 @@ class ViewHelper:
         if viewps.full_access.get() == 0:
             for assoc in assousers:
                 if asso_col:
-                    print("IF 1")
                     break
-                for col in viewps.viewcols.get():
-                    if assoc.col_id == col.col_id:
-                        print("IF 2")
-                        asso_tbl = col.table_name
-                        asso_col = col.col_name
+                for col in view_cols:
+                    if assoc.col_id == col["col_id"]:
+                        qry_alias = col["qry_alias"]
+                        asso_col = col["col_name"]
                         break
             if assocol_ids:
-                viewps.association_qry.set(f"{asso_tbl}.{asso_col} IN ({','.join(map(str, assocol_ids))})")
+                viewps.association_qry.set(f"{qry_alias}.{asso_col} IN ({','.join(map(str, assocol_ids))})")
 
     @staticmethod
     def setHighestPermission(viewps, assoc):

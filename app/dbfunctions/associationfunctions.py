@@ -70,10 +70,8 @@ def getAssociationDesignation(associationps):
         return DB.executeDBSelect(stmt)
 
 def getViewAssociationByUser(associationps):
-    user_id = associationps.view_id.get()
+    user_id = associationps.user_id.get()
     view_id = associationps.view_id.get()
-    print("userAssociationView user_id --> ", user_id)
-    print("userAssociationView view_id --> ", view_id)
     association_users = DB.getTableMeta("sys_association_users").alias("sa_user")
     associations = DB.getTableMeta("sys_associations").alias("sa")
     designation = DB.getTableMeta("sys_designation").alias("sd")
@@ -94,7 +92,7 @@ def getViewAssociationByUser(associationps):
         )
         .order_by(association_users.c.col_p_val.asc())
     )
-    print("stmt --> ", stmt)
+    # print("stmt --> ", stmt)
     return DB.executeDBSelect(stmt)
 
 def getAssociationsForNotification(associationps):

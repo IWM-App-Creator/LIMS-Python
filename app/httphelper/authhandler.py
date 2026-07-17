@@ -27,7 +27,7 @@ async def auth_handler(request: Request, call_next):
                 status_code = 401,
                 content = {
                     "status": False,
-                    "message": "Authorization header missing"
+                    "message": "Authorization header missing -- " + request.url.path
                 }
             )
         if not auth.startswith("Bearer "):

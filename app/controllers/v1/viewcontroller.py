@@ -37,12 +37,9 @@ def getViewData(request: Request):
         view_qry = viewps.view_qry.get() # Get Query
         
         viewhlp.checkViewAssociation(viewps) # Check Associations
-        print("association_qry --", viewps.association_qry.get())
-        
-        # // checkViewAssociation. --> userAssociationView
-        # if($dvps->prmqry) {
-        #     $db_query = $db_query . " AND ( " . $dvps->prmqry . ")";
-        # }
+        # print("association_qry --", viewps.association_qry.get())
+        if viewps.association_qry.get():
+            view_qry = view_qry + " AND ( " + viewps.association_qry.get() + ")"
         
         # print("primary_colnm --", viewps.primary_colnm.get())
         #     $dvps->rawqry = "";
@@ -59,9 +56,7 @@ def getViewData(request: Request):
         #     // if($dvps->association_limit) {
         #     //     $DynamicViewFunctions->getViewAssociationLimit($dvps);
         #     // }
-        #     
-
-       
+        #
 
         sorting = f"mtbl.{viewps.primary_colnm.get()} DESC"
         # viewps.sorting.set(sorting)
