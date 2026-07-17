@@ -24,7 +24,7 @@ async def auth_handler(request: Request, call_next):
         auth = request.headers.get("Authorization")
         if not auth:
             return JSONResponse (
-                status_code = 401,
+                status_code = 200,
                 content = {
                     "status": False,
                     "message": "Authorization header missing -- " + request.url.path
@@ -32,7 +32,7 @@ async def auth_handler(request: Request, call_next):
             )
         if not auth.startswith("Bearer "):
             return JSONResponse (
-                status_code = 401,
+                status_code = 200,
                 content = {
                     "status": False,
                     "message": "Invalid Authorization header"
@@ -43,7 +43,7 @@ async def auth_handler(request: Request, call_next):
         payload = authfnct.verifyJWTToken(token)
         if payload is None:
             return JSONResponse (
-                status_code = 401,
+                status_code = 200,
                 content = {
                     "status": False,
                     "message": "Invalid or expired token"
