@@ -95,12 +95,10 @@ def resetPassword(token: str, password: str):
     result = authfnct.verifyJWTToken(token) # Verify Token
     if not result["status"]: # if Token is Invalid or expired
         return raiseInvalidError(result["message"], 200)
-    salt = bcrypt.gensalt()
-    password = bcrypt.hashpw(password.encode(), salt)
-    password = password.decode()
+    password = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
     user_id = result["payload"]["user_id"]
     userps.user_id.set(user_id)
-    userps.db_upd_vals.set({"password": password})
+    userps.db_upd_vals.set({"password": password.decode()})
     insertUpdateUserData() # Update Password in DB
     return JSONResponse(
         status_code=200,
