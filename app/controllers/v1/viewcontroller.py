@@ -19,7 +19,7 @@ def getViewData(request: Request):
         viewhlp.setViewInputParam(viewps, params) # Get Input Param Data
         getViewDataByID(viewps) # Get View Data
         if not viewps.userview.get(): # Invalid View
-            return raiseInvalidError("View Not Found", 401)
+            return raiseInvalidError("View Not Found", 404)
         viewhlp.setViewDataProperties(viewps) # Set View Properties
         viewhlp.setViewTableCols(viewps) # Get View Columns
         viewhlp.setViewLayout(viewps) # Get View Layout Data
