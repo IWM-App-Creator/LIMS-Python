@@ -1,7 +1,7 @@
 from app.dbfunctions.associationfunctions import getAssociationUsers, getAssociationData, getAssociationDesignationData
 
 def getAssociationList(associationps):
-    association_data = getAssociationData()
+    association_data = getAssociationData(associationps)
     itm_list = []
     for association in association_data:
         associationps.associations_id.set(association.associations_id)
@@ -20,22 +20,20 @@ def getAssociationList(associationps):
             "full_access": association.full_access,
             "inter_msg": association.inter_msg,
             "views_json": association.views_json,
+            "designations": [
+                {
+                    "srno": d.srno,
+                    "designation_id": d.designation_id,
+                    "designation_name": d.designation_name,
+                    "is_owner": d.is_owner,
+                    "is_edit": d.is_edit,
+                    "is_view": d.is_view,
+                    "is_noaccess": d.is_noaccess,
+                    "is_notify": d.is_notify,
+                }
+                for d in getAssociationDesignationData(associationps)
+            ],
         }
-        desig_list = getAssociationDesignationData(associationps)
-        desig_data = []
-        for desig in desig_list:
-            desigrow = {
-                "srno": desig.srno,
-                "designation_id": desig.designation_id,
-                "designation_name": desig.designation_name,
-                "is_owner": desig.is_owner,
-                "is_edit": desig.is_edit,
-                "is_view": desig.is_view,
-                "is_noaccess": desig.is_noaccess,
-                "is_notify": desig.is_notify
-            }
-            desig_data.append(desigrow)
-        row["designations"] = desig_data
         itm_list.append(row)
     return itm_list
 

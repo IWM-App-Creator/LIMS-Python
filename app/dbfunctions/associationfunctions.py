@@ -1,11 +1,12 @@
 from app.utils.common import DB, select, func, text, userps, or_
 
-def getAssociationData():
-    association = DB.getTableMeta("sys_associations").alias("a")
-    association_users = DB.getTableMeta("sys_association_users").alias("au")
-    db_tables = DB.getTableMeta("sys_db_tables").alias("dbt")
-    db_tbl_cols = DB.getTableMeta("sys_db_tables_cols").alias("dbtc")
-    lkup_tbl_cols = DB.getTableMeta("sys_db_tables_cols").alias("lkuptc")
+def getAssociationData(associationps):
+    schema_name = associationps.schema_name.get()
+    association = DB.getTableMeta("sys_associations", schema_name).alias("a")
+    association_users = DB.getTableMeta("sys_association_users", schema_name).alias("au")
+    db_tables = DB.getTableMeta("sys_db_tables", schema_name).alias("dbt")
+    db_tbl_cols = DB.getTableMeta("sys_db_tables_cols", schema_name).alias("dbtc")
+    lkup_tbl_cols = DB.getTableMeta("sys_db_tables_cols", schema_name).alias("lkuptc")
     stmt = (
         select(
             association,
@@ -31,7 +32,7 @@ def getAssociationData():
         )
         .where(association.c.is_delete == 0)
     )
-    if userps.role_id.get() != 1 and userps.ws_role_id.get() != 1:
+    if int(userps.role_id.get()) != 1 and int(userps.ws_role_id.get()) != 1:
         stmt = (
             stmt.outerjoin(
                 association_users,
@@ -45,8 +46,9 @@ def getAssociationData():
     return DB.executeDBSelect(stmt)
 
 def getAssociationDesignationData(associationps):
-    assoc_designation = DB.getTableMeta("sys_assoc_designation").alias("ad")
-    designation = DB.getTableMeta("sys_designation").alias("d")
+    schema_name = associationps.schema_name.get()
+    assoc_designation = DB.getTableMeta("sys_assoc_designation", schema_name).alias("ad")
+    designation = DB.getTableMeta("sys_designation", schema_name).alias("d")
     stmt = (
         select(
             assoc_designation,

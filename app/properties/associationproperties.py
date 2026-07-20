@@ -28,7 +28,7 @@ class AssociationProperties:
 
         self.ass_users_data = ContextVar("ass_users_data", default = [])
 
-        self.access_json = ContextVar("access_json", default = {})
+        self.schema_name = ContextVar("schema_name", default = "")
         self.fetch_single = ContextVar("fetch_single", default = 0)
         self.is_distinct = ContextVar("is_distinct", default = 0)
 

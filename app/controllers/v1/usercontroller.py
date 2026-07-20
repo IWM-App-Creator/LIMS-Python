@@ -5,7 +5,7 @@ from app.dbfunctions.userfunctions import getUserDataFromDB, insertUpdateUserDat
 from app.dbfunctions.logfunctions import saveErrorLogtoDB
 from app.dbfunctions.workspacefunctions import getUserWSData
 from app.properties.dbproperties import dbps
-from app.helper.generalfunctions import uploadFile, addUpdateJson
+from app.helper.generalfunctions import uploadFile, addUpdateJson, getWSUserRole
 from app.helper.userhelper import setUserProperties
 from app.helper.menuhelper import getUserMenuList
 from app.helper.workspacehelper import getUserWSList
@@ -81,17 +81,11 @@ def searchWSUser(request: Request):
             getUserWSData(wsps)
             userws_dtl = []
             for ws in wsps.ws_data.get():
-                if int(ws.ws_role_id) == 1:
-                    role_lbl = "Owner"
-                elif int(ws.ws_role_id) == 2:
-                    role_lbl = "User"
-                else:
-                    role_lbl = "No Access"
                 row = {
                     "workspace_id": getattr(ws, "workspace_id", 0),
                     "workspace_name": getattr(ws, "workspace_name", ""),
                     "ws_role_id": getattr(ws, "ws_role_id", 0),
-                    "ws_role_lbl": role_lbl
+                    "ws_role_lbl": getWSUserRole(int(ws.ws_role_id))
                 }
                 userws_dtl.append(row)
             user_data['userws_dtl'] = userws_dtl
