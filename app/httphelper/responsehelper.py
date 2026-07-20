@@ -10,7 +10,6 @@ def raiseAPIError(message, status_code = 401):
         }
     )
 
-
 def raiseInvalidError(message, status_code = 401):
     return JSONResponse (
         status_code = status_code,
