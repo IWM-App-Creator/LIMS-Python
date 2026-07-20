@@ -54,7 +54,7 @@ def getUserDetail(): # token: str
             "message": "User Data",
             "user_dict": user_dict,
             "menucentre_list": menups.menu_cntr_data.get(),
-            "ws_list" : wsps.ws_data.get(),
+            "workspace_list" : wsps.ws_data.get(),
             "dashboard_list" : dps.dashboards_data.get()
         }
     )
