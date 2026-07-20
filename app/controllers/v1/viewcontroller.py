@@ -84,7 +84,6 @@ def getViewData(request: Request):
                 "view_data": viewps.output_array.get()
             }
         )
-    
         # Association View Wise
         # $tmpdata = array();
         # $tmpdata['view_id'] = $view_id;
