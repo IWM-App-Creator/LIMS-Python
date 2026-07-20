@@ -3,8 +3,8 @@ from contextvars import ContextVar
 class AssociationProperties:
 
     def __init__(self):
-        self.associations_id = ContextVar("associations_id", default = 0)
-        self.designation_id = ContextVar("designation_id", default = 0)
+        self.associations_id = ContextVar("associations_id", default = "")
+        self.designation_id = ContextVar("designation_id", default = "")
 
         self.view_id = ContextVar("view_id", default = 0)
         self.view_ids = ContextVar("view_ids", default = "")

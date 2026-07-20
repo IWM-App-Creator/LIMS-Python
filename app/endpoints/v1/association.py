@@ -4,7 +4,7 @@ from app.controllers.v1 import associationcontroller as associationapi
 router = APIRouter(prefix = "/association")
 
 ROUTES = [
-    ("/getlist", associationapi.getTestData, ["GET"]),
+    ("/getlist", associationapi.getAssociation, ["GET"]),
 ]
 
 for path, handler, methods in ROUTES:
