@@ -1,4 +1,5 @@
-from app.dbfunctions.associationfunctions import getAssociationUsers, getAssociationData, getAssociationDesignationData
+from app.dbfunctions.associationfunctions import getAssociationUsers, getAssociationData, getAssociationDesignationData, getAssociationLookupData, getAssociationUsersByDesignation
+from collections import defaultdict
 
 def getAssociationList(associationps):
     association_data = getAssociationData(associationps)
@@ -35,6 +36,39 @@ def getAssociationList(associationps):
             ],
         }
         itm_list.append(row)
+    return itm_list
+
+def getLookupDataByAssociationId(associationps):
+    asso_lkup_data = getAssociationLookupData(associationps)
+    values = [row.value for row in asso_lkup_data]
+    associationps.col_p_vals.set(values)
+    asso_users = getAssociationUsersByDesignation(associationps)
+    user_map = defaultdict(list)
+    for usr in asso_users:
+        user_map[usr.col_p_val].append({
+            "user_ids": usr.user_ids,
+            "designation_id": usr.designation_id,
+            "is_owner": usr.is_owner,
+            "is_edit": usr.is_edit,
+            "is_view": usr.is_view,
+            "is_noaccess": usr.is_noaccess,
+            "is_notify": usr.is_notify,
+            "dyncviews": usr.dyncviews,
+            "custlink": usr.custlink,
+            "menucntr": usr.menucntr,
+            "defmenucntr": usr.defmenucntr,
+            "modules": usr.modules,
+            "dashboardcntr": usr.dashboardcntr,
+            "defdashboard": usr.defdashboard,
+        })
+    itm_list = []
+    for row in asso_lkup_data:
+        item_array = {
+            "value": row.value,
+            "label": row.label,
+            "asso_desig_users": user_map.get(row.value, [])
+        }
+        itm_list.append(item_array)
     return itm_list
 
 def getViewIdByAssociation(associationps):

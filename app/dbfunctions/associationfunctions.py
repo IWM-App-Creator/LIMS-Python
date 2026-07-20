@@ -64,6 +64,84 @@ def getAssociationDesignationData(associationps):
     )
     return DB.executeDBSelect(stmt)
 
+def getAssociationLookupData(associationps):
+    schema_name = associationps.schema_name.get()
+    pgno = int(associationps.pgno.get())
+    lookup_table = DB.getTableMeta(associationps.table_name.get(), schema_name).alias("lt")
+    association_users = DB.getTableMeta("sys_association_users", schema_name).alias("au")
+    pcol = lookup_table.c[associationps.pcol_nm.get()]
+    lcol = lookup_table.c[associationps.lcol_nm.get()]
+    stmt = (
+        select(
+            pcol.label("value"),
+            lcol.label("label")
+        )
+        .distinct()
+        .where(
+            lookup_table.c.is_delete == 0,
+            lcol.is_not(None)
+        )
+    )
+    if associationps.txtsearch.get():
+        stmt = stmt.where(
+            lcol.like(f"%{associationps.txtsearch.get()}%")
+        )
+    if (int(userps.role_id.get()) != 1 and int(userps.ws_role_id.get()) != 1):
+        subquery = (
+            select(association_users.c.col_p_val)
+            .where(
+                association_users.c.user_id == userps.user_id.get(),
+                association_users.c.col_id == associationps.pcol_id.get(),
+                association_users.c.is_delete == 0,
+            )
+        )
+        stmt = stmt.where(
+            pcol.in_(subquery)
+        )
+    stmt = (
+        stmt.order_by(
+            pcol.desc(),
+            lcol.asc()
+        )
+        .offset((pgno - 1) * 10)
+        .limit(10)
+    )
+    return DB.executeDBSelect(stmt)
+
+def getAssociationUsersByDesignation(associationps):
+    schema_name = associationps.schema_name.get()
+    values = associationps.col_p_vals.get()
+    association_users = DB.getTableMeta("sys_association_users", schema_name).alias("au")
+    stmt = (
+        select(
+            association_users.c.col_p_val,
+            func.group_concat(association_users.c.user_id).label("user_ids"),
+            association_users.c.designation_id,
+            func.max(association_users.c.is_owner).label("is_owner"),
+            func.max(association_users.c.is_edit).label("is_edit"),
+            func.max(association_users.c.is_view).label("is_view"),
+            func.max(association_users.c.is_noaccess).label("is_noaccess"),
+            func.max(association_users.c.is_notify).label("is_notify"),
+            func.max(association_users.c.dyncviews).label("dyncviews"),
+            func.max(association_users.c.custlink).label("custlink"),
+            func.max(association_users.c.menucntr).label("menucntr"),
+            func.max(association_users.c.defmenucntr).label("defmenucntr"),
+            func.max(association_users.c.modules).label("modules"),
+            func.max(association_users.c.dashboardcntr).label("dashboardcntr"),
+            func.max(association_users.c.defdashboard).label("defdashboard"),
+        )
+        .where(
+            association_users.c.col_id == associationps.pcol_id.get(),
+            association_users.c.col_p_val.in_(values),
+            association_users.c.is_delete == 0,
+        )
+        .group_by(
+            association_users.c.col_p_val,
+            association_users.c.designation_id,
+        )
+    )
+    return DB.executeDBSelect(stmt)
+
 def getDesignationData(associationps):
     designation = DB.getTableMeta("sys_designation").alias("d")
     stmt = select(designation)

@@ -12,6 +12,7 @@ class AssociationProperties:
         self.user_id = ContextVar("user_id", default = 0)
         self.col_id = ContextVar("col_id", default = 0)
         self.col_p_val = ContextVar("col_p_val", default = 0)
+        self.col_p_vals = ContextVar("col_p_vals", default = [])
 
         self.access_json = ContextVar("access_json", default = {})
         self.is_owner = ContextVar("is_owner", default = 0)
@@ -25,6 +26,13 @@ class AssociationProperties:
         self.dashboardcntr = ContextVar("dashboardcntr", default = "")
         self.defmenucntr = ContextVar("defmenucntr", default = 0)
         self.defdashboard = ContextVar("defdashboard", default = 0)
+
+        self.table_name = ContextVar("table_name", default = "")
+        self.pcol_id = ContextVar("pcol_id", default = "")
+        self.pcol_nm = ContextVar("pcol_nm", default = "")
+        self.lcol_nm = ContextVar("lcol_nm", default = "")
+        self.txtsearch = ContextVar("txtsearch", default = "")
+        self.pgno = ContextVar("pgno", default = 1)
 
         self.ass_users_data = ContextVar("ass_users_data", default = [])
 
