@@ -2,7 +2,7 @@ from app.utils.common import Request, JSONResponse
 from app.helper.associationhelper import getAssociationList
 from app.properties.associationproperties import associationps
 
-def getAssociation(request: Request):
+def getAssociations(request: Request):
     print("getAssociation --> ")
     associations = getAssociationList(associationps)
     return JSONResponse(
