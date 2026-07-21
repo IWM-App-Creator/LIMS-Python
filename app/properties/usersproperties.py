@@ -8,7 +8,7 @@ class UserProperties:
         self.workspace_id = ContextVar("workspace_id", default = "")
         self.workspace_name = ContextVar("workspace_name", default = "")
         self.ws_url = ContextVar("ws_url", default = "")
-        self.schema_name = ContextVar("schema_name", default = "")
+        self.schema_name = ContextVar("schema_name", default = None)
 
         self.req_host = ContextVar("req_host", default = "")
         self.req_subdomain = ContextVar("req_subdomain", default = "")

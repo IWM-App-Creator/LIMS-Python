@@ -25,7 +25,7 @@ class MenuProperties:
         self.is_section = ContextVar("is_section", default = 0)
         self.submenu = ContextVar("submenu", default = [])
 
-        self.schema_name = ContextVar("schema_name", default = "")
+        self.schema_name = ContextVar("schema_name", default = None)
         self.menu_cntr_data = ContextVar("menu_cntr_data", default = {})
 
 menups = MenuProperties()

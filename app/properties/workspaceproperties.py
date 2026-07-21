@@ -5,7 +5,7 @@ class WorkspaceProperties:
         self.workspace_id = ContextVar("workspace_id", default = 0)
         self.workspace_name = ContextVar("workspace_name", default = "")
         self.ws_url = ContextVar("ws_url", default = "")
-        self.schema_name = ContextVar("schema_name", default = "")
+        self.schema_name = ContextVar("schema_name", default = None)
         self.ws_logo = ContextVar("ws_logo", default = "")
         self.ws_logo_file = ContextVar("ws_logo_file", default = "")
         self.ai_priority = ContextVar("ai_priority", default = "default")
