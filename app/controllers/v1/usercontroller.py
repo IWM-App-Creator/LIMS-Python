@@ -36,9 +36,6 @@ def getUserDetail(): # token: str
     # Get User Menu
     # --------------------------
     menups.created_by.set(userps.user_id.get())
-    menups.m_centre_id.set(None)
-    menups.is_active.set(None)
-    menups.is_public.set(None)
     getUserMenuList(menups)
     # --------------------------
     # Get Workspace List
@@ -47,6 +44,7 @@ def getUserDetail(): # token: str
     # --------------------------
     # Get Dashboard List
     # --------------------------
+    dps.created_by.set(userps.user_id.get())
     getUserDashboards(dps)
     # --------------------------
     # Merge All Data & Send Response

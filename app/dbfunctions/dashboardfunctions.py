@@ -1,12 +1,14 @@
 from app.utils.common import select, update, insert, or_, DB, userps, nowWithTimeZone
 
 def getDashboardData(dps):
-    dashboard = DB.getTableMeta("sys_user_dashboard").alias("ud")
+    schema_name = dps.schema_name.get()
+    dashboard = DB.getTableMeta("sys_user_dashboard", schema_name).alias("ud")
     stmt = (
         select(dashboard)
         .where(dashboard.c.is_delete == 0)
-        .where(dashboard.c.created_by == userps.user_id.get())
     )
+    if dps.created_by.get() not in (None, "", 0):
+        stmt = stmt.where(dashboard.c.created_by == dps.created_by.get())
     return DB.executeDBSelect(stmt)
 
 def insertUpdateDashboard(dps) :

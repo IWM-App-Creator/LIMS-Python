@@ -1,6 +1,7 @@
 from app.utils.common import DB, select, insert, update, func, text, userps, nowWithTimeZone
 
 def getDBTableData(dbps):
+    schema_name = dbps.schema_name.get()
     table_id = dbps.table_id.get()
     table_ids = dbps.table_ids.get()
     col_id = dbps.col_id.get()
@@ -12,8 +13,8 @@ def getDBTableData(dbps):
     is_del_col = dbps.is_del_col.get()
     # print("is_del_tbl --> ", is_del_tbl)
     # print("is_del_col --> ", is_del_col)
-    tblcols = DB.getTableMeta("sys_new_db_tables_cols").alias("tblcols")
-    tblmaster = DB.getTableMeta("sys_db_tables").alias("tbl")
+    tblcols = DB.getTableMeta("sys_new_db_tables_cols", schema_name).alias("tblcols")
+    tblmaster = DB.getTableMeta("sys_db_tables", schema_name).alias("tbl")
     stmt = (
         select(
             tblcols,
@@ -40,7 +41,7 @@ def getDBTableData(dbps):
         stmt = stmt.where(tblmaster.c.table_name == table_name)
     if col_name not in (None, ""):
         stmt = stmt.where(tblcols.c.col_name == col_name)
-    if is_primary:
+    if is_primary not in (None, ""):
         stmt = stmt.where( func.json_unquote( func.json_extract(tblcols.c.col_options, "$.is_primary") ) == "1" )
     if is_del_tbl != "-1":
         stmt = stmt.where(tblmaster.c.is_delete == is_del_tbl)

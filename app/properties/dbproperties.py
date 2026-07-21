@@ -20,7 +20,7 @@ class DBProperties:
         self.length = ContextVar("length", default = "")
         self.is_mandatory = ContextVar("is_mandatory", default = "")
         self.default_val = ContextVar("default_val", default = "")
-        self.is_primary = ContextVar("is_primary", default = 0)
+        self.is_primary = ContextVar("is_primary", default = None)
         self.is_index = ContextVar("is_index", default = 0)
         self.is_unique = ContextVar("is_unique", default = 0)
         self.date_format = ContextVar("date_format", default = "")
@@ -61,8 +61,8 @@ class DBProperties:
         self.db_tbl_data = ContextVar("db_tbl_data", default = [])
         self.table_ids = ContextVar("table_ids", default = [])
         self.col_ids = ContextVar("col_ids", default = [])
-        self.is_del_tbl = ContextVar("is_del_tbl", default = "0")
-        self.is_del_col = ContextVar("is_del_col", default = "0")
+        self.is_del_tbl = ContextVar("is_del_tbl", default = 0)
+        self.is_del_col = ContextVar("is_del_col", default = 0)
 
         # View / DB Column Types
         self.view_col_type = ContextVar("view_col_type", default = {})
@@ -74,6 +74,7 @@ class DBProperties:
         self.colprimary = ContextVar("colprimary", default = "")
         self.colindex = ContextVar("colindex", default = [])
 
+        self.schema_name = ContextVar("schema_name", default = None)
         self.db_upd_vals = ContextVar("db_upd_vals", default = {})
 
 dbps = DBProperties()
