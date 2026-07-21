@@ -1,5 +1,12 @@
 from app.utils.common import select, update, insert, or_, DB, userps, nowWithTimeZone
 
+def getCustomViewData(customvwps):
+    schema_name = customvwps.schema_name.get()
+    custom_view = DB.getTableMeta("sys_custom_view", schema_name).alias("cv")
+    stmt = select(custom_view)
+    stmt = stmt.where(custom_view.c.is_delete == 0).order_by(custom_view.c.view_name.asc())
+    return DB.executeDBSelect(stmt)
+
 def addUpdateCustomView(customvwps):
     custom_view = DB.getTableMeta("sys_custom_view")
     where_clause = (custom_view.c.custom_view_id == customvwps.custom_view_id.get())

@@ -3,10 +3,6 @@ from app.utils.common import userps
 from app.dbfunctions.menufunctions import getMenuCentreData
 
 def getUserMenuList(menups):
-    menups.created_by.set(userps.user_id.get())
-    menups.m_centre_id.set(None)
-    menups.is_active.set(None)
-    menups.is_public.set(None)
     menus = getMenuCentreData(menups)
     menu_list = []
     for menu in menus:

@@ -14,6 +14,7 @@ class CustomViewProperties:
         self.created_by = ContextVar("created_by", default = "")
         self.created_date = ContextVar("created_date", default = "")
 
+        self.schema_name = ContextVar("schema_name", default = "")
         self.fetch_single = ContextVar("fetch_single", default = 0)
         self.order_by = ContextVar("order_by", default = None)
         self.order_type = ContextVar("order_type", default = None)

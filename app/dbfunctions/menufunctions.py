@@ -1,7 +1,8 @@
 from app.utils.common import select, update, insert, or_, DB, userps, nowWithTimeZone
 
 def getMenuCentreData(menups):
-    dync_menu_centre = DB.getTableMeta("sys_dynamic_menu_centre").alias("dmc")
+    schema_name = menups.schema_name.get()
+    dync_menu_centre = DB.getTableMeta("sys_dynamic_menu_centre", schema_name).alias("dmc")
     stmt = select(dync_menu_centre)
     if menups.m_centre_id.get() not in (None, "", 0):
         stmt = stmt.where(dync_menu_centre.c.m_centre_id == menups.m_centre_id.get())

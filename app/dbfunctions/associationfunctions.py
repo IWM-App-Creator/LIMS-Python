@@ -152,7 +152,7 @@ def getDesignationData(associationps):
     if associationps.fetch_single.get() == 1:
         return DB.executeDBSelectSingle(stmt)
     else :
-        return DB.executeDBSelect(stmt)
+        return DB.executeDBSelect(stmt)    
 
 def getAssociationUsers(associationps):
     assousers = DB.getTableMeta("sys_association_users").alias("au")
