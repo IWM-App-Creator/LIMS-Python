@@ -6,7 +6,7 @@ def getUserMenuList(menups):
     menus = getMenuCentreData(menups)
     menu_list = []
     for menu in menus:
-        menu_json = menu.menu_json
+        menu_json = getattr(menu, "menu_json", None)
         if menu_json in (None, "", []):
             menu_json = []
         row = {
