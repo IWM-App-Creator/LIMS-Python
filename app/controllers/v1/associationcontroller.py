@@ -67,6 +67,7 @@ def getAccessAssociation(request: Request):
         content = {
             "status": True,
             "message": "Association Access List",
-            "association_access": association_access
+            "association_access": association_access,
+            "record_cnt": associationps.record_cnt.get()
         }
     )

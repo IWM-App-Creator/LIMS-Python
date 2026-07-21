@@ -35,6 +35,7 @@ class AssociationProperties:
         self.pgno = ContextVar("pgno", default = 1)
 
         self.ass_users_data = ContextVar("ass_users_data", default = [])
+        self.record_cnt = ContextVar("record_cnt", default = 0)
 
         self.schema_name = ContextVar("schema_name", default = None)
         self.fetch_single = ContextVar("fetch_single", default = 0)

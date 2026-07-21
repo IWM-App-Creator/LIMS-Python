@@ -98,7 +98,11 @@ def getAssociationLookupData(associationps):
         stmt = stmt.where(
             pcol.in_(subquery)
         )
-    stmt = (
+    record_qry = select(func.count()).select_from(stmt.subquery())
+    record_cnt = DB.executeDBScalar(record_qry)
+    if record_cnt > 0:
+        associationps.record_cnt.set(record_cnt)
+    mainstmt = (
         stmt.order_by(
             pcol.desc(),
             lcol.asc()
@@ -106,7 +110,7 @@ def getAssociationLookupData(associationps):
         .offset((pgno - 1) * 10)
         .limit(10)
     )
-    return DB.executeDBSelect(stmt)
+    return DB.executeDBSelect(mainstmt)
 
 def getAssociationUsersByDesignation(associationps):
     schema_name = associationps.schema_name.get()
