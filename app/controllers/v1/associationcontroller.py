@@ -4,6 +4,7 @@ from app.helper.customviewhelper import getCustomViewList
 from app.helper.menuhelper import getUserMenuList
 from app.helper.dashboardhelper import getUserDashboards
 from app.helper.dbtablehelper import getDBTables
+from app.helper.modulehelper import getModules
 from app.dbfunctions.workspacefunctions import getWorkspaceData
 from app.properties.associationproperties import associationps
 from app.properties.workspaceproperties import wsps
@@ -11,6 +12,7 @@ from app.properties.customviewproperties import customvwps
 from app.properties.menuproperties import menups
 from app.properties.dashboardproperties import dps
 from app.properties.dbproperties import dbps
+from app.properties.moduleproperties import moduleps
 
 def getAssociations(request: Request):
     params = RequestData.params(request)
@@ -30,6 +32,7 @@ def getAssociations(request: Request):
         getUserDashboards(dps) # get User Dashboard List
         dbps.is_primary.set(1)
         dbtable_list = getDBTables(dbps)
+        module_list = getModules(moduleps) # get Module List
     return JSONResponse(
         status_code = 200,
         content = {
@@ -40,7 +43,8 @@ def getAssociations(request: Request):
             "dbtable_list": dbtable_list,
             "customview_list": customview_list,
             "menu_list": menups.menu_cntr_data.get(),
-            "dashboard_list": dps.dashboards_data.get()
+            "dashboard_list": dps.dashboards_data.get(),
+            "module_list": module_list
         }
     )
 
