@@ -1,4 +1,4 @@
-from app.dbfunctions.associationfunctions import getAssociationUsers, getAssociationData, getAssociationDesignationData, getAssociationLookupData, getAssociationUsersByDesignation
+from app.dbfunctions.associationfunctions import getAssociationUsers, getAssociationData, getAssociationDesignationData, getAssociationLookupData, getAssociationUsersByDesignation, getDesignationData
 from collections import defaultdict
 
 def getAssociationList(associationps):
@@ -70,6 +70,18 @@ def getLookupDataByAssociationId(associationps):
         }
         itm_list.append(item_array)
     return itm_list
+
+def getDesignationList(associationps):
+    associationps.fetch_single.set(0)
+    designation_data = getDesignationData(associationps)
+    designation_list = []
+    for designation in designation_data:
+        row = {
+            "designation_id": designation.designation_id,
+            "designation_name": designation.designation_name
+        }
+        designation_list.append(row)
+    return designation_list
 
 def getViewIdByAssociation(associationps):
     associationps.is_distinct.set(1)

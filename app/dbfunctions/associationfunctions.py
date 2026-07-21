@@ -143,7 +143,8 @@ def getAssociationUsersByDesignation(associationps):
     return DB.executeDBSelect(stmt)
 
 def getDesignationData(associationps):
-    designation = DB.getTableMeta("sys_designation").alias("d")
+    schema_name = associationps.schema_name.get()
+    designation = DB.getTableMeta("sys_designation", schema_name).alias("d")
     stmt = select(designation)
     if associationps.designation_id.get() not in (None, "", 0):
         stmt = stmt.where(designation.c.designation_id == associationps.designation_id.get())

@@ -1,5 +1,5 @@
 from app.utils.common import Request, RequestData, JSONResponse
-from app.helper.associationhelper import getAssociationList, getLookupDataByAssociationId
+from app.helper.associationhelper import getAssociationList, getLookupDataByAssociationId, getDesignationList
 from app.dbfunctions.workspacefunctions import getWorkspaceData
 from app.properties.associationproperties import associationps
 from app.properties.workspaceproperties import wsps
@@ -11,12 +11,14 @@ def getAssociations(request: Request):
     if ws_data not in (None, "", {}, 0):
         associationps.schema_name.set(ws_data.schema_name)
     associations = getAssociationList(associationps)
+    designations = getDesignationList(associationps)
     return JSONResponse(
         status_code = 200,
         content = {
             "status": True,
             "message": "Association List",
-            "associations": associations
+            "association_list": associations,
+            "designation_list": designations
         }
     )
 
