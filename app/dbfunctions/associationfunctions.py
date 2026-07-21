@@ -99,9 +99,7 @@ def getAssociationLookupData(associationps):
             pcol.in_(subquery)
         )
     record_qry = select(func.count()).select_from(stmt.subquery())
-    record_cnt = DB.executeDBScalar(record_qry)
-    if record_cnt > 0:
-        associationps.record_cnt.set(record_cnt)
+    associationps.record_cnt.set(DB.executeDBScalar(record_qry))
     mainstmt = (
         stmt.order_by(
             pcol.desc(),
