@@ -22,9 +22,6 @@ def getAssociations(request: Request):
     if flag == "" or flag == "DesignationList":
         designations = getDesignationList(associationps)
     customview_list = getCustomViewList(customvwps)
-    menups.created_by.set(None)
-    menups.m_centre_id.set(None)
-    menups.is_active.set(None)
     menups.is_public.set(1)
     getUserMenuList(menups)
     return JSONResponse(
