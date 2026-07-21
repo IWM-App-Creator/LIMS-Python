@@ -250,6 +250,9 @@ class ViewHelper:
     @staticmethod
     def setViewOutputArray(viewps):
         viewps.output_array.set({
+            "view_id": viewps.view_id.get(),
+            "view_name": viewps.view_name.get(),
+            "view_type": viewps.view_type.get(),
             "rcdcnt": viewps.total_record.get(),
             "view_cols": viewps.view_cols.get(),
             "tbl_cols": viewps.tbl_cols.get(),
