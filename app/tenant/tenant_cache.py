@@ -10,7 +10,6 @@ class TenantCache:
     def cacheTenantWS(cls):
         cachekey = (userps.req_subdomain.get(), userps.user_id.get())
         workspace = cls._ws_cache.get(cachekey)
-        print("cacheTenantWS --> ", workspace)
         if workspace is None:
             # wsps.user_id.set(userps.user_id.get())
             getUserWSData(wsps)

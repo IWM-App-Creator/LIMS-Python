@@ -10,9 +10,8 @@ class DB:
 
     @staticmethod
     def getTableMeta(table_name, schema = None):
-        if schema is None: # If Schema name is not pass, use form User Property
+        if schema in (None, ""): # If Schema name is not pass, use form User Property
             schema = userps.schema_name.get()
-        print("getTableMeta --> ", schema)
         key = f"{schema}.{table_name}" if schema else table_name
         if key not in DB._dbtables:
             DB._dbtables[key] = Table (
