@@ -104,9 +104,18 @@ def getViewData(request: Request):
 # http://xytovet.localhost:8000/api/v1/view/savetbldata
 def saveTableData(request: Request):
     try:
-        print("saveTableData --> ")
+        params = RequestData.params(request)
+        viewhlp.setViewInputParam(viewps, params) # Get Input Param Data
+        viewhlp.generateTblUpdateQry(viewps) # Generate Update Query
+        return JSONResponse (
+            status_code = 200,
+            content = {
+                "status": True,
+                "message": "Table Data Updated Successfully"
+            }
+        )
     except Exception as e:
-        # saveErrorLogtoDB ("View", viewps.view_id.get(), "getViewData", str(e)) # Log Error To DB
+        # saveErrorLogtoDB ("View", viewps.view_id.get(), "saveTableData", str(e)) # Log Error To DB
         raiseAPIError(str(e), 500)
 
 # http://testws1.localhost:8000/api/v1/view/create?view_name=reactv1&view_type=Table&pin_to_menu=0&m_centre_id=1

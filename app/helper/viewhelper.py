@@ -3,7 +3,7 @@ from app.utils.common import select, DB, userps
 from app.dbfunctions.dbtablesfunctions import getDBTableData
 from app.dbfunctions.viewlayoutfunctions import getViewLayoutDataByID
 from app.dbfunctions.associationfunctions import getViewAssociationByUser
-from app.helper.generalfunctions import sortObjectsByKey, updateNestedJsonVal
+from app.helper.generalfunctions import sortObjectsByKey, updateNestedJsonVal, getLastUpdatedJSON
 from app.properties.dbproperties import dbps
 from app.properties.associationproperties import associationps
 from app.helper import dbhelper as dbhlp
@@ -14,13 +14,22 @@ class ViewHelper:
 
     @staticmethod
     def setViewInputParam(viewps, params):
-        # viewps.view_id.set(params.get("view_id", -1))
+        viewps.view_id.set(params.get("view_id", 0))
         viewps.view_url.set(params.get("view_url", ""))
+        viewps.table_id.set(params.get("table_id", 0))
+        viewps.table_name.set(params.get("table_name", ""))
+        viewps.col_id.set(params.get("col_id", 0))
+        viewps.col_name.set(params.get("col_name", ""))
         viewps.call_from.set(params.get("call_from", "DynamicView"))
         viewps.tab_id.set(params.get("tab_id", "0"))
         viewps.page_no.set(params.get("page_no", 1))
         viewps.txtsearch.set(params.get("txtsearch", ""))
         viewps.filterqry.set(params.get("filterqry", ""))
+        viewps.col_type.set(params.get("col_type", ""))
+        viewps.col_key.set(params.get("col_key", 0))
+        viewps.col_val.set(params.get("col_val", ""))
+        viewps.item_id.set(params.get("item_id", 0))
+        viewps.primary_colnm.set(params.get("primary_colnm", ""))
 
     @staticmethod
     def setViewDataProperties(viewps):
@@ -327,6 +336,16 @@ class ViewHelper:
                     item[f"{col_id}|{col_name}lbl"] = str(getattr(data, lbl_col, ""))
             item_list.append(item)
         viewps.item_list.set(item_list)
+
+    @staticmethod
+    def generateTblUpdateQry(viewps):
+        metadata = getLastUpdatedJSON("Update")
+        upd_qry = "UPDATE " + viewps.table_name.get() + " SET "
+        upd_qry = upd_qry + viewps.table_name.get() + "." + viewps.col_name.get()
+        upd_qry = upd_qry + " = '" + viewps.col_val.get() + "', "
+        upd_qry = upd_qry + viewps.table_name.get() + ".is_metadata = '" + metadata + "' "
+        upd_qry = upd_qry + "WHERE " + viewps.primary_colnm.get() + " in (" + viewps.item_id.get() + ")"
+        DB.executStatementOnly(upd_qry)
 
 viewhlp = ViewHelper()
 

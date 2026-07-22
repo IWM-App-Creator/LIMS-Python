@@ -74,6 +74,14 @@ class viewproperties:
         self.action_group_list = ContextVar("action_group_list", default = [])
         self.user_setting = ContextVar("user_setting", default = [])
 
+        # Save View Data Properties
+        self.item_id = ContextVar("item_id", default = 0)
+        self.col_id = ContextVar("col_id", default = 0)
+        self.col_name = ContextVar("col_name", default = "")
+        self.col_type = ContextVar("col_type", default = "")
+        self.col_key = ContextVar("col_key", default = 0)
+        self.col_val = ContextVar("col_val", default = "")
+
         # View Output Properties
         self.output_array = ContextVar("output_array", default = [])
         

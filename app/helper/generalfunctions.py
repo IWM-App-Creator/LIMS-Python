@@ -7,6 +7,7 @@ import time
 from pathlib import Path
 from fastapi import UploadFile
 from app.properties.usersproperties import userps
+from app.properties.viewproperties import viewps
 from app.properties.globalproperties import globalps
 
 def setEnvVariables():
@@ -174,3 +175,11 @@ def removeNestedJsonVal(fulljson: dict, jsonkey: str, srchkey: str, srchval):
             if srchval is not None:
                 break
     return removed
+
+def getLastUpdatedJSON(type: str) -> str:
+    metadata = {
+        "user_id": userps.user_id.get(),
+        "view_id": viewps.view_id.get(),
+        "type": type
+    }
+    return json.dumps(metadata)
