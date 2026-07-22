@@ -100,6 +100,7 @@ def getViewData(request: Request):
         raiseAPIError(str(e), 500)
 
 # http://xytovet.localhost:8000/api/v1/view/savetbldata
+# api/v1/view/savetbldata?view_id=183&item_id=8&table_name=mmydbptppt&col_name=status_1&primary_colnm=python___react_v2_id&col_val=924
 def saveTableData(request: Request):
     try:
         params = RequestData.params(request)
