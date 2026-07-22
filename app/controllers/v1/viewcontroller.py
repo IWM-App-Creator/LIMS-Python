@@ -61,7 +61,7 @@ def getViewData(request: Request):
         #     // if($dvps->association_limit) {
         #     //     $DynamicViewFunctions->getViewAssociationLimit($dvps);
         #     // }
-        #
+        # if having user tab and not having tab_id then set first tab_id from group tab list
         # Set View Data Sorting
         viewhlp.setViewSorting(viewps)
         view_qry = f"{view_qry} Order By {viewps.sorting.get()}"
