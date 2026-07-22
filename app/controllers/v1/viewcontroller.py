@@ -40,7 +40,7 @@ def getViewData(request: Request):
         # print("association_qry --", viewps.association_qry.get())
         if viewps.association_qry.get():
             view_qry = view_qry + " AND ( " + viewps.association_qry.get() + ")"
-        
+        # Get Group By Data
         # print("primary_colnm --", viewps.primary_colnm.get())
         #     $dvps->rawqry = "";
         #     if($dvps->txtsearch) {
