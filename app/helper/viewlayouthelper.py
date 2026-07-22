@@ -11,5 +11,5 @@ def setViewLayoutParam(viewps, params):
     # viewps.call_from.set(params.get("call_from", "DynamicView"))
     # viewps.tab_id.set(params.get("tab_id", "0"))
     # viewps.page_no.set(params.get("page_no", 1))
-    # viewps.txtsearch.set(params.get("txtsearch", ""))
+    # viewps.search_text.set(params.get("search_text", ""))
     # viewps.filterqry.set(params.get("filterqry", ""))

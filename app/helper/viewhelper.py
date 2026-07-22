@@ -23,7 +23,7 @@ class ViewHelper:
         viewps.call_from.set(params.get("call_from", "DynamicView"))
         viewps.tab_id.set(params.get("tab_id", "0"))
         viewps.page_no.set(params.get("page_no", 1))
-        viewps.txtsearch.set(params.get("txtsearch", ""))
+        viewps.search_text.set(params.get("search_text", ""))
         viewps.filterqry.set(params.get("filterqry", ""))
         viewps.col_type.set(params.get("col_type", ""))
         viewps.col_key.set(params.get("col_key", 0))
@@ -99,6 +99,21 @@ class ViewHelper:
             viewps.user_setting.set(viewlayout.user_setting)
 
     @staticmethod
+    def getViewSearchQuery(viewps):
+        cnt = 0
+        rawqry = ""
+        viewcols = viewps.view_cols.get()
+        viewcols = viewcols.get("view_cols", [])
+        for col in viewcols:
+            if col:
+                srchcol = col['qry_alias'] + "." + col['col_name']
+                if cnt > 0:
+                    rawqry = rawqry + " OR "
+                rawqry = rawqry + srchcol + " LIKE '%" + viewps.search_text.get() + "%'"
+                cnt = cnt + 1
+        return rawqry
+
+    @staticmethod
     def checkViewAssociation(viewps):
         associationps.user_id.set(userps.user_id.get())
         associationps.view_id.set(viewps.view_id.get())
@@ -164,56 +179,44 @@ class ViewHelper:
         
     @staticmethod
     def setViewSorting(viewps):
+        sorting = f"mtbl.{viewps.primary_colnm.get()} DESC"
         user_setting = viewps.user_setting.get() or {}
-        current_tab = f"tab_{viewps.tab_id.get()}"
-        tab_setting = user_setting.get(current_tab)
-        # print("tab_setting --> ", tab_setting)
-        if not tab_setting:
-            return
-        # Sorting
-        # sortby = tab_setting.get("sortby", "")
-        # sortorder = tab_setting.get("sortorder", "")
-
-        # if not sortorder:
-        #     sortorder = "DESC"
-        # viewps.sortby.set(sortby)
-        # viewps.sortorder.set(sortorder)
-        # sorting = ""
-        # if sortby:
-        #     tmp_sortby = sortby.split(",")
-        #     tmp_sortorder = sortorder.split(",")
-        #     sort_parts = []
-        #     for i, srt in enumerate(tmp_sortby):
-        #         if "FIELD(" in srt:
-        #             srt = srt.replace("^^", ",")
-        #             srt = srt.split("**")[0]
-        #             tmp = srt.split(",")[0].replace("FIELD(", "")
-        #             tmp_srt = getSortByColIDName(tmp)
-        #             srt = srt.replace(tmp, tmp_srt)
-        #         else:
-        #             srt = getSortByColIDName(srt)
-        #         order = tmp_sortorder[i] if i < len(tmp_sortorder) else "DESC"
-        #         sort_parts.append(f"{srt} {order}")
-        #     sorting = ", ".join(sort_parts)
-        # # Convert list to comma-separated string if needed
-        # if isinstance(viewps.sortby.get(), list):
-        #     viewps.sortby.set(",".join(viewps.sortby.get()))
-        # if isinstance(viewps.sortorder.get(), list):
-        #     viewps.sortorder.set(",".join(viewps.sortorder.get()))
-        # viewps.sorting.set(sorting)
-
-    @staticmethod
-    def setViewPaging(viewps):
-        user_setting = viewps.user_setting.get() or {}
+        user_setting = user_setting.get("tabs", {})
         current_tab = f"tab_{viewps.tab_id.get()}"
         tab_setting = user_setting.get(current_tab)
         # print("tab_setting --> ", tab_setting)
         if tab_setting:
-            page_size = tab_setting.get("page_size", 10)
-            if page_size in ("", "0"):
+            ly_sorting = ""
+            sortby = tab_setting.get("sortby", "")
+            sortorder = tab_setting.get("sortorder", "")
+            sort_byarr = sortby.split(",") if sortby else []
+            sortorderarr = sortorder.split(",") if sortorder else []
+            srt_cnt = 0
+            for srt in sort_byarr:
+                if "FIELD(" in srt:
+                    srt = srt.replace("^^", ",")
+                ly_sorting = ly_sorting + srt + " " + sortorderarr[srt_cnt] + ", "
+                srt_cnt = srt_cnt + 1
+            if ly_sorting:
+                ly_sorting = ly_sorting[:-2]
+                sorting = ly_sorting
+        viewps.sorting.set(sorting)
+
+    @staticmethod
+    def setViewPaging(viewps):
+        user_setting = viewps.user_setting.get() or {}
+        user_setting = user_setting.get("tabs", {})
+        current_tab = f"tab_{viewps.tab_id.get()}"
+        tab_setting = user_setting.get(current_tab)
+        if tab_setting:
+            page_size = int(tab_setting.get("page_size", 10))
+            if page_size in (None, "0", 0, ""):
                 page_size = 10
+            page_no = int(viewps.page_no.get())
+            if page_no in (None, "0", 0, ""):
+                page_no = 1
             viewps.page_size.set(page_size)
-            offset = (int(viewps.page_no.get()) - 1) * int(viewps.page_size.get())
+            offset = ((page_no - 1) * page_size)
             viewps.offset.set(offset)
         else :
             viewps.page_size.set(20)
@@ -276,20 +279,6 @@ class ViewHelper:
             output_array["rcdcnt"] = viewps.total_record.get()
             output_array["itm_list"] = viewps.item_list.get()
         viewps.output_array.set(output_array)
-        # {
-        #     "view_id": viewps.view_id.get(),
-        #     "view_name": viewps.view_name.get(),
-        #     "view_type": viewps.view_type.get(),
-        #     "rcdcnt": viewps.total_record.get(),
-        #     "view_cols": viewps.view_cols.get(),
-        #     "tbl_cols": viewps.tbl_cols.get(),
-        #     "col_metadata": viewps.col_metadata.get(),
-        #     "col_colors": viewps.col_colors.get(),
-        #     "action_group_list": viewps.action_group_list.get(),
-        #     "user_setting": viewps.user_setting.get(),
-        #     "view_qry": viewps.view_qry.get(),
-        #     "itm_list": viewps.item_list.get()
-        # } 
 
     @staticmethod
     def setViewItemArray(viewps):

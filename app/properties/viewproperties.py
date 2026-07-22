@@ -32,7 +32,7 @@ class viewproperties:
         self.page_no = ContextVar("page_no", default = 1)
         self.page_size = ContextVar("page_size", default = 10)
         self.offset = ContextVar("offset", default = 0)
-        self.txtsearch = ContextVar("txtsearch", default = "")
+        self.search_text = ContextVar("search_text", default = "")
         self.filterqry = ContextVar("filterqry", default = "")
         self.sorting = ContextVar("sorting", default = "")
 

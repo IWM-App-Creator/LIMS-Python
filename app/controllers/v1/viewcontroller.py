@@ -36,6 +36,10 @@ def getViewData(request: Request):
         dataarr = []
         viewps.view_qry_data.set(dataarr)
         view_qry = viewps.view_qry.get() # Get Query
+        # Get Search Query
+        if viewps.search_text.get() not in (None, ""):
+            view_qry = view_qry + " AND (" + viewhlp.getViewSearchQuery(viewps) + ")"
+        # Check Association
         if userps.ws_role_id.get() != 1 and userps.role_id.get() != 1:
             viewhlp.checkViewAssociation(viewps) # Check Associations
             # print("association_qry --", viewps.association_qry.get())
@@ -58,16 +62,9 @@ def getViewData(request: Request):
         #     //     $DynamicViewFunctions->getViewAssociationLimit($dvps);
         #     // }
         #
-
-        sorting = f"mtbl.{viewps.primary_colnm.get()} DESC"
-        # viewps.sorting.set(sorting)
-        # viewps.primary_colnm.set(0)
-        # setViewSorting(viewps) # Get Sorting
-        # print("primary_colnm --> ", viewps.primary_colnm.get())
-        #     if($dvps->sorting) {
-                # $dvps->view_qry = $dvps->view_qry . " order by " . $dvps->sorting;
-        #     }
-        view_qry = f"{view_qry} Order By {sorting}"
+        # Set View Data Sorting
+        viewhlp.setViewSorting(viewps)
+        view_qry = f"{view_qry} Order By {viewps.sorting.get()}"
         viewhlp.setViewPaging(viewps) # Get Paging
         view_qry = view_qry.replace("#USER_ID#", str(userps.user_id.get())) # Update Notification Query User ID
         view_qry = f"{view_qry} LIMIT {viewps.offset.get()}, {viewps.page_size.get()}"
