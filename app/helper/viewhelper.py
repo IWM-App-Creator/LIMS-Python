@@ -339,11 +339,10 @@ class ViewHelper:
 
     @staticmethod
     def generateTblUpdateQry(viewps):
-        metadata = getLastUpdatedJSON("Update")
         upd_qry = "UPDATE " + viewps.table_name.get() + " SET "
         upd_qry = upd_qry + viewps.table_name.get() + "." + viewps.col_name.get()
         upd_qry = upd_qry + " = '" + viewps.col_val.get() + "', "
-        upd_qry = upd_qry + viewps.table_name.get() + ".is_metadata = '" + metadata + "' "
+        upd_qry = upd_qry + viewps.table_name.get() + ".is_metadata = '" + getLastUpdatedJSON("Update") + "' "
         upd_qry = upd_qry + "WHERE " + viewps.primary_colnm.get() + " in (" + viewps.item_id.get() + ")"
         DB.executStatementOnly(upd_qry)
 
