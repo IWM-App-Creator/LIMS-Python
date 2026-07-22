@@ -80,7 +80,7 @@ def getWorkspaceData(wsps):
 
 def getUserWSData(wsps):
     userid = userps.user_id.get()
-    if wsps.ws_usr_id.get() > 0 :
+    if wsps.ws_usr_id.get() not in (None, "", 0) :
         userid = wsps.ws_usr_id.get()
     workspace_master = DB.getTableMeta("workspace_master", "systemconfig").alias("ws")
     users_workspace = DB.getTableMeta("users_workspace", "systemconfig").alias("wsusr")
@@ -99,7 +99,7 @@ def getUserWSData(wsps):
         )
         .where(workspace_master.c.is_delete == 0)
         .where(users_workspace.c.is_delete == 0)
-        .where(users_workspace.c.user_id == userid)
+        .where(users_workspace.c.user_id == int(userid))
     )
     if wsps.chk_ws_role.get() == 1:
         stmt = stmt.where(users_workspace.c.ws_role_id < 3)

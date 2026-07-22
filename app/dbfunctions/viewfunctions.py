@@ -6,7 +6,7 @@ def getViewDataByID(viewps):
     tblview = DB.getTableMeta("sys_new_dynamic_view").alias("dyncv")
     stmt = (select(tblview)).where(tblview.c.is_delete == 0)
     is_single = 0
-    if view_id not in (None, "0", 0): # Fetch View By ID If view_id Is Set
+    if view_id not in (None, "", 0): # Fetch View By ID If view_id Is Set
         stmt = stmt.where(tblview.c.view_id == view_id)
         is_single = 1
     if view_url not in (None, ""): # Fetch View By View URL If view_url Is Set

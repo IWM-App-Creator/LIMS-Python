@@ -16,7 +16,6 @@ async def auth_handler(request: Request, call_next):
 
     # Validate Header
     if globalps.IS_LOCAL_DEV == "1": # Bypass auth for local development
-        print("Is Local Development")
         userps.user_id.set(globalps.JWT_USER_ID) # Set a default user_id for local development
         userps.req_subdomain.set("testws1") # Set a default user_id for local development
         userps.role_id.set("1") # Set a default role_id for local development
