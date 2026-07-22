@@ -14,7 +14,8 @@ class ViewHelper:
 
     @staticmethod
     def setViewInputParam(viewps, params):
-        viewps.view_id.set(params.get("view_id", -1))
+        # viewps.view_id.set(params.get("view_id", -1))
+        viewps.view_url.set(params.get("view_url", ""))
         viewps.call_from.set(params.get("call_from", "DynamicView"))
         viewps.tab_id.set(params.get("tab_id", "0"))
         viewps.page_no.set(params.get("page_no", 1))
