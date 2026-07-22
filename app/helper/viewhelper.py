@@ -30,6 +30,7 @@ class ViewHelper:
         viewps.col_val.set(params.get("col_val", ""))
         viewps.item_id.set(params.get("item_id", 0))
         viewps.primary_colnm.set(params.get("primary_colnm", ""))
+        viewps.output_type.set(params.get("output_type", ""))
 
     @staticmethod
     def setViewDataProperties(viewps):
@@ -259,20 +260,36 @@ class ViewHelper:
 
     @staticmethod
     def setViewOutputArray(viewps):
-        viewps.output_array.set({
-            "view_id": viewps.view_id.get(),
-            "view_name": viewps.view_name.get(),
-            "view_type": viewps.view_type.get(),
-            "rcdcnt": viewps.total_record.get(),
-            "view_cols": viewps.view_cols.get(),
-            "tbl_cols": viewps.tbl_cols.get(),
-            "col_metadata": viewps.col_metadata.get(),
-            "col_colors": viewps.col_colors.get(),
-            "action_group_list": viewps.action_group_list.get(),
-            "user_setting": viewps.user_setting.get(),
-            "view_qry": viewps.view_qry.get(),
-            "itm_list": viewps.item_list.get()
-        })
+        output_array = {}
+        if viewps.output_type.get() in (None, "", 0):
+            output_array["view_id"] = viewps.view_id.get()
+            output_array["view_name"] = viewps.view_name.get()
+            output_array["view_type"] = viewps.view_type.get()
+            output_array["view_cols"] = viewps.view_cols.get()
+            output_array["tbl_cols"] = viewps.tbl_cols.get()
+            output_array["col_metadata"] = viewps.col_metadata.get()
+            output_array["col_colors"] = viewps.col_colors.get()
+            output_array["action_group_list"] = viewps.action_group_list.get()
+            output_array["user_setting"] = viewps.user_setting.get()
+            output_array["view_qry"] = viewps.view_qry.get()
+        if viewps.output_type.get() in (None, "viewdata", 0, ""):
+            output_array["rcdcnt"] = viewps.total_record.get()
+            output_array["itm_list"] = viewps.item_list.get()
+        viewps.output_array.set(output_array)
+        # {
+        #     "view_id": viewps.view_id.get(),
+        #     "view_name": viewps.view_name.get(),
+        #     "view_type": viewps.view_type.get(),
+        #     "rcdcnt": viewps.total_record.get(),
+        #     "view_cols": viewps.view_cols.get(),
+        #     "tbl_cols": viewps.tbl_cols.get(),
+        #     "col_metadata": viewps.col_metadata.get(),
+        #     "col_colors": viewps.col_colors.get(),
+        #     "action_group_list": viewps.action_group_list.get(),
+        #     "user_setting": viewps.user_setting.get(),
+        #     "view_qry": viewps.view_qry.get(),
+        #     "itm_list": viewps.item_list.get()
+        # } 
 
     @staticmethod
     def setViewItemArray(viewps):
@@ -340,10 +357,10 @@ class ViewHelper:
     @staticmethod
     def generateTblUpdateQry(viewps):
         upd_qry = "UPDATE " + viewps.table_name.get() + " SET "
-        upd_qry = upd_qry + viewps.table_name.get() + "." + viewps.col_name.get()
-        upd_qry = upd_qry + " = '" + viewps.col_val.get() + "', "
+        upd_qry = upd_qry + viewps.table_name.get() + "." + viewps.col_name.get() + " = '" + viewps.col_val.get() + "', "
         upd_qry = upd_qry + viewps.table_name.get() + ".is_metadata = '" + getLastUpdatedJSON("Update") + "' "
         upd_qry = upd_qry + "WHERE " + viewps.primary_colnm.get() + " in (" + viewps.item_id.get() + ")"
+        print("upd_qry --> ", upd_qry)
         DB.executStatementOnly(upd_qry)
 
 viewhlp = ViewHelper()

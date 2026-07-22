@@ -21,8 +21,9 @@ def getViewData(request: Request):
         if not viewps.userview.get(): # Invalid View
             return raiseInvalidError("View Not Found", 404)
         viewhlp.setViewDataProperties(viewps) # Set View Properties
-        viewhlp.setViewTableCols(viewps) # Get View Columns
-        viewhlp.setViewLayout(viewps) # Get View Layout Data
+        if viewps.output_type.get() != "viewdata":
+            viewhlp.setViewTableCols(viewps) # Get View Columns
+            viewhlp.setViewLayout(viewps) # Get View Layout Data
         # --------------------------
         # Sort View Col
         # --------------------------
@@ -35,11 +36,11 @@ def getViewData(request: Request):
         dataarr = []
         viewps.view_qry_data.set(dataarr)
         view_qry = viewps.view_qry.get() # Get Query
-        
-        viewhlp.checkViewAssociation(viewps) # Check Associations
-        # print("association_qry --", viewps.association_qry.get())
-        if viewps.association_qry.get():
-            view_qry = view_qry + " AND ( " + viewps.association_qry.get() + ")"
+        if userps.ws_role_id.get() != 1 and userps.role_id.get() != 1:
+            viewhlp.checkViewAssociation(viewps) # Check Associations
+            # print("association_qry --", viewps.association_qry.get())
+            if viewps.association_qry.get():
+                view_qry = view_qry + " AND ( " + viewps.association_qry.get() + ")"
         # Get Group By Data
         # print("primary_colnm --", viewps.primary_colnm.get())
         #     $dvps->rawqry = "";

@@ -83,6 +83,7 @@ class viewproperties:
         self.col_val = ContextVar("col_val", default = "")
 
         # View Output Properties
+        self.output_type = ContextVar("output_type", default = "")
         self.output_array = ContextVar("output_array", default = [])
         
         # Create View Properties

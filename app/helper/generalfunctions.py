@@ -178,8 +178,8 @@ def removeNestedJsonVal(fulljson: dict, jsonkey: str, srchkey: str, srchval):
 
 def getLastUpdatedJSON(type: str) -> str:
     metadata = {
-        "user_id": userps.user_id.get(),
-        "view_id": viewps.view_id.get(),
+        "user_id": int(userps.user_id.get()),
+        "view_id": int(viewps.view_id.get()),
         "type": type
     }
     return json.dumps(metadata)
