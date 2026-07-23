@@ -28,7 +28,7 @@ class viewproperties:
         self.fa_is_view = ContextVar("fa_is_view", default = 0)
         self.fa_is_noaccess = ContextVar("fa_is_noaccess", default = 0)
 
-        self.tab_id = ContextVar("tab_id", default = "")
+        self.tab_id = ContextVar("tab_id", default = "0")
         self.page_no = ContextVar("page_no", default = 1)
         self.page_size = ContextVar("page_size", default = 10)
         self.offset = ContextVar("offset", default = 0)
