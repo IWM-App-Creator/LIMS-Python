@@ -82,10 +82,10 @@ class ViewHelper:
             col_options.pop("csv_col_name", None)
             col_options.pop("csv_col_type", None)
             col_options.pop("csv_map_col_nm", None)
-            tbl_cols[col.col_id] = ({"col_options": col_options})
+            tbl_cols[str(col.col_id)] = ({"col_options": col_options})
         for viewcol in view_cols:
-            if viewcol["col_id"] in tbl_cols:
-                viewcol.update(tbl_cols[viewcol["col_id"]])
+            if str(viewcol["col_id"]) in tbl_cols:
+                viewcol.update(tbl_cols[str(viewcol["col_id"])])
         viewps.view_cols.set(view_cols)
 
     @staticmethod
@@ -283,6 +283,7 @@ class ViewHelper:
     @staticmethod
     def setViewOutputArray(viewps):
         output_array = {}
+        viewhlp.setCurrentTabData(viewps)
         if viewps.output_type.get() in (None, "", 0):
             output_array["view_id"] = viewps.view_id.get()
             output_array["view_name"] = viewps.view_name.get()
@@ -297,6 +298,38 @@ class ViewHelper:
             output_array["rcdcnt"] = viewps.total_record.get()
             output_array["itm_list"] = viewps.item_list.get()
         viewps.output_array.set(output_array)
+
+    @staticmethod
+    def setCurrentTabData(viewps):
+        current_tab = f"tab_{viewps.tab_id.get()}"
+        col_metadata = viewps.col_metadata.get()
+        user_setting = viewps.user_setting.get()
+        col_metadata = col_metadata.get(current_tab)
+        tabs = user_setting.get("tabs")
+        tabs_data = tabs.get(current_tab)
+        sortby = tabs_data.get("sortby").split(",") if tabs_data.get("sortby") else []
+        sortorder = tabs_data.get("sortorder").split(",") if tabs_data.get("sortorder") else []
+        col_data = {}
+        srt_data = {}
+        cnt = 0
+        for col in col_metadata:
+            col_data[str(col["col_id"])] = {"is_pin": col["is_pin"], "th_width": col["th_width"]}
+        for srtby in sortby:
+            if "FIELD(" in srtby:
+                tmp = srtby.replace("^^", ",")
+                tmp = tmp.split(",") if tmp else []
+                srtby = tmp[0].replace("FIELD(", "")
+            srt_data[str(srtby)] = {"sortby": srtby, "sortorder": sortorder[cnt]}
+            cnt = cnt + 1
+        for col in viewps.view_cols.get():
+            if str(col["col_id"]) in col_data:
+                col.update(col_data[str(col["col_id"])])
+            else:
+                col.update({"is_pin": 0, "th_width": 0})
+            if str(col["col_id"]) + col["col_name"] + "_" + col["qry_alias"] in srt_data:
+                col.update(srt_data[str(col["col_id"]) + col["col_name"] + "_" + col["qry_alias"]])
+            else:
+                col.update({"sortby": "", "sortorder": ""})
 
     @staticmethod
     def setViewItemArray(viewps):
