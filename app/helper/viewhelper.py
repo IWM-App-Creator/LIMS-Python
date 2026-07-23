@@ -148,22 +148,44 @@ class ViewHelper:
     @staticmethod
     def setViewGroupByData(viewps):
         user_setting = viewps.user_setting.get()
-        group_tab = int(user_setting.get("group_tab", 0)) if user_setting else 0
-        group_cndt = ""
-        if group_tab not in (None, "", 0):
-            for col in viewps.view_cols.get():
-                if int(col["col_id"]) == group_tab:
-                    group_cndt = col["qry_alias"] + "." + col["col_name"]
-                    break
-            if viewps.tab_id.get() not in (None, "0", "", 0):
-                group_cndt = group_cndt + " = '" + viewps.tab_id.get() + "'"
-            else:
-                for col in viewps.view_cols.get():
-                    if int(col["col_id"]) == group_tab:
-                        col_option = col["col_options"]
-                        col_data_items = col_option.get("col_data_items", [])
-                        group_cndt = group_cndt + " = '" + str(col_data_items[0].get("opt_val", 0)) + "'"
-                        break
+        if not isinstance(user_setting, dict):
+            user_setting = {}
+        group_tab = user_setting.get("group_tab")
+        group_tab = int(group_tab) if str(group_tab).isdigit() else 0
+        if group_tab == 0:
+            return ""
+        view_cols = viewps.view_cols.get()
+        if not isinstance(view_cols, list):
+            return ""
+        group_col = None
+        for col in view_cols:
+            if not isinstance(col, dict):
+                continue
+            col_id = col.get("col_id")
+            if str(col_id).isdigit() and int(col_id) == group_tab:
+                group_col = col
+                break
+        if not group_col:
+            return ""
+        qry_alias = group_col.get("qry_alias", "")
+        col_name = group_col.get("col_name", "")
+        if not qry_alias or not col_name:
+            return ""
+        group_cndt = f"{qry_alias}.{col_name}"
+        tab_id = viewps.tab_id.get()
+        if tab_id not in (None, "", 0, "0"):
+            return f"{group_cndt} = '{tab_id}'"
+        col_options = group_col.get("col_options", {})
+        if not isinstance(col_options, dict):
+            col_options = {}
+        col_data_items = col_options.get("col_data_items", [])
+        if (
+            isinstance(col_data_items, list)
+            and len(col_data_items) > 0
+            and isinstance(col_data_items[0], dict)
+        ):
+            opt_val = col_data_items[0].get("opt_val", 0)
+            return f"{group_cndt} = '{opt_val}'"
         return group_cndt
 
     @staticmethod
