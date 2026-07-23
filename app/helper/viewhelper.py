@@ -353,7 +353,7 @@ class ViewHelper:
             if not isinstance(col, dict):
                 continue
             col_id = str(col.get("col_id", ""))
-            col_data[col_id] = {"is_pin": col.get("is_pin", 0), "th_width": col.get("th_width", 0)}
+            col_data[col_id] = {"is_pin": col.get("is_pin", 0), "th_width": col.get("th_width", "")}
         for idx, srtby in enumerate(sortby):
             if "FIELD(" in srtby:
                 tmp = srtby.replace("^^", ",").split(",")
@@ -383,7 +383,7 @@ class ViewHelper:
             col_id = str(col.get("col_id", ""))
             col_name = col.get("col_name", "")
             qry_alias = col.get("qry_alias", "")
-            col.update(col_data.get(col_id, {"is_pin": 0, "th_width": 0}))
+            col.update(col_data.get(col_id, {"is_pin": 0, "th_width": ""}))
             key = f"{col_id}{col_name}_{qry_alias}"
             col.update(srt_data.get(key, {"sortby": "", "sortorder": ""}))
             col["bg_color"] = ""
