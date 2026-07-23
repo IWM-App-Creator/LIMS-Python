@@ -367,12 +367,13 @@ class ViewHelper:
             if not isinstance(join, dict):
                 continue
             bg_color = join.get("bg_color", "")
+            bg_color_opt = join.get("bg_color_opt", "")
             col_id_1 = str(join.get("col_id_1") or "")
             table_id_2 = str(join.get("table_id_2") or "")
             if col_id_1 and col_id_1 not in join_by_col_id:
-                join_by_col_id[col_id_1] = bg_color
+                join_by_col_id[col_id_1] = {"bg_color": bg_color, "bg_color_opt": bg_color_opt}
             if table_id_2 and table_id_2 not in join_by_table_id:
-                join_by_table_id[table_id_2] = bg_color
+                join_by_table_id[table_id_2] = {"bg_color": bg_color, "bg_color_opt": bg_color_opt}
         if not isinstance(view_cols, list):
             view_cols = []
         for col in view_cols:
@@ -385,10 +386,13 @@ class ViewHelper:
             key = f"{col_id}{col_name}_{qry_alias}"
             col.update(srt_data.get(key, {"sortby": "", "sortorder": ""}))
             col["bg_color"] = ""
+            col["bg_color_opt"] = ""
             if int(col.get("col_key")) == 2 and col_id in join_by_col_id:
-                col["bg_color"] = join_by_col_id[col_id]
+                col["bg_color"] = join_by_col_id[col_id].get("bg_color", "")
+                col["bg_color_opt"] = join_by_col_id[col_id].get("bg_color_opt", "")
             elif str(col.get("table_id")) in join_by_table_id:
-                col["bg_color"] = join_by_table_id[str(col.get("table_id"))]
+                col["bg_color"] = join_by_table_id[str(col.get("table_id"))].get("bg_color", "")
+                col["bg_color_opt"] = join_by_table_id[str(col.get("table_id"))].get("bg_color_opt", "")
                     
 
     @staticmethod
