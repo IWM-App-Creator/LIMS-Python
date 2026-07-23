@@ -181,6 +181,7 @@ class ViewHelper:
         col_data_items = col_options.get("col_data_items", [])
         if (isinstance(col_data_items, list) and len(col_data_items) > 0 and isinstance(col_data_items[0], dict)):
             opt_val = col_data_items[0].get("opt_val", 0)
+            viewps.tab_id.set(opt_val)
             return f"{group_cndt} = '{opt_val}'"
         return group_cndt
 
