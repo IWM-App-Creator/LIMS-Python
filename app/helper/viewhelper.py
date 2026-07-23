@@ -149,11 +149,18 @@ class ViewHelper:
         group_cndt = ""
         if group_tab not in (None, "", 0):
             for col in viewps.view_cols.get():
-                if col["col_id"] == group_tab:
+                if int(col["col_id"]) == group_tab:
                     group_cndt = col["qry_alias"] + "." + col["col_name"]
                     break
             if viewps.tab_id.get() not in (None, "0", "", 0):
                 group_cndt = group_cndt + " = '" + viewps.tab_id.get() + "'"
+            else:
+                for col in viewps.view_cols.get():
+                    if int(col["col_id"]) == group_tab:
+                        col_option = col["col_options"]
+                        col_data_items = col_option.get("col_data_items", [])
+                        group_cndt = group_cndt + " = '" + str(col_data_items[0].get("opt_val", 0)) + "'"
+                        break
         return group_cndt
 
     @staticmethod
