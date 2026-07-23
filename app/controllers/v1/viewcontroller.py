@@ -28,7 +28,7 @@ def getViewData(request: Request):
         # Sort View Col
         # --------------------------
         view_cols = viewps.view_cols.get()
-        sortObjectsByKey(view_cols["view_cols"], 'rank', 'asc'); # Sort By Rank
+        sortObjectsByKey(view_cols, 'rank', 'asc'); # Sort By Rank
         viewps.view_cols.set(view_cols)
         # --------------------------
         # Get Data
@@ -36,7 +36,11 @@ def getViewData(request: Request):
         dataarr = []
         viewps.view_qry_data.set(dataarr)
         view_qry = viewps.view_qry.get() # Get Query
-        # Get Search Query
+        # Set Group By Data
+        groupcndt = viewhlp.setViewGroupByData(viewps)
+        if groupcndt not in (None, ""):
+            view_qry = view_qry + " AND (" + groupcndt + ")"
+        # Set Search Query
         if viewps.search_text.get() not in (None, ""):
             view_qry = view_qry + " AND (" + viewhlp.getViewSearchQuery(viewps) + ")"
         # Check Association
@@ -45,7 +49,6 @@ def getViewData(request: Request):
             # print("association_qry --", viewps.association_qry.get())
             if viewps.association_qry.get():
                 view_qry = view_qry + " AND ( " + viewps.association_qry.get() + ")"
-        # Get Group By Data
         # print("primary_colnm --", viewps.primary_colnm.get())
         #     $dvps->rawqry = "";
         #     if($dvps->txtsearch) {

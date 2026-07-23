@@ -67,7 +67,6 @@ class ViewHelper:
     def setViewTableCols(viewps):
         # Get View Columns
         view_cols = viewps.view_cols.get()
-        view_cols = view_cols.get("view_cols", [])
         col_id_arr = []
         for col in view_cols:
             col_id_arr.append(col["col_id"])
@@ -77,17 +76,17 @@ class ViewHelper:
         dbps.is_del_tbl.set(0)
         dbps.is_del_col.set(0)
         tblcol = getDBTableData(dbps)
-        tbl_cols = []
+        tbl_cols = {}
         for col in tblcol:
             col_options = (col.col_options or {}).copy()
             col_options.pop("csv_col_name", None)
             col_options.pop("csv_col_type", None)
             col_options.pop("csv_map_col_nm", None)
-            tbl_cols.append({
-                "col_id": col.col_id,
-                "col_options": col_options
-            })
-        viewps.tbl_cols.set(tbl_cols)
+            tbl_cols[col.col_id] = ({"col_options": col_options})
+        for viewcol in view_cols:
+            if viewcol["col_id"] in tbl_cols:
+                viewcol.update(tbl_cols[viewcol["col_id"]])
+        viewps.view_cols.set(view_cols)
 
     @staticmethod
     def setViewLayout(viewps):
@@ -103,7 +102,6 @@ class ViewHelper:
         cnt = 0
         rawqry = ""
         viewcols = viewps.view_cols.get()
-        viewcols = viewcols.get("view_cols", [])
         for col in viewcols:
             if col:
                 srchcol = col['qry_alias'] + "." + col['col_name']
@@ -143,6 +141,20 @@ class ViewHelper:
                         break
             if assocol_ids:
                 viewps.association_qry.set(f"{qry_alias}.{asso_col} IN ({','.join(map(str, assocol_ids))})")
+
+    @staticmethod
+    def setViewGroupByData(viewps):
+        user_setting = viewps.user_setting.get()
+        group_tab = int(user_setting.get("group_tab", 0))
+        group_cndt = ""
+        if group_tab not in (None, "", 0):
+            for col in viewps.view_cols.get():
+                if col["col_id"] == group_tab:
+                    group_cndt = col["qry_alias"] + "." + col["col_name"]
+                    break
+            if viewps.tab_id.get() not in (None, "0", "", 0):
+                group_cndt = group_cndt + " = '" + viewps.tab_id.get() + "'"
+        return group_cndt
 
     @staticmethod
     def setHighestPermission(viewps, assoc):
@@ -269,7 +281,6 @@ class ViewHelper:
             output_array["view_name"] = viewps.view_name.get()
             output_array["view_type"] = viewps.view_type.get()
             output_array["view_cols"] = viewps.view_cols.get()
-            output_array["tbl_cols"] = viewps.tbl_cols.get()
             output_array["col_metadata"] = viewps.col_metadata.get()
             output_array["col_colors"] = viewps.col_colors.get()
             output_array["action_group_list"] = viewps.action_group_list.get()
@@ -285,7 +296,6 @@ class ViewHelper:
         item_list = []
         view_qry_data = viewps.view_qry_data.get()
         view_cols = viewps.view_cols.get()
-        view_cols = view_cols.get("view_cols", [])
         primary_col = viewps.primary_col.get().replace("|", "")
         item_id_name = f"{primary_col}_mtbl"
         for data in view_qry_data:
@@ -446,8 +456,7 @@ class CreateViewHelper:
     @staticmethod 
     def generateViewQuery(viewps) :
         view_cols = viewps.view_cols.get()
-        sortObjectsByKey(view_cols["view_cols"], 'rank', 'asc'); # Sort By Rank
-        view_cols = view_cols.get("view_cols", [])
+        sortObjectsByKey(view_cols, 'rank', 'asc'); # Sort By Rank
         qry_col_list = ""
         for col in view_cols:
             if createviewhlp.isColExcludedFromQuery(col):
