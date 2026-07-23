@@ -21,7 +21,10 @@ class ViewHelper:
         viewps.col_id.set(params.get("col_id", 0))
         viewps.col_name.set(params.get("col_name", ""))
         viewps.call_from.set(params.get("call_from", "DynamicView"))
-        viewps.tab_id.set(params.get("tab_id", "0"))
+        tab_id = params.get("tab_id", "0")
+        if tab_id in (None, "0", 0, ""):
+            tab_id = "0"
+        viewps.tab_id.set(tab_id)
         viewps.page_no.set(params.get("page_no", 1))
         viewps.search_text.set(params.get("search_text", ""))
         viewps.filterqry.set(params.get("filterqry", ""))
@@ -145,7 +148,7 @@ class ViewHelper:
     @staticmethod
     def setViewGroupByData(viewps):
         user_setting = viewps.user_setting.get()
-        group_tab = int(user_setting.get("group_tab", 0))
+        group_tab = int(user_setting.get("group_tab", 0)) if user_setting else 0
         group_cndt = ""
         if group_tab not in (None, "", 0):
             for col in viewps.view_cols.get():
@@ -302,34 +305,52 @@ class ViewHelper:
     @staticmethod
     def setCurrentTabData(viewps):
         current_tab = f"tab_{viewps.tab_id.get()}"
+        # Get metadata
         col_metadata = viewps.col_metadata.get()
+        if not isinstance(col_metadata, dict):
+            col_metadata = {}
+        col_metadata = col_metadata.get(current_tab, [])
+        # Get user settings
         user_setting = viewps.user_setting.get()
-        col_metadata = col_metadata.get(current_tab)
+        if not isinstance(user_setting, dict):
+            user_setting = {}
         tabs = user_setting.get("tabs")
+        if not isinstance(tabs, dict):
+            tabs = {}
         tabs_data = tabs.get(current_tab)
-        sortby = tabs_data.get("sortby").split(",") if tabs_data.get("sortby") else []
-        sortorder = tabs_data.get("sortorder").split(",") if tabs_data.get("sortorder") else []
+        if not isinstance(tabs_data, dict):
+            tabs_data = {}
+        # Sort settings
+        sortby = tabs_data.get("sortby") or ""
+        sortorder = tabs_data.get("sortorder") or ""
+        sortby = sortby.split(",") if sortby else []
+        sortorder = sortorder.split(",") if sortorder else []
         col_data = {}
         srt_data = {}
-        cnt = 0
         for col in col_metadata:
-            col_data[str(col["col_id"])] = {"is_pin": col["is_pin"], "th_width": col["th_width"]}
-        for srtby in sortby:
+            col_data[str(col["col_id"])] = {
+                "is_pin": col.get("is_pin", 0),
+                "th_width": col.get("th_width", 0)
+            }
+        for idx, srtby in enumerate(sortby):
             if "FIELD(" in srtby:
-                tmp = srtby.replace("^^", ",")
-                tmp = tmp.split(",") if tmp else []
+                tmp = srtby.replace("^^", ",").split(",")
                 srtby = tmp[0].replace("FIELD(", "")
-            srt_data[str(srtby)] = {"sortby": srtby, "sortorder": sortorder[cnt]}
-            cnt = cnt + 1
-        for col in viewps.view_cols.get():
-            if str(col["col_id"]) in col_data:
-                col.update(col_data[str(col["col_id"])])
-            else:
-                col.update({"is_pin": 0, "th_width": 0})
-            if str(col["col_id"]) + col["col_name"] + "_" + col["qry_alias"] in srt_data:
-                col.update(srt_data[str(col["col_id"]) + col["col_name"] + "_" + col["qry_alias"]])
-            else:
-                col.update({"sortby": "", "sortorder": ""})
+            srt_data[srtby] = {
+                "sortby": srtby,
+                "sortorder": sortorder[idx] if idx < len(sortorder) else ""
+            }
+        view_cols = viewps.view_cols.get() or []
+        for col in view_cols:
+            col.update(col_data.get(
+                str(col["col_id"]),
+                {"is_pin": 0, "th_width": 0}
+            ))
+            key = f'{col["col_id"]}{col["col_name"]}_{col["qry_alias"]}'
+            col.update(srt_data.get(
+                key,
+                {"sortby": "", "sortorder": ""}
+            ))
 
     @staticmethod
     def setViewItemArray(viewps):
