@@ -304,53 +304,52 @@ class ViewHelper:
 
     @staticmethod
     def setCurrentTabData(viewps):
-        current_tab = f"tab_{viewps.tab_id.get()}"
-        # Get metadata
+        current_tab = f"tab_{viewps.tab_id.get() or 0}"
+        # Column metadata
         col_metadata = viewps.col_metadata.get()
         if not isinstance(col_metadata, dict):
             col_metadata = {}
         col_metadata = col_metadata.get(current_tab, [])
-        # Get user settings
+        if not isinstance(col_metadata, list):
+            col_metadata = []
+        # User settings
         user_setting = viewps.user_setting.get()
         if not isinstance(user_setting, dict):
             user_setting = {}
-        tabs = user_setting.get("tabs")
+        tabs = user_setting.get("tabs", {})
         if not isinstance(tabs, dict):
             tabs = {}
-        tabs_data = tabs.get(current_tab)
+        tabs_data = tabs.get(current_tab, {})
         if not isinstance(tabs_data, dict):
             tabs_data = {}
-        # Sort settings
-        sortby = tabs_data.get("sortby") or ""
-        sortorder = tabs_data.get("sortorder") or ""
+        sortby = str(tabs_data.get("sortby") or "")
+        sortorder = str(tabs_data.get("sortorder") or "")
         sortby = sortby.split(",") if sortby else []
         sortorder = sortorder.split(",") if sortorder else []
         col_data = {}
         srt_data = {}
         for col in col_metadata:
-            col_data[str(col["col_id"])] = {
-                "is_pin": col.get("is_pin", 0),
-                "th_width": col.get("th_width", 0)
-            }
+            if not isinstance(col, dict):
+                continue
+            col_id = str(col.get("col_id", ""))
+            col_data[col_id] = {"is_pin": col.get("is_pin", 0), "th_width": col.get("th_width", 0)}
         for idx, srtby in enumerate(sortby):
             if "FIELD(" in srtby:
                 tmp = srtby.replace("^^", ",").split(",")
                 srtby = tmp[0].replace("FIELD(", "")
-            srt_data[srtby] = {
-                "sortby": srtby,
-                "sortorder": sortorder[idx] if idx < len(sortorder) else ""
-            }
-        view_cols = viewps.view_cols.get() or []
+            srt_data[srtby] = {"sortby": srtby, "sortorder": sortorder[idx] if idx < len(sortorder) else ""}
+        view_cols = viewps.view_cols.get()
+        if not isinstance(view_cols, list):
+            view_cols = []
         for col in view_cols:
-            col.update(col_data.get(
-                str(col["col_id"]),
-                {"is_pin": 0, "th_width": 0}
-            ))
-            key = f'{col["col_id"]}{col["col_name"]}_{col["qry_alias"]}'
-            col.update(srt_data.get(
-                key,
-                {"sortby": "", "sortorder": ""}
-            ))
+            if not isinstance(col, dict):
+                continue
+            col_id = str(col.get("col_id", ""))
+            col_name = col.get("col_name", "")
+            qry_alias = col.get("qry_alias", "")
+            col.update(col_data.get(col_id, {"is_pin": 0, "th_width": 0}))
+            key = f"{col_id}{col_name}_{qry_alias}"
+            col.update(srt_data.get(key, {"sortby": "", "sortorder": ""}))
 
     @staticmethod
     def setViewItemArray(viewps):
