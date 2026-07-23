@@ -22,8 +22,6 @@ class ViewHelper:
         viewps.col_name.set(params.get("col_name", ""))
         viewps.call_from.set(params.get("call_from", "DynamicView"))
         tab_id = params.get("tab_id", "0")
-        if tab_id in (None, "0", 0, ""):
-            tab_id = "0"
         viewps.tab_id.set(tab_id)
         viewps.page_no.set(params.get("page_no", 1))
         viewps.search_text.set(params.get("search_text", ""))
@@ -173,7 +171,7 @@ class ViewHelper:
             return ""
         group_cndt = f"{qry_alias}.{col_name}"
         tab_id = viewps.tab_id.get()
-        if tab_id not in (None, "", 0, "0"):
+        if tab_id not in (None, ""):
             return f"{group_cndt} = '{tab_id}'"
         col_options = group_col.get("col_options", {})
         if not isinstance(col_options, dict):
