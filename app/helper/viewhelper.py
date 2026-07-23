@@ -179,11 +179,7 @@ class ViewHelper:
         if not isinstance(col_options, dict):
             col_options = {}
         col_data_items = col_options.get("col_data_items", [])
-        if (
-            isinstance(col_data_items, list)
-            and len(col_data_items) > 0
-            and isinstance(col_data_items[0], dict)
-        ):
+        if (isinstance(col_data_items, list) and len(col_data_items) > 0 and isinstance(col_data_items[0], dict)):
             opt_val = col_data_items[0].get("opt_val", 0)
             return f"{group_cndt} = '{opt_val}'"
         return group_cndt
@@ -314,6 +310,9 @@ class ViewHelper:
             output_array["view_name"] = viewps.view_name.get()
             output_array["view_type"] = viewps.view_type.get()
             output_array["view_cols"] = viewps.view_cols.get()
+            output_array["view_joins"] = viewps.view_joins.get()
+            output_array["view_child"] = viewps.view_child.get()
+            output_array["view_actions"] = viewps.view_actions.get()
             output_array["col_metadata"] = viewps.col_metadata.get()
             output_array["col_colors"] = viewps.col_colors.get()
             output_array["action_group_list"] = viewps.action_group_list.get()
@@ -360,7 +359,22 @@ class ViewHelper:
                 tmp = srtby.replace("^^", ",").split(",")
                 srtby = tmp[0].replace("FIELD(", "")
             srt_data[srtby] = {"sortby": srtby, "sortorder": sortorder[idx] if idx < len(sortorder) else ""}
+        view_joins = viewps.view_joins.get()
+        if not isinstance(view_joins, list):
+            view_joins = []
         view_cols = viewps.view_cols.get()
+        join_by_col_id = {}
+        join_by_table_id = {}
+        for join in view_joins:
+            if not isinstance(join, dict):
+                continue
+            bg_color = join.get("bg_color", "")
+            col_id_1 = str(join.get("col_id_1") or "")
+            table_id_2 = str(join.get("table_id_2") or "")
+            if col_id_1 and col_id_1 not in join_by_col_id:
+                join_by_col_id[col_id_1] = bg_color
+            if table_id_2 and table_id_2 not in join_by_table_id:
+                join_by_table_id[table_id_2] = bg_color
         if not isinstance(view_cols, list):
             view_cols = []
         for col in view_cols:
@@ -372,6 +386,12 @@ class ViewHelper:
             col.update(col_data.get(col_id, {"is_pin": 0, "th_width": 0}))
             key = f"{col_id}{col_name}_{qry_alias}"
             col.update(srt_data.get(key, {"sortby": "", "sortorder": ""}))
+            col["bg_color"] = ""
+            if int(col.get("col_key")) == 2 and col_id in join_by_col_id:
+                col["bg_color"] = join_by_col_id[col_id]
+            elif str(col.get("table_id")) in join_by_table_id:
+                col["bg_color"] = join_by_table_id[str(col.get("table_id"))]
+                    
 
     @staticmethod
     def setViewItemArray(viewps):
