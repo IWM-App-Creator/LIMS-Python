@@ -21,6 +21,8 @@ def nowWithTimeZone(format: str | None = DEFAULT_FORMAT):
 
 def formatDate(from_date: str, format: str = "%d/%m/%Y") -> str:
     try:
+        if format is None:
+            format = "%d/%m/%Y"
         source_tz = ZoneInfo(DEFAULT_TZ)
         user_tz = getTimeZone()  # Convert Timezone based on user setting, Default "Australia/Perth"
         if isinstance(from_date, datetime):
