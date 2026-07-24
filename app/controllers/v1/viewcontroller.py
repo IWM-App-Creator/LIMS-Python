@@ -46,25 +46,8 @@ def getViewData(request: Request):
         # Check Association
         if userps.ws_role_id.get() != 1 and userps.role_id.get() != 1:
             viewhlp.checkViewAssociation(viewps) # Check Associations
-            # print("association_qry --", viewps.association_qry.get())
             if viewps.association_qry.get():
                 view_qry = view_qry + " AND ( " + viewps.association_qry.get() + ")"
-        # print("primary_colnm --", viewps.primary_colnm.get())
-        #     $dvps->rawqry = "";
-        #     if($dvps->txtsearch) {
-        #         $this->getViewSearchQuery($dvps);
-        #         // $DynamicViewFunctions->appendChildViewSearchQuery($dvps); /* Search For Child View */
-        #         if($dvps->rawqry) {
-        #             $dvps->view_qry = $dvps->view_qry . " and ( " . $dvps->rawqry . " ) ";
-        #         }
-        #     }
-        #     if($dvps->filterqry) {
-        #         $this->getViewFilteredQuery($dvps);
-        #     }
-        #     // if($dvps->association_limit) {
-        #     //     $DynamicViewFunctions->getViewAssociationLimit($dvps);
-        #     // }
-        # if having user tab and not having tab_id then set first tab_id from group tab list
         # Set View Data Sorting
         viewhlp.setViewSorting(viewps)
         view_qry = f"{view_qry} Order By {viewps.sorting.get()}"

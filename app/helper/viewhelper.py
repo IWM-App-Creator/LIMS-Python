@@ -1,5 +1,5 @@
 import json
-from app.utils.common import select, DB, userps
+from app.utils.common import select, DB, userps, formatDate
 from app.dbfunctions.dbtablesfunctions import getDBTableData
 from app.dbfunctions.viewlayoutfunctions import getViewLayoutDataByID
 from app.dbfunctions.associationfunctions import getViewAssociationByUser
@@ -116,26 +116,25 @@ class ViewHelper:
         associationps.user_id.set(userps.user_id.get())
         associationps.view_id.set(viewps.view_id.get())
         assousers = getViewAssociationByUser(associationps)
-        # print("assousers --> ", assousers)
+        viewps.assousers.set(assousers)
         viewps.full_access.set(0)
         viewps.association_qry.set("")
         assocol_ids = []
         qry_alias = "mtbl"
         asso_col = ""
         view_cols = viewps.view_cols.get()
-        view_cols = view_cols.get("view_cols", [])
         for assoc in assousers:
-            if assoc.full_access == 1:
+            if int(assoc.full_access) == 1:
                 viewps.full_access.set(1)
                 viewhlp.setHighestPermission(assoc)
             assocol_ids.append(assoc.col_p_val)
         
-        if viewps.full_access.get() == 0:
+        if int(viewps.full_access.get()) == 0:
             for assoc in assousers:
                 if asso_col:
                     break
                 for col in view_cols:
-                    if assoc.col_id == col["col_id"]:
+                    if str(assoc.col_id) == str(col["col_id"]):
                         qry_alias = col["qry_alias"]
                         asso_col = col["col_name"]
                         break
@@ -402,12 +401,17 @@ class ViewHelper:
         view_cols = viewps.view_cols.get()
         primary_col = viewps.primary_col.get().replace("|", "")
         item_id_name = f"{primary_col}_mtbl"
+        assousers = viewps.assousers.get()
+        print("Full Access", viewps.full_access.get())
+        print()
         for data in view_qry_data:
             item = {
                 "item_id": getattr(data, item_id_name, ""),
                 "is_delete": getattr(data, "is_delete", 0),
                 "noti_cnt": getattr(data, "noti_cnt", "")
             }
+            # Association Per Item
+
             # Join Table Is Delete
             # foreach($dvps->tablenames as $tbl) {
             #     $is_main_tbl = 0;
@@ -446,10 +450,24 @@ class ViewHelper:
                 col_id = colhd["col_id"]
                 col_name = colhd["col_name"]
                 qry_alias = colhd["qry_alias"]
+                col_type = colhd["col_type"]
+                link_text = colhd["link_text"]
+                url_prefix = colhd["url_prefix"]
+                date_format = colhd["date_format"]
+                calc_formula = colhd["calc_formula"]
+
                 if colhd["col_type"] == "PChild":
                     continue
+
                 dbcol = f"{col_id}{col_name}_{qry_alias}"
-                item[f"{col_id}|{col_name}"] = str(getattr(data, dbcol, ""))
+                dbval = str(getattr(data, dbcol, ""))
+ 
+                if col_type in ("DATETIME", "DATE", "TIME"):
+                    print("date_format --> ", date_format)
+                    dbval = formatDate(from_date = dbval, format = date_format)
+
+                item[f"{col_id}|{col_name}"] = dbval # Set Actual Col Values
+
                 # Display label for lookup/user columns
                 if (dbhlp.isUserColumn(col_name, 0) or (colhd["col_type"] in ("MAPCOL", "DISPLAYAS") and colhd["lookup_colid"] > 0) ):
                     lbl_col = f"{col_id}{col_name}_lbl_{qry_alias}"
