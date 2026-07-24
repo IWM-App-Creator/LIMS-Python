@@ -182,7 +182,7 @@ def getAssociationViews(associationps):
     assoviews = DB.getTableMeta("sys_association_view").alias("av")
     stmt = select(assoviews)
     if associationps.view_id.get() not in (None, "", 0):
-        stmt = stmt.where(assoviews.c.view_id == associationps.view_id.get())
+        stmt = stmt.where(assoviews.c.view_id == int(associationps.view_id.get()))
     view_ids = associationps.view_ids.get()
     if view_ids not in (None, "", 0):
         view_id_list = [int(x) for x in view_ids.split(",") if x.strip()]

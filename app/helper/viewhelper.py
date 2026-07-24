@@ -2,7 +2,7 @@ import json
 from app.utils.common import select, DB, userps, formatDate
 from app.dbfunctions.dbtablesfunctions import getDBTableData
 from app.dbfunctions.viewlayoutfunctions import getViewLayoutDataByID
-from app.dbfunctions.associationfunctions import getViewAssociationByUser
+from app.dbfunctions.associationfunctions import getViewAssociationByUser, getAssociationViews
 from app.helper.generalfunctions import sortObjectsByKey, updateNestedJsonVal, getLastUpdatedJSON
 from app.properties.dbproperties import dbps
 from app.properties.associationproperties import associationps
@@ -116,7 +116,10 @@ class ViewHelper:
         associationps.user_id.set(userps.user_id.get())
         associationps.view_id.set(viewps.view_id.get())
         assousers = getViewAssociationByUser(associationps)
+        associationps.fetch_single.set(1)
+        assoview = getAssociationViews(associationps)
         viewps.assousers.set(assousers)
+        viewps.assoview.set(getattr(assoview, "view_asso_json", {}))
         viewps.full_access.set(0)
         viewps.association_qry.set("")
         assocol_ids = []
@@ -126,7 +129,7 @@ class ViewHelper:
         for assoc in assousers:
             if int(assoc.full_access) == 1:
                 viewps.full_access.set(1)
-                viewhlp.setHighestPermission(assoc)
+                viewhlp.setHighestPermission(viewps, assoc)
             assocol_ids.append(assoc.col_p_val)
         
         if int(viewps.full_access.get()) == 0:
@@ -401,51 +404,22 @@ class ViewHelper:
         view_cols = viewps.view_cols.get()
         primary_col = viewps.primary_col.get().replace("|", "")
         item_id_name = f"{primary_col}_mtbl"
-        assousers = viewps.assousers.get()
-        print("Full Access", viewps.full_access.get())
-        print()
+        if userps.ws_role_id.get() != 1 and userps.role_id.get() != 1:
+            assousers = viewps.assousers.get()
+            assoview = viewps.assoview.get()
+            if not isinstance(assousers, list):
+                assousers = []
+            if not isinstance(assoview, dict):
+                assoview = {}
+            editable = assoview.get("editable", [])
+
         for data in view_qry_data:
             item = {
                 "item_id": getattr(data, item_id_name, ""),
                 "is_delete": getattr(data, "is_delete", 0),
                 "noti_cnt": getattr(data, "noti_cnt", "")
             }
-            # Association Per Item
-
-            # Join Table Is Delete
-            # foreach($dvps->tablenames as $tbl) {
-            #     $is_main_tbl = 0;
-            #     if($tbl && explode("|", $tbl)[0] == $dvps->table_id) {
-            #         $is_main_tbl = 1;
-            #     }
-            #     if($is_main_tbl == 0) {
-            #         $tbl_alias = explode("|", $tbl)[1] . "_is_delete";
-            #         $item_array[$tbl_alias] = $data->$tbl_alias;
-            #     }
-            # }
-            # Association Per Item
-            # if($dvps->full_access == 1) { /* Full Access */
-            #     $item_array['associations_id'] = $dvps->fa_asso_id;
-            #     $item_array['designation_id'] = $dvps->fa_dsgn_id;
-            #     $item_array['designation_name'] = $dvps->fa_dsgn_nm;
-            #     $item_array['is_owner'] = $dvps->fa_is_owner;
-            #     $item_array['is_edit'] = $dvps->fa_is_edit;
-            #     $item_array['is_view'] = $dvps->fa_is_view;
-            #     $item_array['is_noaccess'] = $dvps->fa_is_noaccess;
-            # } else { /* Limited Access */
-            #     foreach($dvps->assousers as $assousr) {
-            #         if($data->$item_id_name == $assousr->col_p_val) {
-            #             $item_array['associations_id'] = $assousr->associations_id;
-            #             $item_array['designation_id'] = $assousr->designation_id;
-            #             $item_array['designation_name'] = $assousr->designation_name;
-            #             $item_array['is_owner'] = $assousr->is_owner;
-            #             $item_array['is_edit'] = $assousr->is_edit;
-            #             $item_array['is_view'] = $assousr->is_view;
-            #             $item_array['is_noaccess'] = $assousr->is_noaccess;
-            #             break;
-            #         }
-            #     }
-            # }
+            editable_col_id = []
             for colhd in view_cols:
                 col_id = colhd["col_id"]
                 col_name = colhd["col_name"]
@@ -463,7 +437,6 @@ class ViewHelper:
                 dbval = str(getattr(data, dbcol, ""))
  
                 if col_type in ("DATETIME", "DATE", "TIME"):
-                    print("date_format --> ", date_format)
                     dbval = formatDate(from_date = dbval, format = date_format)
 
                 item[f"{col_id}|{col_name}"] = dbval # Set Actual Col Values
@@ -472,7 +445,48 @@ class ViewHelper:
                 if (dbhlp.isUserColumn(col_name, 0) or (colhd["col_type"] in ("MAPCOL", "DISPLAYAS") and colhd["lookup_colid"] > 0) ):
                     lbl_col = f"{col_id}{col_name}_lbl_{qry_alias}"
                     item[f"{col_id}|{col_name}lbl"] = str(getattr(data, lbl_col, ""))
+
+                if (userps.ws_role_id.get() == 1 or userps.role_id.get() == 1):
+                    if primary_col != str(col_id) + col_name:
+                        editable_col_id.append(col_id)
+                else:
+                    if viewps.full_access.get() == 1:
+                        is_owner = viewps.fa_is_owner.get() or 0
+                        is_edit = viewps.fa_is_edit.get() or 0
+                        association_id = viewps.fa_asso_id.get() or 0
+                        designation_id = viewps.fa_dsgn_id.get() or 0
+                        if int(is_owner) == 1 or int(is_edit) == 1:
+                            for asso_edit in editable:
+                                if (
+                                    int(col_id) == int(asso_edit["data_id"])
+                                    and primary_col != str(col_id) + col_name
+                                    and int(asso_edit["is_include"]) == 1
+                                    and int(asso_edit["designation_id"]) == int(designation_id)
+                                    and int(asso_edit["association_id"]) == int(association_id)
+                                ):
+                                    editable_col_id.append(col_id)
+                    else:
+                        for auser in assousers:
+                            if str(getattr(data, item_id_name, "")) == str(getattr(auser, "col_p_val", "")):
+                                access_json = getattr(auser, "access_json", {})
+                                is_owner = access_json.get("is_owner", 0)
+                                is_edit = access_json.get("is_edit", 0)
+                                if int(is_owner) == 1 or int(is_edit) == 1:
+                                    for asso_edit in editable:
+                                        if (
+                                            int(col_id) == int(asso_edit["data_id"])
+                                            and primary_col != str(col_id) + col_name
+                                            and int(asso_edit["is_include"]) == 1
+                                            and int(asso_edit["designation_id"]) == int(getattr(auser, "designation_id", 0))
+                                            and int(asso_edit["association_id"]) == int(getattr(auser, "associations_id", 0))
+                                        ):
+                                            editable_col_id.append(col_id)
+                                break
+
+            item["editable_cols"] = editable_col_id
+
             item_list.append(item)
+
         viewps.item_list.set(item_list)
 
     @staticmethod

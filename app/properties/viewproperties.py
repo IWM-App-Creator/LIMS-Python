@@ -22,6 +22,7 @@ class viewproperties:
         self.full_access = ContextVar("full_access", default = 0)
         self.is_editable = ContextVar("is_editable", default = 0)
         self.assousers = ContextVar("assousers", default = [])
+        self.assoview = ContextVar("assoview", default = {})
         self.fa_asso_id = ContextVar("fa_asso_id", default = 0)
         self.fa_dsgn_id = ContextVar("fa_dsgn_id", default = 0)
         self.fa_dsgn_nm = ContextVar("fa_dsgn_nm", default = "")
