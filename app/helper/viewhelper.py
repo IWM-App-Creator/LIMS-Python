@@ -457,13 +457,7 @@ class ViewHelper:
                         designation_id = viewps.fa_dsgn_id.get() or 0
                         if int(is_owner) == 1 or int(is_edit) == 1:
                             for asso_edit in editable:
-                                if (
-                                    int(col_id) == int(asso_edit["data_id"])
-                                    and primary_col != str(col_id) + col_name
-                                    and int(asso_edit["is_include"]) == 1
-                                    and int(asso_edit["designation_id"]) == int(designation_id)
-                                    and int(asso_edit["association_id"]) == int(association_id)
-                                ):
+                                if (int(col_id) == int(asso_edit["data_id"]) and primary_col != str(col_id) + col_name and int(asso_edit["is_include"]) == 1 and int(asso_edit["designation_id"]) == int(designation_id) and int(asso_edit["association_id"]) == int(association_id)):
                                     editable_col_id.append(col_id)
                     else:
                         for auser in assousers:
@@ -473,13 +467,7 @@ class ViewHelper:
                                 is_edit = access_json.get("is_edit", 0)
                                 if int(is_owner) == 1 or int(is_edit) == 1:
                                     for asso_edit in editable:
-                                        if (
-                                            int(col_id) == int(asso_edit["data_id"])
-                                            and primary_col != str(col_id) + col_name
-                                            and int(asso_edit["is_include"]) == 1
-                                            and int(asso_edit["designation_id"]) == int(getattr(auser, "designation_id", 0))
-                                            and int(asso_edit["association_id"]) == int(getattr(auser, "associations_id", 0))
-                                        ):
+                                        if (int(col_id) == int(asso_edit["data_id"]) and primary_col != str(col_id) + col_name and int(asso_edit["is_include"]) == 1 and int(asso_edit["designation_id"]) == int(getattr(auser, "designation_id", 0)) and int(asso_edit["association_id"]) == int(getattr(auser, "associations_id", 0))):
                                             editable_col_id.append(col_id)
                                 break
 
