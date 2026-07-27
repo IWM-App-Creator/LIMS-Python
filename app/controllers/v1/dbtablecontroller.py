@@ -151,9 +151,9 @@ def addDynamicColumn(request: Request):
 
         # Step 4 : Add New Column To View and update view Query
         view_json = viewps.view_cols.get()
-        view_json["view_cols"].append(view_cols)
-        sortObjectsByKey(view_json["view_cols"], 'rank', 'asc'); # Sort By Rank
-        for i, col in enumerate(view_json["view_cols"]):
+        view_json.append(view_cols)
+        sortObjectsByKey(view_json, 'rank', 'asc'); # Sort By Rank
+        for i, col in enumerate(view_json):
             col["rank"] = (i + 1) * 10
         viewps.view_cols.set(view_json)
         createviewhlp.generateViewQuery(viewps)
