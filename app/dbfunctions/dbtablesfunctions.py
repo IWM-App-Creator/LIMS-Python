@@ -198,7 +198,7 @@ def updateDBTableSequence(dbps):
 
 def getLookupData(dbps):
     schema_name = dbps.schema_name.get()
-    data_limit = dbps.data_limit.get()
+    data_limit = int(dbps.data_limit.get() or 0)
     lookup_table = DB.getTableMeta(dbps.table_name.get(), schema_name).alias("lt")
     pcol = lookup_table.c[dbps.primary_col_nm.get()]
     lcol = lookup_table.c[dbps.lookup_colnm.get()]
@@ -217,5 +217,10 @@ def getLookupData(dbps):
         stmt = stmt.where(
             lcol.like(f"%{dbps.search_txt.get()}%")
         )
-    stmt.order_by(pcol.desc(), lcol.asc()).offset(0).limit(int(data_limit))
+    stmt = (
+        stmt
+        .order_by(pcol.desc(), lcol.asc())
+        .offset(0)
+        .limit(data_limit)
+    )
     return DB.executeDBSelect(stmt)
