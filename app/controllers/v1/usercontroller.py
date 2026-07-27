@@ -1,7 +1,5 @@
-import json
-import bcrypt
 from app.utils.common import DB, select, Request, RequestData, JSONResponse, raiseAPIError, raiseInvalidError, userps
-from app.dbfunctions.userfunctions import getUserDataFromDB, insertUpdateUserData
+from app.dbfunctions.userfunctions import getUserDataFromDB, getUserListFromDB, insertUpdateUserData
 from app.dbfunctions.logfunctions import saveErrorLogtoDB
 from app.dbfunctions.workspacefunctions import getUserWSData
 from app.properties.dbproperties import dbps
@@ -13,9 +11,10 @@ from app.helper.dashboardhelper import getUserDashboards
 from app.properties.menuproperties import menups
 from app.properties.workspaceproperties import wsps
 from app.properties.dashboardproperties import dps
+from app.helper.generalfunctions import formatUserDisplayName
 
 # http://xytovet.localhost:8000/api/v1/user/getdetail?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMzc3OSIsInJvbGVfaWQiOiIxIiwiZW1haWwiOiJjaGludGFuaXQyMkBnbWFpbC5jb20iLCJleHAiOjE3ODMzMjQ3ODR9.AY-PMOH78_p-Jj9v3L1Hd_stU6NXcRWdmoBYHtVnjgo
-def getUserDetail(): # token: str
+def getUserDetail(request: Request): # token: str
     print("getUserDetail:", userps.user_id.get())
     userps.othr_userid.set(userps.user_id.get())
     user = getUserDataFromDB() # Execute Function to User Get Data
@@ -60,6 +59,103 @@ def getUserDetail(): # token: str
             "dashboard_list" : dps.dashboards_data.get()
         }
     )
+
+def getUserList(request: Request):
+    try:
+        # $view_id = empty(Input::get('view_id')) ? "0" : Input::get('view_id');
+        # $ws_flag = empty(Input::get('ws_flag')) ? "" : Input::get('ws_flag'); /* Workspace Association Access Usage */
+        # $ws_ws_id = empty(Input::get('ws_ws_id')) ? "0" : Input::get('ws_ws_id'); /* Workspace Association Access Usage */
+        params = RequestData.params(request)
+        view_id = params.get("view_id", "")
+        ws_flag = params.get("ws_flag", "")
+        ws_ws_id = params.get("ws_ws_id", 0)
+        # Set Workspace ID To Get User List
+        if ws_flag == "wsflag" and ws_ws_id > 0 : 
+            userps.ws_ws_id.set(ws_ws_id)  # Set Pass Workspace ID
+        else :
+            userps.ws_ws_id.set(userps.workspace_id) # Set User Workspace ID
+
+        users = getUserListFromDB(userps)
+        item_list = []
+        if not users: # Invalid View
+            return raiseAPIError("Log User Found", 200)
+        for user in users:
+            first_name = getattr(user, "first_name", "")
+            last_name = getattr(user, "last_name", "")
+            email = getattr(user, "email", "")
+            user_name = "";
+            if first_name :
+                user_name = formatUserDisplayName(first_name = first_name, last_name = last_name)
+                if ws_flag == "wsflag" :
+                    user_name = user_name + "<span style=\'font-size: 12px; padding-left:2px;\'>(" + email + ")</span>"
+            else :
+                user_name = email
+            item = {
+                "value": user.id,
+                "label": user_name,
+                # "first_name": user.first_name,
+                # "last_name": user.last_name,
+                # "role_id": user.role_id
+            }
+            # Include Users Groups Based On Permission
+            if view_id and ws_flag == "" :
+               print("Include Users Groups Based On Permission...")
+            item_list.append(item)
+        return JSONResponse(
+            status_code = 200,
+            content = {
+                "status": True,
+                "message": "Users List",
+                "user_data": item_list
+            }
+        )
+    except Exception as e:
+        saveErrorLogtoDB ("User", "", "getUserList", str(e)) # Log Error To DB
+        raiseAPIError(str(e), 500)
+
+def saveLinkedUser(request: Request):
+    print("saveLinkedUser --> ")
+    try:
+        params = RequestData.params(request)
+        userps.email.set(params.get("email", ""))
+        if userps.email.get() in (None, ""):
+            return raiseInvalidError("Invalid Email", 401)
+        user = getUserDataFromDB()
+        if user:
+            user_data = {
+                "user_id": user.id,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "role_id": user.role_id
+            }
+            wsps.chk_ws_role.set(0)
+            wsps.ws_usr_id.set(user.id)
+            wsps.domain_flag.set(0)
+            wsps.fetch_single.set(0)
+            getUserWSData(wsps)
+            userws_dtl = []
+            for ws in wsps.ws_data.get():
+                row = {
+                    "workspace_id": getattr(ws, "workspace_id", 0),
+                    "workspace_name": getattr(ws, "workspace_name", ""),
+                    "ws_role_id": getattr(ws, "ws_role_id", 0),
+                    "ws_role_lbl": getWSUserRole(int(ws.ws_role_id))
+                }
+                userws_dtl.append(row)
+            user_data['userws_dtl'] = userws_dtl
+            return JSONResponse(
+                status_code = 200,
+                content = {
+                    "status": True,
+                    "message": "User Data",
+                    "user_data": user_data
+                }
+            )
+        else:
+            return raiseInvalidError("User Not Found", 401)
+    except Exception as e:
+        saveErrorLogtoDB ("User", userps.othr_userid.get(), "searchWSUser", str(e)) # Log Error To DB
+        raiseAPIError(str(e), 500)
 
 def searchWSUser(request: Request):
     print("searchWSUser --> ")

@@ -13,6 +13,26 @@ def getUserDataFromDB():
     user = DB.executeDBSelectSingle(stmt) # Execute Query
     return user
 
+def getUserListFromDB(userps):
+    # Prepare Query
+    tbluser = DB.getTableMeta("users", "systemconfig").alias("usr")
+    tbluserws = DB.getTableMeta("users_workspace", "systemconfig").alias("wsusr")
+    stmt = (
+        select(
+            tbluser,
+            tbluserws.c.ws_role_id,
+        )
+        .join(
+            tbluserws,
+            tbluserws.c.usdr_id == tbluser.c.id,
+        )
+        .where(tbluser.c.is_delete == 0)
+        .where(tbluserws.c.is_delete == 0)
+        .where(tbluserws.c.user_id == int(userps.ws_ws_id))
+    )
+    users = DB.executeDBSelect(stmt)
+    return users
+
 def insertUpdateUserData():
     tbluser = DB.getTableMeta("users", "systemconfig")
     user_id = userps.user_id.get() # Get User ID

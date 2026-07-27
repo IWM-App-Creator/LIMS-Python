@@ -24,6 +24,8 @@ class UserProperties:
         self.usermenus = ContextVar("usermenus", default = [])
         self.othr_userid = ContextVar("othr_userid", default = "")
 
+        self.ws_ws_id = ContextVar("ws_ws_id", default = 0) # For Searching User Of Other Workspace
+
         self.user_timezone = ContextVar("user_timezone", default = "")
         self.db_upd_vals = ContextVar("db_upd_vals", default = {})
 
