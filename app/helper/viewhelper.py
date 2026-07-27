@@ -479,10 +479,10 @@ class ViewHelper:
                 col_type = col.get("col_type", "")
                 dbcol = f"{col_id}{col_name}_{qry_alias}"
                 dbval = getattr(data, dbcol, "")
+                item[f"{col_id}|{col_name}"] = str(dbval) # Set Into Array
                 if col_type in ("DATETIME", "DATE", "TIME"):
-                    item[f"{col_id}|{col_name}lbl"] = str(dbval)
-                    dbval = formatDate(from_date=str(dbval), format=col.get("date_format"))
-                item[f"{col_id}|{col_name}"] = str(dbval)
+                    dbval_lbl = getattr(data, dbcol, "")
+                    item[f"{col_id}|{col_name}lbl"] = formatDate(from_date=str(dbval_lbl), format=col.get("date_format"))
                 if (dbhlp.isUserColumn(col_name, 0) or (col_type in ("MAPCOL", "DISPLAYAS") and int(col.get("lookup_colid", 0)) > 0)):
                     lbl_col = f"{col_id}{col_name}_lbl_{qry_alias}"
                     item[f"{col_id}|{col_name}lbl"] = str(getattr(data, lbl_col, ""))
