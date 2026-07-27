@@ -74,6 +74,8 @@ class DBProperties:
         self.colprimary = ContextVar("colprimary", default = "")
         self.colindex = ContextVar("colindex", default = [])
 
+        self.data_limit = ContextVar("data_limit", default = 100)
+        self.search_txt = ContextVar("search_txt", default = "")
         self.schema_name = ContextVar("schema_name", default = None)
         self.db_upd_vals = ContextVar("db_upd_vals", default = {})
 

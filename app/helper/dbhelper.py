@@ -1,6 +1,6 @@
 from app.utils.common import DB, text, userps, select, update
 from app.dbfunctions.dbfunctions import getTableColumnCount
-from app.dbfunctions.dbtablesfunctions import getDBColData
+from app.dbfunctions.dbtablesfunctions import getDBColData, getLookupData
 
 def setDBParams(dbps, params):
     dbps.col_alias.set(params.get("col_alias", ""))
@@ -239,3 +239,14 @@ def getViewColumnCount(dbps):
 def setRankByColID(dbps):
     col_data = getDBColData(dbps)
     return col_data[0].rank
+
+def getDBTableLookupData(dbps):
+    lookuparr = getLookupData(dbps)
+    lookup_data = []
+    for lookup in lookuparr:
+        row = {
+            "value": lookup.value,
+            "label": lookup.label
+        }
+        lookup_data.append(row)
+    return lookup_data

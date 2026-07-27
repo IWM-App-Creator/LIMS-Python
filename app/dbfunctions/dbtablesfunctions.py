@@ -195,3 +195,27 @@ def updateDBTableSequence(dbps):
         stmt = update(db_tbl_cols).where(db_tbl_cols.c.col_id == row.col_id).values(rank = rank)
         DB.executeDBUpdate(stmt)
         rank += 10
+
+def getLookupData(dbps):
+    schema_name = dbps.schema_name.get()
+    data_limit = dbps.data_limit.get()
+    lookup_table = DB.getTableMeta(dbps.table_name.get(), schema_name).alias("lt")
+    pcol = lookup_table.c[dbps.primary_col_nm.get()]
+    lcol = lookup_table.c[dbps.lookup_colnm.get()]
+    stmt = (
+            select(
+                pcol.label("value"),
+                lcol.label("label")
+            )
+            .distinct()
+            .where(
+                lookup_table.c.is_delete == 0,
+                lcol.is_not(None)
+            )
+        )
+    if dbps.search_txt.get():
+        stmt = stmt.where(
+            lcol.like(f"%{dbps.search_txt.get()}%")
+        )
+    stmt.order_by(pcol.desc(), lcol.asc()).offset(0).limit(int(data_limit))
+    return DB.executeDBSelect(stmt)

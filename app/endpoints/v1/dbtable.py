@@ -6,6 +6,7 @@ router = APIRouter(prefix = "/dbtable")
 ROUTES = [
     ("/gettbls", tableapi.getDBTableList, ["GET"]),
     ("/getcols", tableapi.getDBTableColumns, ["GET"]),
+    ("/getlookupdata", tableapi.getLookupData, ["GET"]),
     ("/updatetbl", tableapi.updateDBTableAlias, ["GET"]),
     ("/renamecol", tableapi.updateDBTblColAlias, ["GET"]),
     ("/addcol", tableapi.addDynamicColumn, ["GET"]),

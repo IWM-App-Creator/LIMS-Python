@@ -74,7 +74,25 @@ def getDBTableColumns(request: Request):
     except Exception as e:
         # saveErrorLogtoDB ("DBTable", dbps.table_id.get(), "getDBTableColumns", str(e)) # Log Error To DB
         raiseAPIError(str(e), 500)
-    
+
+# http://testws1.localhost:8000/api/v1/dbtable/getlookupdata
+def getLookupData(request: Request):
+    print("getLookupData --> ")
+    params = RequestData.params(request)
+    dbps.table_name.set(params.get("table_name", ""))
+    dbps.primary_col_nm.set(params.get("primary_col_nm", ""))
+    dbps.lookup_colnm.set(params.get("lookup_colnm", ""))
+    dbps.search_txt.set(params.get("search_txt", ""))
+    dbps.data_limit.set(params.get("data_limit", 100))
+    lookup_data = dbhlp.getDBTableLookupData(dbps)
+    return JSONResponse (
+        status_code = 200,
+        content = {
+            "status": True,
+            "message": "Lookup Data",
+            "lookup_data": lookup_data
+        }
+    )
 
 # http://testws1.localhost:8000/api/v1/dbtable/updatetbl
 def updateDBTableAlias (request: Request):
