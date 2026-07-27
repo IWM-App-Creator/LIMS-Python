@@ -465,14 +465,107 @@ class ViewHelper:
                                 access_json = getattr(auser, "access_json", {})
                                 is_owner = access_json.get("is_owner", 0)
                                 is_edit = access_json.get("is_edit", 0)
+                                association_id = getattr(auser, "associations_id", 0)
+                                designation_id = getattr(auser, "designation_id", 0)
                                 if int(is_owner) == 1 or int(is_edit) == 1:
                                     for asso_edit in editable:
-                                        if (int(col_id) == int(asso_edit["data_id"]) and primary_col != str(col_id) + col_name and int(asso_edit["is_include"]) == 1 and int(asso_edit["designation_id"]) == int(getattr(auser, "designation_id", 0)) and int(asso_edit["association_id"]) == int(getattr(auser, "associations_id", 0))):
+                                        if (int(col_id) == int(asso_edit["data_id"]) and primary_col != str(col_id) + col_name and int(asso_edit["is_include"]) == 1 and int(asso_edit["designation_id"]) == int(designation_id) and int(asso_edit["association_id"]) == int(association_id)):
                                             editable_col_id.append(col_id)
                                 break
 
             item["editable_cols"] = editable_col_id
 
+            item_list.append(item)
+
+        viewps.item_list.set(item_list)
+
+    @staticmethod
+    def setViewItemArray(viewps):
+        item_list = []
+        view_qry_data = viewps.view_qry_data.get()
+        if not isinstance(view_qry_data, list):
+            view_qry_data = []
+        view_cols = viewps.view_cols.get()
+        if not isinstance(view_cols, list):
+            view_cols = []
+        primary_col = str(viewps.primary_col.get() or "").replace("|", "")
+        item_id_name = f"{primary_col}_mtbl"
+        is_admin = (userps.ws_role_id.get() == 1 or userps.role_id.get() == 1)
+        editable_map = {}
+        assouser_map = {}
+        if not is_admin:
+            assousers = viewps.assousers.get()
+            if not isinstance(assousers, list):
+                assousers = []
+            assoview = viewps.assoview.get()
+            if not isinstance(assoview, dict):
+                assoview = {}
+            editable = assoview.get("editable", [])
+            if not isinstance(editable, list):
+                editable = []
+            for row in editable:
+                if not isinstance(row, dict):
+                    continue
+                if int(row.get("is_include", 0)) != 1:
+                    continue
+                key = (row.get("association_id", 0), row.get("designation_id", 0),)
+                editable_map.setdefault(key, set()).add(int(row.get("data_id", 0)))
+            for usr in assousers:
+                col_p_val = str(getattr(usr, "col_p_val", ""))
+                if col_p_val not in assouser_map:
+                    assouser_map[col_p_val] = usr
+        full_access = viewps.full_access.get() == 1
+        fa_owner = int(viewps.fa_is_owner.get() or 0)
+        fa_edit = int(viewps.fa_is_edit.get() or 0)
+        fa_key = (viewps.fa_asso_id.get() or 0,viewps.fa_dsgn_id.get() or 0,)
+        for data in view_qry_data:
+            item_id = str(getattr(data, item_id_name, ""))
+            item = {
+                "item_id": item_id,
+                "is_delete": getattr(data, "is_delete", 0),
+                "noti_cnt": getattr(data, "noti_cnt", ""),
+            }
+            editable_cols = []
+            allowed_cols = set()
+            if is_admin:
+                allowed_cols = None
+            elif full_access:
+                if fa_owner or fa_edit:
+                    allowed_cols = editable_map.get(fa_key, set())
+            else:
+                auser = assouser_map.get(item_id)
+                if auser:
+                    access_json = getattr(auser, "access_json", {})
+                    if not isinstance(access_json, dict):
+                        access_json = {}
+                    if (int(access_json.get("is_owner", 0)) == 1 or int(access_json.get("is_edit", 0)) == 1):
+                        key = (getattr(auser, "associations_id", 0), getattr(auser, "designation_id", 0),)
+                        allowed_cols = editable_map.get(key, set())
+            for col in view_cols:
+                if not isinstance(col, dict):
+                    continue
+                if col.get("col_type") == "PChild":
+                    continue
+                col_id = col.get("col_id", 0)
+                col_name = col.get("col_name", "")
+                qry_alias = col.get("qry_alias", "")
+                col_type = col.get("col_type", "")
+                dbcol = f"{col_id}{col_name}_{qry_alias}"
+                dbval = getattr(data, dbcol, "")
+                if col_type in ("DATETIME", "DATE", "TIME"):
+                    dbval = formatDate(from_date=str(dbval), format=col.get("date_format"))
+                item[f"{col_id}|{col_name}"] = str(dbval)
+                if (dbhlp.isUserColumn(col_name, 0) or (col_type in ("MAPCOL", "DISPLAYAS") and int(col.get("lookup_colid", 0)) > 0)):
+                    lbl_col = f"{col_id}{col_name}_lbl_{qry_alias}"
+                    item[f"{col_id}|{col_name}lbl"] = str(getattr(data, lbl_col, ""))
+                if primary_col == f"{col_id}{col_name}":
+                    continue
+                if is_admin:
+                    editable_cols.append(col_id)
+                elif allowed_cols is not None and int(col_id) in allowed_cols:
+                    editable_cols.append(col_id)
+
+            item["editable_cols"] = editable_cols
             item_list.append(item)
 
         viewps.item_list.set(item_list)
