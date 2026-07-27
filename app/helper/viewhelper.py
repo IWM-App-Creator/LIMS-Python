@@ -309,6 +309,15 @@ class ViewHelper:
             output_array["view_id"] = viewps.view_id.get()
             output_array["view_name"] = viewps.view_name.get()
             output_array["view_type"] = viewps.view_type.get()
+            output_array["table_id"] = viewps.table_id.get()
+            output_array["table_name"] = viewps.table_name.get()
+            output_array["primary_col"] = viewps.primary_col.get()
+            output_array["delete_col"] = viewps.delete_col.get()
+            output_array["enable_newline"] = viewps.enable_newline.get()
+            output_array["show_deleted"] = viewps.show_deleted.get()
+            output_array["enable_join_save"] = viewps.enable_join_save.get()
+            output_array["is_child_view"] = viewps.is_child_view.get()
+            output_array["enable_child_srch"] = viewps.enable_child_srch.get()
             output_array["view_cols"] = viewps.view_cols.get()
             output_array["view_joins"] = viewps.view_joins.get()
             output_array["view_child"] = viewps.view_child.get()
@@ -317,10 +326,11 @@ class ViewHelper:
             output_array["col_colors"] = viewps.col_colors.get()
             output_array["action_group_list"] = viewps.action_group_list.get()
             output_array["user_setting"] = viewps.user_setting.get()
-            output_array["view_qry"] = viewps.view_qry.get()
-        if viewps.output_type.get() in (None, "viewdata", 0, ""):
-            output_array["rcdcnt"] = viewps.total_record.get()
-            output_array["itm_list"] = viewps.item_list.get()
+            output_array["view_options"] = viewps.view_options.get()
+        # Fix Output (Data) Filters/Search etc. # if viewps.output_type.get() in (None, "viewdata", 0, ""):
+        output_array["rcdcnt"] = viewps.total_record.get()
+        output_array["itm_list"] = viewps.item_list.get()
+        output_array["view_qry"] = viewps.view_qry.get()
         viewps.output_array.set(output_array)
 
     @staticmethod
