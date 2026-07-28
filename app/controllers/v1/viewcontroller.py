@@ -179,7 +179,7 @@ def createBlankView(request: Request):
         createviewhlp.getDefaultViewOptions(viewps) # Set View Options
         viewps.view_joins.set([]) # Set View Joins Tables
         viewps.view_child.set([]) # Set View Child
-        viewps.view_actions.set([]) # Set View Actions
+        viewps.view_actions.set([{"act_icon": "trash", "action_id": 3, "action_label": "Delete", "rank": 1, "is_dynamic": 0, "act_prm_ids": "", "act_bg_color": "", "input_params": "", "view_act_json": ""}, {"act_icon": "refresh-ccw", "action_id": 2, "action_label": "Restore", "rank": 2, "is_dynamic": 0, "act_prm_ids": "", "act_bg_color": "", "input_params": "", "view_act_json": ""}]) # Set View Actions
         insertUpdateView(viewps)
         print("view_id --> ", viewps.view_id.get())
 
