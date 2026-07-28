@@ -2,14 +2,17 @@ from app.utils.common import Request, RequestData, JSONResponse
 from app.properties.actionsproperties import actionsps
 from app.dbfunctions.actionsfunctions import getActionList
 
+#http://192.168.31.96:8000/api/v1/actions/get?view_id=182&action_type=&search_text=&pg_no=
 def getActions(request: Request):
     print("getActions --> ")
     # set Params to Properties
     params = RequestData.params(request)
     actionsps.view_id.set(params.get("view_id", 0))
-    actionsps.search_text.set(params.get("search_text", ""))
     actionsps.action_type.set(params.get("action_type", ""))
-    actionsps.pg_no.set(params.get("pg_no", 1))
+    actionsps.search_text.set(params.get("search_text", ""))
+    actionsps.pg_no.set(params.get("pg_no", ""))
+    if actionsps.pg_no.get() in (None, "", 0):
+        actionsps.pg_no.set(1)
     actionarr = getActionList(actionsps)
     action_list = []
     for action in actionarr:
