@@ -1,3 +1,4 @@
+import json
 from app.utils.common import DB, Request, RequestData, JSONResponse, raiseAPIError, raiseInvalidError, nowWithTimeZone, userps
 from app.dbfunctions.viewfunctions import getViewDataByID, insertUpdateView
 from app.dbfunctions.dbfunctions import getCreateTableSqlFromSchema
@@ -166,17 +167,19 @@ def createBlankView(request: Request):
         viewps.table_name.set(table_name)
         view_url = generateRandomString(length = 12, hasdigits = 1)
         viewps.view_url.set(view_url)
-        view_cols = {}
-        view_cols["view_cols"] = v_c_item
-        viewps.view_cols.set(view_cols)
+        # view_cols = {}
+        # view_cols["view_cols"] = v_c_item
+        if v_c_item == []:
+            v_c_item = json.dumps(v_c_item)
+        viewps.view_cols.set(v_c_item)
         # Generate Query 
         createviewhlp.generateViewQuery(viewps)
         createviewhlp.getLeftJoinQuery(viewps)
         createviewhlp.getFullViewQuery(viewps)
         createviewhlp.getDefaultViewOptions(viewps) # Set View Options
-        viewps.view_joins.set({"view_joins": []}) # Set View Joins Tables
-        viewps.view_child.set({"view_child": []}) # Set View Child
-        viewps.view_actions.set({"view_actions": []}) # Set View Actions
+        viewps.view_joins.set([]) # Set View Joins Tables
+        viewps.view_child.set([]) # Set View Child
+        viewps.view_actions.set([]) # Set View Actions
         insertUpdateView(viewps)
         print("view_id --> ", viewps.view_id.get())
 
