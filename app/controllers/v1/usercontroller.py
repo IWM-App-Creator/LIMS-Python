@@ -2,6 +2,7 @@ from app.utils.common import DB, select, Request, RequestData, JSONResponse, rai
 from app.dbfunctions.userfunctions import getUserDataFromDB, getUserListFromDB, insertUpdateUserData
 from app.dbfunctions.logfunctions import saveErrorLogtoDB
 from app.dbfunctions.workspacefunctions import getUserWSData
+from app.dbfunctions.associationfunctions import getAssociationsForNotification
 from app.properties.dbproperties import dbps
 from app.helper.generalfunctions import uploadFile, addUpdateJson, getWSUserRole
 from app.helper.userhelper import setUserProperties

@@ -270,13 +270,4 @@ def getAssociationsForNotification(associationps):
             )
         )
     stmt = stmt.distinct()
-    assousers = DB.executeDBSelect(stmt)
-    asso_notify = []
-    for usr in assousers:
-        row = {
-            "col_id": usr.col_id,
-            "lookup_col_id": usr.lookup_col_id,
-            "col_p_val": usr.col_p_val
-        }
-        asso_notify.append(row)
-    return asso_notify
+    return DB.executeDBSelect(stmt)

@@ -521,17 +521,16 @@ class ViewHelper:
 
     @staticmethod
     def calculate_formula(formula: str, values: dict):
-        # Replace @column placeholders with values
         def replace_var(match):
             key = match.group(0)
-            return str(values.get(key, 0))
-
+            value = values.get(key, 0)
+            # Treat None or blank as 0
+            if value is None or value == "":
+                value = 0
+            return str(value)
         expr = re.sub(r'@\w+', replace_var, formula)
-
         # Remove curly braces
         expr = expr.replace("{", "").replace("}", "")
-
-        # Evaluate expression
         return eval(expr, {"__builtins__": None}, {})
 
 viewhlp = ViewHelper()
