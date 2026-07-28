@@ -232,42 +232,86 @@ def getViewAssociationByUser(associationps):
     # print("stmt --> ", stmt)
     return DB.executeDBSelect(stmt)
 
+from collections import defaultdict
+
 def getAssociationsForNotification(associationps):
     association_users = DB.getTableMeta("sys_association_users")
     associations = DB.getTableMeta("sys_associations")
-    is_admin = 0
-    if userps.role_id.get() == 1 or userps.ws_role_id.get() == 1:
-        is_admin = 1
+    table = DB.getTableMeta("sys_db_tables").alias("tbl")
+    tablecols = DB.getTableMeta("sys_db_tables_cols").alias("cols")
+    lkptablecols = DB.getTableMeta("sys_db_tables_cols").alias("lkpcols")
+    is_admin = userps.role_id.get() == 1 or userps.ws_role_id.get() == 1
     stmt = (
         select(
-            association_users.c.col_id,
             association_users.c.col_p_val,
-            associations.c.lookup_col_id
+            associations.c.table_id,
+            table.c.table_name,
+            tablecols.c.col_name,
+            lkptablecols.c.col_name.label("lookup_col_name"),
         )
-        .select_from(
-            association_users
-            .outerjoin(
-                associations,
-                association_users.c.associations_id == associations.c.associations_id
-            )
+        .outerjoin(
+            associations,
+            association_users.c.associations_id == associations.c.associations_id,
         )
-        .where(association_users.c.is_notify == 1)
-        .where(association_users.c.is_delete == 0)
-    )
-    stmt = stmt.where(
-        func.find_in_set(
-            associationps.view_id.get(),
-            func.json_unquote(
-                func.json_extract(association_users.c.access_json, "$.dyncviews")
+        .outerjoin(table, table.c.table_id == associations.c.table_id)
+        .outerjoin(tablecols, tablecols.c.col_id == associations.c.col_id)
+        .outerjoin(lkptablecols, lkptablecols.c.col_id == associations.c.lookup_col_id)
+        .where(
+            association_users.c.is_notify == 1,
+            association_users.c.is_delete == 0,
+            func.find_in_set(
+                associationps.view_id.get(),
+                func.json_unquote(
+                    func.json_extract(
+                        association_users.c.access_json,
+                        "$.dyncviews",
+                    )
+                ),
             )
-        ) > 0
+            > 0,
+        )
     )
-    if is_admin == 0:
+    if not is_admin:
         stmt = stmt.where(
             or_(
                 association_users.c.user_id == associationps.user_id.get(),
-                associations.c.inter_msg == 1
+                associations.c.inter_msg == 1,
             )
         )
-    stmt = stmt.distinct()
-    return DB.executeDBSelect(stmt)
+
+    rows = DB.executeDBSelect(stmt.distinct())
+
+    if not rows:
+        return []
+
+    # Group by dynamic table/columns
+    groups = defaultdict(list)
+
+    for row in rows:
+        key = (row.table_name, row.col_name, row.lookup_col_name)
+        groups[key].append(row.col_p_val)
+
+    result = []
+
+    for (tbl_name, pcol_name, lcol_name), values in groups.items():
+
+        tbl = DB.getTableMeta(tbl_name).alias("t")
+
+        pcol = tbl.c[pcol_name]
+        lcol = tbl.c[lcol_name]
+
+        q = (
+            select(
+                pcol.label("value"),
+                lcol.label("label"),
+            )
+            .where(
+                tbl.c.is_delete == 0,
+                pcol.in_(values),
+            )
+            .distinct()
+        )
+        result.extend({"value": r.value, "label": str(r.label),} for r in DB.executeDBSelect(q))
+    if result is not []:
+        result.sort(key=lambda x: (x["label"] or "").lower())
+    return result

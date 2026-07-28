@@ -12,6 +12,7 @@ from app.helper.dashboardhelper import getUserDashboards
 from app.properties.menuproperties import menups
 from app.properties.workspaceproperties import wsps
 from app.properties.dashboardproperties import dps
+from app.properties.associationproperties import associationps
 from app.helper.generalfunctions import formatUserDisplayName
 
 # http://xytovet.localhost:8000/api/v1/user/getdetail?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMzc3OSIsInJvbGVfaWQiOiIxIiwiZW1haWwiOiJjaGludGFuaXQyMkBnbWFpbC5jb20iLCJleHAiOjE3ODMzMjQ3ODR9.AY-PMOH78_p-Jj9v3L1Hd_stU6NXcRWdmoBYHtVnjgo
@@ -64,7 +65,7 @@ def getUserDetail(request: Request): # token: str
 def getUserList(request: Request):
     try:
         params = RequestData.params(request)
-        view_id = params.get("view_id", "")
+        view_id = int(params.get("view_id", 0))
         ws_flag = params.get("ws_flag", "")
         ws_ws_id = int(params.get("ws_ws_id", 0))
         # Set Workspace ID To Get User List
@@ -91,14 +92,21 @@ def getUserList(request: Request):
                 "value": user.id,
                 "label": user_name,
                 "type": 0,
-                # "first_name": user.first_name,
-                # "last_name": user.last_name,
-                # "role_id": user.role_id
             }
-            # Include Users Groups Based On Permission
-            if view_id and ws_flag == "":
-               print("Include Users Groups Based On Permission...")
             item_list.append(item)
+        # Include Users Groups Based On Permission
+        if view_id not in ("", None, 0):
+            associationps.view_id.set(view_id)
+            associationps.user_id.set(userps.user_id.get())
+            grouparr = getAssociationsForNotification(associationps)
+            if grouparr not in (None, "", []):
+                for group in grouparr:
+                    row = {
+                        "value": group.get("value", 0),
+                        "label": group.get("label", ""),
+                        "type": 1
+                    }
+                    item_list.append(row)
         return JSONResponse(
             status_code = 200,
             content = {
