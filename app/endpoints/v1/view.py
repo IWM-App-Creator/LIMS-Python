@@ -15,7 +15,6 @@ ROUTES = [
 
     # ("/group", viewapi.saveUserViewGroup, ["GET"]), # Move To Layout
 
-    ("/lookupdata", viewapi.getLookupData, ["GET"]),
     ("/filterdata", viewapi.getDataForFilter, ["GET"]),
     ("/getquery", viewapi.getRawViewQuery, ["GET"]),
     ("/checkurl", viewapi.getViewURL, ["GET"]),

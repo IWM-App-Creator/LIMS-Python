@@ -229,11 +229,6 @@ def duplicateFullView(request: Request):
 def duplicateItemData(request: Request):
     print("duplicateItemData --> ")
 
-# http://xytovet.localhost:8000/api/v1/view/lookupdata
-def getLookupData(request: Request):
-    print("getLookupData --> ")
-    params = RequestData.params(request)
-
 # http://xytovet.localhost:8000/api/v1/view/filterdata
 def getDataForFilter(request: Request):
     print("getDataForFilter --> ")
