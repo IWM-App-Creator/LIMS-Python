@@ -2,7 +2,7 @@ from app.utils.common import Request, RequestData, JSONResponse
 from app.properties.actionsproperties import actionsps
 from app.dbfunctions.actionsfunctions import getActionList
 
-#http://192.168.31.96:8000/api/v1/actions/get?view_id=182&action_type=&search_text=&pg_no=
+# http://192.168.31.96:8000/api/v1/actions/get?view_id=182&action_type=&search_text=&pg_no=
 def getActions(request: Request):
     print("getActions --> ")
     # set Params to Properties
