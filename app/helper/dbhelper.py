@@ -78,7 +78,7 @@ def getStatusColParam(table_id, col_alias, cnt, rank):
 
 def getDropdownColParam(table_id, col_alias, cnt, rank):
     col_name = "dd_" + str(cnt)
-    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "text", "length": "", "default_val": "", "is_primary": 0, "is_index": 0, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": [{"label": "Unassigned", "clrcode": "#d2d2d2", "opt_val": 0}]}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "DROPDOWN", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank}, "rank": rank}
+    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "text", "length": "", "default_val": "", "is_primary": 0, "is_index": 0, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": []}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "DROPDOWN", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank}, "rank": rank}
     return colopt
 
 def getYesNoColParam(table_id, col_alias, cnt, rank):
