@@ -8,8 +8,7 @@ ROUTES = [
     ("/getdetail", usersapi.getUserDetail, ["GET"]),
     ("/search", usersapi.searchWSUser, ["GET"]),
     ("/updateprofile", usersapi.updateUserProfile, ["POST"]),
-    ("/changepassword", usersapi.changeUserPassword, ["POST"]),
-    ("/getlist", usersapi.getUserList, ["GET"]),
+    ("/changepassword", usersapi.changeUserPassword, ["POST"])
 ]
 
 for path, handler, methods in ROUTES:

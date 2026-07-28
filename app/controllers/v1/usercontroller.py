@@ -62,32 +62,28 @@ def getUserDetail(request: Request): # token: str
 
 def getUserList(request: Request):
     try:
-        # $view_id = empty(Input::get('view_id')) ? "0" : Input::get('view_id');
-        # $ws_flag = empty(Input::get('ws_flag')) ? "" : Input::get('ws_flag'); /* Workspace Association Access Usage */
-        # $ws_ws_id = empty(Input::get('ws_ws_id')) ? "0" : Input::get('ws_ws_id'); /* Workspace Association Access Usage */
         params = RequestData.params(request)
         view_id = params.get("view_id", "")
         ws_flag = params.get("ws_flag", "")
-        ws_ws_id = params.get("ws_ws_id", 0)
+        ws_ws_id = int(params.get("ws_ws_id", 0))
         # Set Workspace ID To Get User List
         if ws_flag == "wsflag" and ws_ws_id > 0 : 
             userps.ws_ws_id.set(ws_ws_id)  # Set Pass Workspace ID
         else :
-            userps.ws_ws_id.set(userps.workspace_id) # Set User Workspace ID
-
+            userps.ws_ws_id.set(userps.workspace_id.get()) # Set User Workspace ID
         users = getUserListFromDB(userps)
         item_list = []
         if not users: # Invalid View
-            return raiseAPIError("Log User Found", 200)
+            return raiseAPIError("User Not Found", 200)
         for user in users:
             first_name = getattr(user, "first_name", "")
             last_name = getattr(user, "last_name", "")
             email = getattr(user, "email", "")
             user_name = "";
-            if first_name :
-                user_name = formatUserDisplayName(first_name = first_name, last_name = last_name)
-                if ws_flag == "wsflag" :
-                    user_name = user_name + "<span style=\'font-size: 12px; padding-left:2px;\'>(" + email + ")</span>"
+            if first_name:
+                user_name = formatUserDisplayName(first_name=first_name, last_name=last_name)
+                if ws_flag == "wsflag":
+                    user_name += f"<span style='font-size: 12px; padding-left:2px;'>({email})</span>"
             else :
                 user_name = email
             item = {
@@ -98,7 +94,7 @@ def getUserList(request: Request):
                 # "role_id": user.role_id
             }
             # Include Users Groups Based On Permission
-            if view_id and ws_flag == "" :
+            if view_id and ws_flag == "":
                print("Include Users Groups Based On Permission...")
             item_list.append(item)
         return JSONResponse(
@@ -110,7 +106,7 @@ def getUserList(request: Request):
             }
         )
     except Exception as e:
-        saveErrorLogtoDB ("User", "", "getUserList", str(e)) # Log Error To DB
+        # saveErrorLogtoDB ("User", "", "getUserList", str(e)) # Log Error To DB
         raiseAPIError(str(e), 500)
 
 def saveLinkedUser(request: Request):
@@ -265,6 +261,3 @@ def changeUserPassword(request: Request):
     except Exception as e:
         saveErrorLogtoDB ("User", userps.othr_userid.get(), "changeUserPassword", str(e)) # Log Error To DB
         raiseAPIError(str(e), 500)
-
-def getUserList():
-    print("getUserList:")

@@ -15,6 +15,7 @@ def getUserDataFromDB():
 
 def getUserListFromDB(userps):
     # Prepare Query
+    ws_id = userps.ws_ws_id.get() or 0
     tbluser = DB.getTableMeta("users", "systemconfig").alias("usr")
     tbluserws = DB.getTableMeta("users_workspace", "systemconfig").alias("wsusr")
     stmt = (
@@ -22,13 +23,13 @@ def getUserListFromDB(userps):
             tbluser,
             tbluserws.c.ws_role_id,
         )
-        .join(
+        .outerjoin(
             tbluserws,
-            tbluserws.c.usdr_id == tbluser.c.id,
+            tbluserws.c.user_id == tbluser.c.id,
         )
         .where(tbluser.c.is_delete == 0)
         .where(tbluserws.c.is_delete == 0)
-        .where(tbluserws.c.user_id == int(userps.ws_ws_id))
+        .where(tbluserws.c.workspace_id == ws_id)
     )
     users = DB.executeDBSelect(stmt)
     return users
