@@ -1,4 +1,4 @@
-import json
+import json, re
 from app.utils.common import select, DB, userps, formatDate
 from app.dbfunctions.dbtablesfunctions import getDBTableData
 from app.dbfunctions.viewlayoutfunctions import getViewLayoutDataByID
@@ -477,12 +477,24 @@ class ViewHelper:
                 col_name = col.get("col_name", "")
                 qry_alias = col.get("qry_alias", "")
                 col_type = col.get("col_type", "")
+                calc_formula = col.get("calc_formula", "")
                 dbcol = f"{col_id}{col_name}_{qry_alias}"
                 dbval = getattr(data, dbcol, "")
                 item[f"{col_id}|{col_name}"] = str(dbval) # Set Into Array
                 if col_type in ("DATETIME", "DATE", "TIME"):
                     dbval_lbl = getattr(data, dbcol, "")
                     item[f"{col_id}|{col_name}lbl"] = formatDate(from_date=str(dbval_lbl), format=col.get("date_format"))
+                if col_type == "CALC":
+                    values = {}
+                    calculation = 0
+                    for calcol in view_cols:
+                        cal_col_name = f"@{calcol.get('col_id', 0)}{calcol.get('col_name', '')}"
+                        cal_col_val = f"{calcol.get('col_id', 0)}{calcol.get('col_name', '')}_{calcol.get('qry_alias', '')}"
+                        if cal_col_name in calc_formula:
+                            values[cal_col_name] = getattr(data, cal_col_val, "")
+                    if values not in (None, {}):
+                        calculation = viewhlp.calculate_formula(calc_formula, values)
+                    item[f"{col_id}|{col_name}"] = calculation
                 if (dbhlp.isUserColumn(col_name, 0) or (col_type in ("MAPCOL", "DISPLAYAS") and int(col.get("lookup_colid", 0)) > 0)):
                     lbl_col = f"{col_id}{col_name}_lbl_{qry_alias}"
                     item[f"{col_id}|{col_name}lbl"] = str(getattr(data, lbl_col, ""))
@@ -506,6 +518,21 @@ class ViewHelper:
         upd_qry = upd_qry + "WHERE " + viewps.primary_colnm.get() + " in (" + viewps.item_id.get() + ")"
         print("upd_qry --> ", upd_qry)
         DB.executStatementOnly(upd_qry)
+
+    @staticmethod
+    def calculate_formula(formula: str, values: dict):
+        # Replace @column placeholders with values
+        def replace_var(match):
+            key = match.group(0)
+            return str(values.get(key, 0))
+
+        expr = re.sub(r'@\w+', replace_var, formula)
+
+        # Remove curly braces
+        expr = expr.replace("{", "").replace("}", "")
+
+        # Evaluate expression
+        return eval(expr, {"__builtins__": None}, {})
 
 viewhlp = ViewHelper()
 
