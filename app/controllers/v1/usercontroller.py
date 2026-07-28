@@ -89,6 +89,7 @@ def getUserList(request: Request):
             item = {
                 "value": user.id,
                 "label": user_name,
+                "type": 0,
                 # "first_name": user.first_name,
                 # "last_name": user.last_name,
                 # "role_id": user.role_id
