@@ -186,36 +186,45 @@ class ViewHelper:
 
     @staticmethod
     def setHighestPermission(viewps, assoc):
-        if viewps.fa_is_owner.get() == 0 and assoc.is_owner > 0:
-            viewhlp.copyAssociation(viewps, assoc)
+        access_json = getattr(assoc, "access_json", {})
+        is_owner = int(access_json.get("is_owner", 0))
+        is_edit = int(access_json.get("is_edit", 0))
+        is_view = int(access_json.get("is_view", 0))
+        is_noaccess = int(access_json.get("is_noaccess", 0))
+        if viewps.fa_is_owner.get() == 0 and is_owner > 0:
+            viewhlp.copyAssociation(viewps, assoc, access_json)
             viewps.fa_is_edit.set(1)
             viewps.fa_is_view.set(1)
             viewps.fa_is_noaccess.set(1)
 
-        elif viewps.fa_is_edit.get() == 0 and assoc.is_edit > 0:
-            viewhlp.copyAssociation(viewps, assoc)
-            viewps.fa_is_edit.set(assoc.is_edit)
+        elif viewps.fa_is_edit.get() == 0 and is_edit > 0:
+            viewhlp.copyAssociation(viewps, assoc, access_json)
+            viewps.fa_is_edit.set(is_edit)
             viewps.fa_is_view.set(1)
             viewps.fa_is_noaccess.set(1)
 
-        elif viewps.fa_is_view.get() == 0 and assoc.is_view > 0:
-            viewhlp.copyAssociation(viewps, assoc)
-            viewps.fa_is_view.set(assoc.is_view)
+        elif viewps.fa_is_view.get() == 0 and is_view > 0:
+            viewhlp.copyAssociation(viewps, assoc, access_json)
+            viewps.fa_is_view.set(is_view)
             viewps.fa_is_noaccess.set(1)
 
-        elif viewps.fa_is_noaccess.get() == 0 and assoc.is_noaccess > 0:
-            viewhlp.copyAssociation(viewps, assoc)
-            viewps.fa_is_noaccess.set(assoc.is_noaccess)
+        elif viewps.fa_is_noaccess.get() == 0 and is_noaccess > 0:
+            viewhlp.copyAssociation(viewps, assoc, access_json)
+            viewps.fa_is_noaccess.set(is_noaccess)
     
     @staticmethod
-    def copyAssociation(viewps, assoc):
+    def copyAssociation(viewps, assoc, access_json):
+        is_owner = int(access_json.get("is_owner", 0))
+        is_edit = int(access_json.get("is_edit", 0))
+        is_view = int(access_json.get("is_view", 0))
+        is_noaccess = int(access_json.get("is_noaccess", 0))
         viewps.fa_asso_id.set(assoc.associations_id)
         viewps.fa_dsgn_id.set(assoc.designation_id)
         viewps.fa_dsgn_nm.set(assoc.designation_name)
-        viewps.fa_is_owner.set(assoc.is_owner)
-        viewps.fa_is_edit.set(assoc.is_edit)
-        viewps.fa_is_view.set(assoc.is_view)
-        viewps.fa_is_noaccess.set(assoc.is_noaccess)
+        viewps.fa_is_owner.set(is_owner)
+        viewps.fa_is_edit.set(is_edit)
+        viewps.fa_is_view.set(is_view)
+        viewps.fa_is_noaccess.set(is_noaccess)
         
     @staticmethod
     def setViewSorting(viewps):
@@ -468,7 +477,7 @@ class ViewHelper:
             elif full_access:
                 if fa_owner or fa_edit:
                     allowed_cols = editable_map.get(fa_key, set())
-                has_activity = 1
+                has_activity = int(fa_key in activity_set)
             else:
                 auser = assouser_map.get(item_id)
                 if auser:
@@ -478,7 +487,7 @@ class ViewHelper:
                     if (int(access_json.get("is_owner", 0)) == 1 or int(access_json.get("is_edit", 0)) == 1):
                         key = (getattr(auser, "associations_id", 0), getattr(auser, "designation_id", 0),)
                         allowed_cols = editable_map.get(key, set())
-                    has_activity = int(((int(auser.associations_id), int(auser.designation_id)) in activity_set if auser else 0))
+                    has_activity = int(auser and (auser.associations_id, auser.designation_id) in activity_set)
             # set Item Output Data by Columns
             for col in view_cols:
                 if not isinstance(col, dict):
