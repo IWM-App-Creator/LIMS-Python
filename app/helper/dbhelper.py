@@ -73,7 +73,7 @@ def getPrimaryColParam(table_id, col_name, col_alias, rank):
 
 def getStatusColParam(table_id, col_alias, cnt, rank):
     col_name = "status_" + str(cnt)
-    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "int", "length": "4", "default_val": 0, "is_primary": 0, "is_index": 1, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": [{"label": "Unassigned", "clrcode": "#d2d2d2", "opt_val": 0}]}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "STATUS", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank}, "rank": rank}
+    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "int", "length": "4", "default_val": 0, "is_primary": 0, "is_index": 1, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": []}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "STATUS", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank}, "rank": rank}
     return colopt
 
 def getDropdownColParam(table_id, col_alias, cnt, rank):
@@ -83,12 +83,12 @@ def getDropdownColParam(table_id, col_alias, cnt, rank):
 
 def getYesNoColParam(table_id, col_alias, cnt, rank):
     col_name = "yn_" + str(cnt)
-    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "int", "length": "4", "default_val": 0, "is_primary": 0, "is_index": 1, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": [{"label": "YES", "clrcode": "#10b759", "opt_val": "1"}, {"label": "NO", "clrcode": "#c66565", "opt_val": "2"}, {"label": "Unassigned", "clrcode": "#d2d2d2", "opt_val": "0"}]}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "YN_INT", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank}, "rank": rank}
+    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "int", "length": "4", "default_val": 0, "is_primary": 0, "is_index": 1, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": [{"label": "YES", "clrcode": "#10b759", "opt_val": "1"}, {"label": "NO", "clrcode": "#c66565", "opt_val": "2"}]}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "YN_INT", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank}, "rank": rank}
     return colopt
 
 def getTrueFalseColParam(table_id, col_alias, cnt, rank):
     col_name = "tf_" + str(cnt)
-    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "int", "length": "4", "default_val": 0, "is_primary": 0, "is_index": 1, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": [{"label": "True", "clrcode": "#10b759", "opt_val": "1"}, {"label": "False", "clrcode": "#c66565", "opt_val": "2"}, {"label": "Unassigned", "clrcode": "#d2d2d2", "opt_val": "0"}]}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "TF_INT", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank}, "rank": rank}
+    colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "int", "length": "4", "default_val": 0, "is_primary": 0, "is_index": 1, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": [{"label": "True", "clrcode": "#10b759", "opt_val": "1"}, {"label": "False", "clrcode": "#c66565", "opt_val": "2"}]}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "TF_INT", "qry_alias": "mtbl", "col_key": 0, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank}, "rank": rank}
     return colopt
 
 def getTickColParam(table_id, col_alias, cnt, rank): #Tick(Yes/No).

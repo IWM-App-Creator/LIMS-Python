@@ -82,6 +82,10 @@ class ViewHelper:
             col_options.pop("csv_col_name", None)
             col_options.pop("csv_col_type", None)
             col_options.pop("csv_map_col_nm", None)
+            col_data_items = col_options.get("col_data_items", [])
+            if col_data_items:
+                col_data_items.append({"label": "Unassigned", "clrcode": "#d2d2d2", "opt_val": 0})
+                col_options["col_data_items"] = col_data_items
             tbl_cols[str(col.col_id)] = ({"col_options": col_options})
         for viewcol in view_cols:
             if str(viewcol["col_id"]) in tbl_cols:
