@@ -420,7 +420,8 @@ class ViewHelper:
         is_admin = (userps.ws_role_id.get() == 1 or userps.role_id.get() == 1)
         editable_map = {}
         assouser_map = {}
-        if not is_admin:
+        activity_set = {}
+        if not is_admin: # Check User Permission
             assousers = viewps.assousers.get()
             if not isinstance(assousers, list):
                 assousers = []
@@ -430,6 +431,10 @@ class ViewHelper:
             editable = assoview.get("editable", [])
             if not isinstance(editable, list):
                 editable = []
+            activity = assoview.get("activity", [])
+            if not isinstance(activity, list):
+                activity = []
+            activity_set = {(int(a["association_id"]), int(a["designation_id"])) for a in activity if isinstance(a, dict) and int(a.get("is_include", 0)) == 1}
             for row in editable:
                 if not isinstance(row, dict):
                     continue
@@ -445,6 +450,7 @@ class ViewHelper:
         fa_owner = int(viewps.fa_is_owner.get() or 0)
         fa_edit = int(viewps.fa_is_edit.get() or 0)
         fa_key = (viewps.fa_asso_id.get() or 0,viewps.fa_dsgn_id.get() or 0,)
+        # Set View Item Data
         for data in view_qry_data:
             item_id = str(getattr(data, item_id_name, ""))
             item = {
@@ -454,11 +460,15 @@ class ViewHelper:
             }
             editable_cols = []
             allowed_cols = set()
+            has_activity = 0
+            # set editable columns and check has activity
             if is_admin:
+                has_activity = 1
                 allowed_cols = None
             elif full_access:
                 if fa_owner or fa_edit:
                     allowed_cols = editable_map.get(fa_key, set())
+                has_activity = 1
             else:
                 auser = assouser_map.get(item_id)
                 if auser:
@@ -468,6 +478,8 @@ class ViewHelper:
                     if (int(access_json.get("is_owner", 0)) == 1 or int(access_json.get("is_edit", 0)) == 1):
                         key = (getattr(auser, "associations_id", 0), getattr(auser, "designation_id", 0),)
                         allowed_cols = editable_map.get(key, set())
+                    has_activity = int(((int(auser.associations_id), int(auser.designation_id)) in activity_set if auser else 0))
+            # set Item Output Data by Columns
             for col in view_cols:
                 if not isinstance(col, dict):
                     continue
@@ -481,9 +493,11 @@ class ViewHelper:
                 dbcol = f"{col_id}{col_name}_{qry_alias}"
                 dbval = getattr(data, dbcol, "")
                 item[f"{col_id}|{col_name}"] = str(dbval) # Set Into Array
+                # Set Date or Time Item Value
                 if col_type in ("DATETIME", "DATE", "TIME"):
                     dbval_lbl = getattr(data, dbcol, "")
                     item[f"{col_id}|{col_name}lbl"] = formatDate(from_date=str(dbval_lbl), format=col.get("date_format"))
+                # Set Calculation Item Value
                 if col_type == "CALC":
                     values = {}
                     calculation = 0
@@ -495,6 +509,7 @@ class ViewHelper:
                     if values not in (None, {}):
                         calculation = viewhlp.calculate_formula(calc_formula, values)
                     item[f"{col_id}|{col_name}"] = calculation
+                # Set Lookup Item Value
                 if (dbhlp.isUserColumn(col_name, 0) or (col_type in ("MAPCOL", "DISPLAYAS") and int(col.get("lookup_colid", 0)) > 0)):
                     lbl_col = f"{col_id}{col_name}_lbl_{qry_alias}"
                     item[f"{col_id}|{col_name}lbl"] = str(getattr(data, lbl_col, ""))
@@ -506,6 +521,8 @@ class ViewHelper:
                     editable_cols.append(col_id)
 
             item["editable_cols"] = editable_cols
+            item["has_activity"] = has_activity
+
             item_list.append(item)
 
         viewps.item_list.set(item_list)

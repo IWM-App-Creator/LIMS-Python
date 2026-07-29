@@ -225,7 +225,16 @@ def getViewAssociationByUser(associationps):
         .where(
             association_users.c.user_id == user_id,
             association_users.c.is_delete == 0,
-            text(f"FIND_IN_SET('{view_id}', dyncviews)")
+            func.find_in_set(
+                view_id,
+                func.json_unquote(
+                    func.json_extract(
+                        association_users.c.access_json,
+                        "$.dyncviews",
+                    )
+                ),
+            )
+            > 0,
         )
         .order_by(association_users.c.col_p_val.asc())
     )
