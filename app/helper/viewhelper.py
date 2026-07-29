@@ -153,7 +153,7 @@ class ViewHelper:
         stslmt = assoview.get("stslmt", [])
         if not isinstance(stslmt, list):
             stslmt = []
-        stslmtids = [a.get("data_id", 0) for a in stslmt if isinstance(a, dict) and a.get("is_include", 0) == 0]
+        stslmtids = [str(a.get("data_id", "0")) for a in stslmt if isinstance(a, dict) and a.get("is_include", 0) == 0]
         if stslmtids:
             col_id = stslmt[0].get("col_id")
             col_name = ""
