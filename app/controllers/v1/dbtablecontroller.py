@@ -79,9 +79,9 @@ def getDBTableColumns(request: Request):
 def getLookupData(request: Request):
     print("getLookupData --> ")
     params = RequestData.params(request)
-    dbps.table_name.set(params.get("table_name", ""))
-    dbps.primary_col_nm.set(params.get("primary_col_nm", ""))
-    dbps.lookup_colnm.set(params.get("lookup_colnm", ""))
+    dbps.table_name.set(params.get("lookup_tbl", ""))
+    dbps.primary_col_nm.set(params.get("primary_col", ""))
+    dbps.lookup_colnm.set(params.get("lookup_col", ""))
     dbps.search_txt.set(params.get("search_txt", ""))
     dbps.data_limit.set(params.get("data_limit", 100))
     lookup_data = dbhlp.getDBTableLookupData(dbps)

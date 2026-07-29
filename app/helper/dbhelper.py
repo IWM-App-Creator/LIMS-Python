@@ -245,7 +245,7 @@ def getDBTableLookupData(dbps):
     lookup_data = []
     for lookup in lookuparr:
         row = {
-            "value": lookup.value,
+            "opt_val": lookup.value,
             "label": lookup.label
         }
         lookup_data.append(row)

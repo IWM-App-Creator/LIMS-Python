@@ -89,7 +89,7 @@ def getUserList(request: Request):
             else :
                 user_name = email
             item = {
-                "value": user.id,
+                "opt_val": user.id,
                 "label": user_name,
                 "type": 0,
             }
@@ -102,7 +102,7 @@ def getUserList(request: Request):
             if grouparr not in (None, "", []):
                 for group in grouparr:
                     row = {
-                        "value": group.get("value", 0),
+                        "opt_val": group.get("value", 0),
                         "label": group.get("label", ""),
                         "type": 1
                     }
