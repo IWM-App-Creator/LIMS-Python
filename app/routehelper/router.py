@@ -12,6 +12,7 @@ from app.endpoints.v1.viewlayout import router as viewly_router
 from app.endpoints.v1.menu import router as menu_router
 from app.endpoints.v1.actions import router as action_router
 from app.endpoints.v1.activities import router as activities_router
+from app.endpoints.v1.notes import router as notes_router
 from app.endpoints.v1.widget import router as widget_router
 
 from app.endpoints.v1.users import router as user_router
@@ -36,6 +37,7 @@ def routerGroup():
     apirouter.include_router(menu_router, prefix = prefix, tags = ["Menu"])
     apirouter.include_router(action_router, prefix = prefix, tags = ["Actions"])
     apirouter.include_router(activities_router, prefix = prefix, tags = ["Activities"])
+    apirouter.include_router(notes_router, prefix = prefix, tags = ["Notes"])
     apirouter.include_router(widget_router, prefix = prefix, tags = ["Widget"])
 
     apirouter.include_router(user_router, prefix = prefix, tags = ["Users"])
