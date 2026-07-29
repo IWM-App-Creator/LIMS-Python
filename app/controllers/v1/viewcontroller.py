@@ -48,7 +48,11 @@ def getViewData(request: Request):
         if userps.ws_role_id.get() != 1 and userps.role_id.get() != 1:
             viewhlp.checkViewAssociation(viewps) # Check Associations
             if viewps.association_qry.get():
-                view_qry = view_qry + " AND ( " + viewps.association_qry.get() + ")"
+                view_qry = view_qry + " AND (" + viewps.association_qry.get() + ")"
+        # Set Association Status Limit
+        stslmtqry = viewhlp.setAssociationStatusLimit(viewps)
+        if stslmtqry not in (None, ""):
+            view_qry = view_qry + " AND (" + stslmtqry + ")"
         # Set View Data Sorting
         viewhlp.setViewSorting(viewps)
         view_qry = f"{view_qry} Order By {viewps.sorting.get()}"

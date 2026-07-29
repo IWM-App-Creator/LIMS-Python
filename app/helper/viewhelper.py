@@ -145,6 +145,26 @@ class ViewHelper:
                 viewps.association_qry.set(f"{qry_alias}.{asso_col} IN ({','.join(map(str, assocol_ids))})")
 
     @staticmethod
+    def setAssociationStatusLimit(viewps):
+        stslmtqry = ""
+        assoview = viewps.assoview.get()
+        if not isinstance(assoview, dict):
+            assoview = {}
+        stslmt = assoview.get("stslmt", [])
+        if not isinstance(stslmt, list):
+            stslmt = []
+        stslmtids = [a.get("data_id", 0) for a in stslmt if isinstance(a, dict) and a.get("is_include", 0) == 0]
+        if stslmtids:
+            col_id = stslmt[0].get("col_id")
+            col_name = ""
+            for col in viewps.view_cols.get():
+                if col.get("col_id") == col_id:
+                    col_name = f"{col['qry_alias']}.{col['col_name']}"
+            stslmtqry = col_name + " not in (" + ",".join(map(str, stslmtids)) + ") "
+            viewps.stslmt_ids.set({"col_id": col_id, "data_ids": stslmtids})
+        return stslmtqry
+
+    @staticmethod
     def setViewGroupByData(viewps):
         user_setting = viewps.user_setting.get()
         if not isinstance(user_setting, dict):
@@ -327,6 +347,7 @@ class ViewHelper:
             output_array["enable_join_save"] = viewps.enable_join_save.get()
             output_array["is_child_view"] = viewps.is_child_view.get()
             output_array["enable_child_srch"] = viewps.enable_child_srch.get()
+            output_array["stslmt_ids"] = viewps.stslmt_ids.get()
             output_array["view_cols"] = viewps.view_cols.get()
             output_array["view_joins"] = viewps.view_joins.get()
             output_array["view_child"] = viewps.view_child.get()
