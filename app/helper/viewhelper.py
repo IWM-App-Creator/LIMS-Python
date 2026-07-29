@@ -160,8 +160,11 @@ class ViewHelper:
             for col in viewps.view_cols.get():
                 if col.get("col_id") == col_id:
                     col_name = f"{col['qry_alias']}.{col['col_name']}"
-            stslmtqry = col_name + " not in (" + ",".join(map(str, stslmtids)) + ") "
-            viewps.stslmt_ids.set({"col_id": col_id, "data_ids": stslmtids})
+                    col_options = col.get("col_options", {})
+                    col_data_items = col_options.get("col_data_items", [])
+                    col_data_item = [data for data in col_data_items if str(data.get("opt_val")) not in stslmtids]
+                    col_options["col_data_items"] = col_data_item
+            stslmtqry = col_name + " not in (" + ",".join(map(str, stslmtids)) + ")"
         return stslmtqry
 
     @staticmethod
@@ -347,7 +350,6 @@ class ViewHelper:
             output_array["enable_join_save"] = viewps.enable_join_save.get()
             output_array["is_child_view"] = viewps.is_child_view.get()
             output_array["enable_child_srch"] = viewps.enable_child_srch.get()
-            output_array["stslmt_ids"] = viewps.stslmt_ids.get()
             output_array["view_cols"] = viewps.view_cols.get()
             output_array["view_joins"] = viewps.view_joins.get()
             output_array["view_child"] = viewps.view_child.get()

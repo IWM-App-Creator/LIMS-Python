@@ -30,7 +30,6 @@ class viewproperties:
         self.fa_is_edit = ContextVar("fa_is_edit", default = 0)
         self.fa_is_view = ContextVar("fa_is_view", default = 0)
         self.fa_is_noaccess = ContextVar("fa_is_noaccess", default = 0)
-        self.stslmt_ids = ContextVar("stslmt_ids", default = {})
 
         self.tab_id = ContextVar("tab_id", default = "0")
         self.page_no = ContextVar("page_no", default = 1)
