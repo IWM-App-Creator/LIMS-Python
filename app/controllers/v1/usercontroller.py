@@ -16,12 +16,13 @@ from app.properties.associationproperties import associationps
 from app.helper.generalfunctions import formatUserDisplayName
 
 # http://xytovet.localhost:8000/api/v1/user/getdetail?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMzc3OSIsInJvbGVfaWQiOiIxIiwiZW1haWwiOiJjaGludGFuaXQyMkBnbWFpbC5jb20iLCJleHAiOjE3ODMzMjQ3ODR9.AY-PMOH78_p-Jj9v3L1Hd_stU6NXcRWdmoBYHtVnjgo
+
 def getUserDetail(request: Request): # token: str
-    print("getUserDetail:", userps.user_id.get())
+    # print("getUserDetail:", userps.user_id.get())
     userps.othr_userid.set(userps.user_id.get())
     user = getUserDataFromDB() # Execute Function to User Get Data
     if not user: # Invalid User
-        raiseAPIError("User Not Found", 401)
+        raiseAPIError("User Not Found", 404)
     userps.first_name.set(user.first_name)
     userps.last_name.set(user.last_name)
     userps.email.set(user.email)
