@@ -30,6 +30,64 @@ def getNotes(notesps):
     stmt = stmt.order_by(tbl_notes.c.notes_id.asc())
     return DB.executeDBSelect(stmt)
 
+def getFromUsersData(notesps):
+    note_ids = notesps.note_ids.get()
+    view_id = notesps.view_id.get()
+    if not note_ids:
+        return []
+    tbl_notification = DB.getTableMeta("sys_notificaitons").alias("nt")
+    users = DB.getTableMeta("users", "systemconfig").alias("from_usr")
+    stmt_from = (
+        select(
+            tbl_notification.c.notes_id,
+            users.c.id,
+            users.c.first_name,
+            users.c.last_name,
+            tbl_notification.c.is_read
+        )
+        .outerjoin(
+            users,
+            users.c.id == tbl_notification.c.created_by
+        )
+        .where(
+            tbl_notification.c.view_id == view_id,
+            tbl_notification.c.notes_id.in_(note_ids)
+        )
+        .order_by(tbl_notification.c.notes_id.desc())
+    )
+    if notesps.showdel.get() in (None, "", 0, "0"):
+        stmt_from = stmt_from.where(tbl_notification.c.is_delete == 0)
+    return DB.executeDBSelect(stmt_from)
+
+def getToUsersData(notesps):
+    note_ids = notesps.note_ids.get()
+    view_id = notesps.view_id.get()
+    if not note_ids:
+        return []
+    tbl_notification = DB.getTableMeta("sys_notificaitons").alias("nt")
+    users = DB.getTableMeta("users", "systemconfig").alias("to_usr")
+    stmt_from = (
+        select(
+            tbl_notification.c.notes_id,
+            users.c.id,
+            users.c.first_name,
+            users.c.last_name,
+            tbl_notification.c.is_read
+        )
+        .outerjoin(
+            users,
+            users.c.id == tbl_notification.c.to_user_id
+        )
+        .where(
+            tbl_notification.c.view_id == view_id,
+            tbl_notification.c.notes_id.in_(note_ids)
+        )
+        .order_by(tbl_notification.c.notes_id.desc())
+    )
+    if notesps.showdel.get() in (None, "", 0, "0"):
+        stmt_from = stmt_from.where(tbl_notification.c.is_delete == 0)
+    return DB.executeDBSelect(stmt_from)
+
 def getSmileyNotes(notesps):
     note_ids = notesps.note_ids.get()
     if note_ids in (None, ""):

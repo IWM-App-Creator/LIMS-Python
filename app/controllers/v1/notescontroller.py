@@ -1,6 +1,6 @@
 from app.utils.common import Request, RequestData, JSONResponse, getTimeAgoValue, raiseAPIError
 from app.helper.datetime import formatDate
-from app.helper.noteshelper import getSmileyNotesMap
+from app.helper.noteshelper import getSmileyNotesMap, getNotesUsers
 from app.dbfunctions.logfunctions import saveErrorLogtoDB
 from app.dbfunctions.notesfunctions import getNotes
 from app.properties.notesproperties import notesps
@@ -15,13 +15,14 @@ def getUserNotes(request: Request):
         notesarr = getNotes(notesps)
         notesps.note_ids.set([note.notes_id for note in notesarr])
         smilemap = getSmileyNotesMap(notesps)
+        from_map, to_map = getNotesUsers(notesps)
         user_notes = []
         for note in notesarr:
             row = {
                 "notes_id": note.notes_id,
                 "parent_id": note.parent_id,
-                "from_users": "",
-                "to_users": "",
+                "from_users": from_map.get(note.notes_id, []),
+                "to_users": to_map.get(note.notes_id, []),
                 "note": note.note,
                 "is_delete": note.is_delete,
                 "created_name": note.first_name[0] + " " + note.last_name[0],
