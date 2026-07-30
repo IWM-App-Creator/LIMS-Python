@@ -1,6 +1,7 @@
 from app.properties.usersproperties import userps
 from app.dbfunctions.workspacefunctions import getUserWSData
 from app.properties.workspaceproperties import wsps
+from app.properties.globalproperties import globalps
 
 class TenantCache:
 
@@ -8,6 +9,9 @@ class TenantCache:
 
     @classmethod
     def cacheTenantWS(cls):
+        if(globalps.JWT_USER_ID == 3779):
+            print("cacheTenantWS user_id --> ", userps.user_id.get())
+            print("cacheTenantWS wsps.user_id --> ", wsps.user_id.get())
         cachekey = (userps.req_subdomain.get(), userps.user_id.get())
         workspace = cls._ws_cache.get(cachekey)
         if workspace is None:
@@ -18,6 +22,8 @@ class TenantCache:
                 cls._ws_cache[cachekey] = workspace # Save User Wise WS In Cache
         # If Data found, Set Into Context Property
         if workspace:
+            if(globalps.JWT_USER_ID == 3779):
+                print("workspace --> ", workspace)
             userps.workspace_id.set(workspace.workspace_id)
             userps.workspace_name.set(workspace.workspace_name)
             userps.ws_url.set(workspace.ws_url)

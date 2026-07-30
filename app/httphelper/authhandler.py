@@ -22,6 +22,8 @@ async def auth_handler(request: Request, call_next):
         return await call_next(request)
     else :
         auth = request.headers.get("Authorization")
+        if(globalps.JWT_USER_ID == 3779):
+            print("auth_handler auth --> ", auth)
         if not auth:
             return JSONResponse (
                 status_code = 200,
