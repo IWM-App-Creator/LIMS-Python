@@ -1,6 +1,6 @@
-from app.utils.common import Request, RequestData, raiseAPIError, JSONResponse
+from app.utils.common import Request, RequestData, raiseAPIError, JSONResponse, userps
 from app.dbfunctions.logfunctions import saveErrorLogtoDB
-from app.helper.widgethelper import getWidgets
+from app.helper.widgethelper import getWidgets, getUserWidgets
 from app.properties.widgetproperties import widgetps
 
 def getWidgetList(request: Request):
@@ -27,3 +27,20 @@ def getWidgetList(request: Request):
 
 def getUserWidgetList(request: Request):
     print("getUserWidgetList --> ")
+    try:
+        params = RequestData.params(request)
+        widgetps.dashboard_id.set(params.get("dashboard_id", 0))
+        widgetps.sys_widget_id.set(params.get("sys_widget_id", 0))
+        widgetps.preview.set(params.get("preview", 0))
+        usrwdgt_list = getUserWidgets(widgetps)
+        return JSONResponse(
+            status_code = 200,
+            content = {
+                "status": True,
+                "message": "User Widget List",
+                "userwidget_list": usrwdgt_list
+            }
+        )
+    except Exception as e:
+        saveErrorLogtoDB("Widget", userps.user_id.get(), "getUserWidgetList", str(e))
+        raiseAPIError(str(e), 500)

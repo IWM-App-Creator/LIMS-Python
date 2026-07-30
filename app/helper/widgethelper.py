@@ -1,6 +1,6 @@
 from app.utils.common import userps
 from app.helper.associationhelper import getViewIdByAssociation
-from app.dbfunctions.widgetfunctions import getWidgetsDB
+from app.dbfunctions.widgetfunctions import getWidgetsDB, getUserWidgetsDB
 from app.properties.associationproperties import associationps
 
 def getWidgets(widgetps):
@@ -36,3 +36,30 @@ def getWidgets(widgetps):
             }
             widget_list.append(row)
     return widget_list
+
+def getUserWidgets(widgetps):
+    usrwdgtarr = getUserWidgetsDB(widgetps)
+    userwidget_list = []
+    for wdgt in usrwdgtarr:
+        row = {
+            "sys_widgets_users_id": getattr(wdgt, "sys_widgets_users_id", 0),
+            "sys_widget_id": getattr(wdgt, "sys_widget_id", 0),
+            "widget_type": getattr(wdgt, "widget_type", ""),
+            "widget_title": getattr(wdgt, "widget_title", ""),
+            "widget_json": getattr(wdgt, "widget_json", ""),
+            "widget_label": getattr(wdgt, "widget_label", ""),
+            "widget_setting": getattr(wdgt, "widget_setting", ""),
+            "widget_icon": getattr(wdgt, "widget_icon", ""),
+            "c_width": getattr(wdgt, "c_width", 0),
+            "c_height": getattr(wdgt, "c_height", 0),
+            "htm_flow": getattr(wdgt, "htm_flow", ""),
+            "bg_color": getattr(wdgt, "bg_color", ""),
+            "view_id": getattr(wdgt, "view_id", 0),
+            "view_name": getattr(wdgt, "view_name", ""),
+            "view_url_full": getattr(wdgt, "url", ""),
+            "outlook_token": int(getattr(wdgt, "TODO", "") == 1),
+            "summarydata": getattr(wdgt, "summarydata", ""),
+            "summaryhtml": getattr(wdgt, "summaryhtml", ""),
+        }
+        userwidget_list.append(row)
+    return userwidget_list

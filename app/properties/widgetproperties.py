@@ -20,6 +20,7 @@ class WidgetProperties:
 
         self.dashboard_id = ContextVar("dashboard_id", default = None)
         self.search_text = ContextVar("search_text", default = None)
+        self.preview = ContextVar("preview", default = None)
 
 
 
