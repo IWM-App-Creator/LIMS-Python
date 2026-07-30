@@ -1,7 +1,7 @@
 from app.utils.common import DB, select, case, literal, exists, and_, userps
 
 def getWidgetsDB(widgetps):
-    dashboard_id = widgetps.dashboard_id.get()
+    dashboard_id = int(widgetps.dashboard_id.get() or 0)
     sys_widget_cat_id = widgetps.sys_widget_cat_id.get()
     search_text = widgetps.search_text.get()
     widget_type = widgetps.widget_type.get()
@@ -57,7 +57,7 @@ def getWidgetsDB(widgetps):
     if view_id:
         stmt = stmt.where(tbl_widget.c.view_id == view_id)
 
-    if userps.role_id.get() != 1 or userps.ws_role_id.get() != 1:
+    if userps.role_id.get() != 1 and userps.ws_role_id.get() != 1:
         stmt = stmt.where(
             tbl_widget.c.widget_type.notin_(["ADDUSER", "ADDVIEW"])
         )
