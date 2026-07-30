@@ -282,6 +282,8 @@ class ViewHelper:
     def setViewPaging(viewps):
         user_setting = viewps.user_setting.get() or {}
         user_setting = user_setting.get("tabs", {})
+        if viewps.tab_id.get() in (None, ""):
+            viewps.tab_id.set(0)
         current_tab = f"tab_{viewps.tab_id.get()}"
         tab_setting = user_setting.get(current_tab)
         if tab_setting:
