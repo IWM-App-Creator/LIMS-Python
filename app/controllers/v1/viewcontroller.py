@@ -89,7 +89,20 @@ def getViewData(request: Request):
     except Exception as e:
         print("getViewData Exception SubDomain --> ", userps.req_subdomain.get())
         saveErrorLogtoDB ("View", viewps.view_id.get(), "getViewData", str(e)) # Log Error To DB
-        raiseAPIError(str(e), 500)
+        # raiseAPIError(str(e), 500)
+        return JSONResponse (
+            status_code = 500,
+            content = {
+                "status": False,
+                "message": "Error",
+                "user_id": userps.user_id.get(),
+                "ws_role_id": userps.ws_role_id.get(),
+                "workspace_id": userps.workspace_id.get(),
+                "schema_name": userps.schema_name.get(),
+                "req_host": userps.req_host.get(),
+                "req_subdomain": userps.req_subdomain.get(),
+            }
+        )
 
 # http://xytovet.localhost:8000/api/v1/view/savetbldata
 # api/v1/view/savetbldata?view_id=183&item_id=8&table_name=mmydbptppt&col_name=status_1&primary_colnm=python___react_v2_id&col_val=924

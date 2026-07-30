@@ -12,6 +12,12 @@ class GlobalProperties:
         self.IS_LOCAL_DEV = "" # Is Local Development
         self.JWT_USER_ID = ""  # Local Dev User ID
 
+        self.SECRET_KEY = "4f7d9b8c2e1a6d5f8b9c7a3d4e6f1a2b5c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2" # JWT algorithm used for signing the token
+        self.ALGORITHM = "HS256" # JWT algorithm used for signing the token
+        self.ACCESS_TOKEN_EXPIRE_MINUTES = 180. # JWT token expiration time in minutes
+
+        self.DB_DEBUG_LEVEL = "DB"
+
         self.MAIL_HOST = "mail.miidata.io"
         self.MAIL_PORT = 587
         self.MAIL_USERNAME = "info@miidata.io"

@@ -11,12 +11,17 @@ from app.properties.viewproperties import viewps
 from app.properties.globalproperties import globalps
 
 def setEnvVariables():
-    globalps.IS_LOCAL_DEV = os.getenv('IS_LOCAL_DEV')
     globalps.APP_DOMAIN = os.getenv('APP_DOMAIN')
-    # globalps.APP_DOMAIN_FRONT = os.getenv('APP_DOMAIN_FRONT')
-    # globalps.SESSION_DOMAIN = os.getenv('SESSION_DOMAIN')
-    globalps.AI_API_URL = os.getenv('AI_API_URL')
     globalps.ASSET_URL = os.getenv('ASSET_URL')
+    globalps.AI_API_URL = os.getenv('AI_API_URL')
+
+    globalps.SECRET_KEY = os.getenv('SECRET_KEY') # JWT algorithm used for signing the token
+    globalps.ALGORITHM = os.getenv('ALGORITHM') # JWT algorithm used for signing the token
+    globalps.ACCESS_TOKEN_EXPIRE_MINUTES = os.getenv('ACCESS_TOKEN_EXPIRE_MINUTES') # JWT token expiration time in minutes
+
+    globalps.DB_DEBUG_LEVEL = os.getenv('DB_DEBUG_LEVEL') # Debug Level Log, Print etc.
+
+    globalps.IS_LOCAL_DEV = os.getenv('IS_LOCAL_DEV')
     globalps.JWT_USER_ID = os.getenv('JWT_USER_ID')
 
 def getHostName(request):

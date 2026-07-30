@@ -1,4 +1,4 @@
-from app.utils.common import DB, select, insert, delete, func, userps, nowWithTimeZone
+from app.utils.common import DB, select, insert, delete, func, userps, nowWithTimeZone, globalps
 import traceback
 import sys
 
@@ -49,21 +49,26 @@ def getDBErrorLog(logps):
 def saveErrorLogtoDB(section: str, item_id: str, notes: str, error_msg: str):
     tb = traceback.extract_tb(sys.exc_info()[2])[-1]
     notes = f"{notes} :- {tb.filename} : ({tb.name} - {tb.lineno}"
-    print("Exception --> ", f" {tb.filename} : ({tb.name} - {tb.lineno}")
-    # sys_error_log = DB.getTableMeta("sys_error_log")
-    # stmt = (
-    #     insert(sys_error_log)
-    #     .values(
-    #         section = section,
-    #         item_id = item_id,
-    #         notes = notes,
-    #         error_msg = error_msg,
-    #         created_by = userps.user_id.get(),
-    #         created_date = nowWithTimeZone()
-    #     )
-    # )
-    # error_id = DB.executeDBInsert(stmt)
-    # return error_id
+    
+    error_id = 0
+    if globalps.DB_DEBUG_LEVEL == "Print" :
+        print("Exception --> ", f" {tb.filename} : ({tb.name} - {tb.lineno}")
+
+    if globalps.DB_DEBUG_LEVEL == "DB" :
+        sys_error_log = DB.getTableMeta("sys_error_log")
+        stmt = (
+            insert(sys_error_log)
+            .values(
+                section = section,
+                item_id = item_id,
+                notes = notes,
+                error_msg = error_msg,
+                created_by = userps.user_id.get(),
+                created_date = nowWithTimeZone()
+            )
+        )
+        error_id = DB.executeDBInsert(stmt)
+    return error_id
 
 def resolveError(error_id: str):
     sys_error_log = DB.getTableMeta("sys_error_log")
