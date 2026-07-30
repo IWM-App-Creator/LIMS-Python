@@ -297,7 +297,7 @@ class ViewHelper:
             offset = ((page_no - 1) * page_size)
             viewps.offset.set(offset)
         else :
-            viewps.page_size.set(20)
+            viewps.page_size.set(10)
             viewps.offset.set(0)
 
     @staticmethod
