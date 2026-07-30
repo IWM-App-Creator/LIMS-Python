@@ -2,10 +2,10 @@ from app.utils.common import DB, select, case, literal, exists, and_, userps
 
 def getWidgetsDB(widgetps):
     dashboard_id = int(widgetps.dashboard_id.get() or 0)
-    sys_widget_cat_id = widgetps.sys_widget_cat_id.get()
+    sys_widget_cat_id = int(widgetps.sys_widget_cat_id.get() or 0)
     search_text = widgetps.search_text.get()
     widget_type = widgetps.widget_type.get()
-    view_id = widgetps.view_id.get()
+    view_id = int(widgetps.view_id.get() or 0)
     tbl_widget = DB.getTableMeta("sys_widget_master").alias("wm")
     tbl_view = DB.getTableMeta("sys_dynamic_view").alias("dv")
     tbl_user_widget = DB.getTableMeta("sys_user_widgets").alias("suw")
