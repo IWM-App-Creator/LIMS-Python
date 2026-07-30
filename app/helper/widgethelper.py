@@ -1,7 +1,9 @@
 from app.utils.common import userps
 from app.helper.associationhelper import getViewIdByAssociation
 from app.dbfunctions.widgetfunctions import getWidgetsDB, getUserWidgetsDB
+from app.dbfunctions.viewfunctions import getViewDataByID
 from app.properties.associationproperties import associationps
+from app.properties.viewproperties import viewps
 
 def getWidgets(widgetps):
     is_admin = (userps.ws_role_id.get() == 1 or userps.role_id.get() == 1)
@@ -15,12 +17,15 @@ def getWidgets(widgetps):
     widget_list = []
     for widget in widgetarr:
         is_valid = 1
+        view_url = ""
         if not is_admin and getattr(widget, "widget_type", "") == "VIEWWIDGET":
             is_valid = 0
             for view_id in view_ids:
                 if getattr(widget, "view_id", 0) == view_id:
                     is_valid = 1
         if is_valid == 1:
+            if getattr(widget, "url", "") not in (None, ""):
+                view_url = "https://" + userps.req_host.get() + "/view/" + getattr(widget, "url", "")
             row = {
                 "sys_widget_id": getattr(widget, "sys_widget_id", 0),
                 "widget_title": getattr(widget, "widget_title", ""),
@@ -31,7 +36,7 @@ def getWidgets(widgetps):
                 "is_global": getattr(widget, "is_global", 0),
                 "view_id": getattr(widget, "view_id", 0),
                 "view_name": getattr(widget, "view_name", ""),
-                "view_url_full": getattr(widget, "url", ""),
+                "view_url_full": view_url,
                 "widget_added": getattr(widget, "widget_added", 0),
             }
             widget_list.append(row)
@@ -41,6 +46,20 @@ def getUserWidgets(widgetps):
     usrwdgtarr = getUserWidgetsDB(widgetps)
     userwidget_list = []
     for wdgt in usrwdgtarr:
+        view_id = 0
+        view_name = ""
+        if getattr(wdgt, "widget_type", "") == "VIEWWIDGET":
+            widget_json = getattr(wdgt, "widget_json", "")
+            if isinstance(widget_json, str):
+                widget_json = eval(widget_json)
+            if not isinstance(widget_json, dict):
+                widget_json = {}
+            view_id = int(widget_json.get("view_id") or 0)
+            viewps.view_id.set(view_id)
+            getViewDataByID(viewps)
+            view_data = viewps.userview.get()
+            view_name = getattr(view_data, "view_name", "")
+            view_url = "https://" + userps.req_host.get() + "/view/" + getattr(view_data, "url", "")
         row = {
             "sys_widgets_users_id": getattr(wdgt, "sys_widgets_users_id", 0),
             "sys_widget_id": getattr(wdgt, "sys_widget_id", 0),
@@ -54,10 +73,10 @@ def getUserWidgets(widgetps):
             "c_height": getattr(wdgt, "c_height", 0),
             "htm_flow": getattr(wdgt, "htm_flow", ""),
             "bg_color": getattr(wdgt, "bg_color", ""),
-            "view_id": getattr(wdgt, "view_id", 0),
-            "view_name": getattr(wdgt, "view_name", ""),
-            "view_url_full": getattr(wdgt, "url", ""),
-            "outlook_token": int(getattr(wdgt, "TODO", "") == 1),
+            "view_id": view_id,
+            "view_name": view_name,
+            "view_url_full": view_url,
+            "outlook_token": int(getattr(wdgt, "widget_type", "") == "TODO"),
             "summarydata": getattr(wdgt, "summarydata", ""),
             "summaryhtml": getattr(wdgt, "summaryhtml", ""),
         }

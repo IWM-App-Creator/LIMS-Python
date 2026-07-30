@@ -7,7 +7,7 @@ def getWidgetsDB(widgetps):
     widget_type = widgetps.widget_type.get()
     view_id = int(widgetps.view_id.get() or 0)
     tbl_widget = DB.getTableMeta("sys_widget_master").alias("wm")
-    tbl_view = DB.getTableMeta("sys_dynamic_view").alias("dv")
+    tbl_view = DB.getTableMeta("sys_new_dynamic_view").alias("dv")
     tbl_user_widget = DB.getTableMeta("sys_user_widgets").alias("suw")
     # EXISTS subquery
     exists_conditions = [
