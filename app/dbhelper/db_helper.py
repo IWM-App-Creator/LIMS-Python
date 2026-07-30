@@ -28,18 +28,27 @@ class DB:
     @staticmethod
     def executeDBSelect(stmt):
         with dbconn.connect() as conn:
+            schema_name = userps.schema_name.get()
+            if schema_name:
+                conn.execute(text(f"USE `{schema_name}`"))
             result = conn.execute(stmt)
             return result.fetchall()
 
     @staticmethod
     def executeDBSelectSingle(stmt):
         with dbconn.connect() as conn:
+            schema_name = userps.schema_name.get()
+            if schema_name:
+                conn.execute(text(f"USE `{schema_name}`"))
             result = conn.execute(stmt)
             return result.first()
 
     @staticmethod
     def executeDBInsert(stmt):
         with dbconn.begin() as conn:
+            schema_name = userps.schema_name.get()
+            if schema_name:
+                conn.execute(text(f"USE `{schema_name}`"))
             result = conn.execute(stmt)
             if result.inserted_primary_key:
                 return result.inserted_primary_key[0]
@@ -62,23 +71,25 @@ class DB:
     @staticmethod
     def executeDBUpdate(stmt):
         with dbconn.begin() as conn:
+            schema_name = userps.schema_name.get()
+            if schema_name:
+                conn.execute(text(f"USE `{schema_name}`"))
             result = conn.execute(stmt)
             return result.rowcount
 
     @staticmethod
     def executeDBDelete(stmt):
         with dbconn.begin() as conn:
+            schema_name = userps.schema_name.get()
+            if schema_name:
+                conn.execute(text(f"USE `{schema_name}`"))
             result = conn.execute(stmt)
             return result.rowcount
 
     @staticmethod
     def getSingleColumnValue(stmt, column_name, default = None):
-        with dbconn.begin() as conn:
-            schema_name = userps.schema_name.get()
-            if schema_name:
-                conn.execute(text(f"USE `{schema_name}`"))
-            if isinstance(stmt, str):
-                stmt = text(stmt)
+        if isinstance(stmt, str):
+            stmt = text(stmt)
         row = DB.executeDBSelectSingle(stmt)
         return getattr(row, column_name, default) if row else default
 
@@ -110,3 +121,14 @@ class DB:
             if schema_name:
                 conn.execute(text(f"USE `{schema_name}`"))
             return conn.execute(stmt).scalar()
+
+# # print("getSingleColumnValue schema_name --> " + schema_name)
+# print("getSingleColumnValue userps.schema_name --> " + userps.schema_name.get())
+# with dbconn.begin() as conn:
+#     schema_name = userps.schema_name.get()
+#     if schema_name:
+#         conn.execute(text(f"USE `{schema_name}`"))
+#     if isinstance(stmt, str):
+#         stmt = text(stmt)
+#     row = DB.executeDBSelectSingle(stmt)
+#     return getattr(row, column_name, default) if row else default
