@@ -2,7 +2,6 @@ import datetime
 from app.utils.common import DB, select, or_, func, and_, userps
 
 def getNotes(notesps):
-    print("getNotes --> ")
     tbl_notes = DB.getTableMeta("sys_table_notes").alias("notes")
     users = DB.getTableMeta("users", "systemconfig").alias("usr")
     stmt = (
@@ -29,4 +28,27 @@ def getNotes(notesps):
         )
     )
     stmt = stmt.order_by(tbl_notes.c.notes_id.asc())
+    return DB.executeDBSelect(stmt)
+
+def getSmileyNotes(notesps):
+    note_ids = notesps.note_ids.get()
+    if note_ids in (None, ""):
+        return []
+    if isinstance(note_ids, str):
+        note_ids = note_ids.split(",")
+    notes_smiley = DB.getTableMeta("sys_table_notes_smiley").alias("notes_smiley")
+    users = DB.getTableMeta("users", "systemconfig").alias("usr")
+    stmt = (
+        select(
+            notes_smiley,
+            users.c.first_name,
+            users.c.last_name
+        )
+        .outerjoin(
+            users,
+            users.c.id == notes_smiley.c.created_by
+        )
+        .where(notes_smiley.c.notes_id.in_(note_ids))
+        .where(notes_smiley.c.is_delete == 0)
+    )
     return DB.executeDBSelect(stmt)

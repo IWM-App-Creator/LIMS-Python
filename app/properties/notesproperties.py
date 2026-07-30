@@ -3,6 +3,7 @@ from contextvars import ContextVar
 class NotesProperties:
     def __init__(self):
         self.notes_id = ContextVar("notes_id", default = 0)
+        self.note_ids = ContextVar("note_ids", default = "")
         self.parent_id = ContextVar("parent_id", default = 0)
         self.view_id = ContextVar("view_id", default = 0)
         self.table_id = ContextVar("table_id", default = 0)

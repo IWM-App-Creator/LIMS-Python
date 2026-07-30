@@ -1,8 +1,9 @@
 from app.utils.common import Request, JSONResponse, RequestData, raiseAPIError, DB, text, raiseInvalidError
+from app.dbfunctions.logfunctions import saveErrorLogtoDB
 from app.dbfunctions.dbtablesfunctions import getDBTableData, insertTableDataToDB, insertUpdateTblCol, updateDBTableSequence
-from app.helper.dbhelper import setQueryColStmt, executeCreateTableQuery
 from app.dbfunctions.viewfunctions import getViewDataByID, insertUpdateView
 from app.dbfunctions.dbfunctions import generateDBColumnAlterQuery
+from app.helper.dbhelper import setQueryColStmt, executeCreateTableQuery
 from app.helper.viewhelper import viewhlp, createviewhlp
 from app.helper import dbhelper as dbhlp
 from app.properties.dbproperties import dbps
@@ -12,34 +13,31 @@ from app.helper.dbaddcolhelper import getColumnParams
 
 # http://testws1.localhost:8000/api/v1/dbtable/gettbls
 def getDBTableList (request: Request):
-    # $user_id = empty(Input::get('user_id')) ? "1" : Input::get('user_id');
-    #     $api_secret = empty(Input::get('api_secret')) ? "" : Input::get('api_secret');
-    #     $excl_tbl_id = empty(Input::get('excl_tbl_id')) ? "" : Input::get('excl_tbl_id');
-    #     $workspace_id = empty(Input::get('workspace_id')) ? "0" : Input::get('workspace_id');
-    #     $flag = empty(Input::get('flag')) ? "" : Input::get('flag');
-    #     $excl_tbl_id = explode(",", $excl_tbl_id);
-    #     $excl_tbl_id = array_unique($excl_tbl_id);
-    flag = ""
-    tablesarr = getDBTableData(dbps) # Execute Function to User Get Data
-    table_data = []
-    for table in tablesarr:
-        row = {
-            "table_id": table.table_id,
-            "table_name": table.table_name,
-            "table_alias": table.table_alias
-        }
-        if flag == "DynamicView":
-            row["col_alias"] = table.col_alias
-        table_data.append(row)
-    # Output
-    return JSONResponse (
-        status_code = 200,
-        content = {
-            "status": True,
-            "message": "Table Data",
-            "table_data": table_data
-        }
-    )
+    try:
+        flag = ""
+        tablesarr = getDBTableData(dbps) # Execute Function to User Get Data
+        table_data = []
+        for table in tablesarr:
+            row = {
+                "table_id": table.table_id,
+                "table_name": table.table_name,
+                "table_alias": table.table_alias
+            }
+            if flag == "DynamicView":
+                row["col_alias"] = table.col_alias
+            table_data.append(row)
+        # Output
+        return JSONResponse (
+            status_code = 200,
+            content = {
+                "status": True,
+                "message": "Table Data",
+                "table_data": table_data
+            }
+        )
+    except Exception as e:
+        saveErrorLogtoDB("DBTable", 0, "getDBTableList", str(e)) # Log Error To DB
+        raiseAPIError(str(e), 500)
 
 # http://testws1.localhost:8000/api/v1/dbtable/getcols
 def getDBTableColumns(request: Request):
@@ -78,21 +76,25 @@ def getDBTableColumns(request: Request):
 # http://testws1.localhost:8000/api/v1/dbtable/getlookupdata
 def getLookupData(request: Request):
     print("getLookupData --> ")
-    params = RequestData.params(request)
-    dbps.table_name.set(params.get("lookup_tbl", ""))
-    dbps.primary_col_nm.set(params.get("primary_col", ""))
-    dbps.lookup_colnm.set(params.get("lookup_col", ""))
-    dbps.search_txt.set(params.get("search_txt", ""))
-    dbps.data_limit.set(params.get("data_limit", 100))
-    lookup_data = dbhlp.getDBTableLookupData(dbps)
-    return JSONResponse (
-        status_code = 200,
-        content = {
-            "status": True,
-            "message": "Lookup Data",
-            "lookup_data": lookup_data
-        }
-    )
+    try:
+        params = RequestData.params(request)
+        dbps.table_name.set(params.get("lookup_tbl", ""))
+        dbps.primary_col_nm.set(params.get("primary_col", ""))
+        dbps.lookup_colnm.set(params.get("lookup_col", ""))
+        dbps.search_txt.set(params.get("search_txt", ""))
+        dbps.data_limit.set(params.get("data_limit", 100))
+        lookup_data = dbhlp.getDBTableLookupData(dbps)
+        return JSONResponse (
+            status_code = 200,
+            content = {
+                "status": True,
+                "message": "Lookup Data",
+                "lookup_data": lookup_data
+            }
+        )
+    except Exception as e:
+        saveErrorLogtoDB ("DBTable", 0, "getLookupData", str(e))
+        raiseAPIError(str(e), 500)
 
 # http://testws1.localhost:8000/api/v1/dbtable/updatetbl
 def updateDBTableAlias (request: Request):
