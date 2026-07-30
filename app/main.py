@@ -38,9 +38,11 @@ app.middleware("http")(auth_handler)
 # Middleware for CORS
 app.add_middleware (
     CORSMiddleware,
+    expose_headers=["X-New-JWT",], #New JWT Token On API Call
     allow_origins = [
         "http://localhost:5173",
         "http://localhost:5174",
+        "https://miidata.dev:5173",
     ],
     allow_origin_regex=r"^https://([a-zA-Z0-9-]+\.)?xytovet\.com$",
     allow_credentials = True,

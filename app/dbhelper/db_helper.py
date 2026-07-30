@@ -13,7 +13,10 @@ class DB:
         if schema in (None, ""): # If Schema name is not pass, use form User Property
             schema = userps.schema_name.get()
         key = f"{schema}.{table_name}" if schema else table_name
+
         if key not in DB._dbtables:
+            # tmptbl = DB._dbtables[key]
+            # print("Requested Schema :", schema, "| Cached Schema :", tmptbl.schema, "| Table :", tmptbl.name)
             DB._dbtables[key] = Table (
                 table_name,
                 metadata,

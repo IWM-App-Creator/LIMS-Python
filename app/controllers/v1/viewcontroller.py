@@ -94,13 +94,14 @@ def getViewData(request: Request):
             status_code = 500,
             content = {
                 "status": False,
-                "message": "Error",
+                "message": "View Error",
                 "user_id": userps.user_id.get(),
                 "ws_role_id": userps.ws_role_id.get(),
                 "workspace_id": userps.workspace_id.get(),
                 "schema_name": userps.schema_name.get(),
                 "req_host": userps.req_host.get(),
                 "req_subdomain": userps.req_subdomain.get(),
+                "error" : str(e)
             }
         )
 

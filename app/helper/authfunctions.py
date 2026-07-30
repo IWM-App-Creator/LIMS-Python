@@ -51,4 +51,15 @@ class AuthFunctions:
                 "message": "Invalid token."
             }
 
+    #Validate existing token and return a fresh JWT with a new expiry.
+    @staticmethod
+    def refreshJWTToken(old_token: str) -> str | None:
+        payload = authfnct.verifyJWTToken(old_token)
+        if payload is None:
+            return None
+        return authfnct.createJWTToken(
+            user_id=int(payload["user_id"]),
+            role_id=int(payload["role_id"]),
+            email=payload["email"],
+        )
 authfnct = AuthFunctions()

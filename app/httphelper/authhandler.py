@@ -8,7 +8,7 @@ from app.properties.globalproperties import globalps
 from app.properties.usersproperties import userps
 
 async def auth_handler(request: Request, call_next):
-    # print("auth_handler --> ", request.url.path)
+    print("auth_handler --> ", request.url.path)
     getHostName(request) # Get Host
     # Skip public APIs
     if isPublicEndpoint(request.url.path):
@@ -19,11 +19,21 @@ async def auth_handler(request: Request, call_next):
         userps.user_id.set(globalps.JWT_USER_ID) # Set a default user_id for local development
         userps.req_subdomain.set("testws1") # Set a default user_id for local development
         userps.role_id.set("1") # Set a default role_id for local development
-        return await call_next(request)
+
+        # Continue request
+        response = await call_next(request)
+        # return await call_next(request)    
+        # Issue refreshed JWT
+        new_token = authfnct.createJWTToken(
+            user_id=int(globalps.JWT_USER_ID),
+            role_id=int("1"),
+            email = "chintanit22@gmail.com",
+        )
+        response.headers["X-New-JWT"] = new_token
+        # print("X-New-JWT --> ", response.headers.get("X-New-JWT"))
+        return response
     else :
         auth = request.headers.get("Authorization")
-        if(globalps.JWT_USER_ID == 3779):
-            print("auth_handler auth --> ", auth)
         if not auth:
             return JSONResponse (
                 status_code = 200,
@@ -50,8 +60,23 @@ async def auth_handler(request: Request, call_next):
                     "status": False,
                     "message": "Invalid or expired token"
                 }
-            )        
-        userps.user_id.set(payload["user_id"]) # Set user_id in global properties for global access
+            )
+        # Set user_id in global properties for global access
+        userps.user_id.set(payload["user_id"])
         userps.role_id.set(payload["role_id"])
         request.state.jwt = token
-        return await call_next(request)
+
+        # Continue request
+        response = await call_next(request)
+
+        # Issue refreshed JWT
+        new_token = authfnct.createJWTToken(
+            user_id=int(payload["user_id"]),
+            role_id=int(payload["role_id"]),
+            email=payload["email"],
+        )
+
+        response.headers["X-New-JWT"] = new_token
+        # print("X-New-JWT --> ", response.headers.get("X-New-JWT"))
+        return response
+        # return await call_next(request)
