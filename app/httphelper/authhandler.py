@@ -14,15 +14,17 @@ async def auth_handler(request: Request, call_next):
     if isPublicEndpoint(request.url.path):
         return await call_next(request)
 
+    token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMzc5MiIsInJvbGVfaWQiOiIxIiwiZW1haWwiOiJkaXBha2JlcmFpdEBnbWFpbC5jb20iLCJleHAiOjE3ODU0MjkzNDd9.IjW8IwZTcFIK88iGW8bxM4q5TJQcGKUY4JHpC7yeFHY"
+    # payload = authfnct.verifyJWTToken(token)
+    # print("payload --> ", payload)
     # Validate Header
     if globalps.IS_LOCAL_DEV == "1": # Bypass auth for local development
         userps.user_id.set(globalps.JWT_USER_ID) # Set a default user_id for local development
         userps.req_subdomain.set("testws1") # Set a default user_id for local development
         userps.role_id.set("1") # Set a default role_id for local development
-
         # Continue request
         response = await call_next(request)
-        # return await call_next(request)    
+        # return await call_next(request)
         # Issue refreshed JWT
         new_token = authfnct.createJWTToken(
             user_id=int(globalps.JWT_USER_ID),
@@ -33,13 +35,17 @@ async def auth_handler(request: Request, call_next):
         # print("X-New-JWT --> ", response.headers.get("X-New-JWT"))
         return response
     else :
+        print("Else request.headers --> ", request.headers)
         auth = request.headers.get("Authorization")
+        print("Else auth --> ", auth)
         if not auth:
             return JSONResponse (
                 status_code = 403,
                 content = {
                     "status": False,
-                    "message": "Authorization header missing -- " + request.url.path
+                    "req_host": userps.req_host.get(),
+                    "req_subdomain": userps.req_subdomain.get(),
+                    "message": "Authorization header missing -- " + request.url.path,
                 }
             )
         if not auth.startswith("Bearer "):

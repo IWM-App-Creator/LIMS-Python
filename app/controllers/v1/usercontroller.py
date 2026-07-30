@@ -18,50 +18,53 @@ from app.helper.generalfunctions import formatUserDisplayName
 # http://xytovet.localhost:8000/api/v1/user/getdetail?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMzc3OSIsInJvbGVfaWQiOiIxIiwiZW1haWwiOiJjaGludGFuaXQyMkBnbWFpbC5jb20iLCJleHAiOjE3ODMzMjQ3ODR9.AY-PMOH78_p-Jj9v3L1Hd_stU6NXcRWdmoBYHtVnjgo
 
 def getUserDetail(request: Request): # token: str
-    # print("getUserDetail:", userps.user_id.get())
-    userps.othr_userid.set(userps.user_id.get())
-    user = getUserDataFromDB() # Execute Function to User Get Data
-    if not user: # Invalid User
-        raiseAPIError("User Not Found", 404)
-    userps.first_name.set(user.first_name)
-    userps.last_name.set(user.last_name)
-    userps.email.set(user.email)
-    user_dict = {
-        "user_id": userps.user_id.get(),
-        "role_id": userps.role_id.get(),
-        "first_name": userps.first_name.get(),
-        "last_name": userps.last_name.get(),
-        "email": userps.email.get(),
-    }
-    user_dict.update(user.user_settings)
-    # --------------------------
-    # Get User Menu
-    # --------------------------
-    menups.created_by.set(userps.user_id.get())
-    getUserMenuList(menups)
-    # --------------------------
-    # Get Workspace List
-    # --------------------------
-    getUserWSList(wsps)
-    # --------------------------
-    # Get Dashboard List
-    # --------------------------
-    dps.created_by.set(userps.user_id.get())
-    getUserDashboards(dps)
-    # --------------------------
-    # Merge All Data & Send Response
-    # --------------------------
-    return JSONResponse (
-        status_code = 200,
-        content = {
-            "status": True,
-            "message": "User Data",
-            "user_dict": user_dict,
-            "menucentre_list": menups.menu_cntr_data.get(),
-            "workspace_list" : wsps.ws_data.get(),
-            "dashboard_list" : dps.dashboards_data.get()
+    try:
+        userps.othr_userid.set(userps.user_id.get())
+        user = getUserDataFromDB() # Execute Function to User Get Data
+        if not user: # Invalid User
+            raiseAPIError("User Not Found", 404)
+        userps.first_name.set(user.first_name)
+        userps.last_name.set(user.last_name)
+        userps.email.set(user.email)
+        user_dict = {
+            "user_id": userps.user_id.get(),
+            "role_id": userps.role_id.get(),
+            "first_name": userps.first_name.get(),
+            "last_name": userps.last_name.get(),
+            "email": userps.email.get(),
         }
-    )
+        user_dict.update(user.user_settings)
+        # --------------------------
+        # Get User Menu
+        # --------------------------
+        menups.created_by.set(userps.user_id.get())
+        getUserMenuList(menups)
+        # --------------------------
+        # Get Workspace List
+        # --------------------------
+        getUserWSList(wsps)
+        # --------------------------
+        # Get Dashboard List
+        # --------------------------
+        dps.created_by.set(userps.user_id.get())
+        getUserDashboards(dps)
+        # --------------------------
+        # Merge All Data & Send Response
+        # --------------------------
+        return JSONResponse (
+            status_code = 200,
+            content = {
+                "status": True,
+                "message": "User Data",
+                "user_dict": user_dict,
+                "menucentre_list": menups.menu_cntr_data.get(),
+                "workspace_list" : wsps.ws_data.get(),
+                "dashboard_list" : dps.dashboards_data.get()
+            }
+        )
+    except Exception as e:
+        # saveErrorLogtoDB ("User", "", "getUserList", str(e)) # Log Error To DB
+        raiseAPIError(str(e), 500)
 
 def getUserList(request: Request):
     try:
