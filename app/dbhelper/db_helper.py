@@ -73,7 +73,11 @@ class DB:
 
     @staticmethod
     def getSingleColumnValue(stmt, column_name, default = None):
-        if isinstance(stmt, str):
+        with dbconn.begin() as conn:
+            schema_name = userps.schema_name.get()
+            if schema_name:
+                conn.execute(text(f"USE `{schema_name}`"))
+            if isinstance(stmt, str):
                 stmt = text(stmt)
         row = DB.executeDBSelectSingle(stmt)
         return getattr(row, column_name, default) if row else default

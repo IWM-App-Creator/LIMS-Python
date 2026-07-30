@@ -62,7 +62,9 @@ def getViewData(request: Request):
         viewps.view_qry.set(view_qry)
         view_qry_data = DB.executeDBStatement(view_qry) # Execute Query To Get View Data
         viewps.view_qry_data.set(view_qry_data)
+
         viewhlp.getRecordCount(viewps) # Total Record Data
+
         viewhlp.setViewItemArray(viewps); # Set View Data In Items Array
         viewhlp.setViewOutputArray(viewps); # Output Json
         return JSONResponse (
