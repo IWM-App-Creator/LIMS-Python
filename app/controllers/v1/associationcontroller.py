@@ -54,7 +54,6 @@ def getAssociations(request: Request):
         raiseAPIError(str(e), 500)
 
 def getAccessAssociation(request: Request):
-    print("getAccessAssociation --> ")
     try:
         params = RequestData.params(request)
         associationps.table_name.set(params.get("table_name", ""))

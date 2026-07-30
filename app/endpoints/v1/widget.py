@@ -4,7 +4,8 @@ from app.controllers.v1 import widgetcontroller as widgetapi
 router = APIRouter(prefix = "/widget")
 
 ROUTES = [
-    ("/getlist", widgetapi.getTestData, ["GET"]),
+    ("/get", widgetapi.getWidgetList, ["GET"]),
+    ("/getuser", widgetapi.getUserWidgetList, ["GET"]),
 ]
 
 for path, handler, methods in ROUTES:

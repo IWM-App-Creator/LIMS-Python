@@ -6,7 +6,6 @@ from app.dbfunctions.activitiesfunctions import getActivityLogs
 from app.properties.activitiesproperties import activitiesps
 
 def getActivities(request: Request):
-    print("getActivities --> ")
     try:
         params = RequestData.params(request)
         # set params to Properties

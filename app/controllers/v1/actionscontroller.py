@@ -5,7 +5,6 @@ from app.properties.actionsproperties import actionsps
 
 # http://192.168.31.96:8000/api/v1/actions/get?view_id=182&action_type=&search_text=&pg_no=
 def getActions(request: Request):
-    print("getActions --> ")
     try:
         # set Params to Properties
         params = RequestData.params(request)

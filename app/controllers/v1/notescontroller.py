@@ -6,7 +6,6 @@ from app.dbfunctions.notesfunctions import getNotes
 from app.properties.notesproperties import notesps
 
 def getUserNotes(request: Request):
-    print("getUserNotes --> ")
     try:
         params = RequestData.params(request)
         notesps.view_id.set(params.get("view_id", 0))
@@ -25,9 +24,9 @@ def getUserNotes(request: Request):
                 "to_users": to_map.get(note.notes_id, []),
                 "note": note.note,
                 "is_delete": note.is_delete,
-                "created_name": note.first_name[0] + " " + note.last_name[0],
                 "created_by": note.created_by,
-                "full_name": note.first_name + " " + note.last_name,
+                "crtd_full_name": note.first_name + " " + note.last_name,
+                "crtd_initial_name": note.first_name[0] + note.last_name[0],
                 "created_date": getTimeAgoValue(note.created_date),
                 "created_dt": formatDate(note.created_date, "%d/%m/%Y %H:%M:%S"),
                 "smiley_list": smilemap.get(note.notes_id, [])

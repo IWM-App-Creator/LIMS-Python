@@ -1,5 +1,5 @@
 import datetime
-from app.utils.common import DB, select, or_, func, and_, userps
+from app.utils.common import DB, select, or_, func, and_, userps, nowWithTimeZone
 
 def getNotes(notesps):
     tbl_notes = DB.getTableMeta("sys_table_notes").alias("notes")
@@ -23,7 +23,7 @@ def getNotes(notesps):
         stmt = stmt.where(tbl_notes.c.is_delete == 0)
     stmt = stmt.where(
         or_(
-            tbl_notes.c.created_date <= datetime.datetime.now(),
+            tbl_notes.c.created_date <= nowWithTimeZone(),
             tbl_notes.c.created_by == userps.user_id.get()
         )
     )
@@ -42,9 +42,9 @@ def getFromUsersData(notesps):
             tbl_notification.c.notes_id,
             users.c.id,
             users.c.first_name,
-            users.c.last_name,
-            tbl_notification.c.is_read
+            users.c.last_name
         )
+        .distinct()
         .outerjoin(
             users,
             users.c.id == tbl_notification.c.created_by
@@ -74,6 +74,7 @@ def getToUsersData(notesps):
             users.c.last_name,
             tbl_notification.c.is_read
         )
+        .distinct()
         .outerjoin(
             users,
             users.c.id == tbl_notification.c.to_user_id
