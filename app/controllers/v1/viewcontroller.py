@@ -87,6 +87,7 @@ def getViewData(request: Request):
         #     $tmpdata['view_asso_json'] = [];
         # }
     except Exception as e:
+        print("getViewData SubDomain --> ", userps.req_subdomain.get())
         saveErrorLogtoDB ("View", viewps.view_id.get(), "getViewData", str(e)) # Log Error To DB
         raiseAPIError(str(e), 500)
 
