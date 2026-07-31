@@ -44,3 +44,24 @@ def getUserWidgetList(request: Request):
     except Exception as e:
         saveErrorLogtoDB("Widget", userps.user_id.get(), "getUserWidgetList", str(e))
         raiseAPIError(str(e), 500)
+
+def shareUserWidget(request: Request):
+    print("shareUserWidget --> ")
+    try:
+        params = RequestData.params(request)
+        widgetps.view_id.set(params.get("view_id", 0))
+        widgetps.widget_type.set(params.get("widget_type", None))
+        view_name = params.get("view_name", "")
+        widgetps.sys_widgets_users_id.set(params.get("sys_widgets_users_id", 0))
+        message = params.get("message", None)
+        share_users = params.get("share_users", [])
+        return JSONResponse(
+            status_code = 200,
+            content = {
+                "status": True,
+                "message": "User Widget Shared Successfully"
+            }
+        )
+    except Exception as e:
+        saveErrorLogtoDB("Widget", userps.user_id.get(), "shareUserWidget", str(e))
+        raiseAPIError(str(e), 500)

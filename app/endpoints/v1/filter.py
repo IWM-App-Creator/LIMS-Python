@@ -6,8 +6,9 @@ router = APIRouter(prefix = "/filter")
 ROUTES = [
     ("/get", filtersapi.getFilters, ["GET"])
     ("/save", filtersapi.saveViewFilter, ["POST"])
-    ("/setdefault", filtersapi.saveViewFilter, ["POST"])
-    ("/remove", filtersapi.saveViewFilter, ["POST"])
+    ("/copy", filtersapi.copySaveFilterView, ["POST"])
+    ("/setdefault", filtersapi.makeDefaultFilter, ["POST"])
+    ("/remove", filtersapi.removeSaveFilterView, ["POST"])
 ]
 
 for path, handler, methods in ROUTES:

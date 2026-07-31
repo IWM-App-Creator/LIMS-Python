@@ -112,8 +112,9 @@ def makeDefaultFilter(request: Request):
     print("makeDefaultFilter --> ")
     try:
         params = RequestData.params(request)
+        filterps.view_id.set(params.get("view_id", 0))
         filterps.save_id.set(params.get("save_id", 0))
-        filterps.is_default.set(params.get("is_default", 0))
+        filterps.is_default.set(1)
         insertUpdateFilter(filterps)
         return JSONResponse(
             status_code = 200,

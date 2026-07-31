@@ -18,6 +18,8 @@ class WidgetProperties:
         self.created_by = ContextVar("created_by", default = None)
         self.created_date = ContextVar("created_date", default = None)
 
+        self.sys_widgets_users_id = ContextVar("sys_widgets_users_id", default = None)
+
         self.dashboard_id = ContextVar("dashboard_id", default = None)
         self.search_text = ContextVar("search_text", default = None)
         self.preview = ContextVar("preview", default = None)
