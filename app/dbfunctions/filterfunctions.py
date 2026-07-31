@@ -81,17 +81,18 @@ def insertUpdateFilter(filterps):
     if is_delete not in (None, ""):
         values['is_delete'] = is_delete
     dync_result_save = DB.getTableMeta("sys_dynamic_result_save")
-    if is_default in (1, "1"):
+    if is_default in (1, "1") or save_id in (-1, "-1"):
         stmt = update(dync_result_save).where(dync_result_save.c.view_id == view_id).where(dync_result_save.c.created_by == user_id).values(is_default = 0)
         DB.executeDBUpdate(stmt)
-    if save_id not in (None, "", 0):
-        stmt = update(dync_result_save).where(dync_result_save.c.save_id == save_id).values(**values)
-        DB.executeDBUpdate(stmt)
-    else:
-        values['created_by'] = user_id
-        values['tab_id'] = 0
-        values['is_global'] = 0
-        values['created_date'] = nowWithTimeZone()
-        stmt = insert(dync_result_save).values(**values)
-        save_id = DB.executeDBInsert(stmt)
-    return save_id
+    if save_id not in (-1, "-1"):
+        if save_id not in (None, "", 0):
+            stmt = update(dync_result_save).where(dync_result_save.c.save_id == save_id).values(**values)
+            DB.executeDBUpdate(stmt)
+        else:
+            values['created_by'] = user_id
+            values['tab_id'] = 0
+            values['is_global'] = 0
+            values['created_date'] = nowWithTimeZone()
+            stmt = insert(dync_result_save).values(**values)
+            save_id = DB.executeDBInsert(stmt)
+        return save_id
