@@ -49,12 +49,35 @@ def shareUserWidget(request: Request):
     print("shareUserWidget --> ")
     try:
         params = RequestData.params(request)
-        widgetps.view_id.set(params.get("view_id", 0))
-        widgetps.widget_type.set(params.get("widget_type", None))
-        view_name = params.get("view_name", "")
-        widgetps.sys_widgets_users_id.set(params.get("sys_widgets_users_id", 0))
+        view_id= params.get("view_id", 0)
+        sys_widgets_users_id = params.get("sys_widgets_users_id", 0)
+        widget_type = params.get("widget_type", None)
         message = params.get("message", None)
         share_users = params.get("share_users", [])
+        save_name = params.get("save_name", None)
+        title = ""
+        if isinstance(share_users, str):
+            share_users = share_users.split(",")
+        if not isinstance(share_users, list):
+            share_users = []
+        if widget_type == "ShareWidget":
+            title = userps.first_name.get() + " " + userps.last_name.get() + " shared a widget with you."
+        elif widget_type == "ShareMenu":
+            title = save_name
+            message = userps.first_name.get() + " " + userps.last_name.get() + ' shared a menu "'  + save_name + '"'
+            msg_data = {"m_center_id": sys_widgets_users_id}
+        elif widget_type == "ShareFilter":
+            title = save_name
+            message = userps.first_name.get() + " " + userps.last_name.get() + ' shared a filter view "' + save_name + '"'
+            msg_data = {"view_id": view_id, "save_id": sys_widgets_users_id}
+            tmparr = []
+            for user in share_users:
+                if user.get("type") == 0:
+                    tmparr.append(user.get("opt_val"))
+                else:
+                    print("Check in Association")
+            share_users = tmparr
+        share_users = list(dict.fromkeys(share_users))
         return JSONResponse(
             status_code = 200,
             content = {
