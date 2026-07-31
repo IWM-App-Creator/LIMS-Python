@@ -1,4 +1,5 @@
 import json, re
+from collections import defaultdict
 from app.utils.common import select, DB, userps, formatDate
 from app.dbfunctions.dbtablesfunctions import getDBTableData
 from app.dbfunctions.viewlayoutfunctions import getViewLayoutDataByID
@@ -67,29 +68,35 @@ class ViewHelper:
     def setViewTableCols(viewps):
         # Get View Columns
         view_cols = viewps.view_cols.get()
-        col_id_arr = []
+        tbl_id_arr = []
         for col in view_cols:
-            col_id_arr.append(col["col_id"])
-        col_id_arr = list(dict.fromkeys(col_id_arr))
+            tbl_id_arr.append(col["table_id"])
+        tbl_id_arr = list(dict.fromkeys(tbl_id_arr))
         # Get Table Col
-        dbps.col_ids.set(col_id_arr)
+        dbps.table_ids.set(tbl_id_arr)
         dbps.is_del_tbl.set(0)
         dbps.is_del_col.set(0)
         tblcol = getDBTableData(dbps)
-        tbl_cols = {}
+        tbl_cols_opt = defaultdict(list)
+        table_map = defaultdict(list)
         for col in tblcol:
             col_options = (col.col_options or {}).copy()
             col_options.pop("csv_col_name", None)
             col_options.pop("csv_col_type", None)
             col_options.pop("csv_map_col_nm", None)
+            if col.col_name == "is_delete" or col.col_name == "is_metadata":
+                continue
+            table_map[col.table_id].append({"col_id": col.col_id, "col_name": col.col_name, "col_alias": col.col_alias, "col_options": col_options})
             col_data_items = col_options.get("col_data_items", [])
             if col_data_items:
                 col_data_items.append({"label": "Unassigned", "clrcode": "#d2d2d2", "opt_val": 0})
                 col_options["col_data_items"] = col_data_items
-            tbl_cols[str(col.col_id)] = ({"col_options": col_options})
+            tbl_cols_opt[str(col.col_id)] = ({"col_options": col_options})
         for viewcol in view_cols:
-            if str(viewcol["col_id"]) in tbl_cols:
-                viewcol.update(tbl_cols[str(viewcol["col_id"])])
+            if str(viewcol["col_id"]) in tbl_cols_opt:
+                viewcol.update(tbl_cols_opt[str(viewcol["col_id"])])
+        tbl_cols = [{"table_id": table_id, "tbl_cols": cols} for table_id, cols in table_map.items()]
+        viewps.tbl_cols.set(tbl_cols)
         viewps.view_cols.set(view_cols)
 
     @staticmethod
@@ -357,6 +364,7 @@ class ViewHelper:
             output_array["is_child_view"] = viewps.is_child_view.get()
             output_array["enable_child_srch"] = viewps.enable_child_srch.get()
             output_array["view_cols"] = viewps.view_cols.get()
+            output_array["table_cols"] = viewps.tbl_cols.get()
             output_array["view_joins"] = viewps.view_joins.get()
             output_array["view_child"] = viewps.view_child.get()
             output_array["view_actions"] = viewps.view_actions.get()
