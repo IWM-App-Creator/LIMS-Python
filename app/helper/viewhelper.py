@@ -101,10 +101,11 @@ class ViewHelper:
                 col_data_items.append({"label": "Unassigned", "clrcode": "#d2d2d2", "opt_val": 0})
                 col_options["col_data_items"] = col_data_items
             tbl_cols_opt[str(col.col_id)] = ({"col_options": col_options})
+        # Update Addon Data To View Cols
         for viewcol in view_cols:
             if str(viewcol["col_id"]) in tbl_cols_opt:
                 viewcol.update(tbl_cols_opt[str(viewcol["col_id"])])
-        viewps.tbl_cols.set(tbl_cols)
+        viewps.tbl_cols.set(tbl_cols) # All Table Columns Main Table and Joins Table
         viewps.view_cols.set(view_cols)
 
     @staticmethod

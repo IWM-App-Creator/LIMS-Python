@@ -9,7 +9,7 @@ from app.endpoints.v1.association import router as association_router
 from app.endpoints.v1.dbtable import router as dbtable_router
 from app.endpoints.v1.view import router as view_router
 from app.endpoints.v1.viewlayout import router as viewly_router
-from app.endpoints.v1.filters import router as filters_router
+from app.endpoints.v1.filter import router as filters_router
 from app.endpoints.v1.menu import router as menu_router
 from app.endpoints.v1.actions import router as action_router
 from app.endpoints.v1.activities import router as activities_router

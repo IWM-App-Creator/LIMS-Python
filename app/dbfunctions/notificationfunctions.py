@@ -1,5 +1,5 @@
 from datetime import datetime
-from app.utils.common import select, DB, userps, update, func, nowWithTimeZone
+from app.utils.common import select, DB, userps, insert, update, func, nowWithTimeZone
 
 def getNotificationList(notifyps):
     view_id = viewps.view_id.get()
@@ -51,6 +51,13 @@ def getNotificationList(notifyps):
         to_usr_name.label("to_usr_name")
     )
     return DB.executeDBSelect(stmt)
+
+def getNotificationData(notifyps):
+    notificaitons_id = int(notifyps.notificaitons_id.get() or 0)
+    notificaitons = DB.getTableMeta("sys_notificaitons").alias("noti")
+    stmt = select(notificaitons)
+    stmt = stmt.where(notificaitons.c.notificaitons_id == notificaitons_id)
+    return DB.executeDBSelectSingle(stmt)
 
 def getUnreadNotiCount(notifyps):
     user_id = userps.user_id.get() # Get User ID
@@ -179,3 +186,47 @@ def markNotificationDeleted(notifyps):
         )
     stmt = stmt.values(**update_data)
     DB.executeDBUpdate(stmt)
+
+def insertUpdateNotification(notifyps):    
+    notificaitons = DB.getTableMeta("sys_notificaitons")
+    notificaitons_id = int(notifyps.notificaitons_id.get() or 0)
+    user_id = userps.user_id.get()
+    values = {}
+    if notifyps.upd_vals.get() not in (None, "", {}):
+        values = notifyps.upd_vals.get()
+    else:
+        if notifyps.noti_type.get() not in (None, ""):
+            values["noti_type"] = notifyps.noti_type.get()
+        if notifyps.item_id.get() not in (None, 0):
+            values["item_id"] = notifyps.item_id.get()
+        if notifyps.view_id.get() not in (None, 0):
+            values["view_id"] = notifyps.view_id.get()
+        if notifyps.table_id.get() not in (None, 0):
+            values["table_id"] = notifyps.table_id.get()
+        if notifyps.notes_id.get() not in (None, 0):
+            values["notes_id"] = notifyps.notes_id.get()
+        if notifyps.to_user_id.get() not in (None, 0):
+            values["to_user_id"] = notifyps.to_user_id.get()
+        if notifyps.title.get() not in (None, ""):
+            values["title"] = notifyps.title.get()
+        if notifyps.message.get() not in (None, ""):
+            values["message"] = notifyps.message.get()
+        if notifyps.msg_data.get() not in (None, ""):
+            values["msg_data"] = notifyps.msg_data.get()
+        if notifyps.is_read.get() not in (None, 0):
+            values["is_read"] = notifyps.is_read.get()
+        if notifyps.read_date.get() not in (None, ""):
+            values["read_date"] = notifyps.read_date.get()
+        if notifyps.is_new.get() not in (None, 0):
+            values["is_new"] = notifyps.is_new.get()
+        if notifyps.is_archive.get() not in (None, ""):
+            values["is_archive"] = notifyps.is_archive.get()
+    if notificaitons_id not in (None, "", 0):
+        stmt = update(notificaitons).where(notificaitons.c.notificaitons_id == notificaitons_id).values(**values)
+        DB.executeDBUpdate(stmt)
+    else:
+        values["created_by"] = user_id
+        values["created_date"] = nowWithTimeZone()
+        stmt = insert(notificaitons).values(**values)
+        notificaitons_id = DB.executeDBInsert(stmt)
+    return notificaitons_id

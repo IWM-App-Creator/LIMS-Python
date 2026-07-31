@@ -23,6 +23,7 @@ class WidgetProperties:
         self.preview = ContextVar("preview", default = None)
 
 
+        self.fetch_single = ContextVar("preview", default = None)
 
         # sys_widget_id, sys_widget_cat_id, widget_type, widget_icon, widget_title, widget_dtl, widget_json, view_id, is_visible, is_multiple, is_system, is_global, is_delete, created_by, created_date
 

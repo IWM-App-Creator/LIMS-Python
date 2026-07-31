@@ -12,13 +12,13 @@ class NotificationProperties:
         self.title = ContextVar("title", default = "")
         self.message = ContextVar("message", default = "")
         self.msg_data = ContextVar("msg_data", default = "")
-        self.is_read = ContextVar("is_read", default = 0)
+        self.is_read = ContextVar("is_read", default = None)
         self.read_date = ContextVar("read_date", default = "")
-        self.is_new = ContextVar("is_new", default = 0)
-        self.is_archive = ContextVar("is_archive", default = 0)
+        self.is_new = ContextVar("is_new", default = None)
+        self.is_archive = ContextVar("is_archive", default = None)
         self.created_by = ContextVar("created_by", default = 0)
         self.total_unread = ContextVar("total_unread", default = 0)
-        self.flag = ContextVar("flag", default = 0)        
+        self.flag = ContextVar("flag", default = 0)
 
         self.to_email = ContextVar("to_email", default = "")
         self.subject = ContextVar("subject", default = "")
@@ -27,5 +27,7 @@ class NotificationProperties:
         self.cc = ContextVar("cc", default = "")
         self.bcc = ContextVar("bcc", default = "")
         self.attachments = ContextVar("attachments", default = [])
+
+        self.upd_vals = ContextVar("upd_vals", default = {})
 
 notifyps = NotificationProperties()

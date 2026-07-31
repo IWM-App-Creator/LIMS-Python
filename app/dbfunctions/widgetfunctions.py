@@ -1,4 +1,4 @@
-from app.utils.common import DB, select, case, literal, exists, and_, userps
+from app.utils.common import DB, select, insert, update, case, literal, exists, and_, userps
 
 def getWidgetsDB(widgetps):
     dashboard_id = int(widgetps.dashboard_id.get() or 0)
@@ -116,3 +116,75 @@ def getUserWidgetsDB(widgetps):
         )
     stmt = stmt.order_by(tbl_user_widget.c.rank.asc())
     return DB.executeDBSelect(stmt)
+
+def getWidgetData(widgetps):
+    sys_widget_id = int(widgetps.sys_widget_id.get() or 0)
+    widget_type = widgetps.widget_type.get()
+    view_id = int(widgetps.view_id.get() or 0)
+    widget_json = widgetps.widget_json.get()
+    created_by = int(widgetps.created_by.get() or 0)
+    fetch_single = int(widgetps.fetch_single.get() or 0)
+    widget_master = DB.getTableMeta("sys_widget_master").alias("wm")
+    stmt = select(widget_master)
+    if sys_widget_id not in (None, "", 0):
+        stmt = stmt.where(widget_master.c.sys_widget_id == sys_widget_id)
+    if widget_type not in (None, ""):
+        stmt = stmt.where(widget_master.c.widget_type == widget_type)
+    if view_id not in (None, "", 0):
+        stmt = stmt.where(widget_master.c.view_id == view_id)
+    if widget_json not in (None, "", {}, []):
+        stmt = stmt.where(widget_master.c.widget_json == widget_json)
+    if created_by not in (None, "", 0):
+        stmt = stmt.where(widget_master.c.created_by == created_by)
+    if fetch_single == 1:
+        return DB.executeDBSelectSingle(stmt)
+    else:
+        return DB.executeDBSelect(stmt)
+
+def insertUpdateWidget(widgetps):
+    sys_widget_id = int(widgetps.sys_widget_id.get() or 0)
+    sys_widget_cat_id = int(widgetps.sys_widget_cat_id.get() or 0)
+    widget_type = widgetps.widget_type.get()
+    widget_icon = widgetps.widget_icon.get()
+    widget_title = widgetps.widget_title.get()
+    widget_dtl = widgetps.widget_dtl.get()
+    widget_json = widgetps.widget_json.get()
+    view_id = int(widgetps.view_id.get() or 0)
+    is_visible = int(widgetps.is_visible.get() or 0)
+    is_multiple = int(widgetps.is_multiple.get() or 0)
+    is_system = int(widgetps.is_system.get() or 0)
+    is_global = int(widgetps.is_global.get() or 0)
+    is_delete = int(widgetps.is_delete.get() or 0)
+    values = {}
+    if sys_widget_cat_id not in (None, "", 0):
+        values["sys_widget_cat_id"] = sys_widget_cat_id
+    if widget_type not in (None, ""):
+        values["widget_type"] = widget_type
+    if widget_icon not in (None, ""):
+        values["widget_icon"] = widget_icon
+    if widget_title not in (None, ""):
+        values["widget_title"] = widget_title
+    if widget_dtl not in (None, ""):
+        values["widget_dtl"] = widget_dtl
+    if widget_json not in (None, "", {}, []):
+        values["widget_json"] = widget_json
+    if view_id not in (None, "", 0):
+        values["view_id"] = view_id
+    if is_visible not in (None, ""):
+        values["is_visible"] = is_visible
+    if is_multiple not in (None, ""):
+        values["is_multiple"] = is_multiple
+    if is_system not in (None, ""):
+        values["is_system"] = is_system
+    if is_global not in (None, ""):
+        values["is_global"] = is_global
+    if is_delete not in (None, ""):
+        values["is_delete"] = is_delete
+    widget_master = DB.getTableMeta("sys_widget_master")
+    if sys_widget_id not in (None, "", 0):
+        stmt = update(widget_master).where(widget_master.c.sys_widget_id == sys_widget_id).values(**values)
+        DB.executeDBUpdate(stmt)
+    else:
+        stmt = insert(widget_master).values(**values)
+        sys_widget_id = DB.executeDBInsert(stmt)
+    return sys_widget_id
