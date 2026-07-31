@@ -81,7 +81,7 @@ def insertUpdateFilter(filterps):
     if is_delete not in (None, ""):
         values['is_delete'] = is_delete
     dync_result_save = DB.getTableMeta("sys_dynamic_result_save")
-    if filterps.is_default.get() in (1, "1"):
+    if is_default in (1, "1"):
         stmt = update(dync_result_save).where(dync_result_save.c.view_id == view_id).where(dync_result_save.c.created_by == user_id).values(is_default = 0)
         DB.executeDBUpdate(stmt)
     if save_id not in (None, "", 0):
