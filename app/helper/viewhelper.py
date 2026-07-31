@@ -78,7 +78,7 @@ class ViewHelper:
         dbps.is_del_col.set(0)
         tblcol = getDBTableData(dbps)
         tbl_cols_opt = defaultdict(list)
-        table_map = defaultdict(list)
+        tbl_cols = []
         for col in tblcol:
             col_options = (col.col_options or {}).copy()
             col_options.pop("csv_col_name", None)
@@ -86,7 +86,16 @@ class ViewHelper:
             col_options.pop("csv_map_col_nm", None)
             if col.col_name == "is_delete" or col.col_name == "is_metadata":
                 continue
-            table_map[col.table_id].append({"col_id": col.col_id, "col_name": col.col_name, "col_alias": col.col_alias, "col_options": col_options})
+            data_type = col_options.get("data_type", "")
+            tbl_cols.append({
+                "table_id": col.table_id,
+                "table_name": col.table_name,
+                "table_alias": col.table_alias,
+                "col_id": col.col_id,
+                "col_name": col.col_name,
+                "col_alias": col.col_alias,
+                "data_type": data_type
+            })
             col_data_items = col_options.get("col_data_items", [])
             if col_data_items:
                 col_data_items.append({"label": "Unassigned", "clrcode": "#d2d2d2", "opt_val": 0})
@@ -95,7 +104,6 @@ class ViewHelper:
         for viewcol in view_cols:
             if str(viewcol["col_id"]) in tbl_cols_opt:
                 viewcol.update(tbl_cols_opt[str(viewcol["col_id"])])
-        tbl_cols = [{"table_id": table_id, "tbl_cols": cols} for table_id, cols in table_map.items()]
         viewps.tbl_cols.set(tbl_cols)
         viewps.view_cols.set(view_cols)
 
