@@ -364,7 +364,7 @@ class ViewHelper:
             output_array["col_colors"] = viewps.col_colors.get()
             output_array["action_group_list"] = viewps.action_group_list.get()
             output_array["user_setting"] = viewps.user_setting.get()
-            output_array["view_options"] = viewps.view_options.get()
+            # output_array["view_options"] = viewps.view_options.get()
         # Fix Output (Data) Filters/Search etc. # if viewps.output_type.get() in (None, "viewdata", 0, ""):
         output_array["rcdcnt"] = viewps.total_record.get()
         output_array["itm_list"] = viewps.item_list.get()
