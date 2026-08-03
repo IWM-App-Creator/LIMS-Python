@@ -1,4 +1,4 @@
-from app.utils.common import DB, select, insert, update, case, literal, exists, and_, userps
+from app.utils.common import DB, select, insert, update, case, literal, exists, and_, nowWithTimeZone, userps
 
 def getWidgetsDB(widgetps):
     dashboard_id = int(widgetps.dashboard_id.get() or 0)
@@ -155,6 +155,7 @@ def insertUpdateWidget(widgetps):
     is_system = int(widgetps.is_system.get() or 0)
     is_global = int(widgetps.is_global.get() or 0)
     is_delete = int(widgetps.is_delete.get() or 0)
+    created_by = int(widgetps.created_by.get() or 0)
     values = {}
     if sys_widget_cat_id not in (None, "", 0):
         values["sys_widget_cat_id"] = sys_widget_cat_id
@@ -185,6 +186,8 @@ def insertUpdateWidget(widgetps):
         stmt = update(widget_master).where(widget_master.c.sys_widget_id == sys_widget_id).values(**values)
         DB.executeDBUpdate(stmt)
     else:
+        values["created_by"] = created_by
+        values["created_date"] = nowWithTimeZone()
         stmt = insert(widget_master).values(**values)
         sys_widget_id = DB.executeDBInsert(stmt)
     return sys_widget_id

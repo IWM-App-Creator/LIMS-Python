@@ -70,7 +70,7 @@ class ViewHelper:
         view_cols = viewps.view_cols.get()
         tbl_id_arr = []
         for col in view_cols:
-            tbl_id_arr.append(col["table_id"])
+            tbl_id_arr.append(col.get("table_id", 0))
         tbl_id_arr = list(dict.fromkeys(tbl_id_arr))
         # Get Table Col
         dbps.table_ids.set(tbl_id_arr)

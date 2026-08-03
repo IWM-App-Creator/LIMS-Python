@@ -1,7 +1,9 @@
 from app.utils.common import Request, RequestData, raiseAPIError, JSONResponse, userps
 from app.dbfunctions.logfunctions import saveErrorLogtoDB
+from app.dbfunctions.notificationfunctions import insertUpdateNotification
 from app.helper.widgethelper import getWidgets, getUserWidgets
 from app.properties.widgetproperties import widgetps
+from app.properties.notificationproperties import notifyps
 
 def getWidgetList(request: Request):
     print("getWidgetList --> ")
@@ -49,13 +51,14 @@ def shareUserWidget(request: Request):
     print("shareUserWidget --> ")
     try:
         params = RequestData.params(request)
-        view_id= params.get("view_id", 0)
+        view_id = params.get("view_id", 0)
         sys_widgets_users_id = params.get("sys_widgets_users_id", 0)
         widget_type = params.get("widget_type", None)
         message = params.get("message", None)
         share_users = params.get("share_users", [])
         save_name = params.get("save_name", None)
         title = ""
+        msg_data = ""
         if isinstance(share_users, str):
             share_users = share_users.split(",")
         if not isinstance(share_users, list):
@@ -78,6 +81,20 @@ def shareUserWidget(request: Request):
                     print("Check in Association")
             share_users = tmparr
         share_users = list(dict.fromkeys(share_users))
+        for usr in share_users:
+            if usr:
+                notifyps.upd_vals.set({
+                    "noti_type": widget_type,
+                    "item_id": sys_widgets_users_id,
+                    "view_id": view_id,
+                    "table_id": 0,
+                    "notes_id": 0,
+                    "to_user_id": usr,
+                    "title": title,
+                    "message": message,
+                    "msg_data": msg_data
+                })
+                insertUpdateNotification(notifyps)
         return JSONResponse(
             status_code = 200,
             content = {
