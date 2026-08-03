@@ -87,11 +87,11 @@ def shareUserWidget(request: Request):
         elif widget_type == "ShareMenu":
             title = save_name
             message = userps.first_name.get() + " " + userps.last_name.get() + ' shared a menu "'  + save_name + '"'
-            msg_data = {"m_center_id": sys_widgets_users_id}
+            msg_data = json.dumps({"m_center_id": sys_widgets_users_id})
         elif widget_type == "ShareFilter":
             title = save_name
             message = userps.first_name.get() + " " + userps.last_name.get() + ' shared a filter view "' + save_name + '"'
-            msg_data = {"view_id": view_id, "save_id": sys_widgets_users_id}
+            msg_data = json.dumps({"view_id": view_id, "save_id": sys_widgets_users_id})
             tmparr = []
             for user in share_users:
                 if user.get("type", 0) == 0:
