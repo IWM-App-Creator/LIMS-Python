@@ -49,3 +49,9 @@ def getActivityLogs(activitiesps):
         stmt = stmt.where(activity_logs.c.logtype == activitiesps.logtype.get())
     stmt = stmt.order_by(activity_logs.c.log_id.desc())
     return DB.executeDBSelect(stmt)
+
+def getActivityLogById(activitiesps):
+    log_id = int(activitiesps.log_id.get() or 0)
+    activity_logs  = DB.getTableMeta("sys_activity_logs").alias("al")
+    stmt = select(activity_logs).where(activity_logs.c.log_id == log_id)
+    return DB.executeDBSelect(stmt)

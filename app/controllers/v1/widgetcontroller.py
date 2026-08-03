@@ -149,7 +149,7 @@ def saveViewWidget(request: Request):
         widget_label = params.get("widget_label", "")
         widget_setting = params.get("widget_setting", {})
         pgno = params.get("pgno", 1)
-        widget_json = {"view_id": view_id, "save_id": save_id, "pgno": pgno}
+        widget_json = json.dumps({"view_id": view_id, "save_id": save_id, "pgno": pgno})
         widgetps.widget_json.set(widget_json)
         widgetps.widget_type.set(widget_type)
         widgetps.view_id.set(view_id)

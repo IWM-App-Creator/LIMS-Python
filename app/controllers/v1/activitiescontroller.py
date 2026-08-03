@@ -2,7 +2,7 @@ from app.utils.common import Request, RequestData, JSONResponse, raiseAPIError
 from app.helper.datetime import formatDate
 from app.helper.generalfunctions import formatUserDisplayName
 from app.dbfunctions.logfunctions import saveErrorLogtoDB
-from app.dbfunctions.activitiesfunctions import getActivityLogs
+from app.dbfunctions.activitiesfunctions import getActivityLogs, getActivityLogById
 from app.properties.activitiesproperties import activitiesps
 
 def getActivities(request: Request):
@@ -54,4 +54,15 @@ def getActivities(request: Request):
         )
     except Exception as e:
         saveErrorLogtoDB("Activities", activitiesps.data_id.get(), "getActivities", str(e))
+        raiseAPIError(str(e), 500)
+
+def revertActivities(request: Request):
+    print("revertActivities --> ")
+    try:
+        params = RequestData.params(request)
+        activitiesps.log_id.set(params.get("log_id", 0))
+        log_data = getActivityLogById(activitiesps)
+        print("log_data --> ", log_data)
+    except Exception as e:
+        saveErrorLogtoDB("Activities", activitiesps.data_id.get(), "revertActivities", str(e))
         raiseAPIError(str(e), 500)
