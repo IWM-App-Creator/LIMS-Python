@@ -1,3 +1,4 @@
+import json
 from app.utils.common import Request, RequestData, raiseAPIError, JSONResponse, userps
 from app.dbfunctions.logfunctions import saveErrorLogtoDB
 from app.dbfunctions.notificationfunctions import insertUpdateNotification
@@ -59,8 +60,22 @@ def shareUserWidget(request: Request):
         sys_widgets_users_id = params.get("sys_widgets_users_id", 0)
         widget_type = params.get("widget_type", None)
         message = params.get("message", None)
-        share_users = params.get("share_users", [])
         save_name = params.get("save_name", None)
+        share_users = params.get("share_users", [])
+        # Handle FormData where share_users is JSON string
+        if isinstance(share_users, str):
+            try:
+                share_users = json.loads(share_users)
+            except json.JSONDecodeError:
+                # Fallback for comma-separated values
+                share_users = [
+                    {"opt_val": int(x), "type": 0}
+                    for x in share_users.split(",")
+                    if x.strip()
+                ]
+        # Ensure it's a list
+        if not isinstance(share_users, list):
+            share_users = []
         title = ""
         msg_data = ""
         if isinstance(share_users, str):
@@ -79,7 +94,7 @@ def shareUserWidget(request: Request):
             msg_data = {"view_id": view_id, "save_id": sys_widgets_users_id}
             tmparr = []
             for user in share_users:
-                if user.get("type") == 0:
+                if user.get("type", 0) == 0:
                     tmparr.append(user.get("opt_val"))
                 else:
                     associationps.is_notify.set(1)
