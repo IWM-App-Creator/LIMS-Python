@@ -11,6 +11,7 @@ class AssociationProperties:
 
         self.user_id = ContextVar("user_id", default = 0)
         self.col_id = ContextVar("col_id", default = 0)
+        self.is_notify = ContextVar("is_notify", default = None)
         self.col_p_val = ContextVar("col_p_val", default = 0)
         self.col_p_vals = ContextVar("col_p_vals", default = [])
 

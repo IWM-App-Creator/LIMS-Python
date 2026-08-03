@@ -157,6 +157,7 @@ def getDesignationData(associationps):
         return DB.executeDBSelect(stmt)    
 
 def getAssociationUsers(associationps):
+    view_id = int(associationps.view_id.get() or 0)
     assousers = DB.getTableMeta("sys_association_users").alias("au")
     stmt = select(assousers)
     if associationps.associations_id.get() not in (None, "", 0):
@@ -169,6 +170,21 @@ def getAssociationUsers(associationps):
         stmt = stmt.where(assousers.c.col_id == associationps.col_id.get())
     if associationps.col_p_val.get() not in (None, "", 0):
         stmt = stmt.where(assousers.c.col_p_val == associationps.col_p_val.get())
+    if associationps.is_notify.get() not in (None, ""):
+        stmt = stmt.where(assousers.c.is_notify == associationps.is_notify.get())
+    if view_id not in (None, "", 0):
+        stmt = stmt.where(
+            func.find_in_set(
+                view_id,
+                func.json_unquote(
+                    func.json_extract(
+                        assousers.c.access_json,
+                        "$.dyncviews",
+                    )
+                ),
+            )
+            > 0,
+        )
     stmt = stmt.where(assousers.c.is_delete == 0)
     stmt = stmt.order_by(assousers.c.srno.asc())
     if associationps.is_distinct.get() == 1:
