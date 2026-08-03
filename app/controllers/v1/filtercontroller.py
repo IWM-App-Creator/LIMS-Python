@@ -58,7 +58,7 @@ def copySaveFilterView(request: Request):
         flag = params.get("flag", "")
         message = "Invalid Request"
         if flag == "remove":
-            notifyps.upd_vals.set({"is_delete": 1})
+            notifyps.upd_vals.set({"is_delete": 1, "msg_data": ""})
             message = "Filter Deleted Successfully"
         elif flag == "savefilter" or flag == "addtodashboard":
             message = "Filter Saved Successfully"
