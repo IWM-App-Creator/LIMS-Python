@@ -33,8 +33,6 @@ def getActivityLogs(activitiesps):
         tableids = activitiesps.tableids.get()
         if isinstance(tableids, str):
             tableids = [tableids]
-        if isinstance(activitiesps.tableids.get(), str):
-            activitiesps.tableids.set([activitiesps.tableids.get()])
         stmt = (
             stmt.outerjoin(
                 dync_view,

@@ -16,7 +16,7 @@ def getNotesUsers(notesps):
     for row in to_rows:
         fullname = f"{row.first_name} {row.last_name}"
         to_map[row.notes_id].append({
-            "user_id": row.id, "initial": row.first_name[0] + row.last_name[0], "fullname": fullname, "is_read": row.is_read
+            "user_id": row.id, "initial": row.first_name[0] + row.last_name[0], "fullname": fullname
         })
     return from_map, to_map
 
