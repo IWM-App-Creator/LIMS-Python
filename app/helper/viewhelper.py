@@ -103,8 +103,8 @@ class ViewHelper:
             tbl_cols_opt[str(col.col_id)] = ({"col_options": col_options})
         # Update Addon Data To View Cols
         for viewcol in view_cols:
-            if str(viewcol["col_id"]) in tbl_cols_opt:
-                viewcol.update(tbl_cols_opt[str(viewcol["col_id"])])
+            if str(viewcol.get("col_id", 0)) in tbl_cols_opt:
+                viewcol.update(tbl_cols_opt[str(viewcol.get("col_id", 0))])
         viewps.tbl_cols.set(tbl_cols) # All Table Columns Main Table and Joins Table
         viewps.view_cols.set(view_cols)
 
@@ -124,7 +124,7 @@ class ViewHelper:
         viewcols = viewps.view_cols.get()
         for col in viewcols:
             if col:
-                srchcol = col['qry_alias'] + "." + col['col_name']
+                srchcol = col.get("qry_alias", "") + "." + col.get("col_name", "")
                 if cnt > 0:
                     rawqry = rawqry + " OR "
                 rawqry = rawqry + srchcol + " LIKE '%" + viewps.search_text.get() + "%'"
@@ -157,9 +157,9 @@ class ViewHelper:
                 if asso_col:
                     break
                 for col in view_cols:
-                    if str(assoc.col_id) == str(col["col_id"]):
-                        qry_alias = col["qry_alias"]
-                        asso_col = col["col_name"]
+                    if str(assoc.col_id) == str(col.get("col_id", 0)):
+                        qry_alias = col.get("qry_alias", "")
+                        asso_col = col.get("col_name", "")
                         break
             if assocol_ids:
                 viewps.association_qry.set(f"{qry_alias}.{asso_col} IN ({','.join(map(str, assocol_ids))})")
@@ -179,7 +179,7 @@ class ViewHelper:
             col_name = ""
             for col in viewps.view_cols.get():
                 if col.get("col_id") == col_id:
-                    col_name = f"{col['qry_alias']}.{col['col_name']}"
+                    col_name = f"{col.get('qry_alias', '')}.{col.get('col_name', '')}"
                     col_options = col.get("col_options", {})
                     col_data_items = col_options.get("col_data_items", [])
                     col_data_item = [data for data in col_data_items if str(data.get("opt_val")) not in stslmtids]
