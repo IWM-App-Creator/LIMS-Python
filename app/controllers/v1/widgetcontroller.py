@@ -49,6 +49,7 @@ def getUserWidgetList(request: Request):
         saveErrorLogtoDB("Widget", userps.user_id.get(), "getUserWidgetList", str(e))
         raiseAPIError(str(e), 500)
 
+# api/v1/widget/share?view_id=182&sys_widgets_users_id=1&widget_type=ShareFilter&share_users=1,2,3&save_name=Test Filter
 def shareUserWidget(request: Request):
     print("shareUserWidget --> ")
     try:

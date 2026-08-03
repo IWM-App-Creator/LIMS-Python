@@ -6,6 +6,7 @@ router = APIRouter(prefix = "/widget")
 ROUTES = [
     ("/get", widgetapi.getWidgetList, ["GET"]),
     ("/getuser", widgetapi.getUserWidgetList, ["GET"]),
+    ("/share", widgetapi.shareUserWidget, ["POST"]),
 ]
 
 for path, handler, methods in ROUTES:
