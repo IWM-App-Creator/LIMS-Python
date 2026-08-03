@@ -213,5 +213,23 @@ def insertUpdateWidget(widgetps):
     return sys_widget_id
 
 def insertUpdateUserWidget(widgetps):
-    
+    sys_widgets_users_id = int(widgetps.sys_widgets_users_id.get() or 0)
+    sys_widget_id = int(widgetps.sys_widget_id.get() or 0)
+    dashboard_id = int(widgetps.dashboard_id.get() or 0)
+    user_id = int(widgetps.user_id.get() or 0)
+    c_width = int(widgetps.c_width.get() or 0)
+    c_height = int(widgetps.c_height.get() or 0)
+    htm_flow = int(widgetps.htm_flow.get() or 0)
+    bg_color = widgetps.bg_color.get()
+    widget_label = widgetps.widget_label.get()
+    widget_setting = widgetps.widget_setting.get()
+    rank = int(widgetps.rank.get() or 0)
+    values = {}
+    if sys_widget_id not in (None, "", 0):
+        values["sys_widget_id"] = sys_widget_id
+    if dashboard_id not in (None, "", 0):
+        values["dashboard_id"] = dashboard_id
+    if user_id not in (None, "", 0):
+        values["user_id"] = user_id
+
     sys_user_widgets = DB.getTableMeta("sys_user_widgets")

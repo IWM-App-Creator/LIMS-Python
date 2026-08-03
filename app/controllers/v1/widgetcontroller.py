@@ -2,7 +2,7 @@ from app.utils.common import Request, RequestData, raiseAPIError, JSONResponse, 
 from app.dbfunctions.logfunctions import saveErrorLogtoDB
 from app.dbfunctions.notificationfunctions import insertUpdateNotification
 from app.dbfunctions.associationfunctions import getAssociationUsers
-from app.dbfunctions.widgetfunctions import getWidgetData, getUserWidgetData, insertUpdateWidget
+from app.dbfunctions.widgetfunctions import getWidgetData, getUserWidgetData, insertUpdateWidget, insertUpdateUserWidget
 from app.helper.widgethelper import getWidgets, getUserWidgets
 from app.properties.associationproperties import associationps
 from app.properties.notificationproperties import notifyps
