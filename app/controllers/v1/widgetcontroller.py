@@ -62,6 +62,7 @@ def shareUserWidget(request: Request):
         message = params.get("message", None)
         save_name = params.get("save_name", None)
         share_users = params.get("share_users", [])
+        from_user = params.get("from_user", "")
         # Handle FormData where share_users is JSON string
         if isinstance(share_users, str):
             try:
@@ -83,14 +84,14 @@ def shareUserWidget(request: Request):
         if not isinstance(share_users, list):
             share_users = []
         if widget_type == "ShareWidget":
-            title = userps.first_name.get() + " " + userps.last_name.get() + " shared a widget with you."
+            title = from_user + " shared a widget with you."
         elif widget_type == "ShareMenu":
             title = save_name
-            message = userps.first_name.get() + " " + userps.last_name.get() + ' shared a menu "'  + save_name + '"'
+            message = from_user + ' shared a menu "'  + save_name + '"'
             msg_data = json.dumps({"m_center_id": sys_widgets_users_id})
         elif widget_type == "ShareFilter":
             title = save_name
-            message = userps.first_name.get() + " " + userps.last_name.get() + ' shared a filter view "' + save_name + '"'
+            message = from_user + ' shared a filter view "' + save_name + '"'
             msg_data = json.dumps({"view_id": view_id, "save_id": sys_widgets_users_id})
             tmparr = []
             for user in share_users:
