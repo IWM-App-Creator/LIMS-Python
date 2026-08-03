@@ -175,6 +175,13 @@ def saveViewWidget(request: Request):
                 tmpdelete = 1
             widgetps.rank.set(0)
             sys_widgets_users_id = insertUpdateUserWidget(widgetps)
+        return JSONResponse(
+            status_code = 200,
+            content = {
+                "status": True,
+                "message": "Widget added successfully"
+            }
+        )
     except Exception as e:
         saveErrorLogtoDB("Widget", userps.user_id.get(), "saveViewWidget", str(e))
         raiseAPIError(str(e), 500)

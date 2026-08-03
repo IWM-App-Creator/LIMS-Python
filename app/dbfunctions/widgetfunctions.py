@@ -231,5 +231,27 @@ def insertUpdateUserWidget(widgetps):
         values["dashboard_id"] = dashboard_id
     if user_id not in (None, "", 0):
         values["user_id"] = user_id
-
+    if c_width not in (None, "", 0):
+        values["c_width"] = c_width
+    if c_height not in (None, "", 0):
+        values["c_height"] = c_height
+    if htm_flow not in (None, ""):
+        values["htm_flow"] = htm_flow
+    if bg_color not in (None, ""):
+        values["bg_color"] = bg_color
+    if widget_label not in (None, ""):
+        values["widget_label"] = widget_label
+    if widget_setting not in (None, "", {}, []):
+        values["widget_setting"] = widget_setting
+    if rank not in (None, ""):
+        values["rank"] = rank
     sys_user_widgets = DB.getTableMeta("sys_user_widgets")
+    if sys_widgets_users_id not in (None, "", 0):
+        stmt = update(sys_user_widgets).where(sys_user_widgets.c.sys_widgets_users_id == sys_widgets_users_id).values(**values)
+        DB.executeDBUpdate(stmt)
+    else:
+        values["created_by"] = userps.user_id.get()
+        values["created_date"] = nowWithTimeZone()
+        stmt = insert(sys_user_widgets).values(**values)
+        sys_widgets_users_id = DB.executeDBInsert(stmt)
+    return sys_widgets_users_id
