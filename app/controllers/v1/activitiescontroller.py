@@ -63,6 +63,12 @@ def revertActivities(request: Request):
         activitiesps.log_id.set(params.get("log_id", 0))
         log_data = getActivityLogById(activitiesps)
         print("log_data --> ", log_data)
+        if log_data is not None:
+            view_id = getattr(log_data, "view_id", 0)
+            item_id = getattr(log_data, "item_id", 0)
+            old_value = getattr(log_data, "old_value", "")
+            new_value = getattr(log_data, "new_value", "")
+            desc = getattr(log_data, "desc", "")
     except Exception as e:
         saveErrorLogtoDB("Activities", activitiesps.data_id.get(), "revertActivities", str(e))
         raiseAPIError(str(e), 500)

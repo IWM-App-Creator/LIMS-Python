@@ -175,7 +175,9 @@ def insertUpdateWidget(widgetps):
     is_system = int(widgetps.is_system.get() or 0)
     is_global = int(widgetps.is_global.get() or 0)
     is_delete = int(widgetps.is_delete.get() or 0)
-    created_by = int(widgetps.created_by.get() or 0)
+    created_by = int(userps.user_id.get() or 0)
+    if widgetps.created_by.get() not in (None, "", 0):
+        created_by = int(widgetps.created_by.get() or 0)
     values = {}
     if sys_widget_cat_id not in (None, "", 0):
         values["sys_widget_cat_id"] = sys_widget_cat_id
