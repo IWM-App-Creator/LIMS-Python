@@ -141,6 +141,26 @@ def getWidgetData(widgetps):
     else:
         return DB.executeDBSelect(stmt)
 
+def getUserWidgetData(widgetps):
+    sys_widgets_users_id = int(widgetps.sys_widgets_users_id.get() or 0)
+    sys_widget_id = int(widgetps.sys_widget_id.get() or 0)
+    user_id = int(userps.user_id.get() or 0)
+    fetch_single = int(widgetps.fetch_single.get() or 0)
+    if widgetps.user_id.get() not in (None, "", 0):
+        user_id = int(widgetps.user_id.get() or 0)
+    tbl_user_widget = DB.getTableMeta("sys_user_widgets").alias("uw")
+    stmt = select(tbl_user_widget)
+    if sys_widgets_users_id not in (None, "", 0):
+        stmt = stmt.where(tbl_user_widget.c.sys_widgets_users_id == sys_widgets_users_id)
+    if sys_widget_id not in (None, "", 0):
+        stmt = stmt.where(tbl_user_widget.c.sys_widget_id == sys_widget_id)
+    if user_id not in (None, "", 0):
+        stmt = stmt.where(tbl_user_widget.c.user_id == user_id)
+    if fetch_single == 1:
+        return DB.executeDBSelectSingle(stmt)
+    else:
+        return DB.executeDBSelect(stmt)
+
 def insertUpdateWidget(widgetps):
     sys_widget_id = int(widgetps.sys_widget_id.get() or 0)
     sys_widget_cat_id = int(widgetps.sys_widget_cat_id.get() or 0)
@@ -191,3 +211,7 @@ def insertUpdateWidget(widgetps):
         stmt = insert(widget_master).values(**values)
         sys_widget_id = DB.executeDBInsert(stmt)
     return sys_widget_id
+
+def insertUpdateUserWidget(widgetps):
+    
+    sys_user_widgets = DB.getTableMeta("sys_user_widgets")

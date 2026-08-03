@@ -19,13 +19,21 @@ class WidgetProperties:
         self.created_date = ContextVar("created_date", default = None)
 
         self.sys_widgets_users_id = ContextVar("sys_widgets_users_id", default = None)
-
         self.dashboard_id = ContextVar("dashboard_id", default = None)
+        self.user_id = ContextVar("user_id", default = None)
+        self.c_width = ContextVar("c_width", default = None)
+        self.c_height = ContextVar("c_height", default = None)
+        self.htm_flow = ContextVar("htm_flow", default = None)
+        self.bg_color = ContextVar("bg_color", default = None)
+        self.widget_label = ContextVar("widget_label", default = None)
+        self.widget_setting = ContextVar("widget_setting", default = None)
+        self.rank = ContextVar("rank", default = None)
+
         self.search_text = ContextVar("search_text", default = None)
         self.preview = ContextVar("preview", default = None)
 
-
-        self.fetch_single = ContextVar("preview", default = None)
+        self.upd_vals = ContextVar("upd_vals", default = None)
+        self.fetch_single = ContextVar("fetch_single", default = None)
 
         # sys_widget_id, sys_widget_cat_id, widget_type, widget_icon, widget_title, widget_dtl, widget_json, view_id, is_visible, is_multiple, is_system, is_global, is_delete, created_by, created_date
 

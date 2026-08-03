@@ -15,11 +15,11 @@ def doLogin(email: str, password: str):
         userps.email.set(email) # Set Email To Property
         user = getUserDataFromDB() # Execute Function to User Get Data
         if not user: # Invalid User
-            raiseAPIError("Invalid Email", 401)
+            raiseAPIError("Invalid Email", 200)
         if not bcrypt.checkpw(password.encode(), user.password.encode()): # Invalid Password
-            raiseAPIError("Invalid Password", 401)
+            raiseAPIError("Invalid Password", 200)
         if user.role_id != 1 and user.role_id != 2 : # Check User Access
-            raiseAPIError("Your don't have permission to login.", 401)
+            raiseAPIError("Your don't have permission to login.", 200)
         # If Success Generate JWT Token
         access_token = authfnct.createJWTToken(user.id, user.role_id, user.email)
         # Get Active Workspace URL 
