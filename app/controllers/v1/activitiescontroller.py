@@ -62,13 +62,19 @@ def revertActivities(request: Request):
         params = RequestData.params(request)
         activitiesps.log_id.set(params.get("log_id", 0))
         log_data = getActivityLogById(activitiesps)
-        print("log_data --> ", log_data)
+        table_name = params.get("table_name", "")
+        primary_col_nm = params.get("primary_col_name", "")
+        col_name = params.get("col_name", "")
         if log_data is not None:
             view_id = getattr(log_data, "view_id", 0)
             item_id = getattr(log_data, "item_id", 0)
             old_value = getattr(log_data, "old_value", "")
             new_value = getattr(log_data, "new_value", "")
             desc = getattr(log_data, "desc", "")
+            # update query to revert the value in the table
+            if table_name and primary_col_nm and col_name:
+                upd_qry = f"UPDATE {table_name} SET {col_name} = '{old_value}' WHERE {primary_col_nm} = {item_id}"
+                print("upd_qry --> ", upd_qry)
     except Exception as e:
         saveErrorLogtoDB("Activities", activitiesps.data_id.get(), "revertActivities", str(e))
         raiseAPIError(str(e), 500)
