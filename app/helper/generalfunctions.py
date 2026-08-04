@@ -31,6 +31,8 @@ def getHostName(request):
     hostsd = host.split(":")[0]
     userps.req_host.set(host)
     userps.req_subdomain.set(hostsd.split(".")[0])
+    print("getHostName host --> " + host)
+    print("getHostName hostsd --> " + hostsd)
 
 def uploadFile(ws_url: str, folder: str, file: UploadFile) -> str | None:
     if file is None or not file.filename:
