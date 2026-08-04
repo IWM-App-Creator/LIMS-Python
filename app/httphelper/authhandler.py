@@ -59,6 +59,7 @@ async def auth_handler(request: Request, call_next):
                 }
             )
         token = auth.replace("Bearer ", "", 1)
+        print("token --> ", token)
         # Verify the token using the verify_token function from authfunctions.py
         payload = authfnct.verifyJWTToken(token)
         # if payload is None:
@@ -74,6 +75,8 @@ async def auth_handler(request: Request, call_next):
         jwt_payload = payload["payload"]
         userps.user_id.set(jwt_payload["user_id"])
         userps.role_id.set(jwt_payload["role_id"])
+        print("user_id --> ", userps.user_id.get())
+        print("role_id --> ", userps.role_id.get())
         request.state.jwt = token
         # Continue request
         response = await call_next(request)
