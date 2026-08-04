@@ -5,10 +5,12 @@ import string
 import shutil
 import time
 from pathlib import Path
+from app.dbfunctions.associationfunctions import getAssociationUsers
 from fastapi import UploadFile
 from app.properties.usersproperties import userps
 from app.properties.viewproperties import viewps
 from app.properties.globalproperties import globalps
+from app.properties.associationproperties import associationps
 
 def setEnvVariables():
     globalps.APP_DOMAIN = os.getenv('APP_DOMAIN')
@@ -188,3 +190,20 @@ def getLastUpdatedJSON(type: str) -> str:
         "type": type
     }
     return json.dumps(metadata)
+
+def getSelectedUsers(tmparr: list, view_id: int) -> list:
+    share_users = []
+    for tmp in tmparr:
+        if tmp.get("type", 0) == 0:
+            share_users.append(tmp.get("opt_val"))
+        else:
+            associationps.is_notify.set(1)
+            associationps.col_p_val.set(tmp.get("opt_val"))
+            associationps.view_id.set(view_id)
+            associationps.fetch_single.set(0)
+            associationps.is_distinct.set(1)
+            assousers = getAssociationUsers(associationps)
+            for assousr in assousers:
+                share_users.append(assousr.get("user_id"))
+    share_users = list(dict.fromkeys(share_users))
+    return share_users

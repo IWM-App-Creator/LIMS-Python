@@ -1,5 +1,5 @@
 import datetime
-from app.utils.common import DB, select, or_, func, and_, userps, nowWithTimeZone
+from app.utils.common import DB, select, insert, update, or_, func, and_, userps, nowWithTimeZone
 
 def getNotes(notesps):
     tbl_notes = DB.getTableMeta("sys_table_notes").alias("notes")
@@ -111,3 +111,42 @@ def getSmileyNotes(notesps):
         .where(notes_smiley.c.is_delete == 0)
     )
     return DB.executeDBSelect(stmt)
+
+def insertUpdateNotes(notesps):
+    notes_id = int(notesps.notes_id.get() or 0)
+    view_id = int(notesps.view_id.get() or 0)
+    table_id = int(notesps.table_id.get() or 0)
+    col_id = int(notesps.col_id.get() or 0)
+    item_id = int(notesps.item_id.get() or 0)
+    table_notes = DB.getTableMeta("sys_table_notes")
+    values = {}
+    if notesps.upd_vals.get() not in (None, "", {}):
+        values = notesps.upd_vals.get()
+    else:
+        if notesps.parent_id.get() not in (None, ""):
+            values["parent_id"] = notesps.parent_id.get()
+        if view_id not in (None, "", 0):
+            values["view_id"] = view_id
+        if table_id not in (None, "", 0):
+            values["table_id"] = table_id
+        if col_id not in (None, ""):
+            values["col_id"] = col_id
+        if item_id not in (None, "", 0):
+            values["item_id"] = item_id
+        if notesps.note.get() not in (None, ""):
+            values["note"] = notesps.note.get()
+        if notesps.note_txt.get() not in (None, ""):
+            values["note_txt"] = notesps.note_txt.get()
+    if notes_id not in (None, "", 0, "0"):
+        stmt = update(table_notes).where(table_notes.c.notes_id == notes_id).values(**values)
+        DB.executeDBUpdate(stmt)
+        # clear old notifications for this note_id and view_id
+        notificaitons = DB.getTableMeta("sys_notificaitons")
+        stmt = update(notificaitons).where(notificaitons.c.view_id == view_id).where(notificaitons.c.notes_id == notes_id).values(is_delete = 1)
+        DB.executeDBUpdate(stmt)
+    else:
+        values["created_by"] = userps.user_id.get()
+        values["created_date"] = nowWithTimeZone()
+        stmt = insert(table_notes).values(**values)
+        notes_id = DB.executeDBInsert(stmt)
+    return notes_id

@@ -21,5 +21,6 @@ class NotesProperties:
         self.reminder_date = ContextVar("reminder_date", default = None)
 
         self.showdel = ContextVar("showdel", default = 0)
+        self.upd_vals = ContextVar("upd_vals", default = {})
         #notes_id, parent_id, view_id, table_id, col_id, item_id, note, note_txt, status_1, is_delete, created_by, created_date
 notesps = NotesProperties()

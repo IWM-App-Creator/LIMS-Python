@@ -1,6 +1,10 @@
 import json
+from app.helper.generalfunctions import getSelectedUsers
+from bs4 import BeautifulSoup
 from collections import defaultdict
-from app.dbfunctions.notesfunctions import getSmileyNotes, getFromUsersData, getToUsersData
+from app.dbfunctions.notesfunctions import getSmileyNotes, getFromUsersData, getToUsersData, insertUpdateNotes
+from app.dbfunctions.notificationfunctions import insertUpdateNotification
+from app.properties.notificationproperties import notifyps
 
 def getNotesUsers(notesps):
     if notesps.note_ids.get() in (None, ""):
@@ -75,3 +79,30 @@ def setNoteInputParam(notesps, params):
     notesps.note.set(note)
     notesps.share_users.set(share_users)
     notesps.reminder_date.set(reminder_date)
+
+def saveTableNotes(notesps):
+    view_id = int(notesps.view_id.get() or 0)
+    table_id = int(notesps.table_id.get() or 0)
+    item_ids = notesps.item_ids.get()
+    note = notesps.note.get()
+    notesps.note_txt.set(BeautifulSoup(note, "html.parser").get_text())
+    tmparr = notesps.share_users.get()
+    share_users = getSelectedUsers(tmparr, view_id)
+    # insert or update note for each item_id to table notes
+    for item_id in item_ids:
+        if item_id:
+            notesps.item_id.set(item_id)
+            new_notes_id = insertUpdateNotes(notesps)
+            # Save Notifications for each item_id and share_user
+            notifyps.noti_type.set("View")
+            notifyps.title.set(new_notes_id)
+            notifyps.message.set(note)
+            notifyps.msg_data.set("")
+            notifyps.item_id.set(item_id)
+            notifyps.view_id.set(view_id)
+            notifyps.table_id.set(table_id)
+            notifyps.notes_id.set(new_notes_id)
+            notifyps.is_new.set(1)
+            for usr in share_users:
+                notifyps.to_user_id.set(usr)
+                insertUpdateNotification(notifyps)

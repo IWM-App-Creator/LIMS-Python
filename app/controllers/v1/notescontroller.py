@@ -1,7 +1,7 @@
 import json
 from app.utils.common import Request, RequestData, JSONResponse, getTimeAgoValue, raiseAPIError
 from app.helper.datetime import formatDate
-from app.helper.noteshelper import setNoteInputParam, getSmileyNotesMap, getNotesUsers
+from app.helper.noteshelper import setNoteInputParam, getSmileyNotesMap, getNotesUsers, saveTableNotes
 from app.dbfunctions.logfunctions import saveErrorLogtoDB
 from app.dbfunctions.notesfunctions import getNotes
 from app.properties.notesproperties import notesps
@@ -50,6 +50,15 @@ def saveUserNote(request: Request):
     try:
         params = RequestData.params(request)
         setNoteInputParam(notesps, params)
+        # save note to sys_table_notes
+        saveTableNotes(notesps)
+        return JSONResponse(
+            status_code = 200,
+            content = {
+                "status": True,
+                "message": "Note Saved Successfully"
+            }
+        )
     except Exception as e:
         saveErrorLogtoDB("Notes", notesps.view_id.get(), "saveUserNote", str(e)) # Log Error To DB
         raiseAPIError(str(e), 500)

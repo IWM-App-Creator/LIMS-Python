@@ -158,20 +158,26 @@ def getDesignationData(associationps):
 
 def getAssociationUsers(associationps):
     view_id = int(associationps.view_id.get() or 0)
+    col_p_val = int(associationps.col_p_val.get() or 0)
+    associations_id = int(associationps.associations_id.get() or 0)
+    designation_id = int(associationps.designation_id.get() or 0)
+    user_id = int(associationps.user_id.get() or 0)
+    col_id = int(associationps.col_id.get() or 0)
+    is_notify = int(associationps.is_notify.get() or 0)
     assousers = DB.getTableMeta("sys_association_users").alias("au")
     stmt = select(assousers)
-    if associationps.associations_id.get() not in (None, "", 0):
-        stmt = stmt.where(assousers.c.associations_id == associationps.associations_id.get())
-    if associationps.designation_id.get() not in (None, "", 0):
-        stmt = stmt.where(assousers.c.designation_id == associationps.designation_id.get())
+    if associations_id not in (None, "", 0):
+        stmt = stmt.where(assousers.c.associations_id == associations_id)
+    if designation_id not in (None, "", 0):
+        stmt = stmt.where(assousers.c.designation_id == designation_id)
     if associationps.user_id.get() not in (None, "", 0):
-        stmt = stmt.where(assousers.c.user_id == associationps.user_id.get())
+        stmt = stmt.where(assousers.c.user_id == user_id)
     if associationps.col_id.get() not in (None, "", 0):
-        stmt = stmt.where(assousers.c.col_id == associationps.col_id.get())
-    if associationps.col_p_val.get() not in (None, "", 0):
-        stmt = stmt.where(assousers.c.col_p_val == associationps.col_p_val.get())
-    if associationps.is_notify.get() not in (None, ""):
-        stmt = stmt.where(assousers.c.is_notify == associationps.is_notify.get())
+        stmt = stmt.where(assousers.c.col_id == col_id)
+    if col_p_val not in (None, "", 0):
+        stmt = stmt.where(assousers.c.col_p_val == col_p_val)
+    if is_notify not in (None, ""):
+        stmt = stmt.where(assousers.c.is_notify == is_notify)
     if view_id not in (None, "", 0):
         stmt = stmt.where(
             func.find_in_set(
