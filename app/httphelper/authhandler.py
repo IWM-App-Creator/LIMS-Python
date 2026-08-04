@@ -18,6 +18,15 @@ async def auth_handler(request: Request, call_next):
         userps.user_id.set(globalps.JWT_USER_ID) # Set a default user_id for local development
         userps.req_subdomain.set("testws1") # Set a default user_id for local development
         userps.role_id.set("1") # Set a default role_id for local development
+
+        # auth = request.headers.get("Authorization")
+        # if auth: 
+        #     token = auth.replace("Bearer ", "", 1)
+        #     payload = authfnct.verifyJWTToken(token)
+        #     jwt_payload = payload["payload"]
+        #     userps.user_id.set(jwt_payload["user_id"])
+        #     userps.role_id.set(jwt_payload["role_id"])
+
         # Continue request
         response = await call_next(request)
         # return await call_next(request)
