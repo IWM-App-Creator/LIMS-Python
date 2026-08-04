@@ -10,8 +10,8 @@ def getViewDataByID(viewps):
         stmt = stmt.where(tblview.c.view_id == view_id)
         is_single = 1
     if view_url not in (None, ""): # Fetch View By View URL If view_url Is Set
-            stmt = stmt.where(tblview.c.url == view_url)
-            is_single = 1
+        stmt = stmt.where(tblview.c.url == view_url)
+        is_single = 1
     if is_single == 1 : # Return Single Value 
         userview = DB.executeDBSelectSingle(stmt)
     else : # Return Array Value 
