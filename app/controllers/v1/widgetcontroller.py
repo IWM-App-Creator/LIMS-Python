@@ -1,5 +1,6 @@
 import json
 from app.utils.common import Request, RequestData, raiseAPIError, JSONResponse, userps
+from app.helper.generalfunctions import getSelectedUsers
 from app.dbfunctions.logfunctions import saveErrorLogtoDB
 from app.dbfunctions.notificationfunctions import insertUpdateNotification
 from app.dbfunctions.associationfunctions import getAssociationUsers
@@ -93,20 +94,7 @@ def shareUserWidget(request: Request):
             title = save_name
             message = from_user + ' shared a filter view "' + save_name + '"'
             msg_data = json.dumps({"view_id": view_id, "save_id": sys_widgets_users_id})
-            tmparr = []
-            for user in share_users:
-                if user.get("type", 0) == 0:
-                    tmparr.append(user.get("opt_val"))
-                else:
-                    associationps.is_notify.set(1)
-                    associationps.col_p_val.set(user.get("opt_val"))
-                    associationps.view_id.set(view_id)
-                    associationps.fetch_single.set(0)
-                    associationps.is_distinct.set(1)
-                    assousers = getAssociationUsers(associationps)
-                    for assousr in assousers:
-                        tmparr.append(assousr.get("user_id"))
-            share_users = tmparr
+            share_users = getSelectedUsers(share_users, view_id)
         share_users = list(dict.fromkeys(share_users))
         for usr in share_users:
             if usr:
