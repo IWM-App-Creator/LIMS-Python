@@ -37,7 +37,7 @@ class viewproperties:
         self.offset = ContextVar("offset", default = 0)
         self.search_text = ContextVar("search_text", default = "")
         self.save_id = ContextVar("save_id", default = 0)
-        self.filterqry = ContextVar("filterqry", default = "")
+        self.filter_qry = ContextVar("filter_qry", default = "")
         self.sorting = ContextVar("sorting", default = "")
 
         self.view_options = ContextVar("view_options", default = [])

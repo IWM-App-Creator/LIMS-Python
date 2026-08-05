@@ -26,7 +26,7 @@ class ViewHelper:
         viewps.save_id.set(params.get("save_id", 0))
         viewps.page_no.set(params.get("page_no", 1))
         viewps.search_text.set(params.get("search_text", ""))
-        viewps.filterqry.set(params.get("filterqry", ""))
+        viewps.filter_qry.set(params.get("filter_qry", ""))
         viewps.col_type.set(params.get("col_type", ""))
         viewps.col_key.set(params.get("col_key", 0))
         viewps.col_val.set(params.get("col_val", ""))

@@ -12,4 +12,4 @@ def setViewLayoutParam(viewps, params):
     # viewps.tab_id.set(params.get("tab_id", "0"))
     # viewps.page_no.set(params.get("page_no", 1))
     # viewps.search_text.set(params.get("search_text", ""))
-    # viewps.filterqry.set(params.get("filterqry", ""))
+    # viewps.filter_qry.set(params.get("filter_qry", ""))
