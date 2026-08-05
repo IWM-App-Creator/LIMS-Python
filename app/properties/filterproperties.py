@@ -5,6 +5,7 @@ class FilterProperties:
         self.save_id = ContextVar("save_id", default = 0)
         self.save_name = ContextVar("save_name", default = "")
         self.view_id = ContextVar("view_id", default = 0)
+        self.view_qry = ContextVar("view_qry", default = [])
         self.view_qry_json = ContextVar("view_qry_json", default = [])
         self.is_default = ContextVar("is_default", default = 0)
         self.is_delete = ContextVar("is_delete", default = 0)

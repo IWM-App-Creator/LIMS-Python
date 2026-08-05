@@ -66,6 +66,7 @@ def insertUpdateFilter(filterps):
     save_id = int(filterps.save_id.get() or 0)
     save_name = filterps.save_name.get()
     view_id = int(filterps.view_id.get() or 0)
+    view_qry = filterps.view_qry.get()
     view_qry_json = filterps.view_qry_json.get()
     is_default = int(filterps.is_default.get() or 0)
     is_delete = int(filterps.is_delete.get() or 0)
@@ -74,6 +75,8 @@ def insertUpdateFilter(filterps):
         values['save_name'] = save_name
     if view_id not in (None, "", 0):
         values['view_id'] = view_id
+    if view_qry not in (None, ""):
+        values['view_qry'] = view_qry
     if view_qry_json not in (None, "", []):
         values['view_qry_json'] = view_qry_json
     if is_default not in (None, ""):

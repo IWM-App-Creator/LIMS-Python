@@ -1,3 +1,4 @@
+import json
 from app.utils.common import Request, RequestData, JSONResponse, raiseAPIError, userps
 from app.dbfunctions.logfunctions import saveErrorLogtoDB
 from app.dbfunctions.notificationfunctions import getNotificationData, insertUpdateNotification
@@ -35,7 +36,16 @@ def saveViewFilter(request: Request):
         filterps.save_id.set(params.get("save_id", 0))
         filterps.save_name.set(params.get("save_name", ""))
         filterps.view_id.set(params.get("view_id", 0))
-        filterps.view_qry_json.set(params.get("view_qry_json", []))
+        filterps.view_qry.set(params.get("view_qry", ""))
+        view_qry_json = params.get("view_qry_json", [])
+        if isinstance(view_qry_json, str):
+            try:
+                view_qry_json = json.loads(view_qry_json)
+            except json.JSONDecodeError:
+                view_qry_json = [x for x in view_qry_json.split(",") if x.strip()]
+        if not isinstance(view_qry_json, list):
+            view_qry_json = []
+        filterps.view_qry_json.set(view_qry_json)
         filterps.is_default.set(params.get("is_default", 0))
         insertUpdateFilter(filterps)
         return JSONResponse(
