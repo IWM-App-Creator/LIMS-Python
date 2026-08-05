@@ -44,7 +44,8 @@ def getViewData(request: Request):
         if groupcndt not in (None, ""):
             view_qry = view_qry + " AND (" + groupcndt + ")"
         # get Filter from Save Result Table
-        viewhlp.checkDefaultFilter(viewps)
+        if viewps.filter_qry.get() in (None, ""):
+            viewhlp.checkDefaultFilter(viewps)
         # Set Search Query
         if viewps.search_text.get() not in (None, ""):
             view_qry = view_qry + " AND (" + viewhlp.getViewSearchQuery(viewps) + ")"
