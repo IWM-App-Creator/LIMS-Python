@@ -26,7 +26,7 @@ def getViewData(request: Request):
         viewhlp.setViewDataProperties(viewps) # Set View Properties
         if viewps.output_type.get() != "viewdata":
             viewhlp.setViewTableCols(viewps) # Get View Columns
-            viewhlp.setViewLayout(viewps) # Get View Layout Data
+        viewhlp.setViewLayout(viewps) # Get View Layout Data
         # --------------------------
         # Sort View Col
         # --------------------------
