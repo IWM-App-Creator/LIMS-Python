@@ -4,6 +4,7 @@ from app.utils.common import select, DB, userps, formatDate
 from app.dbfunctions.dbtablesfunctions import getDBTableData
 from app.dbfunctions.viewlayoutfunctions import getViewLayoutDataByID
 from app.dbfunctions.associationfunctions import getViewAssociationByUser, getAssociationViews
+from app.dbfunctions.filterfunctions import getUserDefaultFilter
 from app.helper.generalfunctions import sortObjectsByKey, updateNestedJsonVal, getLastUpdatedJSON
 from app.properties.dbproperties import dbps
 from app.properties.associationproperties import associationps
@@ -117,6 +118,12 @@ class ViewHelper:
             viewps.col_colors.set(viewlayout.col_colors)
             viewps.action_group_list.set(viewlayout.action_group_list)
             viewps.user_setting.set(viewlayout.user_setting)
+
+    @staticmethod
+    def checkDefaultFilter(viewps):
+        default_filter = getUserDefaultFilter()
+        if default_filter not in (None, "", ()):
+            viewps.filter_qry.set(getattr(default_filter, "view_qry", ""))
 
     @staticmethod
     def getViewSearchQuery(viewps):

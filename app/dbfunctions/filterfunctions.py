@@ -59,6 +59,15 @@ def getFilterData(filterps):
     stmt = stmt.where(tbl_saved.c.save_id == save_id)
     return DB.executeDBSelectSingle(stmt)
 
+def getUserDefaultFilter():
+    user_id = userps.user_id.get()
+    tbl_saved = DB.getTableMeta("sys_dynamic_result_save").alias("sdrs")
+    stmt = select(tbl_saved)
+    stmt = stmt.where(tbl_saved.c.is_default == 1)
+    stmt = stmt.where(tbl_saved.c.created_by == user_id)
+    stmt = stmt.where(tbl_saved.c.is_delete == 0)
+    return DB.executeDBSelectSingle(stmt)
+
 def insertUpdateFilter(filterps):
     user_id = userps.user_id.get()
     if filterps.user_id.get() not in (None, "", 0):
