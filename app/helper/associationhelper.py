@@ -88,7 +88,6 @@ def getViewAssociationData(associationps):
     viewasso = getAssociationViews(associationps)
     viewassodata = {}
     if viewasso not in (None, "", ()):
-        viewassodata['view_id'] = getattr(viewasso, "view_id", 0)
         viewassodata['view_asso_json'] = getattr(viewasso, "view_asso_json", {})
     return viewassodata
 
