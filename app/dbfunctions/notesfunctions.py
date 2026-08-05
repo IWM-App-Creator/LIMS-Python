@@ -1,5 +1,5 @@
 import datetime
-from app.utils.common import DB, select, insert, update, or_, func, and_, userps, nowWithTimeZone
+from app.utils.common import DB, select, insert, update, or_, func, and_, formatDate, userps, nowWithTimeZone
 
 def getNotes(notesps):
     tbl_notes = DB.getTableMeta("sys_table_notes").alias("notes")
@@ -119,6 +119,9 @@ def insertUpdateNotes(notesps):
     col_id = int(notesps.col_id.get() or 0)
     item_id = int(notesps.item_id.get() or 0)
     table_notes = DB.getTableMeta("sys_table_notes")
+    created_date = nowWithTimeZone()
+    if notesps.reminder_date.get() not in (None, ""):
+        created_date = notesps.reminder_date.get()
     values = {}
     if notesps.upd_vals.get() not in (None, "", {}):
         values = notesps.upd_vals.get()
@@ -146,7 +149,7 @@ def insertUpdateNotes(notesps):
         DB.executeDBUpdate(stmt)
     else:
         values["created_by"] = userps.user_id.get()
-        values["created_date"] = nowWithTimeZone()
+        values["created_date"] = formatDate(created_date, "%Y-%m-%d %H:%M:%S")
         stmt = insert(table_notes).values(**values)
         notes_id = DB.executeDBInsert(stmt)
     return notes_id

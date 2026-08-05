@@ -1,5 +1,5 @@
 from datetime import datetime
-from app.utils.common import select, DB, userps, insert, update, func, nowWithTimeZone
+from app.utils.common import select, DB, userps, insert, update, func, nowWithTimeZone, formatDate
 
 def getNotificationList(notifyps):
     view_id = viewps.view_id.get()
@@ -191,6 +191,9 @@ def insertUpdateNotification(notifyps):
     notificaitons = DB.getTableMeta("sys_notificaitons")
     notificaitons_id = int(notifyps.notificaitons_id.get() or 0)
     user_id = userps.user_id.get()
+    created_date = nowWithTimeZone()
+    if notifyps.created_date.get() not in (None, ""):
+        created_date = notifyps.created_date.get()
     values = {}
     if notifyps.upd_vals.get() not in (None, "", {}):
         values = notifyps.upd_vals.get()
@@ -226,7 +229,7 @@ def insertUpdateNotification(notifyps):
         DB.executeDBUpdate(stmt)
     else:
         values["created_by"] = user_id
-        values["created_date"] = nowWithTimeZone()
+        values["created_date"] = formatDate(created_date, "%Y-%m-%d %H:%M:%S")
         stmt = insert(notificaitons).values(**values)
         notificaitons_id = DB.executeDBInsert(stmt)
     return notificaitons_id

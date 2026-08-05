@@ -17,6 +17,7 @@ class NotificationProperties:
         self.is_new = ContextVar("is_new", default = None)
         self.is_archive = ContextVar("is_archive", default = None)
         self.created_by = ContextVar("created_by", default = 0)
+        self.created_date = ContextVar("created_date", default = None)
         self.total_unread = ContextVar("total_unread", default = 0)
         self.flag = ContextVar("flag", default = 0)
 

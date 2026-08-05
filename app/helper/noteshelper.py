@@ -88,6 +88,8 @@ def saveTableNotes(notesps):
     notesps.note_txt.set(BeautifulSoup(note, "html.parser").get_text())
     tmparr = notesps.share_users.get()
     share_users = getSelectedUsers(tmparr, view_id)
+    if notesps.reminder_date.get() not in (None, ""):
+        notifyps.created_date.set(notesps.reminder_date.get())
     # insert or update note for each item_id to table notes
     for item_id in item_ids:
         if item_id:
