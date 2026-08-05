@@ -8,6 +8,7 @@ from app.dbfunctions.filterfunctions import getUserDefaultFilter
 from app.helper.generalfunctions import sortObjectsByKey, updateNestedJsonVal, getLastUpdatedJSON
 from app.properties.dbproperties import dbps
 from app.properties.associationproperties import associationps
+from app.properties.filterproperties import filterps
 from app.helper import dbhelper as dbhlp
 
 from app.helper.templatehelper import getPriorityTemplate
@@ -121,7 +122,8 @@ class ViewHelper:
 
     @staticmethod
     def checkDefaultFilter(viewps):
-        default_filter = getUserDefaultFilter()
+        filterps.view_id.set(viewps.view_id.get())
+        default_filter = getUserDefaultFilter(filterps)
         if default_filter not in (None, "", ()):
             viewps.filter_qry.set(getattr(default_filter, "view_qry", ""))
 

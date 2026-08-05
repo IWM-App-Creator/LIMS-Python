@@ -59,10 +59,12 @@ def getFilterData(filterps):
     stmt = stmt.where(tbl_saved.c.save_id == save_id)
     return DB.executeDBSelectSingle(stmt)
 
-def getUserDefaultFilter():
+def getUserDefaultFilter(filterps):
+    view_id = int(filterps.view_id.get() or 0)
     user_id = userps.user_id.get()
     tbl_saved = DB.getTableMeta("sys_dynamic_result_save").alias("sdrs")
     stmt = select(tbl_saved)
+    stmt = stmt.where(tbl_saved.c.view_id == )
     stmt = stmt.where(tbl_saved.c.is_default == 1)
     stmt = stmt.where(tbl_saved.c.created_by == user_id)
     stmt = stmt.where(tbl_saved.c.is_delete == 0)
