@@ -85,7 +85,9 @@ def copySaveFilterView(request: Request):
                     filterps.save_id.set(None)
                     filterps.save_name.set(getattr(filter, "save_name", ""))
                     filterps.view_id.set(view_id)
-                    filterps.view_qry_json.set(getattr(filter, "view_qry_json", []))
+                    view_qry = getattr(filter, "view_qry", "")
+                    view_qry_json = getattr(filter, "view_qry_json", [])
+                    filterps.upd_vals.set({"is_default": 0, "view_id": view_id, "view_qry": view_qry, "view_qry_json": view_qry_json})
                     new_save_id = insertUpdateFilter(filterps)
                     if flag == "addtodashboard":
                         message = "Filter added to Dashboard Successfully"
@@ -125,6 +127,7 @@ def makeDefaultFilter(request: Request):
         filterps.view_id.set(params.get("view_id", 0))
         filterps.save_id.set(params.get("save_id", 0))
         filterps.is_default.set(1)
+        filterps.upd_vals.set({"is_default": 1})
         insertUpdateFilter(filterps)
         return JSONResponse(
             status_code = 200,
@@ -144,6 +147,7 @@ def removeSaveFilterView(request: Request):
         params = RequestData.params(request)
         filterps.save_id.set(params.get("save_id", 0))
         filterps.is_delete.set(1)
+        filterps.upd_vals.set({"is_delete": 1})
         insertUpdateFilter(filterps)
         return JSONResponse(
             status_code = 200,

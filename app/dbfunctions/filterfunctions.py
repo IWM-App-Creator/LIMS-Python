@@ -80,18 +80,21 @@ def insertUpdateFilter(filterps):
     is_default = int(filterps.is_default.get() or 0)
     is_delete = int(filterps.is_delete.get() or 0)
     values = {}
-    if save_name not in (None, ""):
-        values['save_name'] = save_name
-    if view_id not in (None, "", 0):
-        values['view_id'] = view_id
-    if view_qry not in (None, ""):
-        values['view_qry'] = view_qry
-    if view_qry_json not in (None, "", []):
-        values['view_qry_json'] = view_qry_json
-    if is_default not in (None, ""):
-        values['is_default'] = is_default
-    if is_delete not in (None, ""):
-        values['is_delete'] = is_delete
+    if filterps.upd_vals.get() not in (None, "", {}):
+        values = filterps.upd_vals.get()
+    else:
+        if save_name not in (None, ""):
+            values['save_name'] = save_name
+        if view_id not in (None, "", 0):
+            values['view_id'] = view_id
+        if view_qry not in (None, ""):
+            values['view_qry'] = view_qry
+        if view_qry_json not in (None, "", []):
+            values['view_qry_json'] = view_qry_json
+        if is_default not in (None, ""):
+            values['is_default'] = is_default
+        if is_delete not in (None, ""):
+            values['is_delete'] = is_delete
     dync_result_save = DB.getTableMeta("sys_dynamic_result_save")
     if is_default in (1, "1") or save_id in (-1, "-1"):
         stmt = update(dync_result_save).where(dync_result_save.c.view_id == view_id).where(dync_result_save.c.created_by == user_id).values(is_default = 0)
@@ -107,4 +110,4 @@ def insertUpdateFilter(filterps):
             values['created_date'] = nowWithTimeZone()
             stmt = insert(dync_result_save).values(**values)
             save_id = DB.executeDBInsert(stmt)
-        return save_id
+    return save_id
