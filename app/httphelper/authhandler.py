@@ -89,9 +89,10 @@ async def auth_handler(request: Request, call_next):
         # )
         # response.headers["X-New-JWT"] = new_token
         # print("X-New-JWT --> ", response.headers.get("X-New-JWT"))
-        
+
         response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate"
         response.headers["Pragma"] = "no-cache"
         response.headers["Expires"] = "0"
+
         return response
         # return await call_next(request)
