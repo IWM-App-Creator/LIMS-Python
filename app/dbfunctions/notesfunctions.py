@@ -153,3 +153,48 @@ def insertUpdateNotes(notesps):
         stmt = insert(table_notes).values(**values)
         notes_id = DB.executeDBInsert(stmt)
     return notes_id
+
+def getSmileyData(notesps):
+    notes_id = int(notesps.notes_id.get() or 0)
+    created_by = userps.user_id.get()
+    if notesps.created_by.get() not in (None, "", 0):
+        created_by = notesps.created_by.get()
+    notes_smiley = DB.getTableMeta("sys_table_notes_smiley").alias("notes_smiley")
+    stmt = (
+        select(
+            notes_smiley
+        )
+        .where(notes_smiley.c.notes_id == notes_id)
+        .where(notes_smiley.c.created_by == created_by)
+        .where(notes_smiley.c.is_delete == 0)
+    )
+    return DB.executeDBSelectSingle(stmt)
+
+def insertUpdateEmoji(notesps):
+    smiley_id = int(notesps.smiley_id.get() or 0)
+    notes_id = int(notesps.notes_id.get() or 0)
+    view_id = int(notesps.view_id.get() or 0)
+    item_id = int(notesps.item_id.get() or 0)
+    smiley_code = int(notesps.smiley_code.get() or 0)
+    values = {}
+    notes_smiley = DB.getTableMeta("sys_table_notes_smiley").alias("notes_smiley")
+    if notesps.upd_vals.get() not in (None, {}):
+        values = notesps.upd_vals.get()
+    else:
+        if notes_id not in (None, "", 0):
+            values["notes_id"] = notes_id
+        if view_id not in (None, "", 0):
+            values["view_id"] = view_id
+        if item_id not in (None, "", 0):
+            values["item_id"] = item_id
+        if smiley_code not in (None, "", 0):
+            values["smiley_code"] = smiley_code
+    if smiley_id not in (None, "", 0, "0"):
+        stmt = update(notes_smiley).where(notes_smiley.c.smiley_id == smiley_id).values(**values)
+        DB.executeDBUpdate(stmt)
+    else:
+        values["created_by"] = userps.user_id.get()
+        values["created_date"] = nowWithTimeZone()
+        stmt = insert(notes_smiley).values(**values)
+        smiley_id = DB.executeDBInsert(stmt)
+    return smiley_id

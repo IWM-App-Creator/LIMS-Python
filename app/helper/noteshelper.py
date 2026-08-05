@@ -2,7 +2,7 @@ import json
 from app.helper.generalfunctions import getSelectedUsers
 from bs4 import BeautifulSoup
 from collections import defaultdict
-from app.dbfunctions.notesfunctions import getSmileyNotes, getFromUsersData, getToUsersData, insertUpdateNotes
+from app.dbfunctions.notesfunctions import getSmileyNotes, getFromUsersData, getToUsersData, insertUpdateNotes, getSmileyData, insertUpdateEmoji
 from app.dbfunctions.notificationfunctions import insertUpdateNotification
 from app.properties.notificationproperties import notifyps
 
@@ -108,3 +108,15 @@ def saveTableNotes(notesps):
             for usr in share_users:
                 notifyps.to_user_id.set(usr)
                 insertUpdateNotification(notifyps)
+
+def saveEmojiDB(notesps):
+    smiley_code = int(notesps.smiley_code.get() or 0)
+    smile_data = getSmileyData(notesps)
+    if smile_data not in (None, "", ()):
+        notesps.smiley_id.set(getattr(smile_data, "smiley_id", 0))
+        notesps.upd_vals.set({"smiley_code": smiley_code})
+        if getattr(smile_data, "smiley_code", 0) == smiley_code:
+            notesps.upd_vals.set({"is_delete": 1})
+        smiley_id = insertUpdateEmoji(notesps)
+    else:
+        smiley_id = insertUpdateEmoji(notesps)

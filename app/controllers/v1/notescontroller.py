@@ -62,3 +62,23 @@ def saveUserNote(request: Request):
     except Exception as e:
         saveErrorLogtoDB("Notes", notesps.view_id.get(), "saveUserNote", str(e)) # Log Error To DB
         raiseAPIError(str(e), 500)
+
+def saveNoteEmoji(request: Request):
+    print("saveNoteEmoji --> ")
+    try:
+        params = RequestData.params(request)
+        notesps.view_id.set(params.get("view_id", 0))
+        notesps.notes_id.set(params.get("notes_id", 0))
+        notesps.item_id.set(params.get("item_id", 0))
+        notesps.smiley_code.set(params.get("smiley_code", 0))
+        saveTableNotes(notesps)
+        return JSONResponse(
+            status_code = 200,
+            content = {
+                "status": True,
+                "message": "Smile Emoji Saved Successfully"
+            }
+        )
+    except Exception as e:
+        saveErrorLogtoDB("Notes", notesps.view_id.get(), "saveNoteEmoji", str(e)) # Log Error To DB
+        raiseAPIError(str(e), 500)

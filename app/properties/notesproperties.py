@@ -17,6 +17,9 @@ class NotesProperties:
         self.created_by = ContextVar("created_by", default = 0)
         self.created_date = ContextVar("created_date", default = None)
 
+        self.smiley_id = ContextVar("smiley_id", default = 0)
+        self.smiley_code = ContextVar("smiley_code", default = 0)
+
         self.share_users = ContextVar("share_users", default = [])
         self.reminder_date = ContextVar("reminder_date", default = None)
 
