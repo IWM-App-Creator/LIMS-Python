@@ -122,7 +122,7 @@ class ViewHelper:
     @staticmethod
     def checkDefaultFilter(viewps):
         default_filter = getUserDefaultFilter()
-        if default_filter not in (None, "", ()):
+        if default_filter not in (None, "", ()) and viewps.filter_qry.get() in (None, ""):
             viewps.filter_qry.set(getattr(default_filter, "view_qry", ""))
 
     @staticmethod
