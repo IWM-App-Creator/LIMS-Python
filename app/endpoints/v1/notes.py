@@ -4,7 +4,8 @@ from app.controllers.v1 import notescontroller as notesapi
 router = APIRouter(prefix = "/notes")
 
 ROUTES = [
-    ("/get", notesapi.getUserNotes, ["GET"])
+    ("/get", notesapi.getUserNotes, ["GET"]),
+    ("/save", notesapi.saveUserNote, ["POST"]),
 ]
 
 for path, handler, methods in ROUTES:
