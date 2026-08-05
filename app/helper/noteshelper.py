@@ -117,6 +117,5 @@ def saveEmojiDB(notesps):
         notesps.upd_vals.set({"smiley_code": smiley_code})
         if getattr(smile_data, "smiley_code", 0) == smiley_code:
             notesps.upd_vals.set({"is_delete": 1})
-        smiley_id = insertUpdateEmoji(notesps)
-    else:
-        smiley_id = insertUpdateEmoji(notesps)
+    smiley_id = insertUpdateEmoji(notesps)
+    return smiley_id

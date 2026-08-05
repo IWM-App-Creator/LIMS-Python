@@ -1,7 +1,7 @@
 import json
 from app.utils.common import Request, RequestData, JSONResponse, getTimeAgoValue, raiseAPIError
 from app.helper.datetime import formatDate
-from app.helper.noteshelper import setNoteInputParam, getSmileyNotesMap, getNotesUsers, saveTableNotes
+from app.helper.noteshelper import setNoteInputParam, getSmileyNotesMap, getNotesUsers, saveTableNotes, saveEmojiDB
 from app.dbfunctions.logfunctions import saveErrorLogtoDB
 from app.dbfunctions.notesfunctions import getNotes
 from app.properties.notesproperties import notesps
@@ -71,12 +71,13 @@ def saveNoteEmoji(request: Request):
         notesps.notes_id.set(params.get("notes_id", 0))
         notesps.item_id.set(params.get("item_id", 0))
         notesps.smiley_code.set(params.get("smiley_code", 0))
-        saveTableNotes(notesps)
+        smiley_id = saveEmojiDB(notesps)
         return JSONResponse(
             status_code = 200,
             content = {
                 "status": True,
-                "message": "Smile Emoji Saved Successfully"
+                "message": "Smile Emoji Saved Successfully",
+                "smiley_id": smiley_id
             }
         )
     except Exception as e:
