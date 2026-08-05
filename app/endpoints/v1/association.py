@@ -6,6 +6,7 @@ router = APIRouter(prefix = "/association")
 ROUTES = [
     ("/getlist", associationapi.getAssociations, ["GET"]),
     ("/getaccesslist", associationapi.getAccessAssociation, ["GET"]),
+    ("/view", associationapi.getViewAssociation, ["GET"]),
 ]
 
 for path, handler, methods in ROUTES:

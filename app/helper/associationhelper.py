@@ -1,4 +1,4 @@
-from app.dbfunctions.associationfunctions import getAssociationUsers, getAssociationData, getAssociationDesignationData, getAssociationLookupData, getAssociationUsersByDesignation, getDesignationData
+from app.dbfunctions.associationfunctions import getAssociationUsers, getAssociationData, getAssociationDesignationData, getAssociationLookupData, getAssociationUsersByDesignation, getDesignationData, getAssociationViews
 from collections import defaultdict
 
 def getAssociationList(associationps):
@@ -82,6 +82,15 @@ def getDesignationList(associationps):
         }
         designation_list.append(row)
     return designation_list
+
+def getViewAssociationData(associationps):
+    associationps.fetch_single.set(1)
+    viewasso = getAssociationViews(associationps)
+    viewassodata = {}
+    if viewasso not in (None, "", ()):
+        viewassodata['view_id'] = getattr(viewasso, "view_id", 0)
+        viewassodata['view_asso_json'] = getattr(viewasso, "view_asso_json", {})
+    return viewassodata
 
 def getViewIdByAssociation(associationps):
     associationps.is_distinct.set(1)

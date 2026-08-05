@@ -1,5 +1,5 @@
 from app.utils.common import Request, RequestData, JSONResponse, raiseAPIError
-from app.helper.associationhelper import getAssociationList, getLookupDataByAssociationId, getDesignationList
+from app.helper.associationhelper import getAssociationList, getLookupDataByAssociationId, getDesignationList, getViewAssociationData
 from app.helper.customviewhelper import getCustomViewList
 from app.helper.menuhelper import getUserMenuList
 from app.helper.dashboardhelper import getUserDashboards
@@ -78,4 +78,22 @@ def getAccessAssociation(request: Request):
         )
     except Exception as e:
         saveErrorLogtoDB("Association", 0, "getAccessAssociation", str(e))
+        raiseAPIError(str(e), 500)
+
+def getViewAssociation(request: Request):
+    try:
+        print("getViewAssociation --> ")
+        params = RequestData.params(request)
+        associationps.view_id.set(params.get("view_id", 0))
+        viewassociation = getViewAssociationData(associationps)
+        return JSONResponse(
+            status_code = 200,
+            content = {
+                "status": True,
+                "message": "View Association Data",
+                "viewassociation": viewassociation
+            }
+        )
+    except Exception as e:
+        saveErrorLogtoDB ("View", associationps.view_id.get(), "getViewData", str(e)) # Log Error To DB
         raiseAPIError(str(e), 500)
