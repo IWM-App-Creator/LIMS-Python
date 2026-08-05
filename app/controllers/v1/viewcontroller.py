@@ -48,10 +48,9 @@ def getViewData(request: Request):
             filterps.save_id.set(viewps.save_id.get())
             filterdata = getFilterData(filterps)
             viewps.filter_qry.set(getattr(filterdata, "view_qry", ""))
-        else:
-            # Set Search Query
-            if viewps.search_text.get() not in (None, ""):
-                view_qry = view_qry + " AND (" + viewhlp.getViewSearchQuery(viewps) + ")"
+        # Set Search Query
+        if viewps.search_text.get() not in (None, ""):
+            view_qry = view_qry + " AND (" + viewhlp.getViewSearchQuery(viewps) + ")"
         # Set Filter Query
         if viewps.filter_qry.get() not in (None, ""):
             view_qry = view_qry + " AND (" + viewps.filter_qry.get() + ")"
