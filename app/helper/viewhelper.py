@@ -23,6 +23,7 @@ class ViewHelper:
         viewps.col_name.set(params.get("col_name", ""))
         viewps.call_from.set(params.get("call_from", "DynamicView"))
         viewps.tab_id.set(params.get("tab_id", "0"))
+        viewps.save_id.set(params.get("save_id", 0))
         viewps.page_no.set(params.get("page_no", 1))
         viewps.search_text.set(params.get("search_text", ""))
         viewps.filterqry.set(params.get("filterqry", ""))

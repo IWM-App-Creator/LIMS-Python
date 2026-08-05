@@ -4,12 +4,14 @@ from app.dbfunctions.viewfunctions import getViewDataByID, insertUpdateView
 from app.dbfunctions.dbfunctions import getCreateTableSqlFromSchema
 from app.dbfunctions.dbtablesfunctions import insertTableDataToDB, insertUpdateTblCol
 from app.dbfunctions.logfunctions import saveErrorLogtoDB
+from app.dbfunctions.filterfunctions import getFilterData
 from app.helper.viewhelper import viewhlp, createviewhlp
 from app.helper.dbhelper import setQueryColStmt, executeCreateTableQuery
 from app.helper.generalfunctions import sortObjectsByKey, generateRandomString, addUpdateJson, updateNestedJsonVal, insertNestedJsonAfter, insertNestedJsonBefore, removeNestedJsonVal, getHostName
 from app.properties.viewproperties import viewps
 from app.properties.dbproperties import dbps
 from app.properties.menuproperties import menups
+from app.properties.filterproperties import filterps
 
 # http://testws1.localhost:8000/api/v1/view/getdata?view_id=125
 # http://testws1.localhost:8000/api/v1/view/getdata?view_id=178
@@ -41,9 +43,18 @@ def getViewData(request: Request):
         groupcndt = viewhlp.setViewGroupByData(viewps)
         if groupcndt not in (None, ""):
             view_qry = view_qry + " AND (" + groupcndt + ")"
-        # Set Search Query
-        if viewps.search_text.get() not in (None, ""):
-            view_qry = view_qry + " AND (" + viewhlp.getViewSearchQuery(viewps) + ")"
+        # get Filter from Save Result Table
+        if int(viewps.save_id.get()) not in (None, "", 0, "0"):
+            filterps.save_id.set(viewps.save_id.get())
+            filterdata = getFilterData(filterps)
+            viewps.filter_qry.set(getattr(filterdata, "view_qry", ""))
+        else:
+            # Set Search Query
+            if viewps.search_text.get() not in (None, ""):
+                view_qry = view_qry + " AND (" + viewhlp.getViewSearchQuery(viewps) + ")"
+        # Set Filter Query
+        if viewps.filter_qry.get() not in (None, ""):
+            view_qry = view_qry + " AND (" + viewps.filter_qry.get() + ")"
         # Check Association
         if userps.ws_role_id.get() != 1 and userps.role_id.get() != 1:
             viewhlp.checkViewAssociation(viewps) # Check Associations

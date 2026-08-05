@@ -36,6 +36,7 @@ class viewproperties:
         self.page_size = ContextVar("page_size", default = 10)
         self.offset = ContextVar("offset", default = 0)
         self.search_text = ContextVar("search_text", default = "")
+        self.save_id = ContextVar("save_id", default = 0)
         self.filterqry = ContextVar("filterqry", default = "")
         self.sorting = ContextVar("sorting", default = "")
 
