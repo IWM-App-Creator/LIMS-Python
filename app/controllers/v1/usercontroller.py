@@ -66,7 +66,7 @@ def getUserDetail(request: Request): # token: str
                 "menucentre_list": menups.menu_cntr_data.get(),
                 "workspace_list" : wsps.ws_data.get(),
                 "dashboard_list" : dps.dashboards_data.get(),
-                "CBModule_list": cbps.cb_md_list.get(),
+                "cb_module_list": cbps.cb_md_list.get(),
             }
         )
     except Exception as e:
