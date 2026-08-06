@@ -1,8 +1,33 @@
-from app.utils.common import Request, RequestData
+from app.utils.common import Request, RequestData, JSONResponse, raiseAPIError
+from app.helper.notificationfunction import getNotifications
+from app.dbfunctions.logfunctions import saveErrorLogtoDB
+from app.properties.notificationproperties import notifyps
 
 # http://xytovet.localhost:8000/api/v1/notification/get
 def getUserNotifications(request: Request):
     print("getUserNotifications --> ")
+    try:
+        params = RequestData.params(request)
+        notifyps.view_id.set(params.get("view_id", 0))
+        notifyps.is_new.set(params.get("is_new", 0))
+        notifyps.is_read.set(params.get("is_read", 0))
+        notifyps.is_archive.set(params.get("is_archive", 0))
+        notifyps.is_delete.set(params.get("is_delete", 0))
+        notifyps.is_outbox.set(params.get("is_outbox", 0))
+        notifyps.pgno.set(params.get("pgno", 1))
+        notifyps.page_size.set(params.get("page_size", 10))
+        notification_list = getNotifications(notifyps)
+        return JSONResponse (
+            status_code = 200,
+            content = {
+                "status": True,
+                "message": "Notification List",
+                "notification_list": notification_list
+            }
+        )
+    except Exception as e:
+        saveErrorLogtoDB("Notification", 0, "getUserNotifications", str(e))
+        raiseAPIError(str(e), 500)
 
 # http://xytovet.localhost:8000/api/v1/notification/markread
 def markNotificationRead (request: Request):

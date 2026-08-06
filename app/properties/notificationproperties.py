@@ -16,10 +16,16 @@ class NotificationProperties:
         self.read_date = ContextVar("read_date", default = "")
         self.is_new = ContextVar("is_new", default = None)
         self.is_archive = ContextVar("is_archive", default = None)
+        self.is_delete = ContextVar("is_delete", default = 0)
         self.created_by = ContextVar("created_by", default = 0)
         self.created_date = ContextVar("created_date", default = None)
         self.total_unread = ContextVar("total_unread", default = 0)
         self.flag = ContextVar("flag", default = 0)
+
+        self.pgno = ContextVar("pgno", default = 1)
+        self.page_size = ContextVar("page_size", default = 10)
+        self.is_outbox = ContextVar("is_outbox", default = 0)
+        self.record_cnt = ContextVar("record_cnt", default = 0)
 
         self.to_email = ContextVar("to_email", default = "")
         self.subject = ContextVar("subject", default = "")

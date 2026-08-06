@@ -1,7 +1,54 @@
-from app.properties.globalproperties import globalps
+from app.utils.common import globalps, formatDate, getTimeAgoValue
+from app.helper.generalfunctions import formatUserDisplayName
 from pathlib import Path
 import smtplib
 from email.message import EmailMessage
+from app.dbfunctions.notificationfunctions import getNotificationList
+
+def getNotifications(notifyps):
+    notificationarr = getNotificationList(notifyps)
+    notification_list = []
+    for noti in notificationarr:
+        if noti:
+            from_user_nm = getattr(noti, "from_user_name", "").replace("**", " ")
+            to_user_nm = getattr(noti, "to_user_name", "").replace("**", " ")
+            if int(notifyps.is_new.get()) == 1:
+                row = {
+                    "noti_type": getattr(noti, "noti_type", ""),
+                    "to_user_id": getattr(noti, "to_user_id", 0),
+                    "title": getattr(noti, "title", ""),
+                    "message": getattr(noti, "message", ""),
+                    "is_new": 1
+                }
+            else:
+                row = {
+                    "notificaitons_id": getattr(noti, "notificaitons_id", 0),
+                    "noti_type": getattr(noti, "noti_type", ""),
+                    "item_id": getattr(noti, "item_id", 0),
+                    "view_id": getattr(noti, "view_id", 0),
+                    "view_name": getattr(noti, "view_name", 0),
+                    "view_url": getattr(noti, "url", 0),
+                    "notes_id": getattr(noti, "notes_id", 0),
+                    "parent_id": getattr(noti, "parent_id", 0),
+                    "item_id": getattr(noti, "item_id", 0),
+                    "title": getattr(noti, "title", ""),
+                    "message": getattr(noti, "message", ""),
+                    "msg_data": getattr(noti, "msg_data", ""),
+                    "is_read": getattr(noti, "is_read", 0),
+                    "read_date": formatDate(getattr(noti, "read_date", None), "%Y-%m-%d %H:%M:%S"),
+                    "is_new": getattr(noti, "is_new", 0),
+                    "is_archive": getattr(noti, "is_archive", 0),
+                    "is_outbox": int(notifyps.is_outbox.get() or 0),
+                    "to_user": to_user_nm,
+                    "to_user_init_nm": formatUserDisplayName(getattr(noti, "to_user_name", "").split("**")[0], getattr(noti, "to_user_name", "").split("**")[1], "INITIAL"),
+                    "created_by": from_user_nm,
+                    "created_by_init_nm": formatUserDisplayName(getattr(noti, "from_user_name", "").split("**")[0], getattr(noti, "from_user_name", "").split("**")[1], "INITIAL"),
+                    "created_date": formatDate(getattr(noti, "created_date", None), "%Y-%m-%d %H:%M:%S"),
+                    "time_ago": getTimeAgoValue(getattr(noti, "created_date", None)),
+                }
+            notification_list.append(row)
+    return notification_list
+
 
 def sendEmail(notifyps):
     msg = EmailMessage()

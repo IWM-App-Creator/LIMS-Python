@@ -1,55 +1,73 @@
 from datetime import datetime
-from app.utils.common import select, DB, userps, insert, update, func, nowWithTimeZone, formatDate
+from app.utils.common import select, DB, userps, insert, update, func, not_, nowWithTimeZone, formatDate
 
 def getNotificationList(notifyps):
-    view_id = viewps.view_id.get()
-    user_id = userps.user_id.get()
-
-    tblnoti = DB.tableMeta("sys_notificaitons").alias("noti")
-    tblview = DB.tableMeta("sys_dynamic_view").alias("view")
-    tblnotes = DB.tableMeta("sys_table_notes").alias("notes")
-    tbluser = DB.getTableMeta("users", "systemconfig").alias("usr")
-    viewdata = (
+    created_by = userps.user_id.get()
+    pgno = int(notifyps.pgno.get() or 1)
+    page_size = int(notifyps.page_size.get() or 10)
+    view_id = int(notifyps.view_id.get() or 0)
+    is_new = int(notifyps.is_new.get() or 0)
+    is_read = int(notifyps.is_read.get() or 0)
+    is_archive = int(notifyps.is_archive.get() or 0)
+    is_delete = int(notifyps.is_delete.get() or 0)
+    is_outbox = int(notifyps.is_outbox.get() or 0)
+    if notifyps.created_by.get() not in (None, "", 0):
+        created_by = notifyps.created_by.get()
+    notificaitons = DB.getTableMeta("sys_notificaitons").alias("noti")
+    dync_view = DB.getTableMeta("sys_new_dynamic_view").alias("dv")
+    table_notes = DB.getTableMeta("sys_table_notes").alias("tn")
+    from_user_data = DB.getTableMeta("users", "systemconfig").alias("from_user")
+    to_user_data = DB.getTableMeta("users", "systemconfig").alias("to_user")
+    stmt = (
         select(
-            func.concat(tblview.c.url, "~~", tblview.c.view_name)
+            notificaitons,
+            dync_view.c.url,
+            dync_view.c.view_name,
+            table_notes.c.parent_id,
+            table_notes.c.item_id,
+            func.concat(from_user_data.c.first_name, "**", from_user_data.c.last_name).label("from_user_name"),
+            func.concat(to_user_data.c.first_name, "**", to_user_data.c.last_name).label("to_user_name"),
         )
-        .where(tblview.c.view_id == tblnoti.c.view_id)
-        .scalar_subquery()
-    )
-    notesdata = (
-        select(
-            func.concat(tblnotes.c.parent_id, "~~", tblnotes.c.item_id)
+        .outerjoin(
+            dync_view,
+            dync_view.c.view_id == notificaitons.c.view_id
         )
-        .where(tblnotes.c.notes_id == tblnoti.c.notes_id)
-        .scalar_subquery()
-    )
-    created_name = (
-        select(
-            func.concat(tbluser.c.first_name, "~~", tbluser.c.last_name)
+        .outerjoin(
+            table_notes,
+            table_notes.c.notes_id == notificaitons.c.notes_id
         )
-        .where(tbluser.c.id == tblnoti.c.created_by)
-        .scalar_subquery()
-    )
-    to_usr_name = (
-        select(
-            func.concat(tbluser.c.first_name, "~~", tbluser.c.last_name)
+        .outerjoin(
+            from_user_data,
+            from_user_data.c.id == notificaitons.c.created_by
         )
-        .where(tbluser.c.id == tblnoti.c.to_user_id)
-        .scalar_subquery()
+        .outerjoin(
+            to_user_data,
+            to_user_data.c.id == notificaitons.c.to_user_id
+        )
+        .where(notificaitons.c.created_date <= nowWithTimeZone())
+        .order_by(notificaitons.c.notificaitons_id.desc())
     )
-    stmt = select(
-        tblnoti,
-        case(
-            (tblnoti.c.view_id > 0, viewdata),
-            else_=""
-        ).label("viewdata"),
-        case(
-            (tblnoti.c.notes_id > 0, notesdata),
-            else_=""
-        ).label("notesdata"),
-        created_name.label("created_name"),
-        to_usr_name.label("to_usr_name")
-    )
+    if is_outbox in (None, "", 0):
+        stmt = stmt.where(notificaitons.c.to_user_id == created_by)
+    else:
+        stmt = stmt.where(notificaitons.c.created_by == created_by)
+        stmt = stmt.where(not_(notificaitons.c.noti_type.in_(['ShareWidget', 'CSVImport', 'CSVDownload'])))
+    if is_new == 1:
+        stmt = stmt.where(notificaitons.c.is_new == 1)
+    if is_read == 1:
+        stmt = stmt.where(notificaitons.c.is_read == 0)
+    if is_read == 2:
+        stmt = stmt.where(notificaitons.c.is_read == 1)
+    if is_archive != 1:
+        stmt = stmt.where(notificaitons.c.is_archive == 0)
+    if is_delete in (None, "", 0):
+        stmt = stmt.where(notificaitons.c.is_delete == 0)
+    if view_id > 0:
+        stmt = stmt.where(notificaitons.c.view_id == view_id)
+    if view_id < 0:
+        stmt = stmt.where(notificaitons.c.view_id == 0)
+    offset = (pgno - 1) * page_size
+    stmt = stmt.limit(page_size).offset(offset)
     return DB.executeDBSelect(stmt)
 
 def getNotificationData(notifyps):
