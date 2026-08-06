@@ -48,6 +48,7 @@ def getUserWidgets(widgetps):
     for wdgt in usrwdgtarr:
         view_id = 0
         view_name = ""
+        view_url = ""
         if getattr(wdgt, "widget_type", "") == "VIEWWIDGET":
             widget_json = getattr(wdgt, "widget_json", "")
             if isinstance(widget_json, str):
@@ -59,7 +60,7 @@ def getUserWidgets(widgetps):
             getViewDataByID(viewps)
             view_data = viewps.userview.get()
             view_name = getattr(view_data, "view_name", "")
-            view_url = "https://" + userps.req_host.get() + "/view/" + getattr(view_data, "url", "")
+            view_url = getattr(view_data, "url", "")
         row = {
             "sys_widgets_users_id": getattr(wdgt, "sys_widgets_users_id", 0),
             "sys_widget_id": getattr(wdgt, "sys_widget_id", 0),
