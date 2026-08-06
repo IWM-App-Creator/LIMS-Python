@@ -4,7 +4,7 @@ from pathlib import Path
 import smtplib
 from email.message import EmailMessage
 from app.dbfunctions.notificationfunctions import getNotificationList
-from app.helper.noteshelper import getNotesUsers, getSmileyNotesMap
+from app.helper.noteshelper import getSmileyNotesMap
 from app.properties.notesproperties import notesps
 
 def getNotifications(notifyps):
@@ -12,12 +12,9 @@ def getNotifications(notifyps):
     notification_list = []
     note_ids = [getattr(n, "notes_id", 0) for n in notificationarr if n.notes_id]
     notesps.note_ids.set(note_ids)
-    notesps.flag.set("TO")
+    smilemap = getSmileyNotesMap(notesps)
     for noti in notificationarr:
         if noti:
-            notesps.view_id.set(getattr(noti, "view_id", 0))
-            frommap, tomap = getNotesUsers(notesps)
-            smilemap = getSmileyNotesMap(notesps)
             from_user_nm = getattr(noti, "from_user_name", "").replace("**", " ")
             to_user_nm = getattr(noti, "to_user_name", "").replace("**", " ")
             if int(notifyps.is_new.get()) == 1:
@@ -47,7 +44,6 @@ def getNotifications(notifyps):
                     "is_new": getattr(noti, "is_new", 0),
                     "is_archive": getattr(noti, "is_archive", 0),
                     "is_outbox": int(notifyps.is_outbox.get() or 0),
-                    "to_users_data": tomap.get(getattr(noti, "notes_id", 0), []),
                     "smiley_list": smilemap.get(getattr(noti, "notes_id", 0), []),
                     "to_user": to_user_nm,
                     "to_user_init_nm": formatUserDisplayName(getattr(noti, "to_user_name", "").split("**")[0], getattr(noti, "to_user_name", "").split("**")[1], "INITIAL"),
