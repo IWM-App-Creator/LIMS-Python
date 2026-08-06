@@ -15,7 +15,6 @@ def getUserCBMdFromDB():
 
 
 def insertUserCBMD():
-    # userps.user_id.get()
     cbusrmd = DB.getTableMeta("sys_cb_user_module").alias("cbusrmd")
     stmt = (
         insert(cbusrmd)
