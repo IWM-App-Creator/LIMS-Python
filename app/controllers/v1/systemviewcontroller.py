@@ -6,17 +6,28 @@ from app.properties.systemviewproperties import systemviewps
 def getSystemViewList(request: Request):
     try:
         params = RequestData.params(request)
-        systemviewps.table_name.set(params.get("table_name", ""))
-        systemviewps.schema_name.set(params.get("schema_name", None))
+        view_name = params.get("view_name", "")
+        systemviewps.view_name.set(view_name)
+        # systemviewps.page_no.set(params.get("page_no", 1))
+        # systemviewps.filter_qry.set(params.get("filter_qry", ""))
+        # systemviewps.systemviewps.set(params.get("systemviewps", ""))
+
+        systemviewps.table_name.set("lims_expense_master") # temporary default, if no mapping table found redirect to 404..
+        if view_name == "Labour": 
+            systemviewps.table_name.set("lims_labour_master")
+
+        systemviewps.schema_name.set("geno")
+
         if systemviewps.table_name.get() in (None, ""):
             return raiseInvalidError("Table Name Not Found", 401)
-        systemview_list = getSystemView(systemviewps)
+        item_data = getSystemView(systemviewps)
         return JSONResponse(
             status_code = 200,
             content = {
                 "status": True,
-                "message": "System View List",
-                "systemview_list": systemview_list
+                "message": "Data List",
+                "rcdcnt": 100,
+                "item_data": item_data
             }
         )
     except Exception as e:
