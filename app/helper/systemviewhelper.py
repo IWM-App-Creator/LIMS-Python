@@ -4,13 +4,15 @@ from app.dbfunctions.systemviewfunctions import getSystemViewData
 
 def getSystemView(systemviewps):
     view_dataarr = getSystemViewData(systemviewps)
+    colarray = systemviewps.colarray.get()
     systemview_list = []
     for view in view_dataarr:
+        data = dict(view._mapping)   # Convert Row to dict
         row = {}
-        for key, value in dict(view._mapping).items():
+        for col in colarray:
+            value = data.get(col)
             if isinstance(value, datetime):
-                row[key] = formatDate(value, "%Y-%m-%d %H:%M:%S")
-            else:
-                row[key] = value
+                value = formatDate(value, "%d-%m-%Y %H:%M:%S")
+            row[col] = value
         systemview_list.append(row)
     return systemview_list

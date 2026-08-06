@@ -6,27 +6,26 @@ from app.properties.systemviewproperties import systemviewps
 def getSystemViewList(request: Request):
     try:
         params = RequestData.params(request)
-        view_name = params.get("view_name", "")
+        view_name = params.get("view_name", "").lower()
         systemviewps.view_name.set(view_name)
-        # systemviewps.page_no.set(params.get("page_no", 1))
-        # systemviewps.filter_qry.set(params.get("filter_qry", ""))
-        # systemviewps.systemviewps.set(params.get("systemviewps", ""))
+        systemviewps.page_no.set(params.get("page_no", 1))
+        systemviewps.filter_qry.set(params.get("filter_qry", ""))
+        systemviewps.search_text.set(params.get("search_text", ""))
 
         systemviewps.table_name.set("lims_expense_master") # temporary default, if no mapping table found redirect to 404..
-        if view_name == "Labour": 
+        colarray = ["expense_id", "expense_name", "rate", "created_date"]
+        if view_name == "labour": 
             systemviewps.table_name.set("lims_labour_master")
+            colarray = ["labour_id", "labour_name", "hourly_rate", "created_date"]
 
-        systemviewps.schema_name.set("geno")
-
-        if systemviewps.table_name.get() in (None, ""):
-            return raiseInvalidError("Table Name Not Found", 401)
+        systemviewps.colarray.set(colarray)
         item_data = getSystemView(systemviewps)
         return JSONResponse(
             status_code = 200,
             content = {
                 "status": True,
                 "message": "Data List",
-                "rcdcnt": 100,
+                "rcdcnt": systemviewps.rcdcnt.get(),
                 "item_data": item_data
             }
         )
