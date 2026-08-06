@@ -9,9 +9,11 @@ from app.helper.userhelper import setUserProperties
 from app.helper.menuhelper import getUserMenuList
 from app.helper.workspacehelper import getUserWSList
 from app.helper.dashboardhelper import getUserDashboards
+from app.helper.chatbothelper import ChatbotHelper as cbhlp
 from app.properties.menuproperties import menups
 from app.properties.workspaceproperties import wsps
 from app.properties.dashboardproperties import dps
+from app.properties.chatbotproperties import cbps
 from app.properties.associationproperties import associationps
 from app.helper.generalfunctions import formatUserDisplayName
 
@@ -49,6 +51,10 @@ def getUserDetail(request: Request): # token: str
         dps.created_by.set(userps.user_id.get())
         getUserDashboards(dps)
         # --------------------------
+        # Get Dashboard List
+        # --------------------------
+        cbhlp.getUserCBModules(cbps)
+        # --------------------------
         # Merge All Data & Send Response
         # --------------------------
         return JSONResponse (
@@ -59,7 +65,8 @@ def getUserDetail(request: Request): # token: str
                 "user_dict": user_dict,
                 "menucentre_list": menups.menu_cntr_data.get(),
                 "workspace_list" : wsps.ws_data.get(),
-                "dashboard_list" : dps.dashboards_data.get()
+                "dashboard_list" : dps.dashboards_data.get(),
+                "CBModule_list": cbps.cb_md_list.get(),
             }
         )
     except Exception as e:

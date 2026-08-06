@@ -2,7 +2,7 @@ from app.utils.common import DB, select, insert, update, func, exists, and_, cas
 
 def getUserCBMdFromDB():
     cbusrmd = DB.getTableMeta("sys_cb_user_module").alias("cbusrmd")
-    cblibmd = DB.getTableMeta("cb_lib_modules").alias("cblibmd")
+    cblibmd = DB.getTableMeta("cb_lib_modules", "systemconfig").alias("cblibmd")
     stmt = (
         select(cbusrmd, cblibmd.c.module_name, cblibmd.c.module_icon)
         .outerjoin(cblibmd, cblibmd.c.cb_lib_module_id == cbusrmd.c.cb_lib_module_id)
