@@ -16,6 +16,7 @@ from app.endpoints.v1.activities import router as activities_router
 from app.endpoints.v1.notes import router as notes_router
 from app.endpoints.v1.widget import router as widget_router
 
+from app.endpoints.v1.systemview import router as systemview_router
 from app.endpoints.v1.users import router as user_router
 from app.endpoints.v1.notification import router as noti_router
 from app.endpoints.v1.log import router as log_router
@@ -42,6 +43,7 @@ def routerGroup():
     apirouter.include_router(notes_router, prefix = prefix, tags = ["Notes"])
     apirouter.include_router(widget_router, prefix = prefix, tags = ["Widget"])
 
+    apirouter.include_router(systemview_router, prefix = prefix, tags = ["System View"])
     apirouter.include_router(user_router, prefix = prefix, tags = ["Users"])
     apirouter.include_router(noti_router, prefix = prefix, tags = ["Notification"])
     apirouter.include_router(log_router, prefix = prefix, tags = ["Log"])
