@@ -64,8 +64,6 @@ def getNotificationList(notifyps):
         stmt = stmt.where(notificaitons.c.is_delete == 0)
     if view_id > 0:
         stmt = stmt.where(notificaitons.c.view_id == view_id)
-    if view_id < 0:
-        stmt = stmt.where(notificaitons.c.view_id == 0)
     offset = (pgno - 1) * page_size
     stmt = stmt.limit(page_size).offset(offset)
     return DB.executeDBSelect(stmt)

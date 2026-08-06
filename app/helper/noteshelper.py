@@ -11,12 +11,13 @@ def getNotesUsers(notesps):
         return {}, {}
     from_map = defaultdict(list)
     to_map = defaultdict(list)
-    from_rows = getFromUsersData(notesps)
-    for row in from_rows:
-        fullname = f"{row.first_name} {row.last_name}"
-        from_map[row.notes_id].append({
-            "user_id": row.id, "initial": row.first_name[0] + row.last_name[0], "fullname": fullname
-        })
+    if notesps.flag.get() == "":
+        from_rows = getFromUsersData(notesps)
+        for row in from_rows:
+            fullname = f"{row.first_name} {row.last_name}"
+            from_map[row.notes_id].append({
+                "user_id": row.id, "initial": row.first_name[0] + row.last_name[0], "fullname": fullname
+            })
     to_rows = getToUsersData(notesps)
     for row in to_rows:
         fullname = f"{row.first_name} {row.last_name}"
