@@ -28,14 +28,6 @@ def getUserDetail(request: Request): # token: str
         userps.first_name.set(user.first_name)
         userps.last_name.set(user.last_name)
         userps.email.set(user.email)
-        user_dict = {
-            "user_id": userps.user_id.get(),
-            "role_id": userps.role_id.get(),
-            "first_name": userps.first_name.get(),
-            "last_name": userps.last_name.get(),
-            "email": userps.email.get(),
-        }
-        user_dict.update(user.user_settings)
         userps.user_settings.set(user.user_settings)
         # --------------------------
         # Get User Menu
@@ -51,11 +43,6 @@ def getUserDetail(request: Request): # token: str
         # --------------------------
         dps.created_by.set(userps.user_id.get())
         getUserDashboards(dps)
-        user_dict["active_ws_name"] = wsps.workspace_name.get() or ""
-        user_dict["active_menu"] = int(menups.m_centre_id.get() or 0)
-        user_dict["active_menu_name"] = menups.centre_name.get() or ""
-        user_dict["active_dashboard"] = int(dps.dashboard_id.get() or 0)
-        user_dict["active_dashboard_name"] = dps.dashboard_name.get() or ""
         # --------------------------
         # Get Dashboard List
         # --------------------------
@@ -63,6 +50,15 @@ def getUserDetail(request: Request): # token: str
         # --------------------------
         # Merge All Data & Send Response
         # --------------------------
+        user_dict = {
+            "user_id": userps.user_id.get(),
+            "role_id": userps.role_id.get(),
+            "first_name": userps.first_name.get(),
+            "last_name": userps.last_name.get(),
+            "email": userps.email.get(),
+        }
+        user_dict.update(user.user_settings)
+        user_dict.update({"active_ws_name": wsps.workspace_name.get() or "", "active_menu": int(menups.m_centre_id.get() or 0),"active_menu_name": menups.centre_name.get() or "", "active_dashboard": int(dps.dashboard_id.get() or 0), "active_dashboard_name": dps.dashboard_name.get() or ""})
         return JSONResponse (
             status_code = 200,
             content = {
