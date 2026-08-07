@@ -36,6 +36,7 @@ def getUserDetail(request: Request): # token: str
             "email": userps.email.get(),
         }
         user_dict.update(user.user_settings)
+        userps.user_settings.set(user.user_settings)
         # --------------------------
         # Get User Menu
         # --------------------------
