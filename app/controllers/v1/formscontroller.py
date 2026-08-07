@@ -5,7 +5,7 @@ from app.dbfunctions.logfunctions import saveErrorLogtoDB
 def getDynamicFormField(request: Request):
     try:
         # params = RequestData.params(request)
-        # params --> view_name: "labour", 
+        # params --> view_name: "labour", "expense", "scopeofwork"
         # params --> item_id: 0, 
         # params --> form_id: 0
 
