@@ -10,8 +10,8 @@ def getDynamicFormField(request: Request):
         # params --> form_id: 0
         form_cols = []
         item = {
-            "col_id": "3312",
-            "table_id": "214",
+            "col_id": 3312,
+            "table_id": 214,
             "col_name":	"label",
             "col_alias": "Label",
             "col_type":	"TEXT",
