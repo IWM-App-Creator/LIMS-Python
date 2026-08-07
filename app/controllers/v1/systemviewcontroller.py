@@ -17,6 +17,14 @@ def getSystemViewList(request: Request):
         if view_name == "labour": 
             systemviewps.table_name.set("lims_labour_master")
             colarray = ["labour_id", "labour_name", "hourly_rate", "created_date"]
+            # // $extraaction = array("process.calculations|Calculations|btn-primary|dollar-sign", "processes.duplicate|Duplicate|btn-info|copy");
+            # allow add... 
+            # $showurl = ''; //'processes.show';
+            # $editurl = 'processes.edit';
+            # $enabledelete = '1';
+            # $destroyurl = 'processes.destroy';
+            # has_child.. / child_view_name
+
 
         systemviewps.colarray.set(colarray)
         item_data = getSystemView(systemviewps)

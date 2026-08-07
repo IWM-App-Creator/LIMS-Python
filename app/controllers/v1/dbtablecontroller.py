@@ -75,7 +75,6 @@ def getDBTableColumns(request: Request):
 
 # http://testws1.localhost:8000/api/v1/dbtable/getlookupdata
 def getLookupData(request: Request):
-    print("getLookupData --> ")
     try:
         params = RequestData.params(request)
         dbps.table_name.set(params.get("lookup_tbl", ""))
@@ -83,6 +82,7 @@ def getLookupData(request: Request):
         dbps.lookup_colnm.set(params.get("lookup_col", ""))
         dbps.search_txt.set(params.get("search_txt", ""))
         dbps.data_limit.set(params.get("data_limit", 100))
+        # call_from --> 
         lookup_data = dbhlp.getDBTableLookupData(dbps)
         return JSONResponse (
             status_code = 200,
@@ -94,20 +94,20 @@ def getLookupData(request: Request):
         )
     except Exception as e:
         saveErrorLogtoDB ("DBTable", 0, "getLookupData", str(e))
-        # raiseAPIError(str(e), 500)
-        return JSONResponse (
-            status_code = 200,
-            content = {
-                "status": False,
-                "message": "Error",
-                "user_id": userps.user_id.get(),
-                "ws_role_id": userps.ws_role_id.get(),
-                "workspace_id": userps.workspace_id.get(),
-                "schema_name": userps.schema_name.get(),
-                "req_host": userps.req_host.get(),
-                "req_subdomain": userps.req_subdomain.get(),
-            }
-        )
+        raiseAPIError(str(e), 500)
+        # return JSONResponse (
+        #     status_code = 200,
+        #     content = {
+        #         "status": False,
+        #         "message": "Error",
+        #         "user_id": userps.user_id.get(),
+        #         "ws_role_id": userps.ws_role_id.get(),
+        #         "workspace_id": userps.workspace_id.get(),
+        #         "schema_name": userps.schema_name.get(),
+        #         "req_host": userps.req_host.get(),
+        #         "req_subdomain": userps.req_subdomain.get(),
+        #     }
+        # )
 
 # http://testws1.localhost:8000/api/v1/dbtable/updatetbl
 def updateDBTableAlias (request: Request):
