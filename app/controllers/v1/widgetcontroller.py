@@ -55,7 +55,7 @@ def getWidgetCategory(request: Request):
     print("getWidgetCategory --> ")
     try:
         params = RequestData.params(request)
-        Category_data = getWidgetCategoryDB(widgetps)
+        Category_data = getWidgetCategoryDB()
         widget_categories = []
         for cat in Category_data:
             row = {
