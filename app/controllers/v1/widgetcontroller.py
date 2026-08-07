@@ -4,7 +4,7 @@ from app.helper.generalfunctions import getSelectedUsers
 from app.dbfunctions.logfunctions import saveErrorLogtoDB
 from app.dbfunctions.notificationfunctions import insertUpdateNotification
 from app.dbfunctions.associationfunctions import getAssociationUsers
-from app.dbfunctions.widgetfunctions import getWidgetData, getUserWidgetData, insertUpdateWidget, insertUpdateUserWidget
+from app.dbfunctions.widgetfunctions import getWidgetData, getUserWidgetData, getWidgetCategoryDB, insertUpdateWidget, insertUpdateUserWidget
 from app.helper.widgethelper import getWidgets, getUserWidgets
 from app.properties.associationproperties import associationps
 from app.properties.notificationproperties import notifyps
@@ -49,6 +49,30 @@ def getUserWidgetList(request: Request):
         )
     except Exception as e:
         saveErrorLogtoDB("Widget", userps.user_id.get(), "getUserWidgetList", str(e))
+        raiseAPIError(str(e), 500)
+
+def getWidgetCategory(request: Request):
+    print("getWidgetCategory --> ")
+    try:
+        params = RequestData.params(request)
+        Category_data = getWidgetCategoryDB(widgetps)
+        widget_categories = []
+        for cat in Category_data:
+            row = {
+                "sys_widget_cat_id": getattr(cat, "sys_widget_cat_id", 0),
+                "category_name": getattr(cat, "category_name", ""),
+            }
+            widget_categories.append(row)
+        return JSONResponse(
+            status_code = 200,
+            content = {
+                "status": True,
+                "message": "Widget List",
+                "category_list": widget_categories
+            }
+        )
+    except Exception as e:
+        saveErrorLogtoDB("Widget", widgetps.sys_widget_cat_id.get(), "getWidgetCategory", str(e))
         raiseAPIError(str(e), 500)
 
 # api/v1/widget/share?view_id=182&sys_widgets_users_id=1&widget_type=ShareFilter&share_users=1,2,3&save_name=Test Filter

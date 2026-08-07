@@ -141,6 +141,15 @@ def getWidgetData(widgetps):
     else:
         return DB.executeDBSelect(stmt)
 
+def getWidgetCategoryDB():
+    widget_master = DB.getTableMeta("sys_widgets_category").alias("wm")
+    stmt = select(widget_master)
+    stmt = stmt.where(
+        widget_master.c.is_delete == 0
+    )
+    stmt = stmt.order_by(widget_master.c.sys_widget_cat_id.asc())
+    return DB.executeDBSelect(stmt)
+
 def getUserWidgetData(widgetps):
     sys_widgets_users_id = int(widgetps.sys_widgets_users_id.get() or 0)
     sys_widget_id = int(widgetps.sys_widget_id.get() or 0)
