@@ -15,7 +15,6 @@ def getWidgetList(request: Request):
     try:
         params = RequestData.params(request)
         widgetps.dashboard_id.set(params.get("dashboard_id", 0))
-        widgetps.view_id.set(params.get("view_id", 0))
         widgetps.sys_widget_cat_id.set(params.get("sys_widget_cat_id", None))
         widgetps.widget_type.set(params.get("widget_type", None))
         widgetps.search_text.set(params.get("search_text", None))
