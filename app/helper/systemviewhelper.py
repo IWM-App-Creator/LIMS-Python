@@ -12,7 +12,7 @@ def getSystemView(systemviewps):
         for col in colarray:
             value = data.get(col)
             if isinstance(value, datetime):
-                value = formatDate(value, "%d-%m-%Y %H:%M:%S")
+                value = formatDate(value)
             row[col] = value
         systemview_list.append(row)
     return systemview_list
