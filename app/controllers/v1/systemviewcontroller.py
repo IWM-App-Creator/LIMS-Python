@@ -13,18 +13,14 @@ def getSystemViewList(request: Request):
         systemviewps.search_text.set(params.get("search_text", ""))
 
         systemviewps.table_name.set("lims_expense_master") # temporary default, if no mapping table found redirect to 404..
-        colarray = ["expense_id", "expense_name", "rate", "created_date"]
+        colarray = ["expense_id-Expense ID", "expense_name-Expense Name", "rate-Rate", "created_date-Created Date"]
         if view_name == "labour": 
             systemviewps.table_name.set("lims_labour_master")
-            colarray = ["labour_id", "labour_name", "hourly_rate", "created_date"]
-            # // $extraaction = array("process.calculations|Calculations|btn-primary|dollar-sign", "processes.duplicate|Duplicate|btn-info|copy");
-            # allow add... 
-            # $showurl = ''; //'processes.show';
-            # $editurl = 'processes.edit';
-            # $enabledelete = '1';
-            # $destroyurl = 'processes.destroy';
-            # has_child.. / child_view_name
-
+            colarray = ["labour_id-Labour ID", "labour_name-Labour Name", "hourly_rate-Hourly Rate", "created_date-Created Date"]
+            
+        if view_name == "forms": 
+            systemviewps.table_name.set("sys_new_dynamic_form")
+            colarray = ["form_id-Form ID", "form_name-Form Name", "created_by-Created By", "created_date-Created Date"]
 
         systemviewps.colarray.set(colarray)
         item_data = getSystemView(systemviewps)
@@ -33,6 +29,13 @@ def getSystemViewList(request: Request):
             content = {
                 "status": True,
                 "message": "Data List",
+                # // $extraaction = array("process.calculations|Calculations|btn-primary|dollar-sign", "processes.duplicate|Duplicate|btn-info|copy");
+                # allow add... 
+                # $showurl = ''; //'processes.show';
+                # $editurl = 'processes.edit';
+                # $enabledelete = '1';
+                # $destroyurl = 'processes.destroy';
+                # has_child.. / child_view_name
                 "rcdcnt": systemviewps.rcdcnt.get(),
                 "item_data": item_data
             }

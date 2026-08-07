@@ -9,10 +9,13 @@ def getSystemView(systemviewps):
     for view in view_dataarr:
         data = dict(view._mapping)   # Convert Row to dict
         row = {}
-        for col in colarray:
-            value = data.get(col)
+        for colalias in colarray:
+            parts = colalias.split("-")
+            colnm = parts[0]
+            colalias = parts[1]
+            value = data.get(colnm) # Get DB Data
             if isinstance(value, datetime):
                 value = formatDate(value)
-            row[col] = value
+            row[colalias] = value  # Set DB Data
         systemview_list.append(row)
     return systemview_list
