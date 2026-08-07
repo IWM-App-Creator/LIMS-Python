@@ -50,7 +50,7 @@ def getErrorLog(request: Request):
     # result = verify_token(token)
     # return result
 
-# http://testws1.localhost:8000/api/v1//log/saveerror?section=View&item_id=178&notes=notes&error_msg=test error message
+# http://testws1.localhost:8000/api/v1/log/saveerror?section=View&item_id=178&notes=notes&error_msg=test error message
 async def saveErrorLog(section: str, item_id: str, notes: str, error_msg: str):
     try:
         error_id = saveErrorLogtoDB(section, item_id, notes, error_msg)
