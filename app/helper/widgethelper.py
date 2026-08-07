@@ -28,6 +28,7 @@ def getWidgets(widgetps):
                 view_url = "https://" + userps.req_host.get() + "/view/" + getattr(widget, "url", "")
             row = {
                 "sys_widget_id": getattr(widget, "sys_widget_id", 0),
+                "sys_widget_cat_id": getattr(widget, "sys_widget_cat_id", 0),
                 "widget_title": getattr(widget, "widget_title", ""),
                 "widget_json": getattr(widget, "widget_json", ""),
                 "widget_type": getattr(widget, "widget_type", ""),

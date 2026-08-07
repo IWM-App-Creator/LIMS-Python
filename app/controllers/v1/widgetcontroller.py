@@ -67,7 +67,7 @@ def getWidgetCategory(request: Request):
             status_code = 200,
             content = {
                 "status": True,
-                "message": "Widget List",
+                "message": "Widget Category List",
                 "category_list": widget_categories
             }
         )
