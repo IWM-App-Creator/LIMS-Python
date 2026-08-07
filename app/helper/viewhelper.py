@@ -21,6 +21,7 @@ class ViewHelper:
         viewps.view_url.set(params.get("view_url", ""))
         viewps.table_id.set(params.get("table_id", 0))
         viewps.table_name.set(params.get("table_name", ""))
+        viewps.is_child.set(params.get("is_child", 0))
         viewps.col_id.set(params.get("col_id", 0))
         viewps.col_name.set(params.get("col_name", ""))
         viewps.call_from.set(params.get("call_from", "DynamicView"))
@@ -34,6 +35,7 @@ class ViewHelper:
         viewps.col_val.set(params.get("col_val", ""))
         viewps.item_id.set(params.get("item_id", 0))
         viewps.primary_colnm.set(params.get("primary_colnm", ""))
+        viewps.api_param.set(params.get("api_param", ""))
         viewps.output_type.set(params.get("output_type", ""))
 
     @staticmethod
@@ -63,7 +65,6 @@ class ViewHelper:
         viewps.show_deleted.set(viewopt.get("show_deleted", 0))
         viewps.enable_newline.set(viewopt.get("enable_newline", 0))
         viewps.enable_join_save.set(viewopt.get("enable_join_save", 0))
-        viewps.is_child_view.set(viewopt.get("is_child_view", 0))
         viewps.enable_child_srch.set(viewopt.get("enable_child_srch", 0))
         viewps.enable_chart.set(viewopt.get("enable_chart", 0))
 
@@ -380,7 +381,6 @@ class ViewHelper:
             output_array["enable_newline"] = viewps.enable_newline.get()
             output_array["show_deleted"] = viewps.show_deleted.get()
             output_array["enable_join_save"] = viewps.enable_join_save.get()
-            output_array["is_child_view"] = viewps.is_child_view.get()
             output_array["enable_child_srch"] = viewps.enable_child_srch.get()
             output_array["view_cols"] = viewps.view_cols.get()
             output_array["table_cols"] = viewps.tbl_cols.get()
@@ -677,7 +677,6 @@ class CreateViewHelper:
         view_options["enable_newline"] = viewps.enable_newline.get()
         view_options["enable_join_save"] = viewps.enable_join_save.get()
         view_options["show_deleted"] = viewps.show_deleted.get()
-        view_options["is_child_view"] = viewps.is_child_view.get()
         view_options["enable_child_srch"] = viewps.enable_child_srch.get()
         view_options["enable_chart"] = viewps.enable_chart.get()
         view_options["view_qry"] = viewps.view_qry.get()

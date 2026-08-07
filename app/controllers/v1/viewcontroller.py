@@ -61,6 +61,9 @@ def getViewData(request: Request):
         stslmtqry = viewhlp.setAssociationStatusLimit(viewps)
         if stslmtqry not in (None, ""):
             view_qry = view_qry + " AND (" + stslmtqry + ")"
+        # Set Child View Condition
+        if viewps.is_child.get() not in (None, "", 0, "0") and viewps.api_param.get() not in (None, "", 0, "0"):
+            view_qry = view_qry + " AND (" + viewps.api_param.get() + ")"
         # Set View Data Sorting
         viewhlp.setViewSorting(viewps)
         view_qry = f"{view_qry} Order By {viewps.sorting.get()}"

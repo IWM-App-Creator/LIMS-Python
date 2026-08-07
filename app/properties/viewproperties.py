@@ -68,7 +68,7 @@ class viewproperties:
         self.show_deleted = ContextVar("show_deleted", default = "0")
         self.enable_newline = ContextVar("enable_newline", default = "1")
         self.enable_join_save = ContextVar("enable_join_save", default = "0")
-        self.is_child_view = ContextVar("is_child_view", default = "0")
+        self.is_child = ContextVar("is_child", default = 0)
         self.enable_child_srch = ContextVar("enable_child_srch", default = "0")
         self.enable_chart = ContextVar("enable_chart", default = "0")
 
@@ -94,6 +94,7 @@ class viewproperties:
         self.blank_view_cols = ContextVar("blank_view_cols", default = 0)
         self.pin_to_menu = ContextVar("pin_to_menu", default = 0)
 
+        self.api_param = ContextVar("api_param", default = None)
         self.db_upd_vals = ContextVar("db_upd_vals", default = {})
 
 viewps = viewproperties()
