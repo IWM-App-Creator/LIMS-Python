@@ -9,6 +9,9 @@ def getUserMenuList(menups):
         menu_json = getattr(menu, "menu_json", None)
         if menu_json in (None, "", []):
             menu_json = []
+        if getattr(menu, "is_active", 0) in ("1", 1):
+            menups.m_centre_id.set(menu.m_centre_id)
+            menups.centre_name.set(menu.centre_name)
         row = {
             "m_centre_id": menu.m_centre_id,
             "centre_name": menu.centre_name,

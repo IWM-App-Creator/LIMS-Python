@@ -52,6 +52,8 @@ def getUserDetail(request: Request): # token: str
         dps.created_by.set(userps.user_id.get())
         getUserDashboards(dps)
         user_dict["active_ws_name"] = wsps.workspace_name.get() or ""
+        user_dict["active_menu"] = int(menups.m_centre_id.get() or 0)
+        user_dict["active_menu_name"] = menups.centre_name.get() or ""
         user_dict["active_dashboard"] = int(dps.dashboard_id.get() or 0)
         user_dict["active_dashboard_name"] = dps.dashboard_name.get() or ""
         # --------------------------
