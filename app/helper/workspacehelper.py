@@ -57,8 +57,14 @@ def getUserWSList(wsps):
     wsps.fetch_single.set(0)
     wsfnct.getUserWSData(wsps)
     ws_datas = wsps.ws_data.get()
+    user_settings = userps.user_settings.get()
+    if not isinstance(user_settings, dict):
+        user_settings = {}
+    ws_id = user_settings.get("active_ws", 0)
     ws_data = []
     for ws in ws_datas:
+        if getattr(ws, "workspace_id", 0) == ws_id:
+            wsps.workspace_name.set(getattr(ws, "workspace_name", ""))
         row = {
             "workspace_id": getattr(ws, "workspace_id", 0),
             "workspace_name": getattr(ws, "workspace_name", ""),
