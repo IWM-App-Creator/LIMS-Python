@@ -19,3 +19,27 @@ def getSystemView(systemviewps):
             row[colalias] = value  # Set DB Data
         systemview_list.append(row)
     return systemview_list
+
+
+
+# {
+#     "status": true,
+#     "message": "Form loaded successfully",
+#     "form_data": {
+#         "form_id": 1,
+        # "view_id": 1,
+#         "form_name": "Labour Form",
+#         "short_desc": "Add Labour",
+#         "success_message": "Labour added successfully",
+#         "preview_image": ""
+        
+#     }
+# }
+
+
+
+
+# length	"11"
+# data_type	"bigint"
+# is_primary	1
+# is_mandatory	0
