@@ -194,7 +194,7 @@ def saveUserWidget(request: Request):
             }
             updated = updateListJsonVal(widget_list, "id", widgetps.id.get(), updates)
             message = widgetps.widget_label.get() + " updated successfully"
-        elif widgetps.flag.get() == "remove_layout" and widgetps.id.get() not in (None, "", 0):
+        elif widgetps.flag.get() == "remove_widget" and widgetps.id.get() not in (None, "", 0):
             updated = removeListJsonVal(widget_list, "id", widgetps.id.get())
             message = widgetps.widget_label.get() + " removed successfully"
         dps.db_upd_vals.set({"widget_list": widget_list})
