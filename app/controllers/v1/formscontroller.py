@@ -67,3 +67,34 @@ def getDynamicFormField(request: Request):
     except Exception as e:
         saveErrorLogtoDB("System View", 0, "getSystemViewList", str(e))
         raiseAPIError(str(e), 500)
+
+def saveFormData(request: Request):
+    try:
+        params = RequestData.params(request)
+        print("saveFormData --> ", params)
+        return JSONResponse(
+            status_code = 200,
+            content = {
+                "status": True,
+                "message": "Form save",
+            }
+        )
+    except Exception as e:
+        saveErrorLogtoDB("System View", 0, "getSystemViewList", str(e))
+        raiseAPIError(str(e), 500)
+
+
+def saveFormFields(request: Request):
+    try:
+        params = RequestData.params(request)
+        print("saveFormData --> ", params)
+        return JSONResponse(
+            status_code = 200,
+            content = {
+                "status": True,
+                "message": "Form save",
+            }
+        )
+    except Exception as e:
+        saveErrorLogtoDB("System View", 0, "getSystemViewList", str(e))
+        raiseAPIError(str(e), 500)
