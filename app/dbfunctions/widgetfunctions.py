@@ -13,7 +13,7 @@ def getWidgetsDB(widgetps):
     # EXISTS subquery
     exists_conditions = [
         func.json_search(
-            user_dashboard.c.widget_json,
+            user_dashboard.c.widget_list,
             "one",
             func.cast(tbl_widget.c.sys_widget_id, String),
             None,
@@ -82,44 +82,6 @@ def getWidgetsDB(widgetps):
             tbl_widget.c.sys_widget_id.asc()
         )
     )
-    return DB.executeDBSelect(stmt)
-
-def getUserWidgetsDB(widgetps):
-    preview = int(widgetps.preview.get() or 0)
-    dashboard_id = int(widgetps.dashboard_id.get() or 0)
-    widget_id = int(widgetps.sys_widget_id.get() or 0)
-    tbl_widget = DB.getTableMeta("sys_widget_master").alias("wm")
-    tbl_user_widget = DB.getTableMeta("sys_user_widgets").alias("uw")
-    stmt = (
-        select(
-            tbl_widget,
-            tbl_user_widget.c.sys_widgets_users_id,
-            tbl_user_widget.c.c_width,
-            tbl_user_widget.c.c_height,
-            tbl_user_widget.c.htm_flow,
-            tbl_user_widget.c.bg_color,
-            tbl_user_widget.c.widget_label,
-            tbl_user_widget.c.widget_setting
-        )
-        .outerjoin(
-            tbl_user_widget,
-            tbl_user_widget.c.sys_widget_id == tbl_widget.c.sys_widget_id
-        )
-        .where(
-            tbl_widget.c.is_delete == 0,
-            tbl_user_widget.c.is_delete == 0
-        )
-    )
-    if preview == 0:
-        stmt = stmt.where(
-            tbl_user_widget.c.user_id == userps.user_id.get(),
-            tbl_user_widget.c.dashboard_id == dashboard_id
-        )
-    if widget_id not in (None, "", 0):
-        stmt = stmt.where(
-            tbl_user_widget.c.sys_widgets_users_id == widget_id
-        )
-    stmt = stmt.order_by(tbl_user_widget.c.rank.asc())
     return DB.executeDBSelect(stmt)
 
 def getWidgetData(widgetps):
