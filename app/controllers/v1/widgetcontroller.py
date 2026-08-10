@@ -166,13 +166,13 @@ def saveUserWidget(request: Request):
         # Get Dashboard Data
         dps.dashboard_id.set(widgetps.dashboard_id.get())
         dash_data = getDashboardData(dps)
-        widget_json = getattr(dash_data, "widget_json", [])
+        widget_list = getattr(dash_data, "widget_list", [])
         message = ""
         if widgetps.flag.get() == "add_widget":
             widgetps.id.set(generateRandomString(10, 1))
-            if widget_json in (None, "", []):
-                widget_json = []
-            widget_json.append({
+            if widget_list in (None, "", []):
+                widget_list = []
+            widget_list.append({
                 "id": widgetps.id.get(),
                 "sys_widget_id": widgetps.sys_widget_id.get(),
                 "x": widgetps.x.get(),
@@ -192,12 +192,12 @@ def saveUserWidget(request: Request):
                 "bg_color": widgetps.bg_color.get(),
                 "htm_flow": widgetps.htm_flow.get()
             }
-            updated = updateListJsonVal(widget_json, "id", widgetps.id.get(), updates)
+            updated = updateListJsonVal(widget_list, "id", widgetps.id.get(), updates)
             message = widgetps.widget_label.get() + " updated successfully"
         elif widgetps.flag.get() == "remove_layout" and widgetps.id.get() not in (None, "", 0):
-            updated = removeListJsonVal(widget_json, "id", widgetps.id.get())
+            updated = removeListJsonVal(widget_list, "id", widgetps.id.get())
             message = widgetps.widget_label.get() + " removed successfully"
-        dps.db_upd_vals.set({"widget_list": widget_json})
+        dps.db_upd_vals.set({"widget_list": widget_list})
         insertUpdateDashboard(dps)
         return JSONResponse(
             status_code = 200,
