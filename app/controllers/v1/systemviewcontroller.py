@@ -23,6 +23,11 @@ def getSystemViewList(request: Request):
             systemviewps.table_name.set("sys_new_dynamic_form")
             colarray = ["form_id-Form ID", "form_name-Form Name", "created_by-Created By", "created_date-Created Date"]
 
+        if view_name == "scopeofwork": 
+            systemviewps.table_name.set("sys_new_dynamic_form")
+            colarray = ["form_id-Form ID", "form_name-Form Name", "created_by-Created By", "created_date-Created Date"]
+            # $colarray = array("scope_id-Scope ID", "op_scope_name-Operational Scope Name-Text", "scope_name-Customer Scope Name-Text", "sow_tat-Turn Around Time", "min_cost~AMT-Min. Cost", "scope_cost~AMT-Cost", "list_total~AMT-List Cost", "is_lock-Locked");
+        
         systemviewps.colarray.set(colarray)
         item_data = getSystemView(systemviewps)
         return JSONResponse(
@@ -30,15 +35,31 @@ def getSystemViewList(request: Request):
             content = {
                 "status": True,
                 "message": "Data List",
-                # // $extraaction = array("process.calculations|Calculations|btn-primary|dollar-sign", "processes.duplicate|Duplicate|btn-info|copy");
-                # allow add... 
-                # $showurl = ''; //'processes.show';
-                # $editurl = 'processes.edit';
-                # $enabledelete = '1';
-                # $destroyurl = 'processes.destroy';
-                # has_child.. / child_view_name
+
+                # page_title = "Scope of Work",
+                # allow_add = "1",
+                # allow_view = "1",
+                # allow_edit = "1",
+                # allow_delete = "1",
+                
+                # table_name = "scopeofwork"
+                # primary_key_name = "scope_id"
+                
+                # Title, btn_icon, btn_class, btn_url (Json)
+                # $extraaction = array("scopeofwork.processtest|Link Process Test|btn-primary|shuffle", "scopeofwork.duplicate|Duplicate|btn-info|copy");
+                # $enabledelete = '1',  Pending
+                # left_tblname = "", Pending
+                # has_child = "", Pending
+                # $scopetests = DB::table('lims_scope_tests')
+                                #                     ->select('lims_scope_tests.*', 'lims_test_master.name', 'lims_test_master.testtype', 'lims_test_master.target')
+                                #                     ->leftJoin('lims_test_master', 'lims_test_master.test_id', '=', 'lims_scope_tests.test_id')
+                                #                     ->where('lims_scope_tests.is_delete', 0)
+                                #                     ->orderBy('rank', 'ASC')
+                                #                     ->get();
+                # $childlayout = "scopeofwork.scopetestlist";
+
                 "rcdcnt": systemviewps.rcdcnt.get(),
-                "item_data": item_data
+                "item_data": item_data,
             }
         )
     except Exception as e:
