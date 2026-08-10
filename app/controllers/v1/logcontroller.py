@@ -45,15 +45,9 @@ def getErrorLog(request: Request):
     except Exception as e:
         raiseAPIError(str(e), 500)
 
-# def saveLog(token: str):
-#     print(f"Token received: {token}")
-    # result = verify_token(token)
-    # return result
-
-# http://testws1.localhost:8000/api/v1/log/saveerror?section=View&item_id=178&notes=notes&error_msg=test error message
-async def saveErrorLog(section: str, item_id: str, notes: str, error_msg: str):
+async def saveErrorLog(section: str, item_id: str, notes: str, page_url: str, error_msg: str):
     try:
-        error_id = saveErrorLogtoDB(section, item_id, notes, error_msg)
+        error_id = saveErrorLogtoDB(section, item_id, notes, error_msg, page_url)
         return JSONResponse (
             status_code = 200,
             content = {

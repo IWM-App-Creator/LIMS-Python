@@ -46,28 +46,37 @@ def getDBErrorLog(logps):
     logdata = DB.executeDBSelect(stmt)
     logps.logdata.set(logdata)
 
-def saveErrorLogtoDB(section: str, item_id: str, notes: str, error_msg: str):
-    tb = traceback.extract_tb(sys.exc_info()[2])[-1]
-    notes = f"{notes} :- {tb.filename} : ({tb.name} - {tb.lineno}"
-    
+def saveErrorLogtoDB(section: str, item_id: str, notes: str, error_msg: str, page_url: str = ""):
     error_id = 0
-    if globalps.DB_DEBUG_LEVEL == "Print" :
-        print("Exception --> ", f" {tb.filename} : ({tb.name} - {tb.lineno}")
+    try:
+        if item_id == "" :
+            item_id = "0"
+        tb = sys.exc_info()[2]
+        if tb is not None:
+            last_tb = traceback.extract_tb(tb)[-1]
+            notes = f"{notes} :- {last_tb.filename} : ({last_tb.name} - {last_tb.lineno}"
 
-    if globalps.DB_DEBUG_LEVEL == "DB" :
-        sys_error_log = DB.getTableMeta("sys_error_log")
-        stmt = (
-            insert(sys_error_log)
-            .values(
-                section = section,
-                item_id = item_id,
-                notes = notes,
-                error_msg = error_msg,
-                created_by = userps.user_id.get(),
-                created_date = nowWithTimeZone()
+        if globalps.DB_DEBUG_LEVEL == "Print" :
+            print("Exception DB_DEBUG_LEVEL Print --> ", notes)
+
+        if globalps.DB_DEBUG_LEVEL == "DB" or globalps.DB_DEBUG_LEVEL == "Print" :
+            sys_error_log = DB.getTableMeta("sys_error_log")
+            stmt = (
+                insert(sys_error_log)
+                .values(
+                    section = section,
+                    item_id = item_id,
+                    notes = notes,
+                    page_url = page_url,
+                    error_msg = error_msg,
+                    created_by = userps.user_id.get(),
+                    created_date = nowWithTimeZone()
+                )
             )
-        )
-        error_id = DB.executeDBInsert(stmt)
+            error_id = DB.executeDBInsert(stmt)
+        
+    except Exception as e:
+        print(f"Error while saving error log: {str(e)}")
     return error_id
 
 def resolveError(error_id: str):
