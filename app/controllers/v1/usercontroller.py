@@ -58,7 +58,7 @@ def getUserDetail(request: Request): # token: str
             "email": userps.email.get(),
         }
         user_dict.update(user.user_settings)
-        user_dict.update({"active_ws_name": wsps.workspace_name.get() or "", "active_menu": int(menups.m_centre_id.get() or 0),"active_menu_name": menups.centre_name.get() or "", "active_dashboard": int(dps.dashboard_id.get() or 0), "active_dashboard_name": dps.dashboard_name.get() or ""})
+        user_dict.update({"active_ws_name": wsps.workspace_name.get() or "", "active_menu": int(menups.m_centre_id.get() or 0),"active_menu_name": menups.centre_name.get() or "", "active_dashboard": int(dps.dashboard_id.get() or 0), "active_dashboard_name": dps.dashboard_name.get() or "", "ws_role_id": int(wsps.ws_role_id.get() or 0)})
         return JSONResponse (
             status_code = 200,
             content = {

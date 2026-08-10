@@ -65,6 +65,7 @@ def getUserWSList(wsps):
     for ws in ws_datas:
         if getattr(ws, "workspace_id", 0) == ws_id:
             wsps.workspace_name.set(getattr(ws, "workspace_name", ""))
+            wsps.ws_role_id.set(getattr(ws, "ws_role_id", ""))
         row = {
             "workspace_id": getattr(ws, "workspace_id", 0),
             "workspace_name": getattr(ws, "workspace_name", ""),
