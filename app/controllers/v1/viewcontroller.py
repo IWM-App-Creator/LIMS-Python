@@ -63,7 +63,7 @@ def getViewData(request: Request):
             view_qry = view_qry + " AND (" + stslmtqry + ")"
         # Set Child View Condition
         if viewps.is_child.get() not in (None, "", 0, "0") and viewps.api_param.get() not in (None, "", 0, "0"):
-            view_qry = view_qry + " AND (" + viewps.api_param.get() + ")"
+            view_qry = view_qry + " AND (" + viewps.api_param.get() + " = " + int(viewps.api_param_val.get() or 0) + ")"
         # Set View Data Sorting
         viewhlp.setViewSorting(viewps)
         view_qry = f"{view_qry} Order By {viewps.sorting.get()}"

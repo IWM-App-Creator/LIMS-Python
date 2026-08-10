@@ -95,6 +95,7 @@ class viewproperties:
         self.pin_to_menu = ContextVar("pin_to_menu", default = 0)
 
         self.api_param = ContextVar("api_param", default = None)
+        self.api_param_val = ContextVar("api_param_val", default = None)
         self.db_upd_vals = ContextVar("db_upd_vals", default = {})
 
 viewps = viewproperties()

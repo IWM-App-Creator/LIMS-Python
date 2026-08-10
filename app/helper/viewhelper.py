@@ -36,6 +36,7 @@ class ViewHelper:
         viewps.item_id.set(params.get("item_id", 0))
         viewps.primary_colnm.set(params.get("primary_colnm", ""))
         viewps.api_param.set(params.get("api_param", ""))
+        viewps.api_param_val.set(params.get("api_param_val", ""))
         viewps.output_type.set(params.get("output_type", ""))
 
     @staticmethod
