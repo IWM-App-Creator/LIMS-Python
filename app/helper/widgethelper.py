@@ -25,7 +25,7 @@ def getWidgets(widgetps):
                     is_valid = 1
         if is_valid == 1:
             if getattr(widget, "url", "") not in (None, ""):
-                view_url = "https://" + userps.req_host.get() + "/view/" + getattr(widget, "url", "")
+                view_url = getattr(widget, "url", "")
             row = {
                 "sys_widget_id": getattr(widget, "sys_widget_id", 0),
                 "sys_widget_cat_id": getattr(widget, "sys_widget_cat_id", 0),

@@ -17,6 +17,9 @@ def getDynamicFormField(request: Request):
         # '115','14','3315','Num Col','NUMBER','1','0','0','','1','','7','0','0','0','2026-08-07 06:16:14'
         # '119','14','3319','Assign People','FULLNAME','0','0','492','','1','','11','0','0','0','2026-08-07 06:16:17'
 
+        # labour_id, labour_name, hourly_rate, is_delete, created_by, is_metadata, created_date
+        [{"col_id": 2496, "table_id": 74, "table_name": "lims_labour_master", "col_name": "labour_id", "col_alias": "labour_id", "col_type": "NUMBER", "data_type": "bigint", }]
+
         form_cols = []
         item = {
             "col_id": 3293, "table_id": 214, "col_name": "python___react_v3_id", "col_alias": "Python - React V3 ID",
@@ -43,7 +46,7 @@ def getDynamicFormField(request: Request):
         item = {
             "col_id": 3022, "table_id": 214, "col_name": "yn_1", "col_alias": "Yes No",
             "col_type":	"YN_INT", "data_type": "int", "col_key": 0,  "length": "1", "is_mandatory": 1,
-            "col_data_items": [{"opt_val": "1", "label": "YES", "clrcode": "#10b759"}, {"opt_val": "0", "label": "No", "clrcode": "#c66565"}]
+            "col_data_items": [{"opt_val": "1", "label": "Yes", "clrcode": "#10b759"}, {"opt_val": "0", "label": "No", "clrcode": "#c66565"}]
         }
         form_cols.append(item)
         item = {
