@@ -1,5 +1,5 @@
 from fastapi import Request
-from sqlalchemy import select, func, text, insert, update, delete, or_, and_, not_, case, literal, exists
+from sqlalchemy import select, func, text, insert, update, delete, or_, and_, not_, case, literal, String, exists
 from app.dbhelper.db_helper import DB
 from app.httphelper.requesthelper import RequestData
 from fastapi.responses import JSONResponse
@@ -21,6 +21,7 @@ __all__ = [
     "not_",
     "case",
     "literal",
+    "String",
     "exists",
     "Request",
     "RequestData",

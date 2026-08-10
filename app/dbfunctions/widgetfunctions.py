@@ -1,4 +1,4 @@
-from app.utils.common import DB, select, insert, update, case, literal, exists, and_, nowWithTimeZone, userps
+from app.utils.common import DB, select, insert, update, func, case, literal, exists, String, and_, nowWithTimeZone, userps
 
 def getWidgetsDB(widgetps):
     dashboard_id = int(widgetps.dashboard_id.get() or 0)
@@ -8,16 +8,21 @@ def getWidgetsDB(widgetps):
     view_id = int(widgetps.view_id.get() or 0)
     tbl_widget = DB.getTableMeta("sys_widget_master").alias("wm")
     tbl_view = DB.getTableMeta("sys_new_dynamic_view").alias("dv")
-    tbl_user_widget = DB.getTableMeta("sys_user_widgets").alias("suw")
+    # tbl_user_widget = DB.getTableMeta("sys_user_widgets").alias("suw")
+    user_dashboard = DB.getTableMeta("sys_user_dashboard").alias("dash")
     # EXISTS subquery
     exists_conditions = [
-        tbl_user_widget.c.sys_widget_id == tbl_widget.c.sys_widget_id,
-        tbl_user_widget.c.user_id == userps.user_id.get(),
-        tbl_user_widget.c.is_delete == 0,
+        func.json_search(
+            user_dashboard.c.widget_json,
+            "one",
+            func.cast(tbl_widget.c.sys_widget_id, String),
+            None,
+            "$[*].sys_widget_id"
+        ).isnot(None)
     ]
     if dashboard_id not in (None, "", 0):
         exists_conditions.append(
-            tbl_user_widget.c.dashboard_id == dashboard_id
+            user_dashboard.c.dashboard_id == dashboard_id
         )
     widget_added = case(
         (
