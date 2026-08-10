@@ -1,13 +1,14 @@
 import json
 from app.utils.common import Request, RequestData, raiseAPIError, JSONResponse, userps
-from app.helper.generalfunctions import getSelectedUsers
+from app.helper.generalfunctions import getSelectedUsers, generateRandomString, updateListJsonVal, removeListJsonVal
 from app.dbfunctions.logfunctions import saveErrorLogtoDB
 from app.dbfunctions.notificationfunctions import insertUpdateNotification
-from app.dbfunctions.associationfunctions import getAssociationUsers
+from app.dbfunctions.dashboardfunctions import getDashboardData, insertUpdateDashboard
 from app.dbfunctions.widgetfunctions import getWidgetData, getUserWidgetData, getWidgetCategoryDB, insertUpdateWidget, insertUpdateUserWidget
 from app.helper.widgethelper import getWidgets, getUserWidgets
 from app.properties.associationproperties import associationps
 from app.properties.notificationproperties import notifyps
+from app.properties.dashboardproperties import dps
 from app.properties.widgetproperties import widgetps
 
 def getWidgetList(request: Request):
@@ -142,6 +143,80 @@ def shareUserWidget(request: Request):
         )
     except Exception as e:
         saveErrorLogtoDB("Widget", userps.user_id.get(), "shareUserWidget", str(e))
+        raiseAPIError(str(e), 500)
+
+# api/v1/widget/saveuser?dashboard_id=1&sys_widget_id=1&x=0&y=0&c_width=0&c_height=0&htm_flow=0&bg_color=#ffffff&widget_label=Test Widget&widget_setting=&flag=ADD
+def saveUserWidget(request: Request):
+    print("saveUserWidget --> ")
+    try:
+        params = RequestData.params(request)
+        # Set Params to Widget Properties
+        widgetps.id.set(params.get("id", 0))
+        widgetps.dashboard_id.set(params.get("dashboard_id", 0))
+        widgetps.sys_widget_id.set(params.get("sys_widget_id", 0))
+        widgetps.x.set(params.get("x", 0))
+        widgetps.y.set(params.get("y", 0))
+        widgetps.c_width.set(params.get("c_width", 0))
+        widgetps.c_height.set(params.get("c_height", 0))
+        widgetps.htm_flow.set(params.get("htm_flow", 0))
+        widgetps.bg_color.set(params.get("bg_color", "#ffffff"))
+        widgetps.widget_label.set(params.get("widget_label", ""))
+        widgetps.widget_setting.set(params.get("widget_setting", {}))
+        widgetps.flag.set(params.get("flag", ""))
+        # Get Dashboard Data
+        dps.dashboard_id.set(widgetps.dashboard_id.get())
+        dash_data = getDashboardData(dps)
+        widget_json = getattr(dash_data, "widget_json", [])
+        message = ""
+        if widgetps.flag.get() == "add_widget":
+            widgetps.id.set(generateRandomString(10, 1))
+            if widget_json in (None, "", []):
+                widget_json = []
+            widget_json.append({
+                "id": widgetps.id.get(),
+                "sys_widget_id": widgetps.sys_widget_id.get(),
+                "x": widgetps.x.get(),
+                "y": widgetps.y.get(),
+                "c_width": widgetps.c_width.get(),
+                "c_height": widgetps.c_height.get(),
+                "htm_flow": widgetps.htm_flow.get(),
+                "bg_color": widgetps.bg_color.get(),
+                "widget_label": widgetps.widget_label.get(),
+                "widget_setting": widgetps.widget_setting.get()
+            })
+            message = widgetps.widget_label.get() + " added successfully"
+        elif widgetps.flag.get() == "edit_widget" and widgetps.id.get() not in (None, "", 0):
+            updates = {
+                "widget_label": widgetps.widget_label.get(),
+                "widget_setting": widgetps.widget_setting.get(),
+                "bg_color": widgetps.bg_color.get(),
+                "htm_flow": widgetps.htm_flow.get()
+            }
+            updated = updateListJsonVal(widget_json, "id", widgetps.id.get(), updates)
+            message = widgetps.widget_label.get() + " updated successfully"
+        elif widgetps.flag.get() == "remove_layout" and widgetps.id.get() not in (None, "", 0):
+            updated = removeListJsonVal(widget_json, "id", widgetps.id.get())
+            message = widgetps.widget_label.get() + " removed successfully"
+        elif widgetps.flag.get() == "update_layout" and widgetps.id.get() not in (None, "", 0):
+            updates = {
+                "x": widgetps.x.get(),
+                "y": widgetps.y.get(),
+                "c_width": widgetps.c_width.get(),
+                "c_height": widgetps.c_height.get()
+            }
+            updated = updateListJsonVal(widget_json, "id", widgetps.id.get(), updates)
+            message = widgetps.widget_label.get() + " updated successfully"
+        dps.db_upd_vals.set({"widget_json": widget_json})
+        insertUpdateDashboard(dps)
+        return JSONResponse(
+            status_code = 200,
+            content = {
+                "status": True,
+                "message": message
+            }
+        )
+    except Exception as e:
+        saveErrorLogtoDB("Widget", userps.user_id.get(), "saveUserWidget", str(e))
         raiseAPIError(str(e), 500)
 
 def saveViewWidget(request: Request):

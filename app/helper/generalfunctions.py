@@ -137,6 +137,31 @@ def updateNestedJsonVal(fulljson: dict, jsonkey: str, srchkey: str, srchval: str
         return updated
     return False
 
+def updateListJsonVal(fulljson: list, srchkey: str, srchval, updvals: dict):
+    if not isinstance(fulljson, list):
+        return False
+    for item in fulljson:
+        if not isinstance(item, dict):
+            continue
+        if srchval is None or str(item.get(srchkey)) == str(srchval):
+            item.update(updvals)
+            return True
+    return False
+
+def removeListJsonVal(fulljson: list, srchkey: str, srchval):
+    if not isinstance(fulljson, list):
+        return False
+
+    for index, item in enumerate(fulljson):
+        if not isinstance(item, dict):
+            continue
+
+        if str(item.get(srchkey)) == str(srchval):
+            fulljson.pop(index)
+            return True
+
+    return False
+
 def insertNestedJsonAfter(fulljson: dict, jsonkey: str, srchkey: str, srchval, new_item: dict ):
     nested = fulljson.get(jsonkey)
     if isinstance(nested, dict):
