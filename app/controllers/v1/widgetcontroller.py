@@ -214,9 +214,46 @@ def saveUserWidget(request: Request):
 
 def saveUserWidgetLayout(request: Request):
     print("saveUserWidgetLayout --> ")
-    params = RequestData.params(request)
-    widgetps.dashboard_id.set(params.get("dashboard_id", 0))
-    widgetps.widget_list.set(params.get("widget_list", []))
+    try:
+        params = RequestData.params(request)
+        dps.dashboard_id.set(params.get("dashboard_id", 0))
+        w_list = params.get("layout_json", [])
+        if isinstance(w_list, str):
+            try:
+                w_list = json.loads(w_list)
+            except json.JSONDecodeError:
+                # Fallback for comma-separated values
+                w_list = [
+                    {"opt_val": int(x), "type": 0}
+                    for x in w_list.split(",")
+                    if x.strip()
+                ]
+        dash_data = getDashboardData(dps)
+        widget_list = getattr(dash_data, "widget_list", [])
+        if not isinstance(widget_list, list):
+            widget_list = []
+        for wdgt in w_list:
+            if not isinstance(wdgt, dict):
+                continue
+            updates = {
+                "x": wdgt.get("x", 0),
+                "y": wdgt.get("y", 0),
+                "c_width": wdgt.get("c_width", 0),
+                "c_height": wdgt.get("c_height", 0)
+            }
+            updated = updateListJsonVal(widget_list, "widget_ref_id", wdgt.get("widget_ref_id"), updates)
+        dps.db_upd_vals.set({"widget_list": widget_list})
+        insertUpdateDashboard(dps)
+        return JSONResponse(
+            status_code = 200,
+            content = {
+                "status": True,
+                "message": "Widget Layout saved successfully"
+            }
+        )
+    except Exception as e:
+        saveErrorLogtoDB("Widget", dps.dashboard_id.get(), "saveUserWidgetLayout", str(e))
+        raiseAPIError(str(e), 500)
 
 def saveViewWidget(request: Request):
     print("saveViewWidget --> ")
