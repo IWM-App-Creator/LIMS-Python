@@ -86,6 +86,7 @@ def getWidgetsDB(widgetps):
 
 def getWidgetData(widgetps):
     sys_widget_id = int(widgetps.sys_widget_id.get() or 0)
+    sys_widget_ids = widgetps.sys_widget_ids.get()
     widget_type = widgetps.widget_type.get()
     view_id = int(widgetps.view_id.get() or 0)
     widget_json = widgetps.widget_json.get()
@@ -95,6 +96,8 @@ def getWidgetData(widgetps):
     stmt = select(widget_master)
     if sys_widget_id not in (None, "", 0):
         stmt = stmt.where(widget_master.c.sys_widget_id == sys_widget_id)
+    if sys_widget_ids not in (None, "", []):
+        stmt = stmt.where(widget_master.c.sys_widget_id.in_(sys_widget_ids))
     if widget_type not in (None, ""):
         stmt = stmt.where(widget_master.c.widget_type == widget_type)
     if view_id not in (None, "", 0):

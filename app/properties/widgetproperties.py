@@ -3,6 +3,7 @@ from contextvars import ContextVar
 class WidgetProperties:
     def __init__(self):
         self.sys_widget_id = ContextVar("sys_widget_id", default = None)
+        self.sys_widget_ids = ContextVar("sys_widget_ids", default = None)
         self.sys_widget_cat_id = ContextVar("sys_widget_cat_id", default = None)
         self.widget_type = ContextVar("widget_type", default = None)
         self.widget_icon = ContextVar("widget_icon", default = None)
