@@ -19,12 +19,14 @@ def getWidgetList(request: Request):
         widgetps.sys_widget_cat_id.set(params.get("sys_widget_cat_id", None))
         widgetps.widget_type.set(params.get("widget_type", None))
         widgetps.search_text.set(params.get("search_text", None))
+        widgetps.pg_no.set(params.get("pg_no", 1))
         widget_list = getWidgets(widgetps)
         return JSONResponse(
             status_code = 200,
             content = {
                 "status": True,
                 "message": "Widget List",
+                "rcrd_cnt": widgetps.rcrd_cnt.get(),
                 "widget_list": widget_list
             }
         )

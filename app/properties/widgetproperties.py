@@ -38,6 +38,8 @@ class WidgetProperties:
 
         self.upd_vals = ContextVar("upd_vals", default = None)
         self.flag = ContextVar("flag", default = None)
+        self.pg_no = ContextVar("pg_no", default = 1)
+        self.rcrd_cnt = ContextVar("rcrd_cnt", default = 0)
         self.fetch_single = ContextVar("fetch_single", default = None)
 
         # sys_widget_id, sys_widget_cat_id, widget_type, widget_icon, widget_title, widget_dtl, widget_json, view_id, is_visible, is_multiple, is_system, is_global, is_delete, created_by, created_date

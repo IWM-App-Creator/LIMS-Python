@@ -6,6 +6,8 @@ def getWidgetsDB(widgetps):
     search_text = widgetps.search_text.get()
     widget_type = widgetps.widget_type.get()
     view_id = int(widgetps.view_id.get() or 0)
+    page_size = 12
+    pg_no = int(widgetps.pg_no.get() or 1)
     tbl_widget = DB.getTableMeta("sys_widget_master").alias("wm")
     tbl_view = DB.getTableMeta("sys_new_dynamic_view").alias("dv")
     user_dashboard = DB.getTableMeta("sys_user_dashboard").alias("dash")
@@ -81,9 +83,13 @@ def getWidgetsDB(widgetps):
             tbl_widget.c.sys_widget_id.asc()
         )
     )
+    count_stmt = stmt.with_only_columns(func.count()).order_by(None)
+    widgetps.rcrd_cnt.set(DB.executeDBScalar(count_stmt))
+    offset = (pg_no - 1) * page_size
+    stmt = stmt.offset(offset).limit(page_size)
     return DB.executeDBSelect(stmt)
 
-def getWidgetData(widgetps):
+def getWidgetData(widgetps):    
     sys_widget_id = int(widgetps.sys_widget_id.get() or 0)
     sys_widget_ids = widgetps.sys_widget_ids.get()
     widget_type = widgetps.widget_type.get()
