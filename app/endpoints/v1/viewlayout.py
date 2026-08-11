@@ -5,6 +5,7 @@ router = APIRouter(prefix = "/viewly")
 
 ROUTES = [
     # ("/create", viewapi.createBlankView, ["GET"]),
+    ("/save", viewapi.saveViewLayout, ["GET"])
     
     ("/jointblcolor", viewapi.setJoinTblColor, ["GET"]), # Route::any('view/jointblcolor', 'App\Http\Controllers\ModelData\LayoutAPIController@setJoinTblColor');
 
