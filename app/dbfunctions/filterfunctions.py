@@ -1,25 +1,26 @@
 from app.utils.common import DB, select, insert, update, String, func, exists, and_, case, literal, nowWithTimeZone, userps
 
 def getViewFiltersDB(filterps):
-    view_id = filterps.view_id.get()
+    view_id = int(filterps.view_id.get() or 0)
+    user_id = int(userps.user_id.get() or 0)
+
     tbl_saved = DB.getTableMeta("sys_dynamic_result_save").alias("sdrs")
     tbl_widget = DB.getTableMeta("sys_widget_master").alias("swm")
     user_dashboard = DB.getTableMeta("sys_user_dashboard").alias("dash")
-    pattern = func.concat('%{"view_id":"', str(view_id), '","save_id":"', tbl_saved.c.save_id, '"%')
-    widget_list_exists = func.json_search(
-        user_dashboard.c.widget_list,
-        "one",
-        func.cast(
-            tbl_widget.c.sys_widget_id,
-            String
-        ),
-        None,
-        "$[*].sys_widget_id"
-    ).isnot(None)
 
-    # --------------------------------------------------
-    # Check whether matching widget exists
-    # --------------------------------------------------
+    widget_list_exists = (
+        func.json_contains(
+            user_dashboard.c.widget_list,
+            func.json_object(
+                "sys_widget_id",
+                func.cast(
+                    tbl_widget.c.sys_widget_id,
+                    String
+                )
+            )
+        ) == 1
+    )
+
     exists_subquery = exists(
         select(1)
         .select_from(
@@ -29,17 +30,24 @@ def getViewFiltersDB(filterps):
             )
         )
         .where(
-            tbl_widget.c.widget_json.like(pattern),
+            func.json_extract(
+                tbl_widget.c.widget_json,
+                "$.view_id"
+            ) == view_id,
+
+            func.json_extract(
+                tbl_widget.c.widget_json,
+                "$.save_id"
+            ) == tbl_saved.c.save_id,
+
             tbl_widget.c.view_id == view_id,
-            user_dashboard.c.created_by == userps.user_id.get(),
-            tbl_widget.c.is_delete == 0
+
+            tbl_widget.c.is_delete == 0,
+
+            user_dashboard.c.created_by == user_id
         )
     )
-    
 
-    # --------------------------------------------------
-    # widget_added
-    # --------------------------------------------------
     widget_added = case(
         (
             exists_subquery,
@@ -48,9 +56,6 @@ def getViewFiltersDB(filterps):
         else_=literal(0)
     ).label("widget_added")
 
-    # --------------------------------------------------
-    # Main query
-    # --------------------------------------------------
     stmt = (
         select(
             tbl_saved,
@@ -59,9 +64,10 @@ def getViewFiltersDB(filterps):
         .where(
             tbl_saved.c.view_id == view_id,
             tbl_saved.c.is_delete == 0,
-            tbl_saved.c.created_by == userps.user_id.get()
+            tbl_saved.c.created_by == user_id
         )
     )
+
     return DB.executeDBSelect(stmt)
 
 def getFilterData(filterps):

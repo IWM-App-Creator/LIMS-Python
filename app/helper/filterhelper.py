@@ -2,7 +2,6 @@ from app.dbfunctions.filterfunctions import getViewFiltersDB
 
 def getSaveFilters(filterps):
     filterarr = getViewFiltersDB(filterps)
-    print("getSaveFilters --> ", filterarr)
     filter_list = []
     for flt in filterarr:
         row = {
