@@ -5,7 +5,7 @@ from app.dbfunctions.viewlayoutfunctions import getViewLayoutDataByID
 from app.helper.generalfunctions import sortObjectsByKey
 from app.properties.dbproperties import dbps
 from app.helper import dbhelper as dbhlp
-from app.dbfunctions.viewlayoutfunctions import getUserLayoutData, insertUpdateUserLayout
+from app.dbfunctions.viewlayoutfunctions import insertUpdateUserLayout
 
 def setViewLayoutParam(viewps, params):
     viewps.view_id.set(params.get("view_id", ""))

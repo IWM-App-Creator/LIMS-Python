@@ -7,7 +7,7 @@ ROUTES = [
     # ("/create", viewapi.createBlankView, ["GET"]),
     ("/save", viewapi.saveViewLayout, ["GET"])
     
-    ("/jointblcolor", viewapi.setJoinTblColor, ["GET"]), # Route::any('view/jointblcolor', 'App\Http\Controllers\ModelData\LayoutAPIController@setJoinTblColor');
+    # ("/jointblcolor", viewapi.setJoinTblColor, ["GET"]), # Route::any('view/jointblcolor', 'App\Http\Controllers\ModelData\LayoutAPIController@setJoinTblColor');
 
     # ("/upddatefrmt", viewapi.updateViewDateFormat, ["GET"]), # Route::any('view/upddatefrmt', 'App\Http\Controllers\ModelData\LayoutAPIController@updateViewDateFormat'); 
 
