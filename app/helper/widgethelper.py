@@ -41,7 +41,6 @@ def getWidgets(widgetps):
                 "view_id": getattr(widget, "view_id", 0),
                 "view_name": getattr(widget, "view_name", ""),
                 "view_url_full": view_url,
-                "widget_added": getattr(widget, "widget_added", 0),
             }
             widget_list.append(row)
     return widget_list
