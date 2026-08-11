@@ -172,7 +172,7 @@ def saveUserWidget(request: Request):
             widgetps.id.set(generateRandomString(10, 1))
             if widget_list in (None, "", []):
                 widget_list = []
-            widget_list.append({
+            widget_list.insert(0, {
                 "id": widgetps.id.get(),
                 "sys_widget_id": widgetps.sys_widget_id.get(),
                 "x": widgetps.x.get(),
@@ -209,6 +209,9 @@ def saveUserWidget(request: Request):
     except Exception as e:
         saveErrorLogtoDB("Widget", userps.user_id.get(), "saveUserWidget", str(e))
         raiseAPIError(str(e), 500)
+
+def saveUserWidgetLayout(request: Request):
+    print("saveUserWidgetLayout --> ")
 
 def saveViewWidget(request: Request):
     print("saveViewWidget --> ")
