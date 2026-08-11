@@ -4,7 +4,7 @@ from app.helper.generalfunctions import getSelectedUsers, generateRandomString, 
 from app.dbfunctions.logfunctions import saveErrorLogtoDB
 from app.dbfunctions.notificationfunctions import insertUpdateNotification
 from app.dbfunctions.dashboardfunctions import getDashboardData, insertUpdateDashboard
-from app.dbfunctions.widgetfunctions import getWidgetData, getUserWidgetData, getWidgetCategoryDB, insertUpdateWidget, insertUpdateUserWidget
+from app.dbfunctions.widgetfunctions import getWidgetData, getWidgetCategoryDB, insertUpdateWidget
 from app.helper.widgethelper import getWidgets, getUserWidgets
 from app.properties.associationproperties import associationps
 from app.properties.notificationproperties import notifyps
@@ -218,11 +218,12 @@ def saveViewWidget(request: Request):
         save_id = params.get("save_id", 0)
         dashboard_id = params.get("dashboard_id", 0)
         widget_type = params.get("widget_type", None)
-        c_width = params.get("c_width", 0)
-        c_height = params.get("c_height", 0)
+        x = params.get("x", 0)
+        y = params.get("y", 0)
+        c_width = params.get("c_width", 3)
+        c_height = params.get("c_height", 1.5)
         htm_flow = params.get("htm_flow", 0)
         bg_color = params.get("bg_color", "#ffffff")
-        widget_sod = params.get("widget_sod", 1)
         widget_label = params.get("widget_label", "")
         widget_setting = params.get("widget_setting", {})
         pgno = params.get("pgno", 1)
@@ -247,27 +248,51 @@ def saveViewWidget(request: Request):
             sys_widget_id = insertUpdateWidget(widgetps)
         # save Widget to User Widget Table
         widgetps.sys_widget_id.set(sys_widget_id)
-        widgetps.fetch_single.set(1)
-        user_widget = getUserWidgetData(widgetps)
-        tmpdelete = 0
-        if user_widget and user_widget is not None:
-            sys_widgets_users_id = user_widget.get("sys_widgets_users_id", 0)
-            if widget_sod in ("1", 1):
-                tmpdelete = 1
-            widgetps.upd_vals.set({"widget_setting": widget_setting, "is_delete": tmpdelete})
-        else:
-            widgetps.dashboard_id.set(dashboard_id)
-            widgetps.user_id.set(userps.user_id.get())
-            widgetps.c_width.set(c_width)
-            widgetps.c_height.set(c_height)
-            widgetps.htm_flow.set(htm_flow)
-            widgetps.bg_color.set(bg_color)
-            widgetps.widget_label.set(widget_label)
-            widgetps.widget_setting.set(widget_setting)
-            if widget_sod in ("1", 1):
-                tmpdelete = 1
-            widgetps.rank.set(0)
-            sys_widgets_users_id = insertUpdateUserWidget(widgetps)
+        dps.dashboard_id.set(dashboard_id)
+        dash_data = getDashboardData(dps)
+        widget_list = getattr(dash_data, "widget_list", [])
+        if isinstance(widget_list, str):
+            widget_list = eval(widget_list)
+        if not isinstance(widget_list, list):
+            widget_list = []
+        updates = {
+            "widget_setting": widgetps.widget_setting.get()
+        }
+        updated = updateListJsonVal(widget_list, "sys_widget_id", widgetps.sys_widget_id.get(), updates)
+        if not updated:
+            widget_list.append({
+                "id": generateRandomString(10, 1),
+                "sys_widget_id": widgetps.sys_widget_id.get(),
+                "x": x,
+                "y": y,
+                "c_width": c_width,
+                "c_height": c_height,
+                "htm_flow": htm_flow,
+                "bg_color": bg_color,
+                "widget_label": widget_label,
+                "widget_setting": widget_setting
+            })
+        dps.db_upd_vals.set({"widget_list": widget_list})
+        insertUpdateDashboard(dps)
+        # tmpdelete = 0
+        # if user_widget and user_widget is not None:
+        #     sys_widgets_users_id = user_widget.get("sys_widgets_users_id", 0)
+        #     if widget_sod in ("1", 1):
+        #         tmpdelete = 1
+        #     widgetps.upd_vals.set({"widget_setting": widget_setting, "is_delete": tmpdelete})
+        # else:
+        #     widgetps.dashboard_id.set(dashboard_id)
+        #     widgetps.user_id.set(userps.user_id.get())
+        #     widgetps.c_width.set(c_width)
+        #     widgetps.c_height.set(c_height)
+        #     widgetps.htm_flow.set(htm_flow)
+        #     widgetps.bg_color.set(bg_color)
+        #     widgetps.widget_label.set(widget_label)
+        #     widgetps.widget_setting.set(widget_setting)
+        #     if widget_sod in ("1", 1):
+        #         tmpdelete = 1
+        #     widgetps.rank.set(0)
+        #     sys_widgets_users_id = insertUpdateUserWidget(widgetps)
         return JSONResponse(
             status_code = 200,
             content = {
