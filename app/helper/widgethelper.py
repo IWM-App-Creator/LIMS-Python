@@ -89,7 +89,7 @@ def getUserWidgets(widgetps):
     for wdgt in widget_list:
         sys_widget_id = str(wdgt.get("sys_widget_id", ""))
         row = {
-            "id": wdgt.get("id", 0),
+            "widget_ref_id": wdgt.get("widget_ref_id", ""),
             "sys_widget_id": wdgt.get("sys_widget_id", 0),
             "x": wdgt.get("x", 0),
             "y": wdgt.get("y", 0),
