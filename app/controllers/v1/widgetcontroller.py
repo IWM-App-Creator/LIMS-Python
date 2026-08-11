@@ -151,7 +151,7 @@ def saveUserWidget(request: Request):
     try:
         params = RequestData.params(request)
         # Set Params to Widget Properties
-        widgetps.id.set(params.get("id", 0))
+        widgetps.widget_ref_id.set(params.get("widget_ref_id", 0))
         widgetps.dashboard_id.set(params.get("dashboard_id", 0))
         widgetps.sys_widget_id.set(params.get("sys_widget_id", 0))
         widgetps.x.set(params.get("x", 0))
@@ -169,11 +169,11 @@ def saveUserWidget(request: Request):
         widget_list = getattr(dash_data, "widget_list", [])
         message = ""
         if widgetps.flag.get() == "add_widget":
-            widgetps.id.set(generateRandomString(10, 1))
+            widgetps.widget_ref_id.set(generateRandomString(10, 1))
             if widget_list in (None, "", []):
                 widget_list = []
             widget_list.insert(0, {
-                "id": widgetps.id.get(),
+                "widget_ref_id": widgetps.widget_ref_id.get(),
                 "sys_widget_id": widgetps.sys_widget_id.get(),
                 "x": widgetps.x.get(),
                 "y": widgetps.y.get(),
@@ -185,17 +185,17 @@ def saveUserWidget(request: Request):
                 "widget_setting": widgetps.widget_setting.get()
             })
             message = widgetps.widget_label.get() + " added successfully"
-        elif widgetps.flag.get() == "edit_widget" and widgetps.id.get() not in (None, "", 0):
+        elif widgetps.flag.get() == "edit_widget" and widgetps.widget_ref_id.get() not in (None, "", 0):
             updates = {
                 "widget_label": widgetps.widget_label.get(),
                 "widget_setting": widgetps.widget_setting.get(),
                 "bg_color": widgetps.bg_color.get(),
                 "htm_flow": widgetps.htm_flow.get()
             }
-            updated = updateListJsonVal(widget_list, "id", widgetps.id.get(), updates)
+            updated = updateListJsonVal(widget_list, "widget_ref_id", widgetps.widget_ref_id.get(), updates)
             message = widgetps.widget_label.get() + " updated successfully"
-        elif widgetps.flag.get() == "remove_widget" and widgetps.id.get() not in (None, "", 0):
-            updated = removeListJsonVal(widget_list, "id", widgetps.id.get())
+        elif widgetps.flag.get() == "remove_widget" and widgetps.widget_ref_id.get() not in (None, "", 0):
+            updated = removeListJsonVal(widget_list, "widget_ref_id", widgetps.widget_ref_id.get())
             message = widgetps.widget_label.get() + " removed successfully"
         dps.db_upd_vals.set({"widget_list": widget_list})
         insertUpdateDashboard(dps)
@@ -264,7 +264,7 @@ def saveViewWidget(request: Request):
         updated = updateListJsonVal(widget_list, "sys_widget_id", widgetps.sys_widget_id.get(), updates)
         if not updated:
             widget_list.append({
-                "id": generateRandomString(10, 1),
+                "widget_ref_id": generateRandomString(10, 1),
                 "sys_widget_id": widgetps.sys_widget_id.get(),
                 "x": x,
                 "y": y,

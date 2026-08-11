@@ -8,7 +8,6 @@ def getWidgetsDB(widgetps):
     view_id = int(widgetps.view_id.get() or 0)
     tbl_widget = DB.getTableMeta("sys_widget_master").alias("wm")
     tbl_view = DB.getTableMeta("sys_new_dynamic_view").alias("dv")
-    # tbl_user_widget = DB.getTableMeta("sys_user_widgets").alias("suw")
     user_dashboard = DB.getTableMeta("sys_user_dashboard").alias("dash")
     # EXISTS subquery
     exists_conditions = [
@@ -172,47 +171,3 @@ def insertUpdateWidget(widgetps):
         stmt = insert(widget_master).values(**values)
         sys_widget_id = DB.executeDBInsert(stmt)
     return sys_widget_id
-
-def insertUpdateUserWidget(widgetps):
-    sys_widgets_users_id = int(widgetps.sys_widgets_users_id.get() or 0)
-    sys_widget_id = int(widgetps.sys_widget_id.get() or 0)
-    dashboard_id = int(widgetps.dashboard_id.get() or 0)
-    user_id = int(widgetps.user_id.get() or 0)
-    c_width = int(widgetps.c_width.get() or 0)
-    c_height = int(widgetps.c_height.get() or 0)
-    htm_flow = int(widgetps.htm_flow.get() or 0)
-    bg_color = widgetps.bg_color.get()
-    widget_label = widgetps.widget_label.get()
-    widget_setting = widgetps.widget_setting.get()
-    rank = int(widgetps.rank.get() or 0)
-    values = {}
-    if sys_widget_id not in (None, "", 0):
-        values["sys_widget_id"] = sys_widget_id
-    if dashboard_id not in (None, "", 0):
-        values["dashboard_id"] = dashboard_id
-    if user_id not in (None, "", 0):
-        values["user_id"] = user_id
-    if c_width not in (None, "", 0):
-        values["c_width"] = c_width
-    if c_height not in (None, "", 0):
-        values["c_height"] = c_height
-    if htm_flow not in (None, ""):
-        values["htm_flow"] = htm_flow
-    if bg_color not in (None, ""):
-        values["bg_color"] = bg_color
-    if widget_label not in (None, ""):
-        values["widget_label"] = widget_label
-    if widget_setting not in (None, "", {}, []):
-        values["widget_setting"] = widget_setting
-    if rank not in (None, ""):
-        values["rank"] = rank
-    sys_user_widgets = DB.getTableMeta("sys_user_widgets")
-    if sys_widgets_users_id not in (None, "", 0):
-        stmt = update(sys_user_widgets).where(sys_user_widgets.c.sys_widgets_users_id == sys_widgets_users_id).values(**values)
-        DB.executeDBUpdate(stmt)
-    else:
-        values["created_by"] = userps.user_id.get()
-        values["created_date"] = nowWithTimeZone()
-        stmt = insert(sys_user_widgets).values(**values)
-        sys_widgets_users_id = DB.executeDBInsert(stmt)
-    return sys_widgets_users_id

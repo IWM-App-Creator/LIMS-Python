@@ -20,7 +20,7 @@ class WidgetProperties:
         self.created_date = ContextVar("created_date", default = None)
 
         self.sys_widgets_users_id = ContextVar("sys_widgets_users_id", default = None)
-        self.id = ContextVar("id", default = None)
+        self.widget_ref_id = ContextVar("widget_ref_id", default = None)
         self.dashboard_id = ContextVar("dashboard_id", default = None)
         self.user_id = ContextVar("user_id", default = None)
         self.x = ContextVar("x", default = None)
