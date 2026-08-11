@@ -274,25 +274,6 @@ def saveViewWidget(request: Request):
             })
         dps.db_upd_vals.set({"widget_list": widget_list})
         insertUpdateDashboard(dps)
-        # tmpdelete = 0
-        # if user_widget and user_widget is not None:
-        #     sys_widgets_users_id = user_widget.get("sys_widgets_users_id", 0)
-        #     if widget_sod in ("1", 1):
-        #         tmpdelete = 1
-        #     widgetps.upd_vals.set({"widget_setting": widget_setting, "is_delete": tmpdelete})
-        # else:
-        #     widgetps.dashboard_id.set(dashboard_id)
-        #     widgetps.user_id.set(userps.user_id.get())
-        #     widgetps.c_width.set(c_width)
-        #     widgetps.c_height.set(c_height)
-        #     widgetps.htm_flow.set(htm_flow)
-        #     widgetps.bg_color.set(bg_color)
-        #     widgetps.widget_label.set(widget_label)
-        #     widgetps.widget_setting.set(widget_setting)
-        #     if widget_sod in ("1", 1):
-        #         tmpdelete = 1
-        #     widgetps.rank.set(0)
-        #     sys_widgets_users_id = insertUpdateUserWidget(widgetps)
         return JSONResponse(
             status_code = 200,
             content = {
