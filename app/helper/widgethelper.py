@@ -50,6 +50,8 @@ def getUserWidgets(widgetps):
     dps.dashboard_id.set(widgetps.dashboard_id.get())
     usrwdgtarr = getDashboardData(dps)
     widget_list = getattr(usrwdgtarr, "widget_list", [])
+    if not isinstance(widget_list, list):
+        widget_list = [] 
     userwidget_list = []
     sys_widget_ids = list({
         str(wdgt.get("sys_widget_id"))
