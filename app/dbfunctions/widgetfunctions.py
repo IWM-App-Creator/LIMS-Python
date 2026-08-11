@@ -1,4 +1,93 @@
-from app.utils.common import DB, select, insert, update, func, case, literal, exists, String, and_, nowWithTimeZone, userps
+from app.utils.common import DB, select, insert, update, func, case, literal, exists, String, and_, or_, nowWithTimeZone, userps
+
+# def getWidgetsDB(widgetps):
+#     dashboard_id = int(widgetps.dashboard_id.get() or 0)
+#     sys_widget_cat_id = int(widgetps.sys_widget_cat_id.get() or 0)
+#     search_text = widgetps.search_text.get()
+#     widget_type = widgetps.widget_type.get()
+#     view_id = int(widgetps.view_id.get() or 0)
+#     page_size = 12
+#     pg_no = int(widgetps.pg_no.get() or 1)
+#     tbl_widget = DB.getTableMeta("sys_widget_master").alias("wm")
+#     tbl_view = DB.getTableMeta("sys_new_dynamic_view").alias("dv")
+#     user_dashboard = DB.getTableMeta("sys_user_dashboard").alias("dash")
+#     # EXISTS subquery
+#     exists_conditions = [
+#         func.json_search(
+#             user_dashboard.c.widget_list,
+#             "one",
+#             func.cast(tbl_widget.c.sys_widget_id, String),
+#             None,
+#             "$[*].sys_widget_id"
+#         ).isnot(None)
+#     ]
+#     if dashboard_id not in (None, "", 0):
+#         exists_conditions.append(
+#             user_dashboard.c.dashboard_id == dashboard_id
+#         )
+#     widget_added = case(
+#         (
+#             tbl_widget.c.is_multiple == 1,
+#             literal(0)
+#         ),
+#         (
+#             exists(
+#                 select(1).where(and_(*exists_conditions))
+#             ),
+#             literal(1)
+#         ),
+#         else_=literal(0)
+#     ).label("widget_added")
+#     stmt = (
+#         select(
+#             tbl_widget,
+#             tbl_view.c.view_name,
+#             tbl_view.c.url,
+#             widget_added
+#         )
+#         .outerjoin(
+#             tbl_view,
+#             tbl_view.c.view_id == tbl_widget.c.view_id
+#         )
+#     )
+#     # Filters
+#     if sys_widget_cat_id:
+#         stmt = stmt.where(tbl_widget.c.sys_widget_cat_id == sys_widget_cat_id)
+
+#     if search_text:
+#         stmt = stmt.where(tbl_widget.c.widget_title.like(f"%{search_text}%"))
+
+#     if widget_type:
+#         stmt = stmt.where(tbl_widget.c.widget_type == widget_type)
+
+#     if view_id:
+#         stmt = stmt.where(tbl_widget.c.view_id == view_id)
+
+#     if userps.role_id.get() != 1 and userps.ws_role_id.get() != 1:
+#         stmt = stmt.where(
+#             tbl_widget.c.widget_type.notin_(["ADDUSER", "ADDVIEW"])
+#         )
+#     stmt = stmt.where(
+#         and_(
+#             (
+#                 (tbl_widget.c.created_by == userps.user_id.get()) |
+#                 (tbl_widget.c.is_system == 1) |
+#                 (tbl_widget.c.is_global == 1)
+#             ),
+#             tbl_widget.c.is_delete == 0
+#         )
+#     )
+#     stmt = (
+#         stmt.order_by(
+#             tbl_widget.c.is_system.desc(),
+#             tbl_widget.c.sys_widget_id.asc()
+#         )
+#     )
+#     count_stmt = stmt.with_only_columns(func.count()).order_by(None)
+#     widgetps.rcrd_cnt.set(DB.executeDBScalar(count_stmt))
+#     offset = (pg_no - 1) * page_size
+#     stmt = stmt.offset(offset).limit(page_size)
+#     return DB.executeDBSelect(stmt)
 
 def getWidgetsDB(widgetps):
     dashboard_id = int(widgetps.dashboard_id.get() or 0)
@@ -11,7 +100,9 @@ def getWidgetsDB(widgetps):
     tbl_widget = DB.getTableMeta("sys_widget_master").alias("wm")
     tbl_view = DB.getTableMeta("sys_new_dynamic_view").alias("dv")
     user_dashboard = DB.getTableMeta("sys_user_dashboard").alias("dash")
-    # EXISTS subquery
+    # ---------------------------------------------------------
+    # Check whether widget is already added to dashboard
+    # ---------------------------------------------------------
     exists_conditions = [
         func.json_search(
             user_dashboard.c.widget_list,
@@ -21,23 +112,32 @@ def getWidgetsDB(widgetps):
             "$[*].sys_widget_id"
         ).isnot(None)
     ]
-    if dashboard_id not in (None, "", 0):
+    if dashboard_id:
         exists_conditions.append(
             user_dashboard.c.dashboard_id == dashboard_id
         )
+    widget_exists = exists(
+        select(1).where(
+            and_(*exists_conditions)
+        )
+    )
+    # ---------------------------------------------------------
+    # widget_added
+    # ---------------------------------------------------------
     widget_added = case(
         (
             tbl_widget.c.is_multiple == 1,
             literal(0)
         ),
         (
-            exists(
-                select(1).where(and_(*exists_conditions))
-            ),
+            widget_exists,
             literal(1)
         ),
         else_=literal(0)
     ).label("widget_added")
+    # ---------------------------------------------------------
+    # Main query
+    # ---------------------------------------------------------
     stmt = (
         select(
             tbl_widget,
@@ -50,23 +150,37 @@ def getWidgetsDB(widgetps):
             tbl_view.c.view_id == tbl_widget.c.view_id
         )
     )
+    # ---------------------------------------------------------
     # Filters
+    # ---------------------------------------------------------
     if sys_widget_cat_id:
-        stmt = stmt.where(tbl_widget.c.sys_widget_cat_id == sys_widget_cat_id)
-
+        stmt = stmt.where(
+            tbl_widget.c.sys_widget_cat_id == sys_widget_cat_id
+        )
     if search_text:
-        stmt = stmt.where(tbl_widget.c.widget_title.like(f"%{search_text}%"))
-
+        stmt = stmt.where(
+            tbl_widget.c.widget_title.like(f"%{search_text}%")
+        )
     if widget_type:
-        stmt = stmt.where(tbl_widget.c.widget_type == widget_type)
-
+        stmt = stmt.where(
+            tbl_widget.c.widget_type == widget_type
+        )
     if view_id:
-        stmt = stmt.where(tbl_widget.c.view_id == view_id)
-
+        stmt = stmt.where(
+            tbl_widget.c.view_id == view_id
+        )
+    # ---------------------------------------------------------
+    # Role restriction
+    # ---------------------------------------------------------
     if userps.role_id.get() != 1 and userps.ws_role_id.get() != 1:
         stmt = stmt.where(
-            tbl_widget.c.widget_type.notin_(["ADDUSER", "ADDVIEW"])
+            tbl_widget.c.widget_type.notin_(
+                ["ADDUSER", "ADDVIEW"]
+            )
         )
+    # ---------------------------------------------------------
+    # Created/system/global widgets
+    # ---------------------------------------------------------
     stmt = stmt.where(
         and_(
             (
@@ -77,16 +191,42 @@ def getWidgetsDB(widgetps):
             tbl_widget.c.is_delete == 0
         )
     )
-    stmt = (
-        stmt.order_by(
-            tbl_widget.c.is_system.desc(),
-            tbl_widget.c.sys_widget_id.asc()
+    # ---------------------------------------------------------
+    # IMPORTANT:
+    # Do not show already-added widgets.
+    #
+    # is_multiple = 1 widgets are always allowed.
+    # ---------------------------------------------------------
+    stmt = stmt.where(
+        or_(
+            tbl_widget.c.is_multiple == 1,
+            ~widget_exists
         )
     )
-    count_stmt = stmt.with_only_columns(func.count()).order_by(None)
-    widgetps.rcrd_cnt.set(DB.executeDBScalar(count_stmt))
+    # ---------------------------------------------------------
+    # Order
+    # ---------------------------------------------------------
+    stmt = stmt.order_by(
+        tbl_widget.c.is_system.desc(),
+        tbl_widget.c.sys_widget_id.asc()
+    )
+    # ---------------------------------------------------------
+    # Count AFTER removing already-added widgets
+    # ---------------------------------------------------------
+    count_stmt = stmt.with_only_columns(
+        func.count()
+    ).order_by(None)
+    total_count = DB.executeDBScalar(count_stmt)
+    widgetps.rcrd_cnt.set(total_count)
+    # ---------------------------------------------------------
+    # Pagination
+    # ---------------------------------------------------------
     offset = (pg_no - 1) * page_size
-    stmt = stmt.offset(offset).limit(page_size)
+    stmt = (
+        stmt
+        .offset(offset)
+        .limit(page_size)
+    )
     return DB.executeDBSelect(stmt)
 
 def getWidgetData(widgetps):    
