@@ -214,6 +214,9 @@ def saveUserWidget(request: Request):
 
 def saveUserWidgetLayout(request: Request):
     print("saveUserWidgetLayout --> ")
+    params = RequestData.params(request)
+    widgetps.dashboard_id.set(params.get("dashboard_id", 0))
+    widgetps.widget_list.set(params.get("widget_list", []))
 
 def saveViewWidget(request: Request):
     print("saveViewWidget --> ")

@@ -22,6 +22,7 @@ class WidgetProperties:
         self.sys_widgets_users_id = ContextVar("sys_widgets_users_id", default = None)
         self.widget_ref_id = ContextVar("widget_ref_id", default = None)
         self.dashboard_id = ContextVar("dashboard_id", default = None)
+        self.widget_list = ContextVar("widget_list", default = [])
         self.user_id = ContextVar("user_id", default = None)
         self.x = ContextVar("x", default = None)
         self.y = ContextVar("y", default = None)
