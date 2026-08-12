@@ -11,7 +11,8 @@ from app.helper.generalfunctions import sortObjectsByKey, generateRandomString, 
 from app.properties.viewproperties import viewps
 from app.properties.dbproperties import dbps
 from app.properties.menuproperties import menups
-from app.properties.filterproperties import filterps
+from app.properties.dashboardproperties import dps
+from app.properties.widgetproperties import widgetps
 
 # http://testws1.localhost:8000/api/v1/view/getdata?view_id=125
 # http://testws1.localhost:8000/api/v1/view/getdata?view_id=178
@@ -39,6 +40,11 @@ def getViewData(request: Request):
         dataarr = []
         viewps.view_qry_data.set(dataarr)
         view_qry = viewps.view_qry.get() # Get Query
+        # set Filter Qry by calling from Dashboard
+        if viewps.call_from.get() == "Dashboard":
+            dps.dashboard_id.set(params.get("dashboard_id"))
+            widgetps.widget_ref_id.set(params.get("widget_ref_id"))
+            viewhlp.setDashboardFilterQry(viewps, dps, widgetps)
         # Set Group By Data
         groupcndt = viewhlp.setViewGroupByData(viewps)
         if groupcndt not in (None, ""):

@@ -4,8 +4,10 @@ from app.utils.common import select, DB, userps, formatDate
 from app.dbfunctions.dbtablesfunctions import getDBTableData
 from app.dbfunctions.viewlayoutfunctions import getViewLayoutDataByID
 from app.dbfunctions.associationfunctions import getViewAssociationByUser, getAssociationViews
-from app.dbfunctions.filterfunctions import getUserDefaultFilter
-from app.helper.generalfunctions import sortObjectsByKey, updateNestedJsonVal, getLastUpdatedJSON
+from app.dbfunctions.filterfunctions import getFilterData, getUserDefaultFilter
+from app.dbfunctions.dashboardfunctions import getDashboardData
+from app.dbfunctions.widgetfunctions import getWidgetData
+from app.helper.generalfunctions import sortObjectsByKey, updateNestedJsonVal, getLastUpdatedJSON, getListJsonVal
 from app.properties.dbproperties import dbps
 from app.properties.associationproperties import associationps
 from app.properties.filterproperties import filterps
@@ -280,7 +282,28 @@ class ViewHelper:
         viewps.fa_is_edit.set(is_edit)
         viewps.fa_is_view.set(is_view)
         viewps.fa_is_noaccess.set(is_noaccess)
-        
+
+    @staticmethod
+    def setDashboardFilterQry(viewps, dps, widgetps):
+        dash_data = getDashboardData(dps)
+        widget_list = getattr(dash_data, "widget_list", [])
+        if not isinstance(widget_list, list):
+            widget_list = []
+        widget = getListJsonVal(widget_list, "widget_ref_id", widgetps.widget_ref_id.get())
+        if not isinstance(widget, dict):
+            widget = {}
+        widgetps.sys_widget_id.set(widget.get("sys_widget_id", 0))
+        widgetps.fetch_single.set(1)
+        widget_data = getWidgetData(widgetps)
+        widget_json = getattr(widget_data, "widget_json", {})
+        if isinstance(widget_json, str):
+            widget_json = eval(widget_json)
+        if not isinstance(widget_json, dict):
+            widget_json = {}
+        filterps.save_id.set(widget_json.get("save_id"))
+        filter_data = getFilterData(filterps)
+        viewps.filter_qry.set(getattr(filter_data, "view_qry", ""))
+
     @staticmethod
     def setViewSorting(viewps):
         sorting = f"mtbl.{viewps.primary_colnm.get()} DESC"
