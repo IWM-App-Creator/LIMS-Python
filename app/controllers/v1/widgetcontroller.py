@@ -84,6 +84,8 @@ def shareUserWidget(request: Request):
     try:
         params = RequestData.params(request)
         view_id = params.get("view_id", 0)
+        dashboard_id = params.get("dashboard_id", 0)
+        widget_ref_id = params.get("widget_ref_id", "")
         sys_widgets_users_id = params.get("sys_widgets_users_id", 0)
         widget_type = params.get("widget_type", None)
         message = params.get("message", None)
@@ -106,12 +108,10 @@ def shareUserWidget(request: Request):
             share_users = []
         title = ""
         msg_data = ""
-        if isinstance(share_users, str):
-            share_users = share_users.split(",")
-        if not isinstance(share_users, list):
-            share_users = []
         if widget_type == "ShareWidget":
             title = from_user + " shared a widget with you."
+            sys_widgets_users_id = dashboard_id
+            msg_data = widget_ref_id
         elif widget_type == "ShareMenu":
             title = save_name
             message = from_user + ' shared a menu "'  + save_name + '"'
