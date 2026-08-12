@@ -1,5 +1,5 @@
 import json
-from app.utils.common import Request, RequestData, raiseAPIError, JSONResponse, userps
+from app.utils.common import Request, RequestData, raiseAPIError, raiseInvalidError, JSONResponse, userps
 from app.helper.generalfunctions import getSelectedUsers, generateRandomString, getListJsonVal, updateListJsonVal, removeListJsonVal
 from app.dbfunctions.logfunctions import saveErrorLogtoDB
 from app.dbfunctions.notificationfunctions import insertUpdateNotification
@@ -278,6 +278,11 @@ def copyMoveWidget(request: Request):
         widget = getListJsonVal(from_widget_list, "widget_ref_id", widget_ref_id)
         if not isinstance(widget, dict):
             widget = {}
+        widgetps.sys_widget_id.set(widget.get("sys_widget_id", 0))
+        widgetps.fetch_single.set(1)
+        widget_data = getWidgetData(widgetps)
+        if getattr(widget_data, "is_multiple", 0) in (None, 0, "0") and any(str(item.get("sys_widget_id", 0)) == str(widget.get("sys_widget_id", 0)) for item in to_widget_list):
+            return raiseInvalidError("Already Widget is exists")
         # Widget Add to To Dashboard
         to_widget_list.insert(0, {
             "widget_ref_id": generateRandomString(10, 1),
