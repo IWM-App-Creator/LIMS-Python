@@ -1,6 +1,6 @@
 import json
 from app.utils.common import Request, RequestData, raiseAPIError, JSONResponse, userps
-from app.helper.generalfunctions import getSelectedUsers, generateRandomString, updateListJsonVal, removeListJsonVal
+from app.helper.generalfunctions import getSelectedUsers, generateRandomString, getListJsonVal, updateListJsonVal, removeListJsonVal
 from app.dbfunctions.logfunctions import saveErrorLogtoDB
 from app.dbfunctions.notificationfunctions import insertUpdateNotification
 from app.dbfunctions.dashboardfunctions import getDashboardData, insertUpdateDashboard
@@ -253,6 +253,65 @@ def saveUserWidgetLayout(request: Request):
         )
     except Exception as e:
         saveErrorLogtoDB("Widget", dps.dashboard_id.get(), "saveUserWidgetLayout", str(e))
+        raiseAPIError(str(e), 500)
+
+def copyMoveWidget(request: Request):
+    print("copyMoveWidget --> ")
+    try:
+        params = RequestData.params(request)
+        from_dashboard = params.get("from_dashboard", 0)
+        to_dashboard = params.get("to_dashboard", 0)
+        widget_ref_id = params.get("widget_ref_id", 0)
+        flag = params.get("flag", "")
+        message = "Widget copied successfully!!"
+        # Get From Dashboard Widget List
+        dps.dashboard_id.set(from_dashboard)
+        from_dash = getDashboardData(dps)
+        from_widget_list = getattr(from_dash, "widget_list", [])
+        if not isinstance(from_widget_list, list):
+            from_widget_list = []
+        # Get To Dashboard Widget List
+        dps.dashboard_id.set(to_dashboard)
+        to_dash = getDashboardData(dps)
+        to_widget_list = getattr(to_dash, "widget_list", [])
+        if not isinstance(to_widget_list, list):
+            to_widget_list = []
+        # Get Widget from From Dashboard by widget_ref_id
+        widget = getListJsonVal(from_widget_list, "widget_ref_id", widget_ref_id)
+        if not isinstance(widget, dict):
+            widget = {}
+        # Widget Add to To Dashboard
+        to_widget_list.insert(0, {
+            "widget_ref_id": generateRandomString(10, 1),
+            "sys_widget_id": widget.get("sys_widget_id", 0),
+            "x": widget.get("x", 0),
+            "y": widget.get("y", 0),
+            "c_width": widget.get("c_width", 0),
+            "c_height": widget.get("c_height", 0),
+            "htm_flow": widget.get("htm_flow", 0),
+            "bg_color": widget.get("bg_color", "#ffffff"),
+            "widget_label": widget.get("widget_label", ""),
+            "widget_setting": widget.get("widget_setting", ""),
+        })
+        dps.dashboard_id.set(to_dashboard)
+        dps.db_upd_vals.set({"widget_list": to_widget_list})
+        insertUpdateDashboard(dps)
+        # Widget Remove from From Dashboard if flag is move
+        if flag.upper() == "MOVE":
+            message = "Widget moved successfully!!"
+            removeListJsonVal(from_widget_list, "widget_ref_id", widget_ref_id)
+            dps.dashboard_id.set(from_dashboard)
+            dps.db_upd_vals.set({"widget_list": from_widget_list})
+            insertUpdateDashboard(dps)
+        return JSONResponse(
+            status_code = 200,
+            content = {
+                "status": True,
+                "message": message
+            }
+        )
+    except Exception as e:
+        saveErrorLogtoDB("Widget", userps.user_id.get(), "copyMoveWidget", str(e))
         raiseAPIError(str(e), 500)
 
 def saveViewWidget(request: Request):

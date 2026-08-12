@@ -137,6 +137,16 @@ def updateNestedJsonVal(fulljson: dict, jsonkey: str, srchkey: str, srchval: str
         return updated
     return False
 
+def getListJsonVal(fulljson: list, srchkey: str, srchval=None):
+    if not isinstance(fulljson, list):
+        return None
+    for item in fulljson:
+        if not isinstance(item, dict):
+            continue
+        if srchval is None or str(item.get(srchkey)) == str(srchval):
+            return item
+    return None
+
 def updateListJsonVal(fulljson: list, srchkey: str, srchval, updvals: dict):
     if not isinstance(fulljson, list):
         return False

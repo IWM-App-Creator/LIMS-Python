@@ -36,6 +36,7 @@ class WidgetProperties:
 
         self.search_text = ContextVar("search_text", default = None)
         self.preview = ContextVar("preview", default = None)
+        self.to_dashboard = ContextVar("to_dashboard", default = None)
 
         self.upd_vals = ContextVar("upd_vals", default = None)
         self.flag = ContextVar("flag", default = None)
