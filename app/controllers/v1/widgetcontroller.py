@@ -108,10 +108,10 @@ def shareUserWidget(request: Request):
             share_users = []
         title = ""
         msg_data = ""
+        share_users = getSelectedUsers(share_users, view_id)
         if widget_type == "ShareWidget":
             title = from_user + " shared a widget with you."
-            sys_widgets_users_id = dashboard_id
-            msg_data = widget_ref_id
+            msg_data = json.dumps({"dashboard_id": dashboard_id, "widget_ref_id": widget_ref_id})
         elif widget_type == "ShareMenu":
             title = save_name
             message = from_user + ' shared a menu "'  + save_name + '"'
@@ -120,7 +120,6 @@ def shareUserWidget(request: Request):
             title = save_name
             message = from_user + ' shared a filter view "' + save_name + '"'
             msg_data = json.dumps({"view_id": view_id, "save_id": sys_widgets_users_id})
-            share_users = getSelectedUsers(share_users, view_id)
         share_users = list(dict.fromkeys(share_users))
         for usr in share_users:
             if usr:
