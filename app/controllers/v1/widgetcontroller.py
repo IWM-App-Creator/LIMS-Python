@@ -263,7 +263,6 @@ def copyMoveWidget(request: Request):
         to_dashboard = params.get("to_dashboard", 0)
         widget_ref_id = params.get("widget_ref_id", 0)
         flag = params.get("flag", "")
-        message = "Widget copied successfully!!"
         # Get From Dashboard Widget List
         dps.dashboard_id.set(from_dashboard)
         from_dash = getDashboardData(dps)
@@ -293,12 +292,13 @@ def copyMoveWidget(request: Request):
             "widget_label": widget.get("widget_label", ""),
             "widget_setting": widget.get("widget_setting", ""),
         })
+        message = widget.get("widget_label", "") + " copied successfully!!"
         dps.dashboard_id.set(to_dashboard)
         dps.db_upd_vals.set({"widget_list": to_widget_list})
         insertUpdateDashboard(dps)
         # Widget Remove from From Dashboard if flag is move
         if flag.upper() == "MOVE":
-            message = "Widget moved successfully!!"
+            message = widget.get("widget_label", "") + " moved successfully!!"
             removeListJsonVal(from_widget_list, "widget_ref_id", widget_ref_id)
             dps.dashboard_id.set(from_dashboard)
             dps.db_upd_vals.set({"widget_list": from_widget_list})
