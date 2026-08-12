@@ -101,7 +101,7 @@ def copySaveFilterView(request: Request):
                         if widget is None:
                             widgetps.sys_widget_cat_id.set(2)
                             widgetps.widget_title.set(getattr(filter, "save_name", ""))
-                            widgetps.is_multiple.set(0)
+                            widgetps.is_multiple.set(1)
                             widgetps.is_global.set(0)
                             widgetps.is_system.set(0)
                             widgetps.is_delete.set(0)
