@@ -65,14 +65,16 @@ def getUserWidgets(widgetps):
     widget_master_map = {}
     for wigtm in widget_master_data:
         widget_json = getattr(wigtm, "widget_json", {})
-        if viewps.userview.get() not in (None, "", ()) and getattr(wigtm, "widget_type", "") == "VIEWWIDGET" and widget_json not in (None, {}, [], ""):
+        view_name = ""
+        view_url = ""
+        if getattr(wigtm, "widget_type", "") == "VIEWWIDGET" and widget_json not in (None, {}, [], ""):
             if isinstance(widget_json, str):
                 widget_json = eval(widget_json)
             view_id = widget_json.get("view_id", 0)
             viewps.view_id.set(view_id)
             getViewDataByID(viewps)
-            viewps.view_name.set(getattr(viewps.userview.get(), "view_name", ""))
-            viewps.view_url.set(getattr(viewps.userview.get(), "url", ""))
+            view_name = getattr(viewps.userview.get(), "view_name", "")
+            view_url = getattr(viewps.userview.get(), "url", "")
         widgetitm = {
             "sys_widget_id": getattr(wigtm, "sys_widget_id", 0),
             "widget_type": getattr(wigtm, "widget_type", ""),
@@ -80,8 +82,8 @@ def getUserWidgets(widgetps):
             "widget_json": widget_json,
             "widget_icon": getattr(wigtm, "widget_icon", ""),
             "view_id": viewps.view_id.get() or 0,
-            "view_name": viewps.view_name.get() or "",
-            "view_url": viewps.view_url.get() or "",
+            "view_name": view_name,
+            "view_url": view_url,
             "outlook_token": int(getattr(wigtm, "widget_type", "") == "TODO")
         }
         widget_master_map[str(getattr(wigtm, "sys_widget_id", 0))] = widgetitm

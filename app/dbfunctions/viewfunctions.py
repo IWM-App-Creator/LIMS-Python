@@ -1,7 +1,7 @@
 from app.utils.common import DB, select, insert, update, func, userps, nowWithTimeZone
 
 def getViewDataByID(viewps):
-    view_id = viewps.view_id.get()
+    view_id = int(viewps.view_id.get() or 0)
     view_url = viewps.view_url.get()
     tblview = DB.getTableMeta("sys_new_dynamic_view").alias("dyncv")
     stmt = (select(tblview)).where(tblview.c.is_delete == 0)
