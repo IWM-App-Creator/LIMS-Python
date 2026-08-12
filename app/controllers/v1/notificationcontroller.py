@@ -22,6 +22,7 @@ def getUserNotifications(request: Request):
             content = {
                 "status": True,
                 "message": "Notification List",
+                "rcrd_cnt": notifyps.record_cnt.get(),
                 "notification_list": notification_list
             }
         )
