@@ -1,5 +1,5 @@
 from datetime import datetime
-from app.utils.common import select, DB, userps, insert, update, func, not_, nowWithTimeZone, formatDate
+from app.utils.common import select, DB, userps, insert, update, func, not_, and_, nowWithTimeZone, formatDate
 
 def getNotificationList(notifyps):
     created_by = userps.user_id.get()
@@ -94,117 +94,6 @@ def getUnreadNotiCount(notifyps):
     total_unread = DB.executeDBScalar(stmt)
     notifyps.total_unread.set(total_unread)
 
-def markNotificationRead(notifyps):
-    notificaitons_id = notifyps.notificaitons_id.get()
-    item_id = notifyps.item_id.get()
-    view_id = notifyps.view_id.get()
-    table_id = notifyps.table_id.get()
-    to_user_id = notifyps.to_user_id.get()
-    tblnoti = DB.tableMeta("sys_notificaitons")
-    stmt = update(tblnoti).values(
-        is_read=1,
-        is_new=0,
-        read_date=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    )
-    if int(item_id) > 0 and int(table_id) > 0:
-        stmt = stmt.where(
-            tblnoti.c.item_id == item_id,
-            tblnoti.c.table_id == table_id,
-            tblnoti.c.to_user_id == to_user_id
-        )
-    elif int(view_id) > 0:
-        stmt = stmt.where(
-            tblnoti.c.view_id == view_id,
-            tblnoti.c.to_user_id == to_user_id
-        )
-    elif str(view_id) == "-1":
-        stmt = stmt.where(
-            tblnoti.c.is_read == 0,
-            tblnoti.c.to_user_id == to_user_id
-        )
-    else:
-        stmt = stmt.where(
-            tblnoti.c.notificaitons_id == notificaitons_id
-        )
-    DB.executeDBUpdate(stmt)
-
-def markNotificationOld(notifyps):
-    to_user_id = notifyps.to_user_id.get()
-    tblnoti = DB.tableMeta("sys_notificaitons")
-    stmt = (
-        update(tblnoti)
-        .where(
-            tblnoti.c.is_new == 1,
-            tblnoti.c.to_user_id == to_user_id
-        )
-        .values(
-            is_new = 0
-        )
-    )
-    DB.executeDBUpdate(stmt)
-
-def markNotificationArchive(notifyps):
-    item_id = notifyps.item_id.get()
-    view_id = notifyps.view_id.get()
-    table_id = notifyps.table_id.get()
-    to_user_id = notifyps.to_user_id.get()
-    tblnoti = DB.tableMeta("sys_notificaitons")
-    update_data = {
-        "is_archive": 1,
-        "is_read": 1,
-        "is_new": 0,
-        "read_date": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    }
-    stmt = update(tblnoti).values(**update_data)
-    if int(table_id) > 0 and int(item_id) > 0:
-        stmt = stmt.where(
-            tblnoti.c.table_id == table_id,
-            tblnoti.c.item_id == item_id,
-            tblnoti.c.to_user_id == to_user_id
-        )
-    elif int(view_id) > 0:
-        stmt = stmt.where(
-            tblnoti.c.view_id == view_id,
-            tblnoti.c.to_user_id == to_user_id
-        )
-    elif str(view_id) == "-1":
-        stmt = stmt.where(
-            tblnoti.c.is_archive == 0,
-            tblnoti.c.to_user_id == to_user_id
-        )
-    else:
-        stmt = stmt.where(
-            tblnoti.c.notificaitons_id == to_user_id
-        )
-    DB.executeDBUpdate(stmt)
-
-def markNotificationDeleted(notifyps):
-    flag = notifyps.flag.get()
-    notificaitons_id = notifyps.notificaitons_id.get()
-    to_user_id = notifyps.to_user_id.get()
-    tblnoti = DB.tableMeta("sys_notificaitons")
-    update_data = {
-        "is_delete": 1
-    }
-    stmt = update(tblnoti)
-    if int(flag) == 0:
-        update_data.update({
-            "is_read": 1,
-            "is_new": 0,
-            "read_date": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        })
-        stmt = stmt.where(
-            tblnoti.c.notificaitons_id == notificaitons_id,
-            tblnoti.c.to_user_id == to_user_id
-        )
-    else:
-        stmt = stmt.where(
-            tblnoti.c.is_delete == 0,
-            tblnoti.c.to_user_id == to_user_id
-        )
-    stmt = stmt.values(**update_data)
-    DB.executeDBUpdate(stmt)
-
 def insertUpdateNotification(notifyps):    
     notificaitons = DB.getTableMeta("sys_notificaitons")
     notificaitons_id = int(notifyps.notificaitons_id.get() or 0)
@@ -251,3 +140,50 @@ def insertUpdateNotification(notifyps):
         stmt = insert(notificaitons).values(**values)
         notificaitons_id = DB.executeDBInsert(stmt)
     return notificaitons_id
+
+def updateNotification(notifyps):
+    notificaitons = DB.getTableMeta("sys_notificaitons")
+    notificaitons_id = int(notifyps.notificaitons_id.get() or 0)
+    table_id = int(notifyps.table_id.get() or 0)
+    view_id = int(notifyps.view_id.get() or 0)
+    item_id = int(notifyps.item_id.get() or 0)
+    upd_vals = notifyps.upd_vals.get()
+    flag = notifyps.flag.get()
+    values= {}
+    if flag.upper() == "MARKREAD":
+        notifyps.upd_vals.set({"is_read": 1, "is_new": 0, "read_date": nowWithTimeZone()})
+    elif flag.upper() == "ARCHIVE":
+        notifyps.upd_vals.set({"is_archive": 1, "is_read": 1, "is_new": 0, "read_date": nowWithTimeZone()})
+    elif flag.upper() == "MARKOLD":
+        notifyps.upd_vals.set({"is_new": 0, "read_date": nowWithTimeZone()})
+    elif flag.upper() == "DELETE":
+        notifyps.upd_vals.set({"is_delete": 1, "is_read": 1, "is_new": 0, "read_date": nowWithTimeZone()})
+    if upd_vals not in (None, "", {}):
+        values = upd_vals
+    else:
+        if table_id not in (None, 0):
+            values["table_id"] = table_id
+        if view_id not in (None, 0):
+            values["view_id"] = view_id
+        if item_id not in (None, 0):
+            values["item_id"] = item_id
+    conditions = []
+    if notificaitons_id not in (None, "", 0):
+        conditions.append(notificaitons.c.notificaitons_id == notificaitons_id)
+    elif table_id > 0 and item_id > 0:
+        conditions.append(notificaitons.c.table_id == table_id)
+        conditions.append(notificaitons.c.item_id == item_id)
+        conditions.append(notificaitons.c.to_user_id == userps.user_id.get())
+    elif view_id > 0:
+        conditions.append(notificaitons.c.view_id == view_id)
+        conditions.append(notificaitons.c.to_user_id == userps.user_id.get())
+    elif view_id in (-1, "-1"):
+        conditions.append(notificaitons.c.to_user_id == userps.user_id.get())
+        if flag.upper() == "MARKREAD":
+            conditions.append(notificaitons.c.is_read == 0)
+        elif flag.upper() == "ARCHIVE":
+            conditions.append(notificaitons.c.is_archive == 0)
+    if flag.upper() == "MARKOLD":
+        conditions.append(notificaitons.c.is_new == 1)
+    stmt = update(notificaitons).where(and_(*conditions)).values(**values)
+    return DB.executeDBUpdate(stmt)

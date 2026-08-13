@@ -6,15 +6,15 @@ router = APIRouter(prefix = "/notification")
 ROUTES = [
     ("/counts", notiapi.getNotiCountByUserID, ["GET"]),
     ("/get", notiapi.getUserNotifications, ["GET"]),
-    ("/update", notiapi.markNotificationRead, ["GET"]), # Read, Archive, Delete
-    ("/accept", notiapi.markNotificationRead, ["GET"]), # Widget, Menu & Filters (Filter : send to dashboard)
+    ("/update", notiapi.updateUserNotification, ["GET"]), # Read, Archive, Delete
+    # ("/accept", notiapi.markNotificationRead, ["GET"]), # Widget, Menu & Filters (Filter : send to dashboard)
 
     #TO Remove
-    ("/markread", notiapi.markNotificationRead, ["GET"]),
-    ("/markold", notiapi.markNotificationOld, ["GET"]),
-    ("/delete", notiapi.markNotificationDeleted, ["GET"]),
-    ("/archive", notiapi.markNotificationArchive, ["GET"]),
-    ("/counts", notiapi.getNotiCountByUserID, ["GET"]),
+    # ("/markread", notiapi.markNotificationRead, ["GET"]),
+    # ("/markold", notiapi.markNotificationOld, ["GET"]),
+    # ("/delete", notiapi.markNotificationDeleted, ["GET"]),
+    # ("/archive", notiapi.markNotificationArchive, ["GET"]),
+    # ("/counts", notiapi.getNotiCountByUserID, ["GET"]),
 ]
 
 for path, handler, methods in ROUTES:
