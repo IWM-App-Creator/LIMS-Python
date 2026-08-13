@@ -4,7 +4,12 @@ from app.controllers.v1 import notificationcontroller as notiapi
 router = APIRouter(prefix = "/notification")
 
 ROUTES = [
+    ("/counts", notiapi.getNotiCountByUserID, ["GET"]),
     ("/get", notiapi.getUserNotifications, ["GET"]),
+    ("/update", notiapi.markNotificationRead, ["GET"]), # Read, Archive, Delete
+    ("/accept", notiapi.markNotificationRead, ["GET"]), # Widget, Menu & Filters (Filter : send to dashboard)
+
+    #TO Remove
     ("/markread", notiapi.markNotificationRead, ["GET"]),
     ("/markold", notiapi.markNotificationOld, ["GET"]),
     ("/delete", notiapi.markNotificationDeleted, ["GET"]),
