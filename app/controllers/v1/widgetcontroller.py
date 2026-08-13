@@ -164,6 +164,10 @@ def saveUserWidget(request: Request):
         widgetps.widget_label.set(params.get("widget_label", ""))
         widgetps.widget_setting.set(params.get("widget_setting", {}))
         widgetps.flag.set(params.get("flag", ""))
+        if isinstance(widgetps.widget_setting.get(), str):
+            widgetps.widget_setting.set(eval(widgetps.widget_setting.get()))
+        if not isinstance(widgetps.widget_setting.get(), dict):
+            widgetps.widget_setting.set({})
         # Get Dashboard Data
         dps.dashboard_id.set(widgetps.dashboard_id.get())
         dash_data = getDashboardData(dps)
