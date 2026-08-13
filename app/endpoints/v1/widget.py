@@ -12,6 +12,7 @@ ROUTES = [
     ("/savelayout", widgetapi.saveUserWidgetLayout, ["GET"]),
     ("/copymove", widgetapi.copyMoveWidget, ["GET"]),
     ("/saveview", widgetapi.saveViewWidget, ["POST"]),
+    ("/bomxml", widgetapi.getBOMXML, ["GET"]),
 ]
 
 for path, handler, methods in ROUTES:

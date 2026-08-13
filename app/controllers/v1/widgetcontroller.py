@@ -1,4 +1,5 @@
 import json
+import requests
 from app.utils.common import Request, RequestData, raiseAPIError, raiseInvalidError, JSONResponse, userps
 from app.helper.generalfunctions import getSelectedUsers, generateRandomString, getListJsonVal, updateListJsonVal, removeListJsonVal, normalizeJson
 from app.dbfunctions.logfunctions import saveErrorLogtoDB
@@ -390,4 +391,31 @@ def saveViewWidget(request: Request):
         )
     except Exception as e:
         saveErrorLogtoDB("Widget", userps.user_id.get(), "saveViewWidget", str(e))
+        raiseAPIError(str(e), 500)
+
+def getBOMXML(request: Request):
+    print("getBOMXML --> ")
+    try:
+        params = RequestData.params(request)
+        xmlurl = params.get("xmlurl", "")
+        response = requests.get(xmlurl, timeout=None, allow_redirects=True)
+        xmldata = ""
+        error_message = ""
+        if response.ok and response.content:
+            xmldata = response.text
+            error_message = "XML data found."
+        elif response.status_code == 403:
+            error_message = "Access denied by BOM (HTTP 403). Automated access is blocked."
+        else:
+            error_message = f"No XML data found. HTTP Status: {response.status_code}"
+        return JSONResponse(
+            status_code = 200,
+            content = {
+                "status": True,
+                "message": error_message,
+                "xmldata": xmldata
+            }
+        )
+    except Exception as e:
+        saveErrorLogtoDB("Widget", userps.user_id.get(), "getBOMXML", str(e))
         raiseAPIError(str(e), 500)
