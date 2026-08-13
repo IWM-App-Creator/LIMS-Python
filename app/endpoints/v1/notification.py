@@ -6,7 +6,7 @@ router = APIRouter(prefix = "/notification")
 ROUTES = [
     ("/counts", notiapi.getNotiCountByUserID, ["GET"]),
     ("/get", notiapi.getUserNotifications, ["GET"]),
-    ("/update", notiapi.updateUserNotification, ["GET"]), # Read, Archive, Delete
+    ("/update", notiapi.updateUserNotification, ["POST"]), # Read, Archive, Delete
     # ("/accept", notiapi.markNotificationRead, ["GET"]), # Widget, Menu & Filters (Filter : send to dashboard)
 
     #TO Remove
