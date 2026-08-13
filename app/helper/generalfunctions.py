@@ -242,3 +242,20 @@ def getSelectedUsers(tmparr: list, view_id: int) -> list:
                 share_users.append(assousr.get("user_id"))
     share_users = list(dict.fromkeys(share_users))
     return share_users
+
+def normalizeJson(value, default=None):
+    if default is None:
+        default = {}
+    if value is None:
+        return default
+    if isinstance(value, str):
+        value = value.strip()
+        if not value:
+            return default
+        try:
+            return json.loads(value)
+        except (json.JSONDecodeError, TypeError):
+            return default
+    if isinstance(value, (dict, list, int, float, bool)):
+        return value
+    return default
