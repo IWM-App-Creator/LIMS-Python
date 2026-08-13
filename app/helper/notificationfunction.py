@@ -3,7 +3,7 @@ from app.helper.generalfunctions import formatUserDisplayName
 from pathlib import Path
 import smtplib
 from email.message import EmailMessage
-from app.dbfunctions.notificationfunctions import getNotificationList
+from app.dbfunctions.notificationfunctions import getNotificationList, getNotificationCountViews
 from app.helper.noteshelper import getSmileyNotesMap
 from app.properties.notesproperties import notesps
 
@@ -55,6 +55,17 @@ def getNotifications(notifyps):
             notification_list.append(row)
     return notification_list
 
+def getNotificationCount(notifyps):
+    noti_vw_data = getNotificationCountViews(notifyps)
+    noti_views = []
+    for noti in noti_vw_data:
+        row = {
+            "view_id": getattr(noti, "view_id", 0),
+            "view_name": getattr(noti, "view_name", ""),
+            "cnt": getattr(noti, "cnt", 0),
+        }
+        noti_views.append(row)
+    return noti_views
 
 def sendEmail(notifyps):
     msg = EmailMessage()

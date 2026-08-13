@@ -94,6 +94,56 @@ def getUnreadNotiCount(notifyps):
     total_unread = DB.executeDBScalar(stmt)
     notifyps.total_unread.set(total_unread)
 
+def getNotificationCountViews(notifyps):
+    user_id = userps.user_id.get() # Get User ID
+    is_read = int(notifyps.is_read.get() or 0)
+    is_archive = int(notifyps.is_archive.get() or 0)
+    notifications = DB.getTableMeta("sys_notificaitons").alias("n")
+    dynamic_view = DB.getTableMeta("sys_new_dynamic_view").alias("v")
+    stmt = (
+        select(
+            notifications.c.view_id,
+            dynamic_view.c.view_name,
+            func.count(notifications.c.view_id).label("cnt")
+        )
+        .select_from(
+            notifications.outerjoin(
+                dynamic_view,
+                dynamic_view.c.view_id == notifications.c.view_id
+            )
+        )
+        .where(
+            notifications.c.to_user_id == user_id,
+            notifications.c.is_delete == 0
+        )
+    )
+    # readflag = 1 -> unread
+    if is_read == 1:
+        stmt = stmt.where(
+            notifications.c.is_read == 0
+        )
+    # readflag = 2 -> read
+    elif is_read == 2:
+        stmt = stmt.where(
+            notifications.c.is_read == 1
+        )
+    # archiveflag != 1 -> only non-archived
+    if is_archive != 1:
+        stmt = stmt.where(
+            notifications.c.is_archive == 0
+        )
+    stmt = (
+        stmt
+        .group_by(
+            notifications.c.view_id,
+            dynamic_view.c.view_name
+        )
+        .order_by(
+            func.count(notifications.c.view_id).desc()
+        )
+    )
+    return DB.executeDBSelect(stmt)
+
 def insertUpdateNotification(notifyps):    
     notificaitons = DB.getTableMeta("sys_notificaitons")
     notificaitons_id = int(notifyps.notificaitons_id.get() or 0)

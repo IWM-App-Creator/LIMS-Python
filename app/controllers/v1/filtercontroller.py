@@ -59,66 +59,6 @@ def saveViewFilter(request: Request):
         saveErrorLogtoDB("Filter", filterps.view_id.get(), "saveViewFilter", str(e))
         raiseAPIError(str(e), 500)
 
-# api/v1/filter/copy
-def copySaveFilterView(request: Request):
-    print("copySaveFilterView --> ")
-    try:
-        params = RequestData.params(request)
-        notifyps.notificaitons_id.set(params.get("notificaitons_id", 0))
-        flag = params.get("flag", "")
-        message = "Invalid Request"
-        if flag == "remove":
-            notifyps.upd_vals.set({"is_delete": 1, "msg_data": ""})
-            message = "Filter Deleted Successfully"
-        elif flag == "savefilter" or flag == "addtodashboard":
-            message = "Filter Saved Successfully"
-            notification = getNotificationData(notifyps)
-            if notification is not None and getattr(notification, "msg_data", "") not in (None, ""):
-                msg_data = getattr(notification, "msg_data", {})
-                if not isinstance(getattr(notification, "msg_data", {}), dict):
-                    msg_data = {}
-                view_id = int(msg_data.get("view_id", 0))
-                save_id = int(msg_data.get("save_id", 0))
-                filterps.save_id.set(save_id)
-                filter = getFilterData(filterps)
-                if filter is not None:
-                    filterps.save_id.set(None)
-                    filterps.save_name.set(getattr(filter, "save_name", ""))
-                    filterps.view_id.set(view_id)
-                    view_qry = getattr(filter, "view_qry", "")
-                    view_qry_json = getattr(filter, "view_qry_json", [])
-                    filterps.upd_vals.set({"is_default": 0, "view_id": view_id, "view_qry": view_qry, "view_qry_json": view_qry_json})
-                    new_save_id = insertUpdateFilter(filterps)
-                    if flag == "addtodashboard":
-                        message = "Filter added to Dashboard Successfully"
-                        widget_json = {"view_id": view_id, "save_id": new_save_id, "pgno": ""}
-                        widgetps.widget_json.set(widget_json)
-                        widgetps.widget_type.set("VIEWWIDGET")
-                        widgetps.view_id.set(view_id)
-                        widgetps.created_by.set(userps.user_id.get())
-                        widgetps.fetch_single.set(1)
-                        widget = getWidgetData(widgetps)
-                        if widget is None:
-                            widgetps.sys_widget_cat_id.set(2)
-                            widgetps.widget_title.set(getattr(filter, "save_name", ""))
-                            widgetps.is_multiple.set(0)
-                            widgetps.is_global.set(0)
-                            widgetps.is_system.set(0)
-                            widgetps.is_delete.set(0)
-                            insertUpdateWidget(widgetps)
-            notifyps.upd_vals.set({"msg_data": ""})
-        insertUpdateNotification(notifyps)
-        return JSONResponse(
-            status_code = 200,
-            content = {
-                "status": True,
-                "message": message
-            }
-        )
-    except Exception as e:
-        saveErrorLogtoDB("Filter", filterps.save_id.get(), "copySaveFilterView", str(e))
-        raiseAPIError(str(e), 500)
-
 # api/v1/filter/setdefault
 def makeDefaultFilter(request: Request):
     print("makeDefaultFilter --> ")

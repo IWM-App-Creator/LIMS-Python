@@ -1,5 +1,5 @@
 from app.utils.common import Request, RequestData, JSONResponse, raiseAPIError, nowWithTimeZone
-from app.helper.notificationfunction import getNotifications
+from app.helper.notificationfunction import getNotifications, getNotificationCount
 from app.dbfunctions.logfunctions import saveErrorLogtoDB
 from app.dbfunctions.notificationfunctions import getUnreadNotiCount, updateNotification
 from app.properties.notificationproperties import notifyps
@@ -54,5 +54,21 @@ def updateUserNotification(request: Request):
         raiseAPIError(str(e), 500)
 
 # http://xytovet.localhost:8000/api/v1/notification/counts
-def getNotiCountByUserID (request: Request):
-    print("getNotiCountByUserID --> ")
+def getNotiCountByViewID (request: Request):
+    print("getNotiCountByViewID --> ")
+    try:
+        params = RequestData.params(request)
+        notifyps.is_read.set(params.get("is_read", 0))
+        notifyps.is_archive.set(params.get("is_archive", 0))
+        views_notification = getNotificationCount(notifyps)
+        return JSONResponse (
+            status_code = 200,
+            content = {
+                "status": True,
+                "message": "Notification Count List",
+                "views_notification": views_notification
+            }
+        )
+    except Exception as e:
+        saveErrorLogtoDB("Notification", 0, "getNotiCountByViewID", str(e))
+        raiseAPIError(str(e), 500)
