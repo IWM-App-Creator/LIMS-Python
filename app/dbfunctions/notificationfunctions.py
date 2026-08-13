@@ -147,7 +147,6 @@ def updateNotification(notifyps):
     table_id = int(notifyps.table_id.get() or 0)
     view_id = int(notifyps.view_id.get() or 0)
     item_id = int(notifyps.item_id.get() or 0)
-    upd_vals = notifyps.upd_vals.get()
     flag = notifyps.flag.get()
     values= {}
     if flag.upper() == "MARKREAD":
@@ -158,8 +157,8 @@ def updateNotification(notifyps):
         notifyps.upd_vals.set({"is_new": 0, "read_date": nowWithTimeZone()})
     elif flag.upper() == "DELETE":
         notifyps.upd_vals.set({"is_delete": 1, "is_read": 1, "is_new": 0, "read_date": nowWithTimeZone()})
-    if upd_vals not in (None, "", {}):
-        values = upd_vals
+    if notifyps.upd_vals.get() not in (None, "", {}):
+        values = notifyps.upd_vals.get()
     else:
         if table_id not in (None, 0):
             values["table_id"] = table_id
