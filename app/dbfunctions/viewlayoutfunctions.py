@@ -31,4 +31,5 @@ def insertUpdateUserLayout(viewlyps):
         values["created_date"] = nowWithTimeZone()
         stmt = insert(tbl_layout).values(**values)
         srno = DB.executeDBInsert(stmt)
+    print("stmt --> ", stmt)
     return srno

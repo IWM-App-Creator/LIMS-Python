@@ -63,3 +63,5 @@ def saveUserLayoutData(viewlyps):
     viewlyps.db_upd_vals.set({col_flag: data})
     print("viewlyps.db_upd_vals.get() --> ", viewlyps.db_upd_vals.get())
     return insertUpdateUserLayout(viewlyps)
+
+# {"tabs": {"tab_0": {"sortby": null, "page_size": 5, "sortorder": null, "auto_refresh": 0, "refresh_alert": 0, "srch_threshold_json": null}, "tab_925": {"sortby": null, "page_size": 5, "sortorder": null, "auto_refresh": 0, "refresh_alert": 0, "srch_threshold_json": null}, "tab_926": {"sortby": null, "page_size": 5, "sortorder": null, "auto_refresh": 0, "refresh_alert": 0, "srch_threshold_json": null}, "tab_927": {"sortby": null, "page_size": 5, "sortorder": null, "auto_refresh": 0, "refresh_alert": 0, "srch_threshold_json": null}}, "group_tab": 3280}

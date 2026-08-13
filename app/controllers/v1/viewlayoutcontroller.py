@@ -36,6 +36,13 @@ def saveViewLayout(request: Request):
         viewlyps.key_val.set(params.get("key_val", ""))
         viewlyps.rm_flag.set(params.get("rm_flag", ""))
         saveUserLayoutData(viewlyps)
+        return JSONResponse (
+            status_code = 200,
+            content = {
+                "status": True,
+                "message": "View Layout Saved Successfully"
+            }
+        )
     except Exception as e:
         saveErrorLogtoDB("View", viewlyps.view_id.get(), "getViewData", str(e)) # Log Error To DB
         raiseAPIError(str(e), 500)
