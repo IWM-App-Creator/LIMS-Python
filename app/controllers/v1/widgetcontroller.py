@@ -350,7 +350,7 @@ def saveViewWidget(request: Request):
             widgetps.widget_title.set(widget_label)
             widgetps.widget_json.set(widget_json)
             widgetps.view_id.set(view_id)
-            widgetps.is_multiple.set(1)
+            widgetps.is_multiple.set(0)
             widgetps.is_system.set(0)
             widgetps.is_global.set(0)
             sys_widget_id = insertUpdateWidget(widgetps)
