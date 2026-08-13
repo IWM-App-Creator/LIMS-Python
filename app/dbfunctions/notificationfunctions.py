@@ -79,7 +79,7 @@ def getNotificationData(notifyps):
 
 def getUnreadNotiCount(notifyps):
     user_id = userps.user_id.get() # Get User ID
-    tblnoti = DB.tableMeta("sys_notificaitons").alias("noti")
+    tblnoti = DB.getTableMeta("sys_notificaitons").alias("noti")
     stmt = (
         select(func.count())
         .select_from(tblnoti)
@@ -87,7 +87,7 @@ def getUnreadNotiCount(notifyps):
             tblnoti.c.is_read == 0,
             tblnoti.c.to_user_id == user_id,
             tblnoti.c.is_archive == 0,
-            tblnoti.c.created_date <= datetime.now(),
+            tblnoti.c.created_date <= nowWithTimeZone(),
             tblnoti.c.is_delete == 0
         )
     )

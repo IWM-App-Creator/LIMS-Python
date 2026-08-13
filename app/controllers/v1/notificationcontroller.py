@@ -1,6 +1,7 @@
 from app.utils.common import Request, RequestData, JSONResponse, raiseAPIError
 from app.helper.notificationfunction import getNotifications
 from app.dbfunctions.logfunctions import saveErrorLogtoDB
+from app.dbfunctions.notificationfunctions import getUnreadNotiCount
 from app.properties.notificationproperties import notifyps
 
 # http://xytovet.localhost:8000/api/v1/notification/get
@@ -17,11 +18,13 @@ def getUserNotifications(request: Request):
         notifyps.pgno.set(params.get("pgno", 1))
         notifyps.page_size.set(params.get("page_size", 10))
         notification_list = getNotifications(notifyps)
+        getUnreadNotiCount(notifyps)
         return JSONResponse (
             status_code = 200,
             content = {
                 "status": True,
                 "message": "Notification List",
+                "total_unread": notifyps.total_unread.get(),
                 "rcrd_cnt": notifyps.record_cnt.get(),
                 "notification_list": notification_list
             }
