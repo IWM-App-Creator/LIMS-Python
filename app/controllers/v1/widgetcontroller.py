@@ -398,7 +398,18 @@ def getBOMXML(request: Request):
     try:
         params = RequestData.params(request)
         xmlurl = params.get("xmlurl", "")
-        response = requests.get(xmlurl, timeout=None, allow_redirects=True)
+        headers = {
+            "User-Agent": (
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/131.0.0.0 Safari/537.36"
+            ),
+            "Accept": "application/xml,text/xml,text/plain,*/*",
+            "Accept-Language": "en-AU,en;q=0.9",
+            "Referer": "https://www.bom.gov.au/",
+            "Cache-Control": "no-cache",
+        }
+        response = requests.get(xmlurl, headers=headers, timeout=None, allow_redirects=True)
         xmldata = ""
         error_message = ""
         if response.ok and response.content:
