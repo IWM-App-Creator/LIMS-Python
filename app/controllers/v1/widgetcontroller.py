@@ -222,22 +222,15 @@ def saveUserWidgetLayout(request: Request):
     try:
         params = RequestData.params(request)
         dps.dashboard_id.set(params.get("dashboard_id", 0))
-        w_list = params.get("layout_json", [])
-        if isinstance(w_list, str):
-            try:
-                w_list = json.loads(w_list)
-            except json.JSONDecodeError:
-                # Fallback for comma-separated values
-                w_list = [
-                    {"opt_val": int(x), "type": 0}
-                    for x in w_list.split(",")
-                    if x.strip()
-                ]
+        layout_json = normalizeJson(params.get("layout_json"), [])
+        # Make sure layout_json is a list
+        if not isinstance(layout_json, list):
+            layout_json = []
         dash_data = getDashboardData(dps)
         widget_list = getattr(dash_data, "widget_list", [])
         if not isinstance(widget_list, list):
             widget_list = []
-        for wdgt in w_list:
+        for wdgt in layout_json:
             if not isinstance(wdgt, dict):
                 continue
             updates = {
