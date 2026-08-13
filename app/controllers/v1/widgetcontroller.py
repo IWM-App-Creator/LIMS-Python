@@ -188,12 +188,15 @@ def saveUserWidget(request: Request):
         # EDIT WIDGET
         # ---------------------------------------------------------
         elif flag == "edit_widget" and widget_ref_id not in (None, "", 0):
-            updates = {
-                "widget_label": widget_label,
-                "widget_setting": widget_setting,
-                "bg_color": params.get("bg_color", "#ffffff"),
-                "htm_flow": params.get("htm_flow", 0)
-            }
+            updates = {}
+            if widget_label not in (None, ""):
+                updates["widget_label"] = widget_label
+            if widget_setting not in (None, "", {}):
+                updates["widget_setting"] = widget_setting
+            if params.get("bg_color") not in (None, ""):
+                updates["bg_color"] = params.get("bg_color")
+            if params.get("htm_flow") not in (None, ""):
+                updates["htm_flow"] = params.get("htm_flow")
             updateListJsonVal(widget_list, "widget_ref_id", widget_ref_id, updates)
             message = f"{widget_label} updated successfully"
         # ---------------------------------------------------------
