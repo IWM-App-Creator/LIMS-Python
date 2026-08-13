@@ -22,6 +22,9 @@ def saveUserLayoutData(viewlyps):
     key_val = viewlyps.key_val.get()
     usr_layout = getViewLayoutDataByID(viewlyps)
     print("usr_layout --> ", usr_layout)
+    # -------------------------------------------------
+    # Get existing JSON
+    # -------------------------------------------------
     if usr_layout:
         viewlyps.srno.set(getattr(usr_layout, "srno", 0))
         current_value = getattr(usr_layout, col_flag, None)
@@ -35,15 +38,28 @@ def saveUserLayoutData(viewlyps):
         else:
             data = current_value
     else:
+        # No record -> insert new
         data = {}
+    # -------------------------------------------------
+    # USER SETTING
+    # -------------------------------------------------
     if col_flag == "user_setting":
-        tabs = data.setdefault("tabs", {})
-        tab_key = f"tab_{tab_id}"
-        tab_data = tabs.setdefault(tab_key, {})
-        try:
-            key_val = int(key_val)
-        except (ValueError, TypeError):
-            pass
-        tab_data[key_flag] = key_val
-    viewlyps.db_upd_vals.set({col_flag: json.dumps(data)})
-    insertUpdateUserLayout(viewlyps)
+        if key_flag == "group_tab":
+            try:
+                key_val = int(key_val)
+            except (ValueError, TypeError):
+                pass
+            print("key_val --> ", key_val)
+            data["group_tab"] = key_val
+        else:
+            tabs = data.setdefault("tabs", {})
+            tab_key = f"tab_{tab_id}"
+            tab_data = tabs.setdefault(tab_key, {})
+            try:
+                key_val = int(key_val)
+            except (ValueError, TypeError):
+                pass
+            tab_data[key_flag] = key_val
+    viewlyps.db_upd_vals.set({col_flag: data})
+    print("viewlyps.db_upd_vals.get() --> ", viewlyps.db_upd_vals.get())
+    return insertUpdateUserLayout(viewlyps)
