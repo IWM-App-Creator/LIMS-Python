@@ -30,15 +30,15 @@ def insertUpdateView(viewps) :
             values["url"] = viewps.view_url.get()
         if viewps.view_type.get() not in (None, ""):
             values["view_type"] = viewps.view_type.get()
-        if viewps.view_options.get() not in (None, "", []):
+        if viewps.view_options.get() not in (None, "", {}):
             values["view_options"] = viewps.view_options.get()
-        if viewps.view_cols.get() not in (None, "", []):
+        if viewps.view_cols.get() not in (None, ""):
             values["view_cols"] = viewps.view_cols.get()
-        if viewps.view_joins.get() not in (None, "", []):
+        if viewps.view_joins.get() not in (None, ""):
             values["view_joins"] = viewps.view_joins.get()
-        if viewps.view_child.get() not in (None, "", []):
+        if viewps.view_child.get() not in (None, ""):
             values["view_child"] = viewps.view_child.get()
-        if viewps.view_actions.get() not in (None, "", []):
+        if viewps.view_actions.get() not in (None, ""):
             values["view_actions"] = viewps.view_actions.get()
         if viewps.dync_cat_id.get() not in (None, ""):
             values["dync_cat_id"] = viewps.dync_cat_id.get()
