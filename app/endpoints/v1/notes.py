@@ -5,7 +5,7 @@ router = APIRouter(prefix = "/notes")
 
 ROUTES = [
     ("/get", notesapi.getUserNotes, ["GET"]),
-    ("/save", notesapi.saveUserNote, ["GET"]),
+    ("/save", notesapi.saveUserNote, ["POST"]),
 ]
 
 for path, handler, methods in ROUTES:

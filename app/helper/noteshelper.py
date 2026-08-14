@@ -56,15 +56,7 @@ def setNoteInputParam(notesps, params):
         share_users = []
     # Handle FormData where share_users is JSON string
     if isinstance(item_ids, str):
-        try:
-            item_ids = json.loads(item_ids)
-        except json.JSONDecodeError:
-            # Fallback for comma-separated values
-            item_ids = [
-                x
-                for x in item_ids.split(",")
-                if x.strip()
-            ]
+        item_ids = item_ids.split(",")
     # Ensure it's a list
     if not isinstance(item_ids, list):
         item_ids = []
