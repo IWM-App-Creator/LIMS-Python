@@ -27,5 +27,6 @@ class MenuProperties:
 
         self.schema_name = ContextVar("schema_name", default = None)
         self.menu_cntr_data = ContextVar("menu_cntr_data", default = {})
+        self.upd_vals = ContextVar("upd_vals", default = {})
 
 menups = MenuProperties()

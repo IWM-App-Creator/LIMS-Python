@@ -25,32 +25,55 @@ def getMenuCentreData(menups):
     stmt = stmt.distinct()
     return DB.executeDBSelect(stmt)
 
+def getActiveMenuDB(menups):
+    schema_name = menups.schema_name.get()
+    m_centre_id = int(menups.m_centre_id.get() or 0)
+    dync_menu_centre = DB.getTableMeta("sys_dynamic_menu_centre", schema_name).alias("dmc")
+    stmt = (
+        select(
+            dync_menu_centre
+        )
+        .where(dync_menu_centre.c.m_centre_id == m_centre_id)
+    )
+    return DB.executeDBSelectSingle(stmt)
+
 def insertUpdateMenuCentre(menups):
     dync_menu_centre = DB.getTableMeta("sys_dynamic_menu_centre")
+    m_centre_id = int(menups.m_centre_id.get() or 0)
+    centre_name = menups.centre_name.get()
+    menu_json = menups.menu_json.get()
+    short_desc = menups.short_desc.get()
+    preview_img = menups.preview_img.get()
+    is_public = menups.is_public.get()
+    is_active = menups.is_active.get()
+    created_by = userps.user_id.get()
+    if menups.created_by.get() not in (None, "", 0):
+        created_by = menups.created_by.get()
     values = {}
-    if menups.centre_name not in (None, ""):
-        values["centre_name"] = menups.centre_name.get()
-    if menups.menu_json not in (None, []):
-        values["menu_json"] = menups.menu_json.get()
-    if menups.short_desc not in (None, ""):
-        values["short_desc"] = menups.short_desc.get()
-    if menups.preview_img not in (None, ""):
-        values["preview_img"] = menups.preview_img.get()
-    if menups.is_public not in (None, ""):
-        values["is_public"] = menups.is_public.get()
-    if menups.is_active not in (None, ""):
-        values["is_active"] = menups.is_active.get()
-    if menups.created_by not in (None, ""):
-        values["created_by"] = menups.created_by.get()
-    if menups.m_centre_id not in (None, "", 0):
+    if menups.upd_vals.get() not in (None, "", {}):
+        values = menups.upd_vals.get()
+    else:
+        if centre_name not in (None, ""):
+            values["centre_name"] = centre_name
+        if menu_json not in (None, []):
+            values["menu_json"] = menu_json
+        if short_desc not in (None, ""):
+            values["short_desc"] = short_desc
+        if preview_img not in (None, ""):
+            values["preview_img"] = preview_img
+        if is_public not in (None, ""):
+            values["is_public"] = is_public
+        if is_active not in (None, ""):
+            values["is_active"] = is_active
+    if m_centre_id not in (None, "", 0):
         stmt = (
             update(dync_menu_centre)
-            .where(dync_menu_centre.c.m_centre_id == menups.m_centre_id.get())
+            .where(dync_menu_centre.c.m_centre_id == m_centre_id)
             .values(**values)
         )
         DB.executeDBUpdate(stmt)
     else:
-        values["created_by"] = userps.user_id.get()
+        values["created_by"] = created_by
         values["created_date"] = nowWithTimeZone()
         stmt = (
             insert(dync_menu_centre)

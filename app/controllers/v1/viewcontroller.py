@@ -5,6 +5,7 @@ from app.dbfunctions.dbfunctions import getCreateTableSqlFromSchema
 from app.dbfunctions.dbtablesfunctions import insertTableDataToDB, insertUpdateTblCol
 from app.dbfunctions.logfunctions import saveErrorLogtoDB
 from app.dbfunctions.filterfunctions import getFilterData
+from app.dbfunctions.menufunctions import getActiveMenuDB, insertUpdateMenuCentre
 from app.helper.viewhelper import viewhlp, createviewhlp
 from app.helper.dbhelper import setQueryColStmt, executeCreateTableQuery
 from app.helper.generalfunctions import sortObjectsByKey, generateRandomString, addUpdateJson, updateNestedJsonVal, insertNestedJsonAfter, insertNestedJsonBefore, removeNestedJsonVal, getHostName
@@ -144,6 +145,7 @@ def saveTableData(request: Request):
 def createBlankView(request: Request):
     try:
         params = RequestData.params(request)
+        m_centre_id = params.get("m_centre_id", 0)
         view_name = params.get("view_name", "")
         viewps.view_name.set(view_name)
         viewps.view_type.set(params.get("view_type", ""))
@@ -220,12 +222,17 @@ def createBlankView(request: Request):
         print("view_id --> ", viewps.view_id.get())
 
         # Step 5 : Set Menu If Pin
-        # if viewps.pin_to_menu.get() == 1:
-            # menups.menu_name.set(view_name)
-            # menups.m_type.set(1)
-            # menups.view_id.set(viewps.view_id.get())
-            # getLastMenuRankByCMID(menups) # Get Last Menu Rank
-            # insertUpdateUserMenu(menups) # Add To Menu
+        if viewps.pin_to_menu.get() == 1:
+            menups.m_centre_id.set(m_centre_id)
+            menu_data = getActiveMenuDB(menups)
+            menu_json = getattr(menu_data, "menu_json", [])
+            if isinstance(menu_json, str):
+                menu_json = eval(menu_json)
+            if not isinstance(menu_json, list):
+                menu_json = []
+            menu_json.append({"m_type": "view", "item_id": viewps.view_id.get(), "menu_id": 0, "subMenu": [], "menu_url": "", "menu_icon": "", "menu_name": view_name, "is_new_tab": 0, "is_section": 0, "menu_color": "", "parent_menu_id": 0})
+            menups.upd_vals.set({"menu_json": menu_json})
+            insertUpdateMenuCentre(menups)
 
         # Step 6 : Return JSON
         getHostName(request)
