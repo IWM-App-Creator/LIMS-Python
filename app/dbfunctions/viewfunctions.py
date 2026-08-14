@@ -63,5 +63,4 @@ def insertUpdateView(viewps) :
         stmt = insert(tblview).values(**values)
         # print("stmt --> ", stmt)
         view_id = DB.executeDBInsert(stmt)
-    print("stmt --> ", stmt)
     viewps.view_id.set(view_id)
