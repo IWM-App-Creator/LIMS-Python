@@ -226,7 +226,6 @@ def createBlankView(request: Request):
 
         # Step 6 : Return JSON
         getHostName(request)
-        view_url = "https://" + userps.req_host.get() + "/view/" + view_url
         print("view_url --> ", view_url)
         return JSONResponse (
             status_code = 200,
