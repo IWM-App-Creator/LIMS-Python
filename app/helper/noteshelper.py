@@ -2,6 +2,7 @@ import json
 from app.helper.generalfunctions import getSelectedUsers
 from bs4 import BeautifulSoup
 from collections import defaultdict
+from app.helper.generalfunctions import normalizeJson
 from app.dbfunctions.notesfunctions import getSmileyNotes, getFromUsersData, getToUsersData, insertUpdateNotes, getSmileyData, insertUpdateEmoji
 from app.dbfunctions.notificationfunctions import insertUpdateNotification
 from app.properties.notificationproperties import notifyps
@@ -44,19 +45,15 @@ def setNoteInputParam(notesps, params):
     parent_id = params.get("parent_id", 0)
     view_id = params.get("view_id", 0)
     table_id = params.get("table_id", 0)
-    item_ids = params.get("item_ids", [])
-    share_users = params.get("share_users", [])
     note = params.get("note", "")
     reminder_date = params.get("reminder_date", None)
-    # Handle FormData where share_users is JSON string
-    if isinstance(share_users, str):
-        share_users = json.loads(share_users)
+    item_ids = params.get("item_ids", [])
+    share_users = normalizeJson(params.get("share_users", []), [])
+    if isinstance(item_ids, str):
+        item_ids = item_ids.split(",")
     # Ensure it's a list
     if not isinstance(share_users, list):
         share_users = []
-    # Handle FormData where share_users is JSON string
-    if isinstance(item_ids, str):
-        item_ids = item_ids.split(",")
     # Ensure it's a list
     if not isinstance(item_ids, list):
         item_ids = []
