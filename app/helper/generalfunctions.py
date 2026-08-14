@@ -229,7 +229,7 @@ def getLastUpdatedJSON(type: str) -> str:
 def getSelectedUsers(tmparr: list, view_id: int) -> list:
     share_users = []
     for tmp in tmparr:
-        if tmp.get("type", 0) == 0:
+        if tmp.get("type", 0) in (0, "0"):
             share_users.append(tmp.get("opt_val"))
         else:
             associationps.is_notify.set(1)
