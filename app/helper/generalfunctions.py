@@ -13,7 +13,6 @@ from app.properties.globalproperties import globalps
 from app.properties.associationproperties import associationps
 
 def setEnvVariables():
-
     globalps.APP_NAME = os.getenv('APP_NAME')
     globalps.APP_URL = os.getenv('APP_URL')
     globalps.APP_DOMAIN = os.getenv('APP_DOMAIN')
@@ -27,9 +26,6 @@ def setEnvVariables():
     globalps.SECRET_KEY = os.getenv('SECRET_KEY') # JWT algorithm used for signing the token
     globalps.ALGORITHM = os.getenv('ALGORITHM') # JWT algorithm used for signing the token
     globalps.ACCESS_TOKEN_EXPIRE_MINUTES = os.getenv('ACCESS_TOKEN_EXPIRE_MINUTES') # JWT token expiration time in minutes
-
-    
-
 
 def getHostName(request):
     host = request.headers.get("Host", "")
