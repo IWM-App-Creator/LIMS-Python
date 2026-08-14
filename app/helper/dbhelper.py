@@ -35,7 +35,7 @@ def setQueryColStmt(dbps):
     else:
         tmpsql = tmpsql + " NULL"
     if default_val != "":
-        tmpsql = tmpsql + " DEFAULT " + default_val
+        tmpsql = tmpsql + " DEFAULT " + str(default_val)
     if data_type in ("varchar", "text", "longtext", "tinytext"):
        tmpsql = tmpsql + " CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
     colqry.append(tmpsql)
@@ -65,7 +65,7 @@ def executeCreateTableQuery(dbps):
     AUTO_INCREMENT=1;
     """
     print("executeCreateTableQuery create_sql --> ", create_sql)
-    DB.executeDBStatement(create_sql)
+    DB.executStatementOnly(create_sql)
 
 def getPrimaryColParam(table_id, col_name, col_alias, rank):
     colopt = {"table_id": table_id, "col_name": col_name, "col_alias": col_alias, "col_options": {"data_type": "bigint", "length": "11", "default_val": "", "is_primary": 1, "is_index": 1, "is_unique": 0, "is_mandatory": 0, "notify_user": 0, "actv_log_cols": 0, "col_data_items": ""}, "view_cols": {"col_id": "", "col_name": col_name, "col_alias": col_alias, "col_type": "NUMBER", "qry_alias": "mtbl", "col_key": 1, "link_text": "", "url_prefix": "", "date_format": "", "calc_formula": "", "lookup_colid": 0, "lookup_colnm": "", "rank": rank}, "rank": rank}
