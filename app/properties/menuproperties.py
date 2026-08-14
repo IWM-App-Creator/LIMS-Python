@@ -6,7 +6,7 @@ class MenuProperties:
         self.m_centre_id = ContextVar("m_centre_id", default = "")
         self.m_centre_ids = ContextVar("m_centre_ids", default = "")
         self.centre_name = ContextVar("centre_name", default = "")
-        self.menu_json = ContextVar("menu_json", default = {})
+        self.menu_json = ContextVar("menu_json", default = [])
         self.short_desc = ContextVar("short_desc", default = "")
         self.preview_img = ContextVar("preview_img", default = "")
         self.is_public = ContextVar("m_centre_id", default = "")

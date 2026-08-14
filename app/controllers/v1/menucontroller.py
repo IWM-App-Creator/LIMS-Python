@@ -9,13 +9,15 @@ from app.dbfunctions.menufunctions import getMenuCentreData
 def getMenuCentre(request: Request):
     print("getMenuCentre")
     try:
-        asso_menu_cntr_ids = [8, 51, 60, 61] # Get User Menu Centre IDs From Association Users
+        asso_menu_cntr_ids = [] # Get User Menu Centre IDs From Association Users
         menups.m_centre_ids.set(asso_menu_cntr_ids)
         menu_centres = getMenuCentreData(menups)
         menu_centre = []
         for menu in menu_centres:
             menu_json = menu.menu_json
-            if menu_json in (None, "", []):
+            if isinstance(menu_json, str):
+                menu_json = eval(menu_json)
+            if not isinstance(menu_json, list):
                 menu_json = []
             row = {
                 "m_centre_id": menu.m_centre_id,
