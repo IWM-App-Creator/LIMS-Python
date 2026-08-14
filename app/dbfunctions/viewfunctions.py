@@ -49,8 +49,8 @@ def insertUpdateView(viewps) :
         if viewps.is_delete.get() not in (None, ""):
             values["is_delete"] = viewps.is_delete.get()
     # Check for Insert / Update
-    view_id = viewps.view_id.get()
-    if view_id not in (None, "0", ""): # Update existing record
+    view_id = int(viewps.view_id.get() or 0)
+    if view_id not in (None, "0", "", 0): # Update existing record
         stmt = (
             update(tblview)
             .where(tblview.c.view_id == view_id)
@@ -63,4 +63,5 @@ def insertUpdateView(viewps) :
         stmt = insert(tblview).values(**values)
         # print("stmt --> ", stmt)
         view_id = DB.executeDBInsert(stmt)
+    print("stmt --> ", stmt)
     viewps.view_id.set(view_id)

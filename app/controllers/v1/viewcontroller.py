@@ -155,8 +155,6 @@ def createBlankView(request: Request):
         table_id = 0
         table_name = generateRandomString()
         v_c_item = []
-        print("view_name --> ", view_name)
-        print("table_name --> ", table_name)
         # Step 1 : Insert Into Sys DB Table
         dbps.table_alias.set(view_name)
         dbps.table_name.set(table_name)
@@ -164,7 +162,6 @@ def createBlankView(request: Request):
         if not table_id:
             return raiseInvalidError("Table Not Created ", 401)
         dbps.table_id.set(table_id)
-        print("table_id --> ", dbps.table_id.get())
 
         # Step 2 : Insert Into Sys DB Table Col
         createviewhlp.getDefaultAddViewCols(viewps) # Get Column List Based On View Type
@@ -204,24 +201,19 @@ def createBlankView(request: Request):
         viewps.table_name.set(table_name)
         view_url = generateRandomString(length = 12, hasdigits = 1)
         viewps.view_url.set(view_url)
-        # view_cols = {}
-        # view_cols["view_cols"] = v_c_item
-        if v_c_item == []:
-            v_c_item = json.dumps(v_c_item)
         viewps.view_cols.set(v_c_item)
         # Generate Query 
         createviewhlp.generateViewQuery(viewps)
         createviewhlp.getLeftJoinQuery(viewps)
         createviewhlp.getFullViewQuery(viewps)
         createviewhlp.getDefaultViewOptions(viewps) # Set View Options
-        viewps.view_joins.set([]) # Set View Joins Tables
-        viewps.view_child.set([]) # Set View Child
+        viewps.view_joins.set(json.dumps([])) # Set View Joins Tables
+        viewps.view_child.set(json.dumps([])) # Set View Child
         viewps.view_actions.set([{"act_icon": "trash", "action_id": 3, "action_label": "Delete", "rank": 1, "is_dynamic": 0, "act_prm_ids": "", "act_bg_color": "", "input_params": "", "view_act_json": ""}, {"act_icon": "refresh-ccw", "action_id": 2, "action_label": "Restore", "rank": 2, "is_dynamic": 0, "act_prm_ids": "", "act_bg_color": "", "input_params": "", "view_act_json": ""}]) # Set View Actions
         insertUpdateView(viewps)
-        print("view_id --> ", viewps.view_id.get())
 
         # Step 5 : Set Menu If Pin
-        if viewps.pin_to_menu.get() == 1:
+        if viewps.pin_to_menu.get() in (1, "1"):
             menu_data = getActiveMenuDB(menups)
             menu_json = getattr(menu_data, "menu_json", [])
             if isinstance(menu_json, str):
