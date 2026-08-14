@@ -220,7 +220,7 @@ def createBlankView(request: Request):
                 menu_json = eval(menu_json)
             if not isinstance(menu_json, list):
                 menu_json = []
-            menu_json.append({"m_type": "view", "item_id": viewps.view_id.get(), "menu_id": 0, "subMenu": [], "menu_url": "", "menu_icon": "", "menu_name": view_name, "is_new_tab": 0, "is_section": 0, "menu_color": "", "parent_menu_id": 0})
+            menu_json.append({"m_type": "view", "item_id": viewps.view_id.get(), "menu_id": 0, "subMenu": [], "menu_url": "view/" + view_url, "menu_icon": "", "menu_name": view_name, "is_new_tab": 0, "is_section": 0, "menu_color": "", "parent_menu_id": 0})
             menups.upd_vals.set({"menu_json": menu_json})
             insertUpdateMenuCentre(menups)
 
