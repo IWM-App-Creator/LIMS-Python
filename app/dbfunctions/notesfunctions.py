@@ -119,6 +119,7 @@ def insertUpdateNotes(notesps):
     col_id = int(notesps.col_id.get() or 0)
     item_id = int(notesps.item_id.get() or 0)
     table_notes = DB.getTableMeta("sys_table_notes")
+    parent_id = int(notesps.parent_id.get() or 0)
     created_date = nowWithTimeZone()
     if notesps.reminder_date.get() not in (None, ""):
         created_date = notesps.reminder_date.get()
@@ -126,8 +127,8 @@ def insertUpdateNotes(notesps):
     if notesps.upd_vals.get() not in (None, "", {}):
         values = notesps.upd_vals.get()
     else:
-        if notesps.parent_id.get() not in (None, ""):
-            values["parent_id"] = notesps.parent_id.get()
+        if parent_id not in (None, ""):
+            values["parent_id"] = parent_id
         if view_id not in (None, "", 0):
             values["view_id"] = view_id
         if table_id not in (None, "", 0):

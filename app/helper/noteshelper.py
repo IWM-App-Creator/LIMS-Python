@@ -50,15 +50,7 @@ def setNoteInputParam(notesps, params):
     reminder_date = params.get("reminder_date", None)
     # Handle FormData where share_users is JSON string
     if isinstance(share_users, str):
-        try:
-            share_users = json.loads(share_users)
-        except json.JSONDecodeError:
-            # Fallback for comma-separated values
-            share_users = [
-                {"opt_val": int(x), "type": 0}
-                for x in share_users.split(",")
-                if x.strip()
-            ]
+        share_users = json.loads(share_users)
     # Ensure it's a list
     if not isinstance(share_users, list):
         share_users = []
@@ -68,7 +60,11 @@ def setNoteInputParam(notesps, params):
             item_ids = json.loads(item_ids)
         except json.JSONDecodeError:
             # Fallback for comma-separated values
-            item_ids = [x for x in item_ids.split(",") if x.strip()]
+            item_ids = [
+                x
+                for x in item_ids.split(",")
+                if x.strip()
+            ]
     # Ensure it's a list
     if not isinstance(item_ids, list):
         item_ids = []
