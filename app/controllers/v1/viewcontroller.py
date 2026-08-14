@@ -145,7 +145,6 @@ def saveTableData(request: Request):
 def createBlankView(request: Request):
     try:
         params = RequestData.params(request)
-        m_centre_id = params.get("m_centre_id", 0)
         view_name = params.get("view_name", "")
         viewps.view_name.set(view_name)
         viewps.view_type.set(params.get("view_type", ""))
@@ -223,7 +222,6 @@ def createBlankView(request: Request):
 
         # Step 5 : Set Menu If Pin
         if viewps.pin_to_menu.get() == 1:
-            menups.m_centre_id.set(m_centre_id)
             menu_data = getActiveMenuDB(menups)
             menu_json = getattr(menu_data, "menu_json", [])
             if isinstance(menu_json, str):
