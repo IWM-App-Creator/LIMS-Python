@@ -59,7 +59,7 @@ def saveErrorLogtoDB(section: str, item_id: str, notes: str, error_msg: str, pag
         if globalps.DB_DEBUG_LEVEL == "Print" :
             print("Exception DB_DEBUG_LEVEL Print --> ", notes)
 
-        if globalps.DB_DEBUG_LEVEL == "DB" or globalps.DB_DEBUG_LEVEL == "Print" :
+        if globalps.DB_DEBUG_LEVEL == "DB":
             sys_error_log = DB.getTableMeta("sys_error_log")
             stmt = (
                 insert(sys_error_log)
