@@ -41,6 +41,9 @@ def getViewData(request: Request):
         dataarr = []
         viewps.view_qry_data.set(dataarr)
         view_qry = viewps.view_qry.get() # Get Query
+        # check Main Table Delete Records
+        if viewps.show_deleted.get() in (0, "0", None):
+            view_qry = view_qry + " AND is_delete = 0"
         # set Filter Qry by calling from Dashboard
         if viewps.call_from.get() == "Dashboard":
             dps.dashboard_id.set(params.get("dashboard_id"))
