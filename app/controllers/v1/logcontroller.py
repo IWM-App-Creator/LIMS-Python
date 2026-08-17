@@ -15,8 +15,8 @@ def getErrorLog(request: Request):
         getDBErrorLog(logps) # Get Error Log Data
         logdata = logps.logdata.get()
         item_list = []
-        if not logdata: # Invalid View
-            return raiseAPIError("Log Not Found", 200)
+        # if not logdata: # Invalid View
+        #     # return raiseAPIError("Log Not Found", 200)
         for data in logdata:
             first_name = getattr(data, "first_name", "")
             last_name = getattr(data, "last_name", "")
