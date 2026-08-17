@@ -127,15 +127,15 @@ def insertUpdateNotes(notesps):
     if notesps.upd_vals.get() not in (None, "", {}):
         values = notesps.upd_vals.get()
     else:
-        if parent_id not in (None, ""):
+        if parent_id not in (None, "", "null", "None", 0):
             values["parent_id"] = parent_id
-        if view_id not in (None, "", 0):
+        if view_id not in (None, "", "null", "None", 0):
             values["view_id"] = view_id
-        if table_id not in (None, "", 0):
+        if table_id not in (None, "", "null", "None", 0):
             values["table_id"] = table_id
-        if col_id not in (None, ""):
+        if col_id not in (None, "", "null", "None", 0):
             values["col_id"] = col_id
-        if item_id not in (None, "", 0):
+        if item_id not in (None, "", "null", "None", 0):
             values["item_id"] = item_id
         if notesps.note.get() not in (None, ""):
             values["note"] = notesps.note.get()
