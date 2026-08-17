@@ -20,6 +20,7 @@ from app.endpoints.v1.systemforms import router as systemform_router
 from app.endpoints.v1.systemview import router as systemview_router
 from app.endpoints.v1.users import router as user_router
 from app.endpoints.v1.notification import router as noti_router
+from app.endpoints.v1.tinymce import router as tinymce_router
 from app.endpoints.v1.log import router as log_router
 
 from app.endpoints.v1.testapi import router as test_router
@@ -48,6 +49,7 @@ def routerGroup():
     apirouter.include_router(systemview_router, prefix = prefix, tags = ["System View"])
     apirouter.include_router(user_router, prefix = prefix, tags = ["Users"])
     apirouter.include_router(noti_router, prefix = prefix, tags = ["Notification"])
+    apirouter.include_router(tinymce_router, prefix = prefix, tags = ["Tiny MCE"])
     apirouter.include_router(log_router, prefix = prefix, tags = ["Log"])
 
     apirouter.include_router(test_router, prefix = prefix, tags = ["Test"])
