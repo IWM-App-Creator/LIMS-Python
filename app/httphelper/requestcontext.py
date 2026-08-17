@@ -1,4 +1,4 @@
-from fastapi import Request
+from fastapi import Request, UploadFile
 from fastapi.responses import JSONResponse
 from app.httphelper.publicendpoints import isPublicEndpoint
 from app.tenant.tenant_cache import TenantCache
@@ -24,7 +24,14 @@ async def request_context(request: Request, call_next):
         if "application/json" in content_type:
             request.state.params = await request.json()
         elif "multipart/form-data" in content_type:
-            request.state.params = {}
+            form = await request.form()
+            params = {}
+            for key, value in form.multi_items():
+                # Don't put uploaded files into params
+                if isinstance(value, UploadFile):
+                    continue
+                params[key] = value
+            request.state.params = params
         elif "application/x-www-form-urlencoded" in content_type:
             form = await request.form()
             request.state.params = dict(form)

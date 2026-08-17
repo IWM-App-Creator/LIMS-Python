@@ -148,7 +148,7 @@ def shareUserWidget(request: Request):
         raiseAPIError(str(e), 500)
 
 # api/v1/widget/saveuser?dashboard_id=1&sys_widget_id=1&x=0&y=0&c_width=0&c_height=0&htm_flow=0&bg_color=#ffffff&widget_label=Test Widget&widget_setting=&flag=ADD
-def saveUserWidget(request: Request):
+async def saveUserWidget(request: Request):
     print("saveUserWidget -->")
     try:
         params = RequestData.params(request)
@@ -157,6 +157,8 @@ def saveUserWidget(request: Request):
         widget_ref_id = params.get("widget_ref_id", 0)
         widget_label = params.get("widget_label", "")
         widget_setting = normalizeJson(params.get("widget_setting", {}))
+        btn_imgs = await RequestData.file(request, "btn_imgs")
+        print("btn_imgs", btn_imgs)
         dps.dashboard_id.set(dashboard_id)
         dash_data = getDashboardData(dps)
         widget_list = getattr(dash_data, "widget_list", None)
