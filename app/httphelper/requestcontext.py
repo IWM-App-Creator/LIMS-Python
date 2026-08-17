@@ -25,13 +25,7 @@ async def request_context(request: Request, call_next):
             request.state.params = await request.json()
         elif "multipart/form-data" in content_type:
             form = await request.form()
-            params = {}
-            for key, value in form.multi_items():
-                # Don't put uploaded files into params
-                if isinstance(value, UploadFile):
-                    continue
-                params[key] = value
-            request.state.params = params
+            request.state.params = form
         elif "application/x-www-form-urlencoded" in content_type:
             form = await request.form()
             request.state.params = dict(form)

@@ -1,7 +1,7 @@
 import json
 import requests
 from app.utils.common import Request, RequestData, raiseAPIError, raiseInvalidError, JSONResponse, userps
-from app.helper.generalfunctions import getSelectedUsers, generateRandomString, getListJsonVal, updateListJsonVal, removeListJsonVal, normalizeJson
+from app.helper.generalfunctions import getSelectedUsers, generateRandomString, getListJsonVal, updateListJsonVal, removeListJsonVal, normalizeJson, uploadFile
 from app.dbfunctions.logfunctions import saveErrorLogtoDB
 from app.dbfunctions.notificationfunctions import insertUpdateNotification
 from app.dbfunctions.dashboardfunctions import getDashboardData, insertUpdateDashboard
@@ -157,8 +157,9 @@ async def saveUserWidget(request: Request):
         widget_ref_id = params.get("widget_ref_id", 0)
         widget_label = params.get("widget_label", "")
         widget_setting = normalizeJson(params.get("widget_setting", {}))
-        btn_imgs = await RequestData.file(request, "btn_imgs")
-        print("btn_imgs", btn_imgs)
+        # btn_imgs = await RequestData.file(request, "btn_imgs")
+        btn_imgs = params.getlist("btn_imgs[]")
+        btn_img_index = params.getlist("btn_img_index[]")
         dps.dashboard_id.set(dashboard_id)
         dash_data = getDashboardData(dps)
         widget_list = getattr(dash_data, "widget_list", None)
@@ -199,6 +200,28 @@ async def saveUserWidget(request: Request):
                 updates["bg_color"] = params.get("bg_color")
             if params.get("htm_flow") not in (None, ""):
                 updates["htm_flow"] = params.get("htm_flow")
+            buttons = widget_setting.get("buttons", [])
+            if buttons and btn_imgs and btn_img_index:
+                for file, index in zip(btn_imgs, btn_img_index):
+                    try:
+                        button_index = int(index)
+                    except (ValueError, TypeError):
+                        continue
+                    # Check index
+                    if button_index < 0 or button_index >= len(buttons):
+                        return raiseInvalidError("Invalid button index.", 401)
+                    # Check file
+                    if file is None or not file.filename:
+                        continue
+                    # Upload
+                    filename = uploadFile(userps.ws_url.get(), "dashboard", file, 0)
+                    if filename:
+                        filename = "https://" + userps.req_host.get() + "/wsassets/uploads/" + userps.ws_url.get() + "/dashboard/" + filename
+                        # Update exact button
+                        buttons[button_index]["image"] = filename
+                # Save complete buttons list
+                widget_setting["buttons"] = buttons
+                updates["widget_setting"] = widget_setting
             updateListJsonVal(widget_list, "widget_ref_id", widget_ref_id, updates)
             message = f"{widget_label} updated successfully"
         # ---------------------------------------------------------

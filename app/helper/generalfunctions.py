@@ -33,14 +33,17 @@ def getHostName(request):
     userps.req_host.set(host)
     userps.req_subdomain.set(hostsd.split(".")[0])
 
-def uploadFile(ws_url: str, folder: str, file: UploadFile) -> str | None:
+def uploadFile(ws_url: str, folder: str, file: UploadFile, append_time = 1) -> str | None:
     if file is None or not file.filename:
         return None
     destination_path = Path("wsassets/uploads") / ws_url / folder
     destination_path = makeDirectory(destination_path)
     stem = Path(file.filename).stem          # abc
     extension = Path(file.filename).suffix   # .png
-    filename = f"{stem}_{int(time.time())}{extension}"
+    if append_time == 1:
+        filename = f"{stem}_{int(time.time())}{extension}"
+    else:
+        filename = f"{stem}{extension}"
     with open(destination_path / filename, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
     return filename
