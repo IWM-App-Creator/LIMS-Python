@@ -44,7 +44,7 @@ def getMenuCentre(request: Request):
 def saveMenuCentre(request: Request):
     print("saveMenuCentre --> ")
     try:
-        params = request.params
+        params = RequestData.params(request)
         menups.m_centre_id.set(params.get("m_centre_id", 0))
         menups.centre_name.set(params.get("centre_name", ""))
         menups.ref_m_c_id.set(params.get("ref_m_c_id", 0))
@@ -54,6 +54,13 @@ def saveMenuCentre(request: Request):
         menups.is_active.set(params.get("is_active", 0))
         menups.is_delete.set(params.get("is_delete", 0))
         insertUpdateMenuCentre(menups)
+        return JSONResponse (
+            status_code = 200,
+            content = {
+                "status": True,
+                "message": "Menu Centre Saved Successfully"
+            }
+        )
     except Exception as e:
-        saveErrorLogtoDB("Menu", menups.view_id.get(), "saveMenuCentre", str(e)) # Log Error To DB
+        saveErrorLogtoDB("Menu", 0, "saveMenuCentre", str(e)) # Log Error To DB
         raiseAPIError(str(e), 500)
