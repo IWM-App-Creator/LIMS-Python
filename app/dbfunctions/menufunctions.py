@@ -81,6 +81,9 @@ def insertUpdateMenuCentre(menups):
     if ref_m_c_id not in (None, "", 0, "0"):
         ref_mc = getReferenceMenuCentre(menups)
         values["menu_json"] = getattr(ref_mc, "menu_json", [])
+    if is_active in (1, "1"):
+        stmt = update(dync_menu_centre).where(dync_menu_centre.c.created_by == created_by).values(is_active = 0)
+        DB.executeDBUpdate(stmt)
     if m_centre_id not in (None, "", 0):
         stmt = (
             update(dync_menu_centre)
