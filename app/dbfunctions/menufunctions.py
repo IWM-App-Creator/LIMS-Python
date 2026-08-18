@@ -53,8 +53,8 @@ def insertUpdateMenuCentre(menups):
     menu_json = menups.menu_json.get()
     short_desc = menups.short_desc.get()
     preview_img = menups.preview_img.get()
-    is_public = int(menups.is_public.get() or 0)
-    is_active = int(menups.is_active.get() or 0)
+    is_public = menups.is_public.get()
+    is_active = menups.is_active.get()
     created_by = int(userps.user_id.get() or 0)
     is_delete = int(menups.is_delete.get() or 0)
     if menups.created_by.get() not in (None, "", 0):

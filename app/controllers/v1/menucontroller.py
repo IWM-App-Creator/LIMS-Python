@@ -50,8 +50,8 @@ def saveMenuCentre(request: Request):
         menups.ref_m_c_id.set(params.get("ref_m_c_id", 0))
         menups.menu_json.set(normalizeJson(params.get("menu_json", []), []))
         menups.short_desc.set(params.get("short_desc", ""))
-        menups.is_public.set(params.get("is_public", 0))
-        menups.is_active.set(params.get("is_active", 0))
+        menups.is_public.set(params.get("is_public", ""))
+        menups.is_active.set(params.get("is_active", ""))
         menups.is_delete.set(params.get("is_delete", 0))
         insertUpdateMenuCentre(menups)
         return JSONResponse (
