@@ -192,7 +192,7 @@ def getUserWorkspaceData(wsps):
     return DB.executeDBSelectSingle(stmt)
 
 def insertUpdateUsersWorkspace(wsps):
-    users_workspace = DB.getTableMeta("users_workspace", "systemconfig").alias("wsusr")
+    users_workspace = DB.getTableMeta("users_workspace", "systemconfig")
     user_wp_id = int(wsps.user_wp_id.get() or 0)
     user_id = int(wsps.ws_usr_id.get() or 0)
     workspace_id = int(wsps.workspace_id.get() or 0)

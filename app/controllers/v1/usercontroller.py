@@ -249,6 +249,7 @@ def inviteWorkspaceUser(request: Request):
             u_name = getattr(user_data, "first_name", "") + " " + getattr(user_data, "last_name", "")
             error_msg = 'User added to workspace "' + workspace_name + '" successfully.'
         else:
+            u_name = userps.first_name.get() + " " + userps.last_name.get()
             newpassword = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
             userps.db_upd_vals.set({
                 "first_name": userps.first_name.get(),
