@@ -55,11 +55,14 @@ def saveUserLayoutData(viewlyps):
             tabs = data.setdefault("tabs", {})
             tab_key = f"tab_{tab_id}"
             tab_data = tabs.setdefault(tab_key, {})
-            try:
-                key_val = int(key_val)
-            except (ValueError, TypeError):
-                pass
-            tab_data[key_flag] = key_val
+            key_flags = key_flag.split("||")
+            key_vals = key_val.split("||")
+            for flag, value in zip(key_flags, key_vals):
+                try:
+                    value = int(value)
+                except (ValueError, TypeError):
+                    pass
+                tab_data[flag] = value
     viewlyps.db_upd_vals.set({col_flag: data})
     print("viewlyps.db_upd_vals.get() --> ", viewlyps.db_upd_vals.get())
     return insertUpdateUserLayout(viewlyps)
