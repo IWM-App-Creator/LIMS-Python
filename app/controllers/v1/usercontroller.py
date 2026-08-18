@@ -359,7 +359,6 @@ def inviteWorkspaceUser(request: Request):
         dps.created_by.set(u_id)
         dash_data = getDashboardData(dps)
         if not dash_data:
-            dps.created_by.set(u_id)
             dps.db_upd_vals.set({
                 "dashboard_name": "Default",
                 "widget_list": [{"x": "0", "y": "0", "c_width": "3", "bg_color": "#ffffff", "c_height": "1.5", "htm_flow": "0", "widget_label": "Add Menu", "sys_widget_id": "1", "widget_ref_id": generateRandomString(10, 1), "widget_setting": {}}, {"x": "0", "y": "0", "c_width": "3", "bg_color": "#ffffff", "c_height": "1.5", "htm_flow": "0", "widget_label": "Add View", "sys_widget_id": "2", "widget_ref_id": generateRandomString(10, 1), "widget_setting": {}}, {"x": "0", "y": "0", "c_width": "3", "bg_color": "#ffffff", "c_height": "1.5", "htm_flow": "0", "widget_label": "Add User", "sys_widget_id": "3", "widget_ref_id": generateRandomString(10, 1), "widget_setting": {}}],
