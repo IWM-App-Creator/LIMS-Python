@@ -4,6 +4,7 @@ from app.dbfunctions.userfunctions import getUserDataFromDB, getUserListFromDB, 
 from app.dbfunctions.logfunctions import saveErrorLogtoDB
 from app.dbfunctions.workspacefunctions import getUserWSData, getWorkspaceData, getUserWorkspaceData, insertUpdateUsersWorkspace
 from app.dbfunctions.associationfunctions import getAssociationsForNotification
+from app.dbfunctions.dashboardfunctions import getDashboardData, insertUpdateDashboard
 from app.properties.dbproperties import dbps
 from app.helper.generalfunctions import uploadFile, addUpdateJson, getWSUserRole, generateRandomString
 from app.helper.userhelper import setUserProperties
@@ -354,6 +355,17 @@ def inviteWorkspaceUser(request: Request):
         notifyps.attachments.set([])
         # Send email
         sendEmail(notifyps)
+        # create Default Dashboard
+        dps.created_by.set(u_id)
+        dash_data = getDashboardData(dps)
+        if not dash_data and dash_data is None:
+            dps.created_by.set(u_id)
+            dps.db_upd_vals.set({
+                "dashboard_name": "Default",
+                "widget_list": [{"x": "0", "y": "0", "c_width": "3", "bg_color": "#ffffff", "c_height": "1.5", "htm_flow": "0", "widget_label": "Add Menu", "sys_widget_id": "1", "widget_ref_id": generateRandomString(10, 1), "widget_setting": {}}, {"x": "0", "y": "0", "c_width": "3", "bg_color": "#ffffff", "c_height": "1.5", "htm_flow": "0", "widget_label": "Add View", "sys_widget_id": "2", "widget_ref_id": generateRandomString(10, 1), "widget_setting": {}}, {"x": "0", "y": "0", "c_width": "3", "bg_color": "#ffffff", "c_height": "1.5", "htm_flow": "0", "widget_label": "Add User", "sys_widget_id": "3", "widget_ref_id": generateRandomString(10, 1), "widget_setting": {}}],
+                "is_active": 1
+            })
+            insertUpdateDashboard(dps)
         return JSONResponse (
             status_code = 200,
             content = {

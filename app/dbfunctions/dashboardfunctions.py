@@ -3,6 +3,7 @@ from app.utils.common import select, update, insert, or_, DB, userps, nowWithTim
 def getDashboardData(dps):
     schema_name = dps.schema_name.get()
     dashboard_id = int(dps.dashboard_id.get() or 0)
+    user_id = int(dps.created_by.get() or 0)
     dashboard = DB.getTableMeta("sys_user_dashboard", schema_name).alias("ud")
     stmt = (
         select(dashboard)
@@ -12,11 +13,14 @@ def getDashboardData(dps):
         stmt = stmt.where(dashboard.c.dashboard_id == dashboard_id)
         return DB.executeDBSelectSingle(stmt)
     if dps.created_by.get() not in (None, "", 0):
-        stmt = stmt.where(dashboard.c.created_by == dps.created_by.get())
+        stmt = stmt.where(dashboard.c.created_by == user_id)
     return DB.executeDBSelect(stmt)
 
 def insertUpdateDashboard(dps) :
     dashboard = DB.getTableMeta("sys_user_dashboard")
+    user_id = int(userps.user_id.get() or 0)
+    if dps.created_by.get() not in (None, "", 0):
+        user_id = int(dps.created_by.get() or 0)
     values = {}
     db_upd_vals = dps.db_upd_vals.get() 
     # dashboard_id, dashboard_name, is_active, is_delete, created_by, created_date
@@ -38,7 +42,7 @@ def insertUpdateDashboard(dps) :
         print("stmt --> ", stmt)
         DB.executeDBUpdate(stmt)
     else : # Insert new record
-        values["created_by"] = userps.user_id.get() # Include Create By
+        values["created_by"] = user_id # Include Create By
         values["created_date"] = nowWithTimeZone() # Include Create Date
         stmt = insert(dashboard).values(**values)
         print("stmt --> ", stmt)
