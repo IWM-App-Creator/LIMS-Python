@@ -358,7 +358,7 @@ def inviteWorkspaceUser(request: Request):
         # create Default Dashboard
         dps.created_by.set(u_id)
         dash_data = getDashboardData(dps)
-        if not dash_data and dash_data is None:
+        if not dash_data:
             dps.created_by.set(u_id)
             dps.db_upd_vals.set({
                 "dashboard_name": "Default",
