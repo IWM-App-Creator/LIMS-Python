@@ -1,11 +1,11 @@
 import bcrypt
-from app.utils.common import DB, select, Request, RequestData, JSONResponse, raiseAPIError, raiseInvalidError, nowWithTimeZone, userps
+from app.utils.common import DB, select, Request, RequestData, JSONResponse, raiseAPIError, raiseInvalidError, nowWithTimeZone, globalps, userps
 from app.dbfunctions.userfunctions import getUserDataFromDB, getUserListFromDB, insertUpdateUserData
 from app.dbfunctions.logfunctions import saveErrorLogtoDB
-from app.dbfunctions.workspacefunctions import getUserWSData, getUserWorkspaceData, insertUpdateUsersWorkspace
+from app.dbfunctions.workspacefunctions import getUserWSData, getWorkspaceData, getUserWorkspaceData, insertUpdateUsersWorkspace
 from app.dbfunctions.associationfunctions import getAssociationsForNotification
 from app.properties.dbproperties import dbps
-from app.helper.generalfunctions import uploadFile, addUpdateJson, getWSUserRole
+from app.helper.generalfunctions import uploadFile, addUpdateJson, getWSUserRole, generateRandomString
 from app.helper.userhelper import setUserProperties
 from app.helper.menuhelper import getUserMenuList
 from app.helper.workspacehelper import getUserWSList
@@ -233,8 +233,15 @@ def inviteWorkspaceUser(request: Request):
         workspace_id = params.get("workspace_id", 0)
         role_id = params.get("role_id", 0)
         error_msg = "Something went wrong, Please try again!"
-        password = "Your Password"
+        password = generateRandomString(10, 1)
         workspace_name = ""
+        workspace_url = ""
+        # get workspace Data
+        wsps.workspace_id.set(workspace_id)
+        ws_data = getWorkspaceData(wsps)
+        if ws_data:
+            workspace_name = getattr(ws_data, "workspace_name", "")
+            workspace_url = getattr(ws_data, "ws_url", "")
         # Set in System Users Table
         user_data = getUserDataFromDB()
         if user_data and user_data is not None:
@@ -256,7 +263,6 @@ def inviteWorkspaceUser(request: Request):
             u_id = insertUpdateUserData()
             error_msg = 'User added to workspace "' + workspace_name + '" successfully.'
         # set in User Workspace Table
-        wsps.workspace_id.set(workspace_id)
         wsps.ws_usr_id.set(u_id)
         user_ws = getUserWorkspaceData(wsps)
         if user_ws and user_ws is not None:
@@ -273,7 +279,7 @@ def inviteWorkspaceUser(request: Request):
             })
         insertUpdateUsersWorkspace(wsps)
         # send invitation email
-        login_url = f"https://{workspace_url}.{domain_url}/login"
+        login_url = f"https://{workspace_url}.{globalps.APP_DOMAIN}/login"
         # Email subject
         subject = f"Welcome to {workspace_name}"
         # Email HTML
@@ -345,7 +351,6 @@ def inviteWorkspaceUser(request: Request):
         notifyps.html.set(html)
         notifyps.body.set("")
         notifyps.attachments.set([])
-
         # Send email
         sendEmail(notifyps)
     except Exception as e:

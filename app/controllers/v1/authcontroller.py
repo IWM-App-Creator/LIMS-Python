@@ -62,7 +62,7 @@ def forgotPassword(email: str):
         env = Environment(loader=FileSystemLoader("app/assets/emailtemplate"))
         template = env.get_template("forgotpass.html")
         if globalps.IS_LOCAL_DEV == "1":
-            reset_url = f"http://localhost:5173/resetpassword/{jwt_token}"
+            reset_url = f"http://testws1.{globalps.APP_DOMAIN}/resetpassword/{jwt_token}"
         else:
             reset_url = f"https://auth.{globalps.APP_DOMAIN}/resetpassword/{jwt_token}"
         html_body = template.render(

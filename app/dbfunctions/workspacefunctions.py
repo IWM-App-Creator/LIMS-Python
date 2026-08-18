@@ -68,6 +68,7 @@ def getWSListByUsers(wsps):
 
 def getWorkspaceData(wsps):
     tblworkspace = DB.getTableMeta("workspace_master", "systemconfig").alias("ws")
+    workspace_id = int(wsps.workspace_id.get() or 0)
     stmt = (
         select(
             tblworkspace.c.workspace_name,
@@ -75,7 +76,7 @@ def getWorkspaceData(wsps):
             tblworkspace.c.schema_name
         )
     )
-    stmt = stmt.where(tblworkspace.c.workspace_id == wsps.workspace_id.get())
+    stmt = stmt.where(tblworkspace.c.workspace_id == workspace_id)
     return DB.executeDBSelectSingle(stmt)
 
 def getUserWSData(wsps):
