@@ -58,7 +58,8 @@ def saveMenuCentre(request: Request):
             status_code = 200,
             content = {
                 "status": True,
-                "message": "Menu Centre Saved Successfully"
+                "message": "Menu Centre Saved Successfully",
+                "m_centre_id": menups.m_centre_id.get()
             }
         )
     except Exception as e:
