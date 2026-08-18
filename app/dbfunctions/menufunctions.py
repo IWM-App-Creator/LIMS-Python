@@ -2,6 +2,7 @@ from app.utils.common import select, update, insert, or_, DB, userps, nowWithTim
 
 def getMenuCentreData(menups):
     schema_name = menups.schema_name.get()
+    created_by = int(menups.created_by.get() or 0)
     dync_menu_centre = DB.getTableMeta("sys_dynamic_menu_centre", schema_name).alias("dmc")
     stmt = select(dync_menu_centre)
     if menups.m_centre_id.get() not in (None, "", 0):
@@ -10,8 +11,8 @@ def getMenuCentreData(menups):
         stmt = stmt.where(dync_menu_centre.c.is_public == menups.is_public.get())
     if menups.is_active.get() not in (None, ""):
         stmt = stmt.where(dync_menu_centre.c.is_active == menups.is_active.get())
-    if menups.created_by.get() not in (None, "", 0):
-        stmt = stmt.where(dync_menu_centre.c.created_by == menups.created_by.get())
+    if created_by not in (None, "", 0, "0"):
+        stmt = stmt.where(dync_menu_centre.c.created_by == created_by)
     if menups.m_centre_ids.get() not in (None, [], ""):
         stmt = stmt.where(
             or_(
@@ -23,6 +24,7 @@ def getMenuCentreData(menups):
     stmt = stmt.where(dync_menu_centre.c.is_delete == 0)
     stmt = stmt.order_by(dync_menu_centre.c.m_centre_id.asc())
     stmt = stmt.distinct()
+    print("getMenuCentreData stmt --> ", stmt)
     return DB.executeDBSelect(stmt)
 
 def getReferenceMenuCentre(menups):

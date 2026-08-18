@@ -10,8 +10,8 @@ class MenuProperties:
         self.menu_json = ContextVar("menu_json", default = [])
         self.short_desc = ContextVar("short_desc", default = "")
         self.preview_img = ContextVar("preview_img", default = "")
-        self.is_public = ContextVar("m_centre_id", default = 0)
-        self.is_active = ContextVar("m_centre_id", default = 0)
+        self.is_public = ContextVar("m_centre_id", default = "")
+        self.is_active = ContextVar("m_centre_id", default = "")
         self.created_by = ContextVar("created_by", default = 0)
         self.is_delete = ContextVar("is_delete", default = 0)
 

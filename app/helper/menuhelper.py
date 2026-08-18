@@ -4,6 +4,7 @@ from app.dbfunctions.menufunctions import getMenuCentreData
 
 def getUserMenuList(menups):
     menus = getMenuCentreData(menups)
+    print("getUserMenuList --> ", menus)
     menu_list = []
     for menu in menus:
         menu_json = getattr(menu, "menu_json", None)
