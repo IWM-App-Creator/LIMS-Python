@@ -24,7 +24,6 @@ def getMenuCentreData(menups):
     stmt = stmt.where(dync_menu_centre.c.is_delete == 0)
     stmt = stmt.order_by(dync_menu_centre.c.m_centre_id.asc())
     stmt = stmt.distinct()
-    print("getMenuCentreData stmt --> ", stmt)
     return DB.executeDBSelect(stmt)
 
 def getReferenceMenuCentre(menups):
