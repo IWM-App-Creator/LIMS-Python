@@ -354,6 +354,16 @@ def inviteWorkspaceUser(request: Request):
         notifyps.attachments.set([])
         # Send email
         sendEmail(notifyps)
+        return JSONResponse (
+            status_code = 200,
+            content = {
+                "status": True,
+                "message": error_msg,
+                "u_id": u_id,
+                "first_name": userps.first_name.get(),
+                "last_name": userps.last_name.get(),
+            }
+        )
     except Exception as e:
         raiseAPIError(str(e), 500)
 
