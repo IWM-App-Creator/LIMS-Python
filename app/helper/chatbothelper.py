@@ -23,12 +23,14 @@ class ChatbotHelper:
 
     @staticmethod
     def getUserCBModules(cbps):
-        cbps.cb_md_list.set([]) # Clean Output Array
+        cbps.cb_md_list.set([])
         itm_list = []
         cbmdarr = getUserCBMdFromDB()
-        # If no modules exist, insert FAQ as default
+        # If no modules exist, insert default module
         if not cbmdarr:
-            insertUserCBMD()    
+            insertUserCBMD()
+            # Fetch again after insert
+            cbmdarr = getUserCBMdFromDB()
         for cbmd in cbmdarr:
             row = {
                 "cb_user_module_id": getattr(cbmd, "cb_user_module_id", "0"),
