@@ -180,3 +180,45 @@ def isWorkspaceValid(subdomain: str):
         .limit(1)
     )
     return DB.getSingleColumnValue(stmt, "workspace_id", "0")
+
+def getUserWorkspaceData(wsps):
+    users_workspace = DB.getTableMeta("users_workspace", "systemconfig").alias("wsusr")
+    user_id = int(wsps.ws_usr_id.get() or 0)
+    workspace_id = int(wsps.workspace_id.get() or 0)
+    stmt = (select(users_workspace) )
+    stmt = stmt.where(users_workspace.c.user_id == user_id)
+    stmt = stmt.where(users_workspace.c.workspace_id == workspace_id)
+    return DB.executeDBSelectSingle(stmt)
+
+def insertUpdateUsersWorkspace(wsps):
+    users_workspace = DB.getTableMeta("users_workspace", "systemconfig").alias("wsusr")
+    user_wp_id = int(wsps.user_wp_id.get() or 0)
+    user_id = int(wsps.ws_usr_id.get() or 0)
+    workspace_id = int(wsps.workspace_id.get() or 0)
+    ws_role_id = int(wsps.ws_role_id.get() or 0)
+    is_invited = int(wsps.is_invited.get() or 0)
+    is_accepted = int(wsps.is_accepted.get() or 0)
+    values = {}
+    db_upd_vals = wsps.db_upd_vals.get() 
+    if db_upd_vals is not None :
+       values = db_upd_vals
+    else :
+        if user_id not in (None, ""):
+            values["user_id"] = user_id
+        if workspace_id not in (None, ""):
+            values["workspace_id"] = workspace_id
+        if ws_role_id not in (None, ""):
+            values["ws_role_id"] = ws_role_id
+        if is_invited not in (None, ""):
+            values["is_invited"] = is_invited
+        if is_accepted not in (None, ""):
+            values["is_accepted"] = is_accepted
+    if user_wp_id not in (None, "", 0, "0"):
+        stmt = update(users_workspace).where(users_workspace.c.user_wp_id == user_wp_id).values(**values)
+        DB.executeDBUpdate(stmt)
+    else:
+        values["created_by"] = userps.user_id.get()
+        values["created_date"] = nowWithTimeZone()
+        stmt = insert(users_workspace).values(**values)
+        user_wp_id = DB.executeDBInsert(stmt)
+    return user_wp_id

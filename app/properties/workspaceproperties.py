@@ -20,6 +20,7 @@ class WorkspaceProperties:
         self.ws_role_id = ContextVar("ws_role_id", default = 2)
         self.is_invited = ContextVar("is_invited", default = 1)
         self.is_accepted = ContextVar("is_accepted", default = 0)
+        self.created_by = ContextVar("created_by", default = 0)
 
         self.chk_ws_role = ContextVar("chk_ws_role", default = 1)
         self.domain_flag = ContextVar("domain_flag", default = 1)

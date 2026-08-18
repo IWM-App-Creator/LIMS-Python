@@ -94,7 +94,7 @@ def resetPassword(token: str, password: str):
             return raiseInvalidError(result["message"], 401)
         password = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
         user_id = result["payload"]["user_id"]
-        userps.user_id.set(user_id)
+        userps.othr_userid.set(user_id)
         userps.db_upd_vals.set({"password": password.decode()})
         insertUpdateUserData() # Update Password in DB
         return JSONResponse(

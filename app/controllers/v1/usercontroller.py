@@ -1,7 +1,8 @@
-from app.utils.common import DB, select, Request, RequestData, JSONResponse, raiseAPIError, raiseInvalidError, userps
+import bcrypt
+from app.utils.common import DB, select, Request, RequestData, JSONResponse, raiseAPIError, raiseInvalidError, nowWithTimeZone, userps
 from app.dbfunctions.userfunctions import getUserDataFromDB, getUserListFromDB, insertUpdateUserData
 from app.dbfunctions.logfunctions import saveErrorLogtoDB
-from app.dbfunctions.workspacefunctions import getUserWSData
+from app.dbfunctions.workspacefunctions import getUserWSData, getUserWorkspaceData, insertUpdateUsersWorkspace
 from app.dbfunctions.associationfunctions import getAssociationsForNotification
 from app.properties.dbproperties import dbps
 from app.helper.generalfunctions import uploadFile, addUpdateJson, getWSUserRole
@@ -10,11 +11,13 @@ from app.helper.menuhelper import getUserMenuList
 from app.helper.workspacehelper import getUserWSList
 from app.helper.dashboardhelper import getUserDashboards
 from app.helper.chatbothelper import ChatbotHelper as cbhlp
+from app.helper.notificationfunction import sendEmail
 from app.properties.menuproperties import menups
 from app.properties.workspaceproperties import wsps
 from app.properties.dashboardproperties import dps
 from app.properties.chatbotproperties import cbps
 from app.properties.associationproperties import associationps
+from app.properties.notificationproperties import notifyps
 from app.helper.generalfunctions import formatUserDisplayName
 
 # http://xytovet.localhost:8000/api/v1/user/getdetail?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMzc3OSIsInJvbGVfaWQiOiIxIiwiZW1haWwiOiJjaGludGFuaXQyMkBnbWFpbC5jb20iLCJleHAiOjE3ODMzMjQ3ODR9.AY-PMOH78_p-Jj9v3L1Hd_stU6NXcRWdmoBYHtVnjgo
@@ -215,9 +218,137 @@ def searchWSUser(request: Request):
                 }
             )
         else:
-            return raiseInvalidError("User Not Found", 401)
+            return raiseInvalidError("User Not Found", 200)
     except Exception as e:
         saveErrorLogtoDB ("User", userps.othr_userid.get(), "searchWSUser", str(e)) # Log Error To DB
+        raiseAPIError(str(e), 500)
+
+def inviteWorkspaceUser(request: Request):
+    print("inviteWorkspaceUser --> ")
+    try:
+        params = RequestData.params(request)
+        userps.first_name.set(params.get("first_name", ""))
+        userps.last_name.set(params.get("last_name", ""))
+        userps.email.set(params.get("email", ""))
+        workspace_id = params.get("workspace_id", 0)
+        role_id = params.get("role_id", 0)
+        error_msg = "Something went wrong, Please try again!"
+        password = "Your Password"
+        workspace_name = ""
+        # Set in System Users Table
+        user_data = getUserDataFromDB()
+        if user_data and user_data is not None:
+            u_id = getattr(user_data, "id", 0)
+            u_name = getattr(user_data, "first_name", "") + " " + getattr(user_data, "last_name", "")
+            error_msg = 'User added to workspace "' + workspace_name + '" successfully.'
+        else:
+            newpassword = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
+            userps.db_upd_vals.set({
+                "first_name": userps.first_name.get(),
+                "last_name": userps.last_name.get(),
+                "email": userps.email.get(),
+                "password": newpassword.decode(),
+                "role_id": role_id,
+                "user_settings": {"active_ws": workspace_id, "pg_layout": "", "time_zone": "Australia/Perth", "user_sign": "", "public_key": "", "is_darkmode": 0, "profile_pic": "", "theme_color": "", "company_name": ""},
+                "created_by": userps.user_id.get(),
+                "created_at": nowWithTimeZone()
+            })
+            u_id = insertUpdateUserData()
+            error_msg = 'User added to workspace "' + workspace_name + '" successfully.'
+        # set in User Workspace Table
+        wsps.workspace_id.set(workspace_id)
+        wsps.ws_usr_id.set(u_id)
+        user_ws = getUserWorkspaceData(wsps)
+        if user_ws and user_ws is not None:
+            wsps.user_wp_id.set(getattr(user_ws, "user_wp_id", 0))
+            wsps.db_upd_vals.set({
+                "is_delete": 0
+            })
+        else:  
+            wsps.db_upd_vals.set({
+                "user_id": u_id,
+                "workspace_id": workspace_id,
+                "ws_role_id": role_id,
+                "is_invited": 1
+            })
+        insertUpdateUsersWorkspace(wsps)
+        # send invitation email
+        login_url = f"https://{workspace_url}.{domain_url}/login"
+        # Email subject
+        subject = f"Welcome to {workspace_name}"
+        # Email HTML
+        html = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>{subject}</title>
+        </head>
+        <body style="font-family: Arial, sans-serif; color: #333;">
+
+            <h2>Welcome to {workspace_name}</h2>
+
+            <p>Hi {u_name},</p>
+
+            <p>
+                Your account has been created successfully.
+                You can use the following credentials to log in:
+            </p>
+
+            <table cellpadding="8" cellspacing="0" border="0">
+                <tr>
+                    <td><strong>Name:</strong></td>
+                    <td>{u_name}</td>
+                </tr>
+                <tr>
+                    <td><strong>Email:</strong></td>
+                    <td>{userps.email.get()}</td>
+                </tr>
+                <tr>
+                    <td><strong>Password:</strong></td>
+                    <td>{password}</td>
+                </tr>
+            </table>
+
+            <p>
+                <a href="{login_url}"
+                   style="
+                       display: inline-block;
+                       padding: 10px 20px;
+                       background-color: #007bff;
+                       color: white;
+                       text-decoration: none;
+                       border-radius: 5px;
+                   ">
+                    Login to Workspace
+                </a>
+            </p>
+
+            <p>
+                Or copy and paste the following URL into your browser:
+            </p>
+
+            <p>{login_url}</p>
+
+            <br>
+
+            <p>Regards,<br>
+            MiiData</p>
+
+        </body>
+        </html>
+        """
+        notifyps.subject.set(subject)
+        notifyps.to_email.set(userps.email.get())
+        notifyps.cc.set("")
+        notifyps.bcc.set("miidata@genotypingaustralia.com.au")
+        notifyps.html.set(html)
+        notifyps.body.set("")
+        notifyps.attachments.set([])
+
+        # Send email
+        sendEmail(notifyps)
+    except Exception as e:
         raiseAPIError(str(e), 500)
 
 async def updateUserProfile(request: Request):
@@ -231,6 +362,7 @@ async def updateUserProfile(request: Request):
         userps.profile_pic.set(uploadFile(userps.ws_url.get(), "users", profile_pic))
         user = getUserDataFromDB()
         if user:
+            userps.othr_userid.set(getattr(user, "id", 0))
             user_settings = user.user_settings
             if userps.company_name.get() not in (None, ""):
                 addUpdateJson(user_settings, "company_name", userps.company_name.get())
@@ -268,6 +400,7 @@ def changeUserPassword(request: Request):
             return raiseInvalidError("User Not Found", 401)
         user = getUserDataFromDB()
         if user:
+            userps.othr_userid.set(getattr(user, "id", 0))
             password = userps.password.get()
             password = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
             userps.db_upd_vals.set({"password": password.decode()})

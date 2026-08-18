@@ -7,6 +7,7 @@ ROUTES = [
     ("/getlist", usersapi.getUserList, ["GET"]),
     ("/getdetail", usersapi.getUserDetail, ["GET"]),
     ("/search", usersapi.searchWSUser, ["GET"]),
+    ("/inviteuser", usersapi.inviteWorkspaceUser, ["GET"]),
     ("/updateprofile", usersapi.updateUserProfile, ["POST"]),
     ("/changepassword", usersapi.changeUserPassword, ["POST"])
 ]

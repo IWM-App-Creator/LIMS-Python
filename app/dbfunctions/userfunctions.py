@@ -36,9 +36,7 @@ def getUserListFromDB(userps):
 
 def insertUpdateUserData():
     tbluser = DB.getTableMeta("users", "systemconfig")
-    user_id = userps.user_id.get() # Get User ID
-    if userps.othr_userid.get() not in (None, "", 0):
-        user_id = userps.othr_userid.get()
+    user_id = int(userps.othr_userid.get() or 0)
     values = {}
     if userps.db_upd_vals.get() not in (None, {}, ""):
         values = userps.db_upd_vals.get()
