@@ -4,20 +4,7 @@ from app.controllers.v1 import menucontroller as menuapi
 router = APIRouter(prefix = "/menu")
 
 ROUTES = [
-    # Menu Centre API
-    ("/mcget", menuapi.getMenuCentre, ["GET"]),
-    ("/mcsave", menuapi.saveMenuCentre, ["GET"]),
-    ("/mcactive", menuapi.setMenuCentreActive, ["GET"]),
-    ("/mcreset", menuapi.resetMenuCentre, ["GET"]),
-    ("/mccopy", menuapi.copyMenuCentre, ["GET"]),
-    
-    # Menu's API
-    ("/get", menuapi.getUserMenu, ["GET"]),
-    ("/save", menuapi.saveUserMenu, ["GET", "POST"]),
-    ("/update", menuapi.updateUserMenu, ["GET", "PUT"]),
-    ("/sort", menuapi.saveMenuSorting, ["GET"]),
-    ("/remove", menuapi.removeUserMenu, ["GET"]),
-    ("/geticons", menuapi.getMenuIcons, ["GET"]),
+    ("/save", menuapi.saveMenuCentre, ["POST"]),
 ]
 
 for path, handler, methods in ROUTES:

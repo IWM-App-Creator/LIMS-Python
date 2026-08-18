@@ -3,15 +3,17 @@ from contextvars import ContextVar
 class MenuProperties:
     def __init__(self):
         # Menu Centre Params
-        self.m_centre_id = ContextVar("m_centre_id", default = "")
+        self.m_centre_id = ContextVar("m_centre_id", default = 0)
         self.m_centre_ids = ContextVar("m_centre_ids", default = "")
         self.centre_name = ContextVar("centre_name", default = "")
+        self.ref_m_c_id = ContextVar("ref_m_c_id", default = 0)
         self.menu_json = ContextVar("menu_json", default = [])
         self.short_desc = ContextVar("short_desc", default = "")
         self.preview_img = ContextVar("preview_img", default = "")
-        self.is_public = ContextVar("m_centre_id", default = "")
-        self.is_active = ContextVar("m_centre_id", default = "")
+        self.is_public = ContextVar("m_centre_id", default = 0)
+        self.is_active = ContextVar("m_centre_id", default = 0)
         self.created_by = ContextVar("created_by", default = 0)
+        self.is_delete = ContextVar("is_delete", default = 0)
 
         # Menu Json Params
         self.menu_id = ContextVar("menu_id", default = "")
