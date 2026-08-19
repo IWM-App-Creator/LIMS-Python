@@ -241,12 +241,21 @@ def setRankByColID(dbps):
     return col_data[0].rank
 
 def getDBTableLookupData(dbps):
+    table_name = dbps.table_name.get()
     lookuparr = getLookupData(dbps)
     lookup_data = []
+    view_url_col = None
+    if table_name == "sys_new_dynamic_view":
+        view_url_col = "url"
+    elif table_name == "sys_custom_view":
+        view_url_col = "view_url"
     for lookup in lookuparr:
         row = {
             "opt_val": lookup.value,
             "label": lookup.label
         }
+        if view_url_col:
+            row["view_url"] = getattr(lookup, view_url_col)
         lookup_data.append(row)
+
     return lookup_data
