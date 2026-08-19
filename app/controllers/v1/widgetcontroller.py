@@ -79,63 +79,6 @@ def getWidgetCategory(request: Request):
         saveErrorLogtoDB("Widget", widgetps.sys_widget_cat_id.get(), "getWidgetCategory", str(e))
         raiseAPIError(str(e), 500)
 
-# api/v1/widget/share?view_id=182&sys_widgets_users_id=1&widget_type=ShareFilter&share_users=1,2,3&save_name=Test Filter
-def shareUserWidget(request: Request):
-    print("shareUserWidget --> ")
-    try:
-        params = RequestData.params(request)
-        view_id = params.get("view_id", 0)
-        dashboard_id = params.get("dashboard_id", 0)
-        widget_ref_id = params.get("widget_ref_id", "")
-        sys_widgets_users_id = params.get("sys_widgets_users_id", 0)
-        widget_type = params.get("widget_type", None)
-        message = params.get("message", None)
-        save_name = params.get("save_name", None)
-        share_users = normalizeJson(params.get("share_users", []), [])
-        from_user = params.get("from_user", "")
-        # Ensure it's a list
-        if not isinstance(share_users, list):
-            share_users = []
-        title = ""
-        msg_data = ""
-        share_users = getSelectedUsers(share_users, view_id)
-        if widget_type == "ShareWidget":
-            title = from_user + " shared a widget with you."
-            msg_data = json.dumps({"dashboard_id": dashboard_id, "widget_ref_id": widget_ref_id})
-        elif widget_type == "ShareMenu":
-            title = save_name
-            message = from_user + ' shared a menu "'  + save_name + '"'
-            msg_data = json.dumps({"m_center_id": sys_widgets_users_id})
-        elif widget_type == "ShareFilter":
-            title = save_name
-            message = from_user + ' shared a filter view "' + save_name + '"'
-            msg_data = json.dumps({"view_id": view_id, "save_id": sys_widgets_users_id})
-        share_users = list(dict.fromkeys(share_users))
-        for usr in share_users:
-            if usr:
-                notifyps.upd_vals.set({
-                    "noti_type": widget_type,
-                    "item_id": sys_widgets_users_id,
-                    "view_id": view_id,
-                    "table_id": 0,
-                    "notes_id": 0,
-                    "to_user_id": usr,
-                    "title": title,
-                    "message": message,
-                    "msg_data": msg_data
-                })
-                insertUpdateNotification(notifyps)
-        return JSONResponse(
-            status_code = 200,
-            content = {
-                "status": True,
-                "message": "User Widget Shared Successfully"
-            }
-        )
-    except Exception as e:
-        saveErrorLogtoDB("Widget", userps.user_id.get(), "shareUserWidget", str(e))
-        raiseAPIError(str(e), 500)
-
 # api/v1/widget/saveuser?dashboard_id=1&sys_widget_id=1&x=0&y=0&c_width=0&c_height=0&htm_flow=0&bg_color=#ffffff&widget_label=Test Widget&widget_setting=&flag=ADD
 async def saveUserWidget(request: Request):
     print("saveUserWidget -->")

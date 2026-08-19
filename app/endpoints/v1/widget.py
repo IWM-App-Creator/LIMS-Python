@@ -7,7 +7,6 @@ ROUTES = [
     ("/get", widgetapi.getWidgetList, ["GET"]),
     ("/getuser", widgetapi.getUserWidgetList, ["GET"]),
     ("/category", widgetapi.getWidgetCategory, ["GET"]),
-    ("/share", widgetapi.shareUserWidget, ["POST"]),
     ("/saveuser", widgetapi.saveUserWidget, ["POST"]),
     ("/savelayout", widgetapi.saveUserWidgetLayout, ["GET"]),
     ("/copymove", widgetapi.copyMoveWidget, ["GET"]),
