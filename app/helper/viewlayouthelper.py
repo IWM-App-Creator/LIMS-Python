@@ -41,9 +41,25 @@ def saveUserLayoutData(viewlyps):
         # No record -> insert new
         data = {}
     # -------------------------------------------------
+    # Conditional Color
+    # -------------------------------------------------
+    if col_flag == "col_colors":
+        if not isinstance(data, dict):
+            data = {}
+        # key_val can be JSON string or already parsed list
+        if isinstance(key_val, str):
+            try:
+                key_val = json.loads(key_val)
+            except json.JSONDecodeError:
+                key_val = []
+        if not isinstance(key_val, list):
+            key_val = []
+        # Update only requested tab
+        data[key_flag] = key_val
+    # -------------------------------------------------
     # USER SETTING
     # -------------------------------------------------
-    if col_flag == "user_setting":
+    elif col_flag == "user_setting":
         if key_flag == "group_tab":
             try:
                 key_val = int(key_val)
