@@ -91,19 +91,8 @@ def shareUserWidget(request: Request):
         widget_type = params.get("widget_type", None)
         message = params.get("message", None)
         save_name = params.get("save_name", None)
-        share_users = params.get("share_users", [])
+        share_users = normalizeJson(params.get("share_users", []), [])
         from_user = params.get("from_user", "")
-        # Handle FormData where share_users is JSON string
-        if isinstance(share_users, str):
-            try:
-                share_users = json.loads(share_users)
-            except json.JSONDecodeError:
-                # Fallback for comma-separated values
-                share_users = [
-                    {"opt_val": int(x), "type": 0}
-                    for x in share_users.split(",")
-                    if x.strip()
-                ]
         # Ensure it's a list
         if not isinstance(share_users, list):
             share_users = []

@@ -42,11 +42,12 @@ def saveUserDashboard(request: Request):
         if not isinstance(dashboards, list):
             dashboards = []
         for dash in dashboards:
+            dps.db_upd_vals.set(None)
+            dps.dashboard_name.set(None)
+            dps.is_active.set(None)
             if not isinstance(dash, dict):
                 continue
-            if dash.get("isNew") in (True, "true"):
-                dps.dashboard_id.set(None)
-            else:
+            if dash.get("isNew") in (False, "false"):
                 dps.dashboard_id.set(dash.get("dashboard_id", 0))
             if dash.get("isDeleted") in (True, "true"):
                 dps.db_upd_vals.set({"is_delete": 1})
