@@ -5,7 +5,7 @@ class DashboardProperties:
         self.dashboard_id = ContextVar("dashboard_id", default = 0)
         self.dashboard_name = ContextVar("dashboard_name", default = "")
         self.widget_list = ContextVar("widget_list", default = [])
-        self.is_active = ContextVar("is_active", default = 0)
+        self.is_active = ContextVar("is_active", default = None)
         self.active_dash_id = ContextVar("active_dash_id", default = 0)
         self.created_by = ContextVar("created_by", default = None)
 

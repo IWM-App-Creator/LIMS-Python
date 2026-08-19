@@ -23,7 +23,6 @@ def insertUpdateDashboard(dps) :
         user_id = int(dps.created_by.get() or 0)
     values = {}
     db_upd_vals = dps.db_upd_vals.get() 
-    # dashboard_id, dashboard_name, is_active, is_delete, created_by, created_date
     if db_upd_vals is not None :
        values = db_upd_vals
     else :
@@ -31,6 +30,10 @@ def insertUpdateDashboard(dps) :
             values["dashboard_name"] = dps.dashboard_name.get()
         if dps.is_active.get() not in (None, ""):
             values["is_active"] = dps.is_active.get()
+    # if is active then inactive all
+    if dps.is_active.get() in (1, "1"):
+        stmt = update(dashboard).where(dashboard.c.created_by == user_id).values({"is_active": 0})
+        DB.executeDBUpdate(stmt)
     # Check for Insert / Update
     dashboard_id = int(dps.dashboard_id.get() or 0)
     if dashboard_id not in (None, 0, ""): # Update Existing Record
@@ -39,12 +42,10 @@ def insertUpdateDashboard(dps) :
             .where(dashboard.c.dashboard_id == dashboard_id)
             .values(**values)
         )
-        print("stmt --> ", stmt)
         DB.executeDBUpdate(stmt)
     else : # Insert new record
         values["created_by"] = user_id # Include Create By
         values["created_date"] = nowWithTimeZone() # Include Create Date
         stmt = insert(dashboard).values(**values)
-        print("stmt --> ", stmt)
         dashboard_id = DB.executeDBInsert(stmt)
     dps.dashboard_id.set(dashboard_id)
