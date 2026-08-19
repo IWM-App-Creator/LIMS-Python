@@ -18,6 +18,7 @@ from app.endpoints.v1.widget import router as widget_router
 from app.endpoints.v1.viewcsv import router as viewcsv_router
 
 from app.endpoints.v1.systemforms import router as systemform_router
+from app.endpoints.v1.customview import router as customview_router
 from app.endpoints.v1.systemview import router as systemview_router
 from app.endpoints.v1.users import router as user_router
 from app.endpoints.v1.notification import router as noti_router
@@ -48,6 +49,7 @@ def routerGroup():
     apirouter.include_router(viewcsv_router, prefix = prefix, tags = ["View CSV"])
 
     apirouter.include_router(systemform_router, prefix = prefix, tags = ["System Forms"])
+    apirouter.include_router(customview_router, prefix = prefix, tags = ["Custom View"])
     apirouter.include_router(systemview_router, prefix = prefix, tags = ["System View"])
     apirouter.include_router(user_router, prefix = prefix, tags = ["Users"])
     apirouter.include_router(noti_router, prefix = prefix, tags = ["Notification"])

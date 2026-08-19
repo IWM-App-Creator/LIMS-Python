@@ -19,4 +19,6 @@ class CustomViewProperties:
         self.order_by = ContextVar("order_by", default = None)
         self.order_type = ContextVar("order_type", default = None)
 
+        self.db_upd_vals = ContextVar("db_upd_vals", default = {})
+
 customvwps = CustomViewProperties()
