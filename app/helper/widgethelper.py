@@ -1,3 +1,4 @@
+import json
 from collections import defaultdict
 from app.utils.common import userps
 from app.helper.associationhelper import getViewIdByAssociation
@@ -50,43 +51,51 @@ def getUserWidgets(widgetps):
     usrwdgtarr = getDashboardData(dps)
     widget_list = getattr(usrwdgtarr, "widget_list", [])
     if not isinstance(widget_list, list):
-        widget_list = [] 
+        widget_list = []
     userwidget_list = []
-    sys_widget_ids = list({
-        str(wdgt.get("sys_widget_id"))
-        for wdgt in widget_list
-        if wdgt.get("sys_widget_id") not in (None, "", 0)
-    })
+    sys_widget_ids = list({str(wdgt.get("sys_widget_id")) for wdgt in widget_list if wdgt.get("sys_widget_id") not in (None, "", 0)})
     if not sys_widget_ids:
         return []
     widgetps.sys_widget_ids.set(sys_widget_ids)
     widgetps.fetch_single.set(0)
-    widget_master_data  = getWidgetData(widgetps)
+    widget_master_data = getWidgetData(widgetps)
     widget_master_map = {}
     for wigtm in widget_master_data:
+        sys_widget_id = getattr(wigtm, "sys_widget_id", 0)
+        widget_type = getattr(wigtm, "widget_type", "")
         widget_json = getattr(wigtm, "widget_json", {})
+        # Reset these for every widget
+        view_id = 0
         view_name = ""
         view_url = ""
-        if getattr(wigtm, "widget_type", "") == "VIEWWIDGET" and widget_json not in (None, {}, [], ""):
-            if isinstance(widget_json, str):
-                widget_json = eval(widget_json)
-            view_id = widget_json.get("view_id", 0)
-            viewps.view_id.set(view_id)
-            getViewDataByID(viewps)
-            view_name = getattr(viewps.userview.get(), "view_name", "")
-            view_url = getattr(viewps.userview.get(), "url", "")
+        if widget_json in (None, "", []):
+            widget_json = {}
+        if isinstance(widget_json, str):
+            try:
+                widget_json = json.loads(widget_json)
+            except (json.JSONDecodeError, TypeError):
+                widget_json = {}
+        if not isinstance(widget_json, dict):
+            widget_json = {}
+        if widget_type == "VIEWWIDGET":
+            view_id = widget_json.get("view_id", 0) or 0
+            if view_id:
+                viewps.view_id.set(view_id)
+                getViewDataByID(viewps)
+                view_name = getattr(viewps.userview.get(), "view_name", "")
+                view_url = getattr(viewps.userview.get(), "url", "")
         widgetitm = {
-            "sys_widget_id": getattr(wigtm, "sys_widget_id", 0),
-            "widget_type": getattr(wigtm, "widget_type", ""),
+            "sys_widget_id": sys_widget_id,
+            "widget_type": widget_type,
             "widget_title": getattr(wigtm, "widget_title", ""),
             "widget_json": widget_json,
             "widget_icon": getattr(wigtm, "widget_icon", ""),
-            "view_id": viewps.view_id.get() or 0,
+            "view_id": view_id,
             "view_name": view_name,
             "view_url": view_url,
-            "outlook_token": int(getattr(wigtm, "widget_type", "") == "TODO")
+            "outlook_token": int(widget_type == "TODO")
         }
-        widget_master_map[str(getattr(wigtm, "sys_widget_id", 0))] = widgetitm
+        widget_master_map[str(sys_widget_id)] = widgetitm
     for wdgt in widget_list:
         sys_widget_id = str(wdgt.get("sys_widget_id", ""))
         row = {
