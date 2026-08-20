@@ -11,6 +11,7 @@ from app.httphelper.requestcontext import request_context
 from app.httphelper.authhandler import auth_handler
 
 from app.helper.generalfunctions import setEnvVariables
+import time
 
 load_dotenv(Path(__file__).parent.parent / ".env")
 
@@ -22,7 +23,12 @@ def root():
 
 @app.on_event("startup")
 async def startup_event():
+    start = time.perf_counter()
     initialize()
+    print(
+        f"[STARTUP] initialize() took "
+        f"{time.perf_counter() - start:.3f}s"
+    )
 
 # Set Env Variables To Global Properties.
 setEnvVariables()
