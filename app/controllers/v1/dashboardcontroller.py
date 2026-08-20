@@ -47,11 +47,14 @@ def saveUserDashboard(request: Request):
             dps.is_active.set(None)
             if not isinstance(dash, dict):
                 continue
-            if dash.get("isNew") in (False, "false"):
-                dps.dashboard_id.set(dash.get("dashboard_id", 0))
-            if dash.get("isDeleted") in (True, "true"):
+            if dash.get("isNew") in ("true", True) and dash.get("isDeleted") in ("false", False):
+                dps.dashboard_name.set(dash.get("dashboard_name", ""))
+                dps.is_active.set(dash.get("is_active", ""))
+            elif dash.get("isDeleted") in ("true", True) and dash.get("isNew") in ("false", False):
+                dps.dashboard_id.set(dash.get("dashboard_id", ""))
                 dps.db_upd_vals.set({"is_delete": 1})
             else:
+                dps.dashboard_id.set(dash.get("dashboard_id", ""))
                 dps.dashboard_name.set(dash.get("dashboard_name", ""))
                 dps.is_active.set(dash.get("is_active", ""))
             insertUpdateDashboard(dps)
