@@ -4,7 +4,7 @@ from app.controllers.v1 import dashboardcontroller as dashboardapi
 router = APIRouter(prefix = "/dashboard")
 
 ROUTES = [
-    ("/save", dashboardapi.saveUserDashboard, ["GET"])
+    ("/save", dashboardapi.saveUserDashboard, ["POST"])
 ]
 
 for path, handler, methods in ROUTES:
