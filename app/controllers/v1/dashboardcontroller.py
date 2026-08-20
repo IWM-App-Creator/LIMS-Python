@@ -1,39 +1,10 @@
 from app.utils.common import Request, RequestData, JSONResponse, raiseAPIError, raiseInvalidError, userps
 from app.dbfunctions.logfunctions import saveErrorLogtoDB
 from app.dbfunctions.dashboardfunctions import insertUpdateDashboard
+from app.helper.dashboardhelper import getUserDashboards
 from app.helper.generalfunctions import normalizeJson
 from app.properties.dashboardproperties import dps
 
-# [
-#     {
-#         "dashboard_id": 1,
-#         "dashboard_name": "Default",
-#         "is_active": 0,
-#         "isDeleted": false,
-#         "isNew": false
-#     },
-#     {
-#         "dashboard_id": 16,
-#         "dashboard_name": "Rushi's Dash",
-#         "is_active": 1,
-#         "isDeleted": false,
-#         "isNew": false
-#     },
-#     {
-#         "dashboard_id": 17,
-#         "dashboard_name": "New Dashboard",
-#         "is_active": 0,
-#         "isDeleted": true,
-#         "isNew": false
-#     },
-#     {
-#         "dashboard_id": -1,
-#         "dashboard_name": "RKO Dash",
-#         "is_active": 0,
-#         "isNew": true,
-#         "isDeleted": false
-#     }
-# ]
 def saveUserDashboard(request: Request):
     print("saveUserDashboard --> ")
     try:
@@ -43,6 +14,7 @@ def saveUserDashboard(request: Request):
             dashboards = []
         for dash in dashboards:
             dps.db_upd_vals.set(None)
+            dps.dashboard_id.set(None)
             dps.dashboard_name.set(None)
             dps.is_active.set(None)
             if not isinstance(dash, dict):
@@ -58,11 +30,20 @@ def saveUserDashboard(request: Request):
                 dps.dashboard_name.set(dash.get("dashboard_name", ""))
                 dps.is_active.set(dash.get("is_active", ""))
             insertUpdateDashboard(dps)
+            dps.db_upd_vals.set(None)
+            dps.dashboard_id.set(None)
+            dps.dashboard_name.set(None)
+            dps.is_active.set(None)
+            dps.created_by.set(userps.user_id.get())
+            getUserDashboards(dps)
         return JSONResponse (
             status_code = 200,
             content = {
                 "status": True,
-                "message": "Dashboard Saved Successfully"
+                "message": "Dashboard Saved Successfully",
+                "dashboard_list" : dps.dashboards_data.get(),
+                "active_dashboard": int(dps.dashboard_id.get() or 0) or 0,
+                "active_dashboard_name": dps.dashboard_name.get() or ""
             }
         )
     except Exception as e:
