@@ -26,11 +26,7 @@ def saveUserLayoutData(viewlyps):
         tab_ids = tab_id
     else:
         tab_ids = str(tab_id).split(",")
-    tab_ids = [
-        str(tab).strip().replace(".0", "")
-        for tab in tab_ids
-        if str(tab).strip()
-    ]
+    tab_ids = [str(tab).strip().replace(".0", "") for tab in tab_ids if str(tab).strip()]
     print("tab_ids --> ", tab_ids)
     # -------------------------------------------------
     # Get existing JSON
@@ -48,12 +44,11 @@ def saveUserLayoutData(viewlyps):
         else:
             data = current_value
     else:
-        # No record -> insert new
         data = {}
     # -------------------------------------------------
     # Conditional Color
     # -------------------------------------------------
-    if col_flag == "col_colors": # col_metadata, col_colors, action_group_list
+    if col_flag in ("col_metadata", "col_colors", "action_group_list"):
         if not isinstance(data, dict):
             data = {}
         # key_val can be JSON string or already parsed list
