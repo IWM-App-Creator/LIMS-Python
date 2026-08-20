@@ -27,7 +27,7 @@ class ViewHelper:
         viewps.col_id.set(params.get("col_id", 0))
         viewps.col_name.set(params.get("col_name", ""))
         viewps.call_from.set(params.get("call_from", "DynamicView"))
-        viewps.tab_id.set(params.get("tab_id", "0"))
+        viewps.tab_id.set(params.get("tab_id") or "0")
         viewps.save_id.set(params.get("save_id", 0))
         viewps.page_no.set(params.get("page_no", 1))
         viewps.search_text.set(params.get("search_text", ""))
@@ -311,7 +311,6 @@ class ViewHelper:
         user_setting = user_setting.get("tabs", {})
         current_tab = f"tab_{viewps.tab_id.get()}"
         tab_setting = user_setting.get(current_tab)
-        # print("tab_setting --> ", tab_setting)
         if tab_setting:
             ly_sorting = ""
             sortby = tab_setting.get("sortby", "")
@@ -320,8 +319,15 @@ class ViewHelper:
             sortorderarr = sortorder.split(",") if sortorder else []
             srt_cnt = 0
             for srt in sort_byarr:
+                # Custom Status sorting
                 if "FIELD(" in srt:
                     srt = srt.replace("^^", ",")
+                # Status sorting
+                if "status_" in srt:
+                    col_name = srt.split("status_", 1)[1].split("_mtbl", 1)[0]
+                    col_name = "status_" + col_name
+                    srt = f"( SELECT st.label FROM sys_dync_status st WHERE st.db_status_id = mtbl.{col_name} )"
+                # Append To Sorting
                 ly_sorting = ly_sorting + srt + " " + sortorderarr[srt_cnt] + ", "
                 srt_cnt = srt_cnt + 1
             if ly_sorting:
