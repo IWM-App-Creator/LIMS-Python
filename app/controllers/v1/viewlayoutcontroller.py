@@ -35,7 +35,6 @@ def saveViewLayout(request: Request):
         viewlyps.key_flag.set(params.get("key_flag", ""))
         viewlyps.key_val.set(params.get("key_val", ""))
         viewlyps.rm_flag.set(params.get("rm_flag", ""))
-        pri
         saveUserLayoutData(viewlyps)
         return JSONResponse (
             status_code = 200,
