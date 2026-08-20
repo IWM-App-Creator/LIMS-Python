@@ -7,7 +7,7 @@ def getSystemView(systemviewps):
     colarray = systemviewps.colarray.get()
     systemview_list = []
     for view in view_dataarr:
-        data = dict(view._mapping)   # Convert Row to dict
+        data = dict(view._mapping) # Convert Row to dict
         row = {}
         for colalias in colarray:
             parts = colalias.split("-")
@@ -19,8 +19,6 @@ def getSystemView(systemviewps):
             row[colalias] = value  # Set DB Data
         systemview_list.append(row)
     return systemview_list
-
-
 
 # {
 #     "status": true,
@@ -35,8 +33,6 @@ def getSystemView(systemviewps):
         
 #     }
 # }
-
-
 
 
 # length	"11"

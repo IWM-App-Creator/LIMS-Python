@@ -28,6 +28,10 @@ def getSystemViewList(request: Request):
             colarray = ["form_id-Form ID", "form_name-Form Name", "created_by-Created By", "created_date-Created Date"]
             # $colarray = array("scope_id-Scope ID", "op_scope_name-Operational Scope Name-Text", "scope_name-Customer Scope Name-Text", "sow_tat-Turn Around Time", "min_cost~AMT-Min. Cost", "scope_cost~AMT-Cost", "list_total~AMT-List Cost", "is_lock-Locked");
         
+        if view_name == "dynamicview": 
+            systemviewps.table_name.set("sys_new_dynamic_view")
+            colarray = ["view_id-ID", "view_name-View Name", "url-URL", "created_by-Created By", "created_date-Created Date"]
+        
         systemviewps.colarray.set(colarray)
         item_data = getSystemView(systemviewps)
         return JSONResponse(
