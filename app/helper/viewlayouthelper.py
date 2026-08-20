@@ -100,6 +100,6 @@ def saveUserLayoutData(viewlyps):
     # -------------------------------------------------
     # Save
     # -------------------------------------------------
-    viewlyps.db_upd_vals.set({col_flag: data, "view_id": viewlyps.view_id.get()})
+    viewlyps.db_upd_vals.set({col_flag: data, "view_id": int(viewlyps.view_id.get()) or 0})
     print("viewlyps.db_upd_vals.get() --> ", viewlyps.db_upd_vals.get())
     return insertUpdateUserLayout(viewlyps)
