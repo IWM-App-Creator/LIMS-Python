@@ -22,6 +22,16 @@ def saveUserLayoutData(viewlyps):
     key_val = viewlyps.key_val.get()
     usr_layout = getViewLayoutDataByID(viewlyps)
     print("usr_layout --> ", usr_layout)
+    if isinstance(tab_id, (list, tuple)):
+        tab_ids = tab_id
+    else:
+        tab_ids = str(tab_id).split(",")
+    tab_ids = [
+        str(tab).strip().replace(".0", "")
+        for tab in tab_ids
+        if str(tab).strip()
+    ]
+    print("tab_ids --> ", tab_ids)
     # -------------------------------------------------
     # Get existing JSON
     # -------------------------------------------------
@@ -54,33 +64,47 @@ def saveUserLayoutData(viewlyps):
                 key_val = []
         if not isinstance(key_val, list):
             key_val = []
-        # Update only requested tab
-        data[key_flag] = key_val
+        # ---------------------------------------------
+        # Update one or multiple tabs
+        # ---------------------------------------------
+        for tab in tab_ids:
+            data[f"tab_{tab}"] = key_val
     # -------------------------------------------------
     # USER SETTING
     # -------------------------------------------------
     elif col_flag == "user_setting":
+        # ---------------------------------------------
+        # Group setting
+        # ---------------------------------------------
         if key_flag == "group_tab":
             try:
                 key_val = int(key_val)
             except (ValueError, TypeError):
                 pass
-            print("key_val --> ", key_val)
             data["group_tab"] = key_val
+        # ---------------------------------------------
+        # Tab setting
+        # ---------------------------------------------
         else:
             tabs = data.setdefault("tabs", {})
-            tab_key = f"tab_{tab_id}"
-            tab_data = tabs.setdefault(tab_key, {})
-            key_flags = key_flag.split("||")
-            key_vals = key_val.split("||")
-            for flag, value in zip(key_flags, key_vals):
-                try:
-                    value = int(value)
-                except (ValueError, TypeError):
-                    pass
-                tab_data[flag] = value
+            key_flags = str(key_flag).split("||")
+            key_vals = str(key_val).split("||")
+            # -----------------------------------------
+            # Apply same values to ALL selected tabs
+            # -----------------------------------------
+            for tab in tab_ids:
+                tab_key = f"tab_{tab}"
+                # Existing tab or new tab
+                tab_data = tabs.setdefault(tab_key, {})
+                for flag, value in zip(key_flags, key_vals):
+                    try:
+                        value = int(value)
+                    except (ValueError, TypeError):
+                        pass
+                    tab_data[flag] = value
+    # -------------------------------------------------
+    # Save
+    # -------------------------------------------------
     viewlyps.db_upd_vals.set({col_flag: data})
     print("viewlyps.db_upd_vals.get() --> ", viewlyps.db_upd_vals.get())
     return insertUpdateUserLayout(viewlyps)
-
-# {"tabs": {"tab_0": {"sortby": null, "page_size": 5, "sortorder": null, "auto_refresh": 0, "refresh_alert": 0, "srch_threshold_json": null}, "tab_925": {"sortby": null, "page_size": 5, "sortorder": null, "auto_refresh": 0, "refresh_alert": 0, "srch_threshold_json": null}, "tab_926": {"sortby": null, "page_size": 5, "sortorder": null, "auto_refresh": 0, "refresh_alert": 0, "srch_threshold_json": null}, "tab_927": {"sortby": null, "page_size": 5, "sortorder": null, "auto_refresh": 0, "refresh_alert": 0, "srch_threshold_json": null}}, "group_tab": 3280}
