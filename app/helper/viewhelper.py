@@ -323,10 +323,17 @@ class ViewHelper:
                 if "FIELD(" in srt:
                     srt = srt.replace("^^", ",")
                 # Status sorting
-                if "status_" in srt:
-                    col_name = srt.split("status_", 1)[1].split("_mtbl", 1)[0]
-                    col_name = "status_" + col_name
-                    srt = f"( SELECT st.label FROM sys_dync_status st WHERE st.db_status_id = mtbl.{col_name} )"
+                elif "status_" in srt:
+                    match = re.search(r"(status_\d+)_([a-zA-Z0-9_]+)$", srt)
+                    col_name = match.group(1)
+                    tbl_alias = match.group(2)
+                    srt = f"( SELECT st.label FROM sys_dync_status st WHERE st.db_status_id = {tbl_alias}.{col_name} )"
+                # Dropdown sorting
+                elif "dd_" in srt:
+                    match = re.search(r"(dd_\d+)_([a-zA-Z0-9_]+)$", srt)
+                    col_name = match.group(1)
+                    tbl_alias = match.group(2)
+                    srt = f"( SELECT dd.dd_label FROM sys_dync_dropdown dd WHERE dd.dync_dd_id = {tbl_alias}.{col_name} )"
                 # Append To Sorting
                 ly_sorting = ly_sorting + srt + " " + sortorderarr[srt_cnt] + ", "
                 srt_cnt = srt_cnt + 1
