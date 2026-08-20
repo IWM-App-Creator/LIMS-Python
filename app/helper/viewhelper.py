@@ -617,9 +617,7 @@ class ViewHelper:
 
             item["editable_cols"] = editable_cols
             item["has_activity"] = has_activity
-
             item_list.append(item)
-
         viewps.item_list.set(item_list)
 
     @staticmethod
