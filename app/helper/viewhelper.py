@@ -354,15 +354,16 @@ class ViewHelper:
             page_size = int(tab_setting.get("page_size", 10))
             if page_size in (None, "0", 0, ""):
                 page_size = 10
-            page_no = int(viewps.page_no.get())
-            if page_no in (None, "0", 0, ""):
-                page_no = 1
-            viewps.page_size.set(page_size)
-            offset = ((page_no - 1) * page_size)
-            viewps.offset.set(offset)
         else :
-            viewps.page_size.set(10)
-            viewps.offset.set(0)
+            page_size = 10
+        # Update Paging & Offset Based On Page No.
+        page_no = int(viewps.page_no.get())
+        if page_no in (None, "0", 0, ""):
+            page_no = 1
+        viewps.page_size.set(page_size)
+        offset = ((page_no - 1) * page_size)
+        viewps.offset.set(offset)
+        # viewps.offset.set(0)
 
     @staticmethod
     def getSortByColIDName(srt: str):

@@ -81,6 +81,8 @@ def getViewData(request: Request):
         view_qry = view_qry.replace("#USER_ID#", str(userps.user_id.get())) # Update Notification Query User ID
         view_qry = f"{view_qry} LIMIT {viewps.offset.get()}, {viewps.page_size.get()}"
         viewps.view_qry.set(view_qry)
+        # print(view_qry)
+        # return
         view_qry_data = DB.executeDBStatement(view_qry) # Execute Query To Get View Data
         viewps.view_qry_data.set(view_qry_data)
         viewhlp.getRecordCount(viewps) # Total Record Data
