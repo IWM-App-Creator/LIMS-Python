@@ -120,8 +120,8 @@ def getNotiCountByViewID (request: Request):
     print("getNotiCountByViewID --> ")
     try:
         params = RequestData.params(request)
-        notifyps.is_read.set(params.get("is_read", 0))
-        notifyps.is_archive.set(params.get("is_archive", 0))
+        notifyps.is_read.set(params.get("is_read", ""))
+        notifyps.is_archive.set(params.get("is_archive", ""))
         views_notification = getNotificationCount(notifyps)
         return JSONResponse (
             status_code = 200,
