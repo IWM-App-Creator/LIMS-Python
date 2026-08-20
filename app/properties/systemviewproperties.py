@@ -9,7 +9,7 @@ class SystemViewProperties:
         self.table_name = ContextVar("table_name", default = "")
         self.colarray = ContextVar("colarray", default = [])
 
-        self.page_size = ContextVar("page_size", default = 5)
+        self.page_size = ContextVar("page_size", default = 10)
         self.rcdcnt = ContextVar("rcdcnt", default = 0)
 
 systemviewps = SystemViewProperties()

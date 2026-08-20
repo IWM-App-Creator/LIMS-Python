@@ -3,8 +3,7 @@ from app.utils.common import select, DB, func, userps
 def getSystemViewData(systemviewps):
     table_name = systemviewps.table_name.get() or ""
     page_no = int(systemviewps.page_no.get() or 1)
-    page_size = int(systemviewps.page_size.get() or 5)
-    
+    page_size = int(systemviewps.page_size.get() or 10)
     sys_table = DB.getTableMeta(table_name, userps.schema_name.get()).alias("table")
     stmt = (
         select(

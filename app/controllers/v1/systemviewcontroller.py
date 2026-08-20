@@ -9,6 +9,7 @@ def getSystemViewList(request: Request):
         view_name = params.get("view_name", "").lower()
         systemviewps.view_name.set(view_name)
         systemviewps.page_no.set(params.get("page_no", 1))
+        systemviewps.page_size.set(params.get("page_size", 10))
         systemviewps.filter_qry.set(params.get("filter_qry", ""))
         systemviewps.search_text.set(params.get("search_text", ""))
 
