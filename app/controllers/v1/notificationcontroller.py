@@ -1,6 +1,6 @@
 import json
 from app.utils.common import Request, RequestData, JSONResponse, raiseAPIError, nowWithTimeZone
-from app.helper.notificationfunction import getNotifications, getNotificationCount
+from app.helper.notificationfunction import getNotifications, getNotificationCount, acceptNotificationData
 from app.helper.generalfunctions import normalizeJson, getSelectedUsers
 from app.dbfunctions.logfunctions import saveErrorLogtoDB
 from app.dbfunctions.notificationfunctions import getUnreadNotiCount, updateNotification, insertUpdateNotification
@@ -115,7 +115,24 @@ def shareNotifications(request: Request):
         saveErrorLogtoDB("Notification", 0, "shareNotifications", str(e))
         raiseAPIError(str(e), 500)
 
-# http://xytovet.localhost:8000/api/v1/notification/counts
+def acceptShareNotification(request: Request):
+    print("acceptShareNotification --> ")
+    try:
+        params = RequestData.params(request)
+        notifyps.flag.set(params.get("flag", ""))
+        notifyps.notificaitons_id.set(params.get("notificaitons_id", 0) or 0)
+        acceptNotificationData(notifyps)
+        return JSONResponse (
+            status_code = 200,
+            content = {
+                "status": True,
+                "message": "Notification Updated Successfully"
+            }
+        )
+    except Exception as e:
+        saveErrorLogtoDB("Notification", 0, "acceptShareNotification", str(e))
+        raiseAPIError(str(e), 500)
+
 def getNotiCountByViewID (request: Request):
     print("getNotiCountByViewID --> ")
     try:

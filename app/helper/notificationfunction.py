@@ -3,9 +3,12 @@ from app.helper.generalfunctions import formatUserDisplayName
 from pathlib import Path
 import smtplib
 from email.message import EmailMessage
-from app.dbfunctions.notificationfunctions import getNotificationList, getNotificationCountViews
+from app.dbfunctions.notificationfunctions import getNotificationList, getNotificationData, getNotificationCountViews, insertUpdateNotification
+from app.dbfunctions.menufunctions import getActiveMenuDB, insertUpdateMenuCentre
 from app.helper.noteshelper import getSmileyNotesMap
+from app.helper.generalfunctions import normalizeJson
 from app.properties.notesproperties import notesps
+from app.properties.menuproperties import menups
 
 def getNotifications(notifyps):
     notificationarr = getNotificationList(notifyps)
@@ -66,6 +69,31 @@ def getNotificationCount(notifyps):
         }
         noti_views.append(row)
     return noti_views
+
+def acceptNotificationData(notifyps):
+    flag = notifyps.flag.get().upper()
+    if flag == "REMOVE":
+        notifyps.upd_vals.set({"is_delete": 1})
+    elif flag == "SAVEMENU":
+        noti_data = getNotificationData(notifyps)
+        if noti_data and getattr(noti_data, "msg_data", "") not in (None, "", {}):
+            msg_data = normalizeJson(getattr(noti_data, "msg_data", {}), {})
+            menups.m_centre_id.set(msg_data.get("m_center_id", 0))
+            menu_data = getActiveMenuDB(menups)
+            if menu_data:
+                menups.m_centre_id.set(None)
+                menups.upd_vals.set({
+                    "centre_name": getattr(menu_data, "centre_name", ""),
+                    "ref_m_c_id": msg_data.get("m_center_id", 0),
+                    "menu_json": getattr(menu_data, "menu_json", []),
+                    "is_public": 0,
+                    "is_active": 0,
+                })
+                insertUpdateMenuCentre(menups)
+    elif flag == "SAVEFILTER":
+        print("filter save")
+    notifyps.upd_vals.set({"msg_data": ""})
+    insertUpdateNotification(notifyps)
 
 def sendEmail(notifyps):
     msg = EmailMessage()
