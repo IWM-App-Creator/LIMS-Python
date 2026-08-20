@@ -53,7 +53,7 @@ def saveUserLayoutData(viewlyps):
     # -------------------------------------------------
     # Conditional Color
     # -------------------------------------------------
-    if col_flag == "col_colors":
+    if col_flag == "col_colors": # col_metadata, col_colors, action_group_list
         if not isinstance(data, dict):
             data = {}
         # key_val can be JSON string or already parsed list
