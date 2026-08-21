@@ -5,6 +5,7 @@ from app.dbfunctions.notificationfunctions import getNotificationData, insertUpd
 from app.dbfunctions.filterfunctions import insertUpdateFilter, getFilterData
 from app.dbfunctions.widgetfunctions import getWidgetData, insertUpdateWidget
 from app.helper.filterhelper import getSaveFilters
+from app.helper.generalfunctions import normalizeJson
 from app.properties.filterproperties import filterps
 from app.properties.widgetproperties import widgetps
 from app.properties.notificationproperties import notifyps
@@ -37,12 +38,7 @@ def saveViewFilter(request: Request):
         filterps.save_name.set(params.get("save_name", ""))
         filterps.view_id.set(params.get("view_id", 0))
         filterps.view_qry.set(params.get("view_qry", ""))
-        view_qry_json = params.get("view_qry_json", [])
-        if isinstance(view_qry_json, str):
-            try:
-                view_qry_json = json.loads(view_qry_json)
-            except json.JSONDecodeError:
-                view_qry_json = [x for x in view_qry_json.split(",") if x.strip()]
+        view_qry_json = normalizeJson(params.get("view_qry_json", []), [])
         if not isinstance(view_qry_json, list):
             view_qry_json = []
         filterps.view_qry_json.set(view_qry_json)
