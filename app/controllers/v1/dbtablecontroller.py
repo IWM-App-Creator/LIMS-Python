@@ -93,21 +93,8 @@ def getLookupData(request: Request):
             }
         )
     except Exception as e:
-        saveErrorLogtoDB ("DBTable", 0, "getLookupData", str(e))
+        saveErrorLogtoDB("DBTable", 0, "getLookupData", str(e))
         raiseAPIError(str(e), 500)
-        # return JSONResponse (
-        #     status_code = 200,
-        #     content = {
-        #         "status": False,
-        #         "message": "Error",
-        #         "user_id": userps.user_id.get(),
-        #         "ws_role_id": userps.ws_role_id.get(),
-        #         "workspace_id": userps.workspace_id.get(),
-        #         "schema_name": userps.schema_name.get(),
-        #         "req_host": userps.req_host.get(),
-        #         "req_subdomain": userps.req_subdomain.get(),
-        #     }
-        # )
 
 # http://testws1.localhost:8000/api/v1/dbtable/updatetbl
 def updateDBTableAlias (request: Request):
