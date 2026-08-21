@@ -118,6 +118,7 @@ def getViewData(request: Request):
             content = {
                 "status": False,
                 "message": "View Error",
+                "view_name": viewps.view_name.get(),
                 "user_id": userps.user_id.get(),
                 "ws_role_id": userps.ws_role_id.get(),
                 "workspace_id": userps.workspace_id.get(),
