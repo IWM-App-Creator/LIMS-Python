@@ -1,5 +1,5 @@
 import json
-from app.utils.common import Request, RequestData, JSONResponse, raiseAPIError, nowWithTimeZone
+from app.utils.common import Request, RequestData, JSONResponse, raiseAPIError, raiseInvalidError, nowWithTimeZone
 from app.helper.notificationfunction import getNotifications, getNotificationCount, acceptNotificationData
 from app.helper.generalfunctions import normalizeJson, getSelectedUsers
 from app.dbfunctions.logfunctions import getDBErrorLogCount, saveErrorLogtoDB
@@ -58,10 +58,17 @@ def getSystemStats(request: Request):
 def updateUserNotification(request: Request):
     try:
         params = RequestData.params(request)
-        notifyps.notificaitons_id.set(params.get("notificaitons_id", 0))
-        notifyps.table_id.set(params.get("table_id", 0))
-        notifyps.view_id.set(params.get("view_id", 0))
-        notifyps.item_id.set(params.get("item_id", 0))
+        notificaitons_id = params.get("notificaitons_id")
+        table_id = params.get("table_id")
+        view_id = params.get("view_id")
+        item_id = params.get("item_id")
+        # At least one parameter must be provided
+        if all(value in (None, "", 0, "0") for value in [notificaitons_id,table_id,view_id,item_id]):
+            return raiseInvalidError("At least one of notificaitons_id, table_id, view_id or item_id is required", 200)
+        notifyps.notificaitons_id.set(notificaitons_id or 0)
+        notifyps.table_id.set(table_id or 0)
+        notifyps.view_id.set(view_id or 0)
+        notifyps.item_id.set(item_id or 0)
         notifyps.flag.set(params.get("flag", ""))
         updateNotification(notifyps)
         return JSONResponse (
@@ -72,7 +79,7 @@ def updateUserNotification(request: Request):
             }
         )
     except Exception as e:
-        saveErrorLogtoDB("Notification", 0, "updateUserNotification", str(e))
+        saveErrorLogtoDB("Notification",0,"updateUserNotification",str(e))
         raiseAPIError(str(e), 500)
 
 def shareNotifications(request: Request):
