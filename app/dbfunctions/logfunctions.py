@@ -51,14 +51,14 @@ def saveErrorLogtoDB(section: str, item_id: str, notes: str, error_msg: str, pag
     try:
         if item_id == "" :
             item_id = "0"
-        tb = sys.exc_info()[2]
-        if tb is not None:
-            last_tb = traceback.extract_tb(tb)[-1]
-            notes = f"{notes} :- {last_tb.filename} : ({last_tb.name} - {last_tb.lineno}"
-
+        # For Local Development : Log Bug In Console    
         if globalps.DB_DEBUG_LEVEL == "Print" :
+            tb = sys.exc_info()[2]
+            if tb is not None:
+                last_tb = traceback.extract_tb(tb)[-1]
+                notes = f"{notes} :- {last_tb.filename} : ({last_tb.name} - {last_tb.lineno}"
             print("Exception DB_DEBUG_LEVEL Print --> ", notes)
-
+        # Log Bug To Database
         if globalps.DB_DEBUG_LEVEL == "DB":
             sys_error_log = DB.getTableMeta("sys_error_log")
             stmt = (
