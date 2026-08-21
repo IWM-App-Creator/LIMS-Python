@@ -68,29 +68,38 @@ def saveUserLayoutData(viewlyps):
     # USER SETTING
     # -------------------------------------------------
     elif col_flag == "user_setting":
-        # ---------------------------------------------
+        if not isinstance(data, dict):
+            data = {}
+        # -------------------------------------------------
         # Group setting
-        # ---------------------------------------------
+        # -------------------------------------------------
         if key_flag == "group_tab":
             try:
                 key_val = int(key_val)
             except (ValueError, TypeError):
                 pass
             data["group_tab"] = key_val
-        # ---------------------------------------------
+        # -------------------------------------------------
         # Tab setting
-        # ---------------------------------------------
+        # -------------------------------------------------
         else:
             tabs = data.setdefault("tabs", {})
             key_flags = str(key_flag).split("||")
             key_vals = str(key_val).split("||")
-            # -----------------------------------------
-            # Apply same values to ALL selected tabs
-            # -----------------------------------------
             for tab in tab_ids:
                 tab_key = f"tab_{tab}"
-                # Existing tab or new tab
-                tab_data = tabs.setdefault(tab_key, {})
+                # If tab does not exist, create default tab
+                tab_data = tabs.setdefault(
+                    tab_key,
+                    {
+                        "sortby": "",
+                        "page_size": 10,
+                        "sortorder": "",
+                        "auto_refresh": 0,
+                        "refresh_alert": 0,
+                        "srch_threshold_json": ""
+                    }
+                )
                 for flag, value in zip(key_flags, key_vals):
                     try:
                         value = int(value)
