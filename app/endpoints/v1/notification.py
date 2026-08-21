@@ -8,6 +8,7 @@ ROUTES = [
     ("/update", notiapi.updateUserNotification, ["POST"]), # Read, Archive, Delete
     ("/share", notiapi.shareNotifications, ["POST"]),
     ("/counts", notiapi.getNotiCountByViewID, ["GET"]),
+    ("/statcount", notiapi.getSystemStats, ["GET"]),
     ("/accept", notiapi.acceptShareNotification, ["POST"]), # Widget, Menu & Filters (Filter : send to dashboard)
 
     #TO Remove

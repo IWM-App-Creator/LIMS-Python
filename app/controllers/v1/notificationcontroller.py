@@ -2,9 +2,10 @@ import json
 from app.utils.common import Request, RequestData, JSONResponse, raiseAPIError, nowWithTimeZone
 from app.helper.notificationfunction import getNotifications, getNotificationCount, acceptNotificationData
 from app.helper.generalfunctions import normalizeJson, getSelectedUsers
-from app.dbfunctions.logfunctions import saveErrorLogtoDB
+from app.dbfunctions.logfunctions import getDBErrorLogCount, saveErrorLogtoDB
 from app.dbfunctions.notificationfunctions import getUnreadNotiCount, updateNotification, insertUpdateNotification
 from app.properties.notificationproperties import notifyps
+from app.properties.logproperties import logps
 
 # http://xytovet.localhost:8000/api/v1/notification/get
 def getUserNotifications(request: Request):
@@ -33,6 +34,25 @@ def getUserNotifications(request: Request):
         )
     except Exception as e:
         saveErrorLogtoDB("Notification", 0, "getUserNotifications", str(e))
+        raiseAPIError(str(e), 500)
+
+def getSystemStats(request: Request):
+    print("getSystemStats --> ")
+    try:
+        params = RequestData.params(request)
+        getUnreadNotiCount(notifyps)
+        getDBErrorLogCount(logps)
+        return JSONResponse (
+            status_code = 200,
+            content = {
+                "status": True,
+                "message": "System Stat",
+                "total_unread": notifyps.total_unread.get(),
+                "error_count": logps.error_count.get(),
+            }
+        )
+    except Exception as e:
+        saveErrorLogtoDB("SystemStat", 0, "getSystemStats", str(e))
         raiseAPIError(str(e), 500)
 
 def updateUserNotification(request: Request):

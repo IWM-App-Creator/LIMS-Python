@@ -9,5 +9,7 @@ class LogProperties:
         self.page_size = ContextVar("page_size", default = 5)
         self.logdata = ContextVar("logdata", default = [])        
         self.total_record = ContextVar("total_record", default = 0)
+
+        self.error_count = ContextVar("error_count", default = 0)
         
 logps = LogProperties()

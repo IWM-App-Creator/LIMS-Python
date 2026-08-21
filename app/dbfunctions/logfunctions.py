@@ -46,6 +46,15 @@ def getDBErrorLog(logps):
     logdata = DB.executeDBSelect(stmt)
     logps.logdata.set(logdata)
 
+def getDBErrorLogCount(logps):
+    tblerrorlog = DB.getTableMeta("sys_error_log").alias("errlog")
+    stmt = (
+        select(func.count())
+        .select_from(tblerrorlog)
+    )
+    total_unread = DB.executeDBScalar(stmt)
+    logps.error_count.set(total_unread)
+
 def saveErrorLogtoDB(section: str, item_id: str, notes: str, error_msg: str, page_url: str = ""):
     error_id = 0
     try:
