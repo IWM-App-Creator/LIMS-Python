@@ -306,7 +306,7 @@ class ViewHelper:
 
     @staticmethod
     def setViewSorting(viewps):
-        sorting = f"mtbl.{viewps.primary_colnm.get()} DESC"
+        sorting = f"1 DESC"
         user_setting = viewps.user_setting.get() or {}
         user_setting = user_setting.get("tabs", {})
         current_tab = f"tab_{viewps.tab_id.get()}"
