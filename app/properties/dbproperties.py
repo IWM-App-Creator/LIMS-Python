@@ -77,6 +77,7 @@ class DBProperties:
         self.data_limit = ContextVar("data_limit", default = 100)
         self.search_txt = ContextVar("search_txt", default = "")
         self.schema_name = ContextVar("schema_name", default = None)
+        self.exclude_sys_tables = ContextVar("exclude_sys_tables", default = None)
         self.db_upd_vals = ContextVar("db_upd_vals", default = {})
 
 dbps = DBProperties()

@@ -3,7 +3,6 @@ from app.dbfunctions.logfunctions import saveErrorLogtoDB
 from app.dbfunctions.dbtablesfunctions import getDBTableData, insertTableDataToDB, insertUpdateTblCol, updateDBTableSequence
 from app.dbfunctions.viewfunctions import getViewDataByID, insertUpdateView
 from app.dbfunctions.dbfunctions import generateDBColumnAlterQuery
-from app.helper.dbhelper import setQueryColStmt, executeCreateTableQuery
 from app.helper.viewhelper import viewhlp, createviewhlp
 from app.helper import dbhelper as dbhlp
 from app.properties.dbproperties import dbps
@@ -15,6 +14,7 @@ from app.helper.dbaddcolhelper import getColumnParams
 def getDBTableList (request: Request):
     try:
         flag = ""
+        dbps.exclude_sys_tables.set(1)
         tablesarr = getDBTableData(dbps) # Execute Function to User Get Data
         table_data = []
         for table in tablesarr:

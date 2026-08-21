@@ -11,6 +11,7 @@ def getDBTableData(dbps):
     is_primary = dbps.is_primary.get()
     is_del_tbl = dbps.is_del_tbl.get()
     is_del_col = dbps.is_del_col.get()
+    exclude_sys_tables = dbps.exclude_sys_tables.get()
     # print("is_del_tbl --> ", is_del_tbl)
     # print("is_del_col --> ", is_del_col)
     tblcols = DB.getTableMeta("sys_new_db_tables_cols", schema_name).alias("tblcols")
@@ -28,7 +29,8 @@ def getDBTableData(dbps):
             )
         )
     )
-    stmt = stmt.where(tblmaster.c.table_name.not_like("sys_%"))
+    if exclude_sys_tables in (1, "1"):
+        stmt = stmt.where(tblmaster.c.table_name.not_like("sys_%"))
     if table_id not in (None, "", 0):
         stmt = stmt.where(tblcols.c.table_id == table_id)
     if table_ids:
