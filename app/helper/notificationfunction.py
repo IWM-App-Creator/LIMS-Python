@@ -1,14 +1,18 @@
-from app.utils.common import globalps, formatDate, getTimeAgoValue
+from app.utils.common import globalps, formatDate, getTimeAgoValue, userps
 from app.helper.generalfunctions import formatUserDisplayName
 from pathlib import Path
 import smtplib
 from email.message import EmailMessage
 from app.dbfunctions.notificationfunctions import getNotificationList, getNotificationData, getNotificationCountViews, insertUpdateNotification
 from app.dbfunctions.menufunctions import getActiveMenuDB, insertUpdateMenuCentre
+from app.dbfunctions.filterfunctions import getFilterData, insertUpdateFilter
+from app.dbfunctions.widgetfunctions import insertUpdateWidget
 from app.helper.noteshelper import getSmileyNotesMap
 from app.helper.generalfunctions import normalizeJson
 from app.properties.notesproperties import notesps
 from app.properties.menuproperties import menups
+from app.properties.filterproperties import filterps
+from app.properties.widgetproperties import widgetps
 
 def getNotifications(notifyps):
     notificationarr = getNotificationList(notifyps)
@@ -72,10 +76,10 @@ def getNotificationCount(notifyps):
 
 def acceptNotificationData(notifyps):
     flag = notifyps.flag.get().upper()
+    noti_data = getNotificationData(notifyps)
     if flag == "REMOVE":
         notifyps.upd_vals.set({"is_delete": 1})
     elif flag == "SAVEMENU":
-        noti_data = getNotificationData(notifyps)
         if noti_data and getattr(noti_data, "msg_data", "") not in (None, "", {}):
             msg_data = normalizeJson(getattr(noti_data, "msg_data", {}), {})
             menups.m_centre_id.set(msg_data.get("m_center_id", 0))
@@ -90,8 +94,35 @@ def acceptNotificationData(notifyps):
                     "is_active": 0,
                 })
                 insertUpdateMenuCentre(menups)
-    elif flag == "SAVEFILTER":
+    elif flag == "SAVEFILTER" or flag == "SENDTODASHBOARD":
         print("filter save")
+        if noti_data and getattr(noti_data, "msg_data", "") not in (None, "", {}):
+            msg_data = normalizeJson(getattr(noti_data, "msg_data", {}), {})
+            filterps.view_id.set(msg_data.get("view_id", 0))
+            filterps.save_id.set(msg_data.get("save_id", 0))
+            filter_data = getFilterData(filterps)
+            if filter_data:
+                filterps.save_id.set(None)
+                filterps.upd_vals.set({
+                    "save_name": getattr(filter_data, "save_name", ""),
+                    "view_id": msg_data.get("view_id", 0),
+                    "view_qry": getattr(filter_data, "view_qry", ""),
+                    "view_qry_json": getattr(filter_data, "view_qry_json", [])
+                })
+                new_save_id = insertUpdateFilter(filterps)
+                if flag == "SENDTODASHBOARD":
+                    widgetps.upd_vals.set({
+                        "sys_widget_cat_id": 2,
+                        "widget_type": "VIEWWIDGET",
+                        "widget_icon": "widget_viewlst.png",
+                        "widget_title": getattr(filter_data, "save_name", ""),
+                        "widget_json": {"view_id": msg_data.get("view_id", 0), "save_id": new_save_id, "pgno": ""},
+                        "view_id": msg_data.get("view_id", 0),
+                        "is_multiple": 0,
+                        "is_system": 0,
+                        "is_global": 0
+                    })
+                    sys_widget_id = insertUpdateWidget(widgetps)
     notifyps.upd_vals.set({"msg_data": ""})
     insertUpdateNotification(notifyps)
 

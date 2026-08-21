@@ -178,30 +178,33 @@ def insertUpdateWidget(widgetps):
     if widgetps.created_by.get() not in (None, "", 0):
         created_by = int(widgetps.created_by.get() or 0)
     values = {}
-    if sys_widget_cat_id not in (None, "", 0):
-        values["sys_widget_cat_id"] = sys_widget_cat_id
-    if widget_type not in (None, ""):
-        values["widget_type"] = widget_type
-    if widget_icon not in (None, ""):
-        values["widget_icon"] = widget_icon
-    if widget_title not in (None, ""):
-        values["widget_title"] = widget_title
-    if widget_dtl not in (None, ""):
-        values["widget_dtl"] = widget_dtl
-    if widget_json not in (None, "", {}, []):
-        values["widget_json"] = widget_json
-    if view_id not in (None, "", 0):
-        values["view_id"] = view_id
-    if is_visible not in (None, ""):
-        values["is_visible"] = is_visible
-    if is_multiple not in (None, ""):
-        values["is_multiple"] = is_multiple
-    if is_system not in (None, ""):
-        values["is_system"] = is_system
-    if is_global not in (None, ""):
-        values["is_global"] = is_global
-    if is_delete not in (None, ""):
-        values["is_delete"] = is_delete
+    if widgetps.upd_vals.get() not in (None, "", {}):
+        values = widgetps.upd_vals.get()
+    else:
+        if sys_widget_cat_id not in (None, "", 0):
+            values["sys_widget_cat_id"] = sys_widget_cat_id
+        if widget_type not in (None, ""):
+            values["widget_type"] = widget_type
+        if widget_icon not in (None, ""):
+            values["widget_icon"] = widget_icon
+        if widget_title not in (None, ""):
+            values["widget_title"] = widget_title
+        if widget_dtl not in (None, ""):
+            values["widget_dtl"] = widget_dtl
+        if widget_json not in (None, "", {}, []):
+            values["widget_json"] = widget_json
+        if view_id not in (None, "", 0):
+            values["view_id"] = view_id
+        if is_visible not in (None, ""):
+            values["is_visible"] = is_visible
+        if is_multiple not in (None, ""):
+            values["is_multiple"] = is_multiple
+        if is_system not in (None, ""):
+            values["is_system"] = is_system
+        if is_global not in (None, ""):
+            values["is_global"] = is_global
+        if is_delete not in (None, ""):
+            values["is_delete"] = is_delete
     widget_master = DB.getTableMeta("sys_widget_master")
     if sys_widget_id not in (None, "", 0):
         stmt = update(widget_master).where(widget_master.c.sys_widget_id == sys_widget_id).values(**values)
